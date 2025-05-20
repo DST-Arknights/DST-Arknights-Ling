@@ -1,0 +1,71 @@
+msgid ""
+msgstr ""
+"Language: zh\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT Version: 2.0"
+
+#. STRINGS.CHARACTER_TITLES.LING
+msgctxt "STRINGS.CHARACTER_TITLES.LING"
+msgid "Arknights Ling"
+msgstr "令"
+
+#. STRINGS.CHARACTER_NAMES.LING
+msgctxt "STRINGS.CHARACTER_NAMES.LING"
+msgid "Ling"
+msgstr "令"
+
+#. STRINGS.NAMES.LING
+msgctxt "STRINGS.NAMES.LING"
+msgid "Ling"
+msgstr "令"
+
+#. STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_LANTERN
+msgctxt "STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_LANTERN"
+msgid "Autumn's orphans cling to foreign boughs, frost-lit vigil keeping shadows at bay"
+msgstr "落叶他乡树，寒灯独夜人"
+
+#. STRINGS.NAMES.LING_LANTERN
+msgctxt "STRINGS.NAMES.LING_LANTERN"
+msgid "Ling's Lantern"
+msgstr "令之灯"
+
+#. STRINGS.CHARACTER_DESCRIPTIONS.LING
+msgctxt "STRINGS.CHARACTER_DESCRIPTIONS.LING"
+msgid "Cloudy peaks surge like waves, a thousand leagues of parched path unfolds"
+msgstr "云峦波涛，千里枯路"
+
+#. STRINGS.CHARACTER_QUOTES.LING
+msgctxt "STRINGS.CHARACTER_QUOTES.LING"
+msgid "The endless river through layered peaks, a solitary citadel in barren expanse, etched upon my sight"
+msgstr "长河千嶂，大荒孤城，历历在目"
+
+#. STRINGS.NAMES.LING_ELITE_2
+msgctxt "STRINGS.NAMES.LING_ELITE_2"
+msgid "Elite Level 1"
+msgstr "精英化 1级"
+
+#. STRINGS.NAMES.LING_ELITE_3
+msgctxt "STRINGS.NAMES.LING_ELITE_3"
+msgid "Elite Level 2"
+msgstr "精英化 2级"
+
+#. STRINGS.RECIPE_DESC.LING_ELITE_2
+msgctxt "STRINGS.RECIPE_DESC.LING_ELITE_2"
+msgid "Elite level upgraded to level 1"
+msgstr "精英化等级提升为1级"
+
+#. STRINGS.RECIPE_DESC.LING_ELITE_3
+msgctxt "STRINGS.RECIPE_DESC.LING_ELITE_3"
+msgid "Elite level upgraded to level 2"
+msgstr "精英化等级提升为2级"
+
+#. STRINGS.UI.CRAFTING.RECIPEACTION.LING_ELITE_2
+msgctxt "STRINGS.UI.CRAFTING.RECIPEACTION.LING_ELITE_2"
+msgid "Elite"
+msgstr "精英化"
+
+#. STRINGS.UI.CRAFTING.RECIPEACTION.LING_ELITE_3
+msgctxt "STRINGS.UI.CRAFTING.RECIPEACTION.LING_ELITE_3"
+msgid "Elite"
+msgstr "精英化"
