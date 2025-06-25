@@ -1,4 +1,4 @@
-local ANIM_HAND_TEXTURE = "fx/animhand.tex"
+local ANIM_LANTERN_TEXTURE = resolvefilepath("fx/lantern_fx.tex")
 local ANIM_SMOKE_TEXTURE = "fx/animsmoke.tex"
 
 local REVEAL_SHADER = "shaders/vfx_particle_reveal.ksh"
@@ -10,7 +10,7 @@ local SCALE_ENVELOPE_NAME_HAND = "thurible_scaleenvelope_hand"
 
 local assets =
 {
-    Asset("IMAGE", ANIM_HAND_TEXTURE),
+    Asset("IMAGE", ANIM_LANTERN_TEXTURE),
     Asset("IMAGE", ANIM_SMOKE_TEXTURE),
     Asset("SHADER", REVEAL_SHADER),
 }
@@ -142,7 +142,7 @@ local function InitParticles(inst)
 	effect:SetSortOffset(0, -1)
 
     --HAND
-    effect:SetRenderResources(1, ANIM_HAND_TEXTURE, REVEAL_SHADER) --REVEAL_SHADER --particle_add
+    effect:SetRenderResources(1, ANIM_LANTERN_TEXTURE, REVEAL_SHADER) --REVEAL_SHADER --particle_add
     effect:SetMaxNumParticles(1, 32)
     effect:SetRotationStatus(1, true)
     effect:SetMaxLifetime(1, HAND_MAX_LIFETIME)

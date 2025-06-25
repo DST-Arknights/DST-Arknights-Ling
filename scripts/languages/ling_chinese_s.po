@@ -10,6 +10,21 @@ msgctxt "STRINGS.CHARACTER_TITLES.LING"
 msgid "Arknights Ling"
 msgstr "令"
 
+#. STRINGS.CHARACTERS.LING.DESCRIBE.LING_LANTERN.NORMAL
+msgctxt "STRINGS.CHARACTERS.LING.DESCRIBE.LING_LANTERN.NORMAL"
+msgid "My lantern, illuminating the path ahead."
+msgstr "我的灯，照亮前方的道路。"
+
+#. STRINGS.CHARACTERS.LING.DESCRIBE.LING_LANTERN.LOWFUEL
+msgctxt "STRINGS.CHARACTERS.LING.DESCRIBE.LING_LANTERN.LOWFUEL"
+msgid "The light is fading, I need more nightmare fuel."
+msgstr "光芒渐弱，需要更多噩梦燃料。"
+
+#. STRINGS.CHARACTERS.LING.DESCRIBE.LING_LANTERN.OUT
+msgctxt "STRINGS.CHARACTERS.LING.DESCRIBE.LING_LANTERN.OUT"
+msgid "The lantern has gone out. It needs nightmare fuel."
+msgstr "灯已熄灭，需要噩梦燃料点燃。"
+
 #. STRINGS.CHARACTER_NAMES.LING
 msgctxt "STRINGS.CHARACTER_NAMES.LING"
 msgid "Ling"
@@ -24,6 +39,21 @@ msgstr "令"
 msgctxt "STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_LANTERN"
 msgid "Autumn's orphans cling to foreign boughs, frost-lit vigil keeping shadows at bay"
 msgstr "落叶他乡树，寒灯独夜人"
+
+#. STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_LANTERN.NORMAL
+msgctxt "STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_LANTERN.NORMAL"
+msgid "A mystical lantern that glows with ethereal light."
+msgstr "一盏散发着奇异光芒的灯。"
+
+#. STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_LANTERN.LOWFUEL
+msgctxt "STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_LANTERN.LOWFUEL"
+msgid "The light is growing dim. It needs more fuel."
+msgstr "光芒变得暗淡了。它需要更多燃料。"
+
+#. STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_LANTERN.OUT
+msgctxt "STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_LANTERN.OUT"
+msgid "The lantern has gone out. It needs nightmare fuel to light again."
+msgstr "灯已经熄灭了。需要噩梦燃料才能重新点亮。"
 
 #. STRINGS.NAMES.LING_LANTERN
 msgctxt "STRINGS.NAMES.LING_LANTERN"
@@ -69,3 +99,223 @@ msgstr "精英化"
 msgctxt "STRINGS.UI.CRAFTING.RECIPEACTION.LING_ELITE_3"
 msgid "Elite"
 msgstr "精英化"
+
+#. STRINGS.UI.ARK_SKILL.NAMES.LING.1
+msgctxt "STRINGS.UI.ARK_SKILL.NAMES.LING.1"
+msgid "Sips of Wine"
+msgstr "重进酒"
+
+#. STRINGS.UI.ARK_SKILL.LOCKED_DESC.LING.1
+msgctxt "STRINGS.UI.ARK_SKILL.LOCKED_DESC.LING.1"
+msgid "Auto unlock"
+msgstr "自动解锁"
+
+#. STRINGS.UI.ARK_SKILL.LOCKED_DESC.LING.2
+msgctxt "STRINGS.UI.ARK_SKILL.LOCKED_DESC.LING.2"
+msgid "Elite level 1 unlock at Prestihatitator"
+msgstr "精英化一解锁 到灵子分解器完成精英化"
+
+#. STRINGS.UI.ARK_SKILL.LOCKED_DESC.LING.3
+msgctxt "STRINGS.UI.ARK_SKILL.LOCKED_DESC.LING.3"
+msgid "Elite level 2 unlock at Shadow Manipulator"
+msgstr "精英化二解锁 到暗影操控器完成精英化"
+
+#. STRINGS.UI.ARK_SKILL.NAMES.LING.2
+msgctxt "STRINGS.UI.ARK_SKILL.NAMES.LING.2"
+msgid "Amidst Pleasant Melodies"
+msgstr "笑鸣瑟"
+
+#. STRINGS.UI.ARK_SKILL.NAMES.LING.3
+msgctxt "STRINGS.UI.ARK_SKILL.NAMES.LING.3"
+msgid "To Remain Oneself"
+msgstr "宁作吾"
+
+#. STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.1.1
+msgctxt "STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.1.1"
+msgid "STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.1.1"
+msgstr "-自身与召唤物攻击力+20%，攻击速度+20%\n-自身与召唤物伤害类型变为真实伤害"
+
+#. STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.1.2
+msgctxt "STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.1.2"
+msgid "STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.1.2"
+msgstr "-自身与召唤物攻击力+38%，攻击速度+38%\n-自身与召唤物伤害类型变为真实伤害"
+
+#. STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.1.3
+msgctxt "STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.1.3"
+msgid "STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.1.3"
+msgstr "-自身与召唤物攻击力+50%，攻击速度+50%\n-自身与召唤物伤害类型变为真实伤害"
+
+#. STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.2.1
+msgctxt "STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.2.1"
+msgid "STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.2.1"
+msgstr "-令下次攻击变成范围伤害\n-造成250%攻击力的真实伤害并束缚1.5秒\n-可充能1次"
+
+#. STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.2.2
+msgctxt "STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.2.2"
+msgid "STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.2.2"
+msgstr "-令下次攻击变成范围伤害\n-造成370%攻击力的真实伤害并束缚2.5秒\n-可充能2次"
+
+#. STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.3.1
+msgctxt "STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.3.1"
+msgid "STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.3.1"
+msgstr "-自身与召唤物攻击力+40%，免伤+40%\n-召唤物每0.5秒对周围四墙距离的敌人造成\n 20%令目前攻击力的真实伤害"
+
+#. STRINGS.UI.ARK_SKILL.ACTIVATION_MODE.AUTO
+msgctxt "STRINGS.UI.ARK_SKILL.ACTIVATION_MODE.AUTO"
+msgid "Auto"
+msgstr "自动触发"
+
+#. STRINGS.UI.ARK_SKILL.ACTIVATION_MODE.PASSIVE
+msgctxt "STRINGS.UI.ARK_SKILL.ACTIVATION_MODE.PASSIVE"
+msgid "Passive"
+msgstr "被动"
+
+#. STRINGS.UI.ARK_SKILL.ACTIVATION_MODE.MANUAL
+msgctxt "STRINGS.UI.ARK_SKILL.ACTIVATION_MODE.MANUAL"
+msgid "Manual"
+msgstr "手动触发"
+
+#. STRINGS.UI.ARK_SKILL.ENERGY_RECOVERY_MODE.NONE
+msgctxt "STRINGS.UI.ARK_SKILL.ENERGY_RECOVERY_MODE.NONE"
+msgid "None"
+msgstr "无"
+
+#. STRINGS.UI.ARK_SKILL.ENERGY_RECOVERY_MODE.AUTO
+msgctxt "STRINGS.UI.ARK_SKILL.ENERGY_RECOVERY_MODE.AUTO"
+msgid "Auto Recovery"
+msgstr "自动回复"
+
+#. STRINGS.UI.ARK_SKILL.ENERGY_RECOVERY_MODE.ATTACK
+msgctxt "STRINGS.UI.ARK_SKILL.ENERGY_RECOVERY_MODE.ATTACK"
+msgid "Attack Recovery"
+msgstr "攻击回复"
+
+#. STRINGS.UI.ARK_SKILL.ENERGY_RECOVERY_MODE.DEFENSIVE
+msgctxt "STRINGS.UI.ARK_SKILL.ENERGY_RECOVERY_MODE.DEFENSIVE"
+msgid "Defensive Recovery"
+msgstr "受击回复"
+
+#. STRINGS.UI.ARK_SKILL.SECONDS
+msgctxt "STRINGS.UI.ARK_SKILL.SECONDS"
+msgid "Seconds"
+msgstr "秒"
+
+#. STRINGS.UI.ARK_SKILL.HOT_KEY
+msgctxt "STRINGS.UI.ARK_SKILL.HOT_KEY"
+msgid "Hot Key"
+msgstr "快捷键"
+
+#. STRINGS.UI.ARK_SKILL.SETTING
+msgctxt "STRINGS.UI.ARK_SKILL.SETTING"
+msgid "Setting"
+msgstr "设置"
+
+#. STRINGS.UI.ARK_SKILL.NONE
+msgctxt "STRINGS.UI.ARK_SKILL.NONE"
+msgid "None"
+msgstr "无"
+
+#. STRINGS.UI.ARK_SKILL.LOCKED
+msgctxt "STRINGS.UI.ARK_SKILL.LOCKED"
+msgid "Locked"
+msgstr "未解锁"
+
+#. STRINGS.UI.ARK_SKILL.PRESS_ANY_KEY
+msgctxt "STRINGS.UI.ARK_SKILL.PRESS_ANY_KEY"
+msgid "Press any key"
+msgstr "请按下任意键"
+
+#. STRINGS.UI.ARK_SKILL.CANCEL
+msgctxt "STRINGS.UI.ARK_SKILL.CANCEL"
+msgid "Cancel"
+msgstr "取消"
+
+#. STRINGS.UI.ARK_SKILL.RESET
+msgctxt "STRINGS.UI.ARK_SKILL.RESET"
+msgid "Reset"
+msgstr "重置"
+
+#. STRINGS.UI.ARK_SKILL.HOT_KEY_CONFLICT
+msgctxt "STRINGS.UI.ARK_SKILL.HOT_KEY_CONFLICT"
+msgid "Hot Key Conflict"
+msgstr "冲突的按键"
+
+#. STRINGS.UI.ARK_SKILL.SKILL
+msgctxt "STRINGS.UI.ARK_SKILL.SKILL"
+msgid "Skill"
+msgstr "技能"
+
+#. STRINGS.UI.ARK_SKILL.CURRENT_LEVEL
+msgctxt "STRINGS.UI.ARK_SKILL.CURRENT_LEVEL"
+msgid "Current Level"
+msgstr "当前等级"
+
+#. STRINGS.UI.ARK_SKILL.NEXT_LEVEL
+msgctxt "STRINGS.UI.ARK_SKILL.NEXT_LEVEL"
+msgid "Next Level"
+msgstr "下一级"
+
+#. STRINGS.UI.ARK_SKILL.SKILL_MAX_LEVEL
+msgctxt "STRINGS.UI.ARK_SKILL.SKILL_MAX_LEVEL"
+msgid "Skill level maxed"
+msgstr "该技能已满级"
+
+#. STRINGS.UI.ARK_SKILL.LOCKED_DESC.DEFAULT
+msgctxt "STRINGS.UI.ARK_SKILL.LOCKED_DESC.DEFAULT"
+msgid "Locked skill"
+msgstr "该技能已锁定"
+
+#. STRINGS.UI.ARK_SKILL.LEVEL.8
+msgctxt "STRINGS.UI.ARK_SKILL.LEVEL.8"
+msgid "Rank Ⅰ"
+msgstr "Rank Ⅰ"
+
+#. STRINGS.UI.ARK_SKILL.LEVEL.9
+msgctxt "STRINGS.UI.ARK_SKILL.LEVEL.9"
+msgid "Rank Ⅱ"
+msgstr "Rank Ⅱ"
+
+#. STRINGS.UI.ARK_SKILL.LEVEL.10
+msgctxt "STRINGS.UI.ARK_SKILL.LEVEL.10"
+msgid "Rank Ⅲ"
+msgstr "Rank Ⅲ"
+
+#. STRINGS.UI.LING_SUMMON.SUMMON
+msgctxt "STRINGS.UI.LING_SUMMON.SUMMON"
+msgid "Summon"
+msgstr "召唤"
+
+#. STRINGS.UI.LING_SUMMON.COMMAND
+msgctxt "STRINGS.UI.LING_SUMMON.COMMAND"
+msgid "Command"
+msgstr "命令"
+
+#. STRINGS.UI.LING_SUMMON.QINGPING
+msgctxt "STRINGS.UI.LING_SUMMON.QINGPING"
+msgid "Qingping"
+msgstr "清平"
+
+#. STRINGS.UI.LING_SUMMON.XIAOYAO
+msgctxt "STRINGS.UI.LING_SUMMON.XIAOYAO"
+msgid "Xiaoyao"
+msgstr "逍遥"
+
+#. STRINGS.UI.LING_SUMMON.XIANJING
+msgctxt "STRINGS.UI.LING_SUMMON.XIANJING"
+msgid "Xianjing"
+msgstr "弦惊"
+
+#. STRINGS.UI.LING_COMMAND.GUARD
+msgctxt "STRINGS.UI.LING_COMMAND.GUARD"
+msgid "Guard"
+msgstr "守"
+
+#. STRINGS.UI.LING_COMMAND.ATTACK
+msgctxt "STRINGS.UI.LING_COMMAND.ATTACK"
+msgid "Attack"
+msgstr "攻"
+
+#. STRINGS.UI.LING_COMMAND.CAUTIOUS
+msgctxt "STRINGS.UI.LING_COMMAND.CAUTIOUS"
+msgid "Cautious"
+msgstr "慎"

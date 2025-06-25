@@ -48,3 +48,6 @@ luac.out
 exported/
 anim/
 temp/
+/imageSource
+
+out

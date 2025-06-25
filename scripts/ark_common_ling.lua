@@ -42,6 +42,11 @@ local function LoadPOFile(fname, lang)
   end
 end
 
+local function genArkSkillLevelTag(idx, level)
+  return 'ark_skill_level_' .. idx .. '_' .. level
+end
+
 return {
   LoadPOFile = LoadPOFile,
+  genArkSkillLevelTag = genArkSkillLevelTag,
 }
