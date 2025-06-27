@@ -8,7 +8,7 @@ local common = require("ark_common_ling")
 -- 加载语言文件
 common.LoadPOFile("scripts/languages/ling_chinese_s.po", "zh")
 
-PrefabFiles = {'ling', 'ling_lantern', 'ling_lantern_smoke', 'ling_guards', 'ling_summon_fx', 'ling_aoe_attack_fx' }
+PrefabFiles = {'ling', 'ling_lantern', 'ling_lantern_smoke', 'ling_guards', 'ling_summon_fx', 'ling_aoe_attack_fx', 'ling_guard_containers'}
 Assets = {
   Asset('ATLAS', 'images/saveslot_portraits/ling.xml'),
   Asset('ATLAS', 'images/selectscreen_portraits/ling.xml'),
@@ -49,3 +49,4 @@ modimport("lingmain/summon_guard")
 modimport("lingmain/true_damage")
 modimport("lingmain/attack_speed")
 modimport("lingmain/ling_skill2_attack")
+modimport("lingmain/ling_guard_containers")

@@ -58,7 +58,7 @@ msgstr "灯已经熄灭了。需要噩梦燃料才能重新点亮。"
 #. STRINGS.NAMES.LING_LANTERN
 msgctxt "STRINGS.NAMES.LING_LANTERN"
 msgid "Ling's Lantern"
-msgstr "令之灯"
+msgstr "引梦灯"
 
 #. STRINGS.CHARACTER_DESCRIPTIONS.LING
 msgctxt "STRINGS.CHARACTER_DESCRIPTIONS.LING"

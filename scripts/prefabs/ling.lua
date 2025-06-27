@@ -22,8 +22,7 @@ end
 
 local function common_post_init(inst)
   inst:AddTag("ling")
-  inst.AnimState:Show("HAIR_NOHAT")
-  inst.AnimState:Show("HAIR")
+  inst:AddTag("reader")
 end
 
 local SKILL1_DAMAGE_SOURCE = "ling_skill_1"
@@ -81,6 +80,9 @@ local function DeclareFunction(inst)
     inst.components.hunger:SetMax(data.MAX_HUNGER)
     inst.components.sanity:SetMax(data.MAX_SANITY)
     inst.components.ling_poetry:SetElite(level)
+    inst.components.locomotor:SetExternalSpeedMultiplier(inst, "ling_elite_speed", data.SPEED_MULTIPLIER)
+    inst.components.combat.externaldamagemultipliers:SetModifier(inst, data.DAMAGE_MULTIPLIER, "ling_elite_damage")
+    inst.components.sleeper:SetResistance(data.SLEEP_RESISTANCE)
     for i = 1, 3 do
       local tag = "ling_elite_" .. i
       inst:RemoveTag(tag)
@@ -508,6 +510,7 @@ local function DeclareFunction(inst)
 end
 
 local function master_post_init(inst)
+  inst.MiniMapEntity:SetIcon("ling.tex")
   -- 初始化基础属性
   inst.elite_level = 0
 
@@ -517,6 +520,10 @@ local function master_post_init(inst)
   -- 添加组件
   inst:AddComponent("ling_poetry")
   inst:AddComponent("ark_skill_ling")
+  inst:AddComponent("sleeper")
+  inst:AddComponent("planarentity")
+  inst:AddComponent("reader")
+  inst.components.sanity.dapperness = TUNING.DAPPERNESS_MED
 
   -- 配置技能系统
   inst.components.ark_skill_ling:SetupSkillConfig("ling")

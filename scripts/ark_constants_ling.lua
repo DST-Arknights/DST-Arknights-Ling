@@ -18,4 +18,5 @@ return {
   },
   MAX_SKILL_LIMIT = 6,
   MAX_SKILL_LEVEL = 10,
+  MAX_GUARDS_CONTAINER = 7,
 }

@@ -127,6 +127,9 @@ local ArkSkillDesc = Class(Widget, function(self, owner, descConfig, idx)
   foot:SetPosition(0, topOffset, 0)
   local levelStr = tostring(descConfig.level)
   local levelString = "LV: " .. (STRINGS.UI.ARK_SKILL.LEVEL[levelStr] or levelStr)
+  if descConfig.locked then
+    levelString = STRINGS.UI.ARK_SKILL.LOCKED
+  end
   local levelText = foot:AddChild(Text(FALLBACK_FONT_FULL, 80, levelString))
   local levelTextSizeX, levelTextSizeY = levelText:GetRegionSize()
   levelText:SetPosition(leftOffset + levelTextSizeX / 2, 0, 0)

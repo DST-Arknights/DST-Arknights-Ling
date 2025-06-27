@@ -100,6 +100,10 @@ local ArkSkill = Class(Widget, function(self, owner, config, idx)
   self.isBlinking = false
   self.previousActivationStacks = 0  -- 用于检测充能状态变化
 
+  -- skillDesc 延迟移除相关变量
+  self.skillDescHideTimer = nil
+  self.skillDescHideDelay = 0.1  -- 0.3秒延迟
+
   self.owner:StartUpdatingComponent(self)
   self.initComplete = false
 end)
@@ -338,6 +342,19 @@ local function OnUpdate(self, dt)
   end
   -- 更新闪烁效果
   self:UpdateBlink(dt)
+
+  -- 处理 skillDesc 延迟移除
+  if self.skillDescHideTimer then
+    self.skillDescHideTimer = self.skillDescHideTimer - dt
+    if self.skillDescHideTimer <= 0 then
+      self.skillDescHideTimer = nil
+      if self.skillDesc then
+        self.skillDesc:Kill()
+        self.skillDesc = nil
+      end
+    end
+  end
+
   -- buff期间技能停止充能
   local leftBuffTime = UpdateTimeBuff(self, dt)
   if leftBuffTime == nil then
@@ -358,6 +375,10 @@ function ArkSkill:OnGainFocus()
     return
   end
   ArkSkill._base.OnGainFocus(self)
+
+  -- 取消延迟移除计时器
+  self.skillDescHideTimer = nil
+
   if not self.skillDesc then
     local descConfig = {
       locked = self.status == CONSTANTS.SKILL_STATUS.LOCKED,
@@ -382,8 +403,8 @@ end
 function ArkSkill:OnLoseFocus()
   ArkSkill._base.OnLoseFocus(self)
   if self.skillDesc then
-    self.skillDesc:Kill()
-    self.skillDesc = nil
+    -- 启动延迟移除计时器，而不是立即移除
+    self.skillDescHideTimer = self.skillDescHideDelay
   end
 end
 

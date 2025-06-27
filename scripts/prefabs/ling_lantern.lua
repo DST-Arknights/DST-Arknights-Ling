@@ -126,18 +126,12 @@ local function UpdateSmokePosition(inst)
 
     if state == LANTERN_STATE.EQUIPPED and inst._body then
         -- 装备状态：跟随灯体
-        if not inst.currentSmokeFollow or inst.currentSmokeFollow ~= "body" then
-            inst._smoke.Follower:FollowSymbol(inst._body.GUID, "lantern_swing",
-                                             offset[1], offset[2], offset[3])
-            inst.currentSmokeFollow = "body"
-        end
+        inst._smoke.Follower:FollowSymbol(inst._body.GUID, "lantern_swing",
+                                            offset[1], offset[2], offset[3])
     elseif state == LANTERN_STATE.GROUND then
         -- 地面状态：跟随灯笼本体
-        if not inst.currentSmokeFollow or inst.currentSmokeFollow ~= "ground" then
-            inst._smoke.Follower:FollowSymbol(inst.GUID, "lantern_swing",
-                                             offset[1], offset[2], offset[3])
-            inst.currentSmokeFollow = "ground"
-        end
+        inst._smoke.Follower:FollowSymbol(inst.GUID, "lantern_swing",
+                                            offset[1], offset[2], offset[3])
     end
 end
 
@@ -168,7 +162,7 @@ local function MachineTurnOnCallback(inst)
         return
     end
     CreateSmoke(inst)
-    UpdateSmokePosition(inst)
+    inst:DoTaskInTime(0, UpdateSmokePosition)
     -- 开始消耗燃料
     inst.components.fueled:StartConsuming()
     -- 更新光照系统
@@ -426,9 +420,7 @@ local function CreateLingLantern()
     inst.components.fueled:SetTakeFuelFn(OnRefueled)
     inst.components.fueled:SetFirstPeriod(TUNING.TURNON_FUELED_CONSUMPTION, TUNING.TURNON_FULL_FUELED_CONSUMPTION)
     inst.components.fueled:SetSections(10)
-    inst.components.fueled:SetSectionCallback(function(section)
-        UpdateLightSystem(inst)
-    end)
+    inst.components.fueled:SetSectionCallback(function () OnFuelUpdate(inst) end)
 
     -- 武器组件
     inst:AddComponent("weapon")
