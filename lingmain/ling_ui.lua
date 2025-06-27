@@ -1,31 +1,42 @@
 
 -- 诗意值ui
-AddClassPostConstruct("widgets/statusdisplays", function(self)
+AddClassPostConstruct("widgets/controls", function(self)
   if not self.owner or self.owner.prefab ~= "ling" then
     return
   end
   local LingPoetryBadge = require "widgets/ling_poetry"
-  self.ling_poetry = self:AddChild(LingPoetryBadge(self.owner))
+
+  -- 将诗意值 UI 直接添加到 topright_root，这样坐标系统更简单
+  self.ling_poetry = self.topright_root:AddChild(LingPoetryBadge(self.owner))
+
   self.owner:DoTaskInTime(.5, function(owner)
-    local heartX, heartY = self.heart:GetPosition():Get()
-    local brainX, brainY = self.brain:GetPosition():Get()
-    local stomachX, stomachY = self.stomach:GetPosition():Get()
-    local offsetX = stomachX - heartX
-    if brainY == heartY or brainY == stomachY then
-      if self.heart:GetScale().x / self.ling_poetry:GetScale().x ~= 1 then
-        self.ling_poetry:SetScale(self.heart:GetScale())
-      end
-      offsetX = stomachX - brainX
+    -- 只有在没有保存位置的情况下才设置默认位置
+    if not self.ling_poetry.position_loaded then
+      -- 获取 statusdisplays 的位置作为参考
+      local status_pos = self.status:GetPosition()
+      local status_world_pos = self.status:GetWorldPosition()
+      local topright_world_pos = self.topright_root:GetWorldPosition()
+
+      -- 计算相对于 topright_root 的位置
+      local relative_x = status_world_pos.x - topright_world_pos.x
+      local relative_y = status_world_pos.y - topright_world_pos.y
+
+      -- 设置默认位置（在状态显示的右侧）
+      self.ling_poetry:SetPosition(relative_x + 80, relative_y, 0)
+      self.ling_poetry:SetScale(self.status:GetScale())
     end
-    self.ling_poetry:SetPosition(stomachX + offsetX, stomachY, 0)
   end)
-  local _SetGhostMode = self.SetGhostMode
-  function self:SetGhostMode(ghost_mode, ...)
+
+  -- 监听幽灵模式变化
+  local _SetGhostMode = self.status.SetGhostMode
+  function self.status:SetGhostMode(ghost_mode, ...)
     _SetGhostMode(self, ghost_mode, ...)
-    if ghost_mode then
-      self.ling_poetry:Hide()
-    else
-      self.ling_poetry:Show()
+    if self.parent and self.parent.ling_poetry then
+      if ghost_mode then
+        self.parent.ling_poetry:Hide()
+      else
+        self.parent.ling_poetry:Show()
+      end
     end
   end
 end)

@@ -5,14 +5,14 @@ local SilenceFatigueReplica = Class(function(self, inst)
   if not TheWorld.ismastersim then
     self.inst:ListenForEvent("maxpoetrychanged", function()
       print("maxpoetrychanged", self._max_poetry:value())
-      if ThePlayer.HUD.controls and ThePlayer.HUD.controls.status then
-        ThePlayer.HUD.controls.status.ling_poetry:SetMax(self._max_poetry:value())
+      if ThePlayer.HUD.controls and ThePlayer.HUD.controls.ling_poetry then
+        ThePlayer.HUD.controls.ling_poetry:SetMax(self._max_poetry:value())
       end
     end, inst)
     self.inst:ListenForEvent("poetrychanged", function()
       print("poetrychanged", self._current_poetry:value())
-      if ThePlayer.HUD.controls and ThePlayer.HUD.controls.status then
-        ThePlayer.HUD.controls.status.ling_poetry:SetCurrent(self._current_poetry:value())
+      if ThePlayer.HUD.controls and ThePlayer.HUD.controls.ling_poetry then
+        ThePlayer.HUD.controls.ling_poetry:SetCurrent(self._current_poetry:value())
       end
     end, inst)
   end
