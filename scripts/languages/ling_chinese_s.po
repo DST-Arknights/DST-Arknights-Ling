@@ -319,3 +319,8 @@ msgstr "攻"
 msgctxt "STRINGS.UI.LING_COMMAND.CAUTIOUS"
 msgid "Cautious"
 msgstr "慎"
+
+#. STRINGS.UI.LING_GUARD_PANEL_CALL.SUMMARY
+msgctxt "STRINGS.UI.LING_GUARD_PANEL_CALL.SUMMARY"
+msgid "Summary"
+msgstr "召唤"

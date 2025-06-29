@@ -5,7 +5,6 @@ AddClassPostConstruct("widgets/controls", function(self)
     return
   end
   local LingPoetryBadge = require "widgets/ling_poetry"
-
   -- 将诗意值 UI 直接添加到 topright_root，这样坐标系统更简单
   self.ling_poetry = self.topright_root:AddChild(LingPoetryBadge(self.owner))
 
@@ -33,10 +32,19 @@ AddClassPostConstruct("widgets/controls", function(self)
     _SetGhostMode(self, ghost_mode, ...)
     if self.parent and self.parent.ling_poetry then
       if ghost_mode then
+        self.topright_root.ling_guard_panel:Hide()
         self.parent.ling_poetry:Hide()
       else
         self.parent.ling_poetry:Show()
       end
     end
   end
+
+  
+  local LingGuardPanel = require "widgets/ling_guard_panel"
+  self.topright_root.ling_guard_panel = self.topright_root:AddChild(LingGuardPanel(self.owner))
+  self.topright_root.ling_guard_panel:SetPosition(-800, -400, 0)
+  self.topright_root.ling_guard_panel:SetScale(0.6, 0.6, 0.6)
+  -- 同时在 topright_root 上也存储一个引用，方便 ling_poetry 访问
+  self.topright_root.ling_guard_panel:Hide();
 end)
