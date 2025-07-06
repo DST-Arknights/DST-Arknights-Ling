@@ -82,7 +82,6 @@ local function UpdateLightSystem(inst)
     local intensity = should_have_light and (LING_LANTERN_CONFIG.LIGHT_INTENSITY_MAX * fuel_percent) or 0
 
     if state == LANTERN_STATE.EQUIPPED and inst._body then
-        print("ling_lantern: UpdateLightSystem - equipped")
         -- 装备状态：使用灯体光照
         inst._body.Light:SetRadius(radius)
         inst._body.Light:SetIntensity(intensity)
@@ -90,7 +89,6 @@ local function UpdateLightSystem(inst)
         -- 关闭本体光照
         inst.Light:Enable(false)
     else
-        print("ling_lantern: UpdateLightSystem - ground/inventory")
         -- 地面或库存状态：使用本体光照
         inst.Light:SetRadius(radius)
         inst.Light:SetIntensity(intensity)

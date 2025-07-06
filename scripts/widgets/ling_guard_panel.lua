@@ -68,6 +68,23 @@ local LingGuardPanel = Class(Widget, function(self, owner)
   self.container_close = self:AddChild(ImageButton("images/ui_ling_guard_panel.xml", "container_close.tex"))
   self.container_close:SetPosition(scalePosition(54, 111, 0, BUTTON_SCALE))
   ScaleOnFocus(self.container_close, BUTTON_FOCUS_SCALE)
+
+  self.close:SetOnClick(function() self:RequestClose() end)
+
+  self:Hide()
 end)
+
+function LingGuardPanel:RequestOpen(guard)
+  SendModRPCToServer(GetModRPC("ling_summon", "request_open_guard_panel"), guard)
+end
+
+function LingGuardPanel:Open(guard)
+  self:Show()
+end
+
+function LingGuardPanel:RequestClose()
+  self:Hide()
+  SendModRPCToServer(GetModRPC("ling_summon", "request_close_guard_panel"))
+end
 
 return LingGuardPanel

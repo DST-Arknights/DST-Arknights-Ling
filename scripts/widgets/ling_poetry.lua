@@ -1,6 +1,7 @@
 local Badge = require "widgets/badge"
 local UIAnim = require "widgets/uianim"
 local ling_guard_panel_call = require "widgets/ling_guard_panel_call"
+local CONSTANTS = require "ark_constants_ling"
 
 local LingPoetryBadge = Class(Badge, function(self, owner)
   Badge._ctor(self, "ling_poetry", owner)
@@ -40,28 +41,23 @@ local LingPoetryBadge = Class(Badge, function(self, owner)
     end
   end
   self.panelCallOpened = false
-  self.callSummary = {}
-  -- test 添加callBind测试数据
-  self.currentSummaryMax = 7
-  self.callSummary = {
-    {entityId = 1, type = 'qingping', name='清平1'},
-    {entityId = 2, type = 'xiaoyao', name='逍遥2'},
-    {entityId = 3, type = 'xianjing', name='弦惊3'},
-  }
   self.buttons = {}
 end)
 
-function LingPoetryBadge:OpenCallPanel()
-  -- 补齐callBinds到最大数量, 剩余的为open类型
-  while #self.callSummary < self.currentSummaryMax do
-    table.insert(self.callSummary, {entityId = 0, type = 'summary', name=STRINGS.UI.LING_GUARD_PANEL_CALL.SUMMARY})
+function LingPoetryBadge:OpenCallPanel(summaries, max_slots)
+  self:CloseCallPanel()
+  -- 移除disabled状态的元素
+  for i = #summaries, 1, -1 do
+    if summaries[i].status == CONSTANTS.GUARD_SLOT_STATUS.DISABLED then
+      table.remove(summaries, i)
+    end
   end
   -- 根据callSummary,的数量, 生成ling_guard_panel_call并围绕本ui做360均分旋转布局, ling_guard_panel_call的方向也要旋转朝外
-  local angle_step = 360 / #self.callSummary
+  local angle_step = 360 / #summaries
   local radius = 105  -- 调整这个值以改变 ling_guard_panel_call 的半径
   local offsetX = 0
   local offsetY = 0
-  for i, callBind in ipairs(self.callSummary) do
+  for i, callBind in ipairs(summaries) do
     -- 从90度开始(最上面)，顺时针旋转
     local angle = 90 - (i - 1) * angle_step
     local x =  radius * math.cos(angle / 180 * math.pi)
@@ -72,6 +68,7 @@ function LingPoetryBadge:OpenCallPanel()
     callPanel:SetRotation(-angle + 90)
     table.insert(self.buttons, callPanel)
   end
+  self.panelCallOpened = true
 end
 
 function LingPoetryBadge:CloseCallPanel()
@@ -79,6 +76,7 @@ function LingPoetryBadge:CloseCallPanel()
     button:Kill()
   end
   self.buttons = {}
+  self.panelCallOpened = false
 end
 
 
@@ -273,28 +271,33 @@ function LingPoetryBadge:ResetPosition()
   end
 end
 
-function LingPoetryBadge:RecoveryCallPanelVisibility()
-  -- 安全检查：确保 ling_guard_panel 存在
-  if not self.parent or not self.parent.ling_guard_panel then
-    return
-  end
+function LingPoetryBadge:RequestOpenCallPanel()
+  SendModRPCToServer(GetModRPC("ling_summon", "request_open_caller"))
+end
 
-  if self.panelCallOpened then
-    self:OpenCallPanel()
-  else
-    self:CloseCallPanel()
-  end
+function LingPoetryBadge:RequestCloseCallPanel()
+  self:CloseCallPanel()
+  SendModRPCToServer(GetModRPC("ling_summon", "request_close_caller"))
 end
 
 -- 重写鼠标按钮事件处理
 function LingPoetryBadge:OnMouseButton(button, down, x, y)
+  print("LingPoetryBadge:OnMouseButton")
+
+  -- 调用父类的处理方法
+  Badge.OnMouseButton(self, button, down, x, y)
   -- 左键切换ling_guard_panel显示状态
   if button == MOUSEBUTTON_LEFT then
     if down then
-      -- 只在鼠标按下时处理，避免按下和释放都触发
-      -- 切换面板状态
-      self.panelCallOpened = not self.panelCallOpened
-      self:RecoveryCallPanelVisibility()
+      if self.panelCallOpened then
+        self:RequestCloseCallPanel()
+      else
+        if (ThePlayer.HUD.controls.ling_guard_panel:IsVisible()) then
+          ThePlayer.HUD.controls.ling_guard_panel:RequestClose()
+        else 
+          self:RequestOpenCallPanel()
+        end
+      end
     end
     return true
   end
@@ -340,9 +343,6 @@ function LingPoetryBadge:OnMouseButton(button, down, x, y)
       return true
     end
   end
-
-  -- 调用父类的处理方法
-  return Badge.OnMouseButton(self, button, down, x, y)
 end
 
 -- 重写 Kill 方法，确保清理拖拽相关的资源

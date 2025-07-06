@@ -468,12 +468,35 @@ local function MakeGuard(guard_type, prefab_name, state_graph)
             data.level = inst.level
             data.behavior_mode = inst.behavior_mode
             data.guard_type = inst.guard_type
+            -- 保存召唤者和插槽信息
+            data.saved_summoner_userid = inst.saved_summoner_userid
+            data.saved_slots = inst.saved_slots
+
+            print(string.format("[Guard] OnSave: %s - userid=%s, slot=%s, count=%s",
+                inst.guard_type or "unknown",
+                tostring(inst.saved_summoner_userid),
+                tostring(inst.saved_slots)))
             -- Health组件会自动保存血量，不需要我们手动处理
         end
 
         inst.OnLoad = function(inst, data)
             -- 标记为从存档加载
             inst._loaded_from_save = true
+
+            print(string.format("[Guard] OnLoad: %s - 开始加载", inst.guard_type or "unknown"))
+
+            if data then
+                -- 恢复召唤者和插槽信息
+                inst.saved_summoner_userid = data.saved_summoner_userid
+                inst.saved_slots = data.saved_slots
+
+                print(string.format("[Guard] OnLoad: %s - userid=%s, slot=%s, count=%s",
+                    inst.guard_type or "unknown",
+                    tostring(inst.saved_summoner_userid),
+                    tostring(inst.saved_slots)))
+            else
+                print(string.format("[Guard] OnLoad: %s - 没有数据", inst.guard_type or "unknown"))
+            end
 
             -- 延迟设置等级和行为模式，确保不覆盖Health组件的加载
             inst:DoTaskInTime(0, function()

@@ -85,19 +85,73 @@ TUNING.LING_GUARDS = {
   }
 }
 
+-- 诗意值ui
+AddClassPostConstruct("widgets/controls", function(self)
+  if not self.owner or self.owner.prefab ~= "ling" then
+    return
+  end
+  local LingPoetryBadge = require "widgets/ling_poetry"
+  -- 将诗意值 UI 直接添加到 topright_root，这样坐标系统更简单
+  self.ling_poetry = self.topright_root:AddChild(LingPoetryBadge(self.owner))
+
+  self.owner:DoTaskInTime(.5, function(owner)
+    -- 只有在没有保存位置的情况下才设置默认位置
+    if not self.ling_poetry.position_loaded then
+      -- 获取 statusdisplays 的位置作为参考
+      local status_pos = self.status:GetPosition()
+      local status_world_pos = self.status:GetWorldPosition()
+      local topright_world_pos = self.topright_root:GetWorldPosition()
+
+      -- 计算相对于 topright_root 的位置
+      local relative_x = status_world_pos.x - topright_world_pos.x
+      local relative_y = status_world_pos.y - topright_world_pos.y
+
+      -- 设置默认位置（在状态显示的右侧）
+      self.ling_poetry:SetPosition(relative_x + 80, relative_y, 0)
+      self.ling_poetry:SetScale(self.status:GetScale())
+    end
+  end)
+
+  -- 监听幽灵模式变化
+  local _SetGhostMode = self.status.SetGhostMode
+  function self.status:SetGhostMode(ghost_mode, ...)
+    _SetGhostMode(self, ghost_mode, ...)
+    print("SetGhostMode", ghost_mode)
+    if self.parent and self.parent.ling_poetry then
+      if ghost_mode then
+        self.parent.ling_poetry:RequestCloseCallPanel()
+        self.ling_guard_panel:RequestClose()
+        self.parent.ling_poetry:Hide()
+      else
+        self.parent.ling_poetry:Show()
+      end
+    end
+  end
+
+  
+  local LingGuardPanel = require "widgets/ling_guard_panel"
+  self.topright_root.ling_guard_panel = self.topright_root:AddChild(LingGuardPanel(self.owner))
+  self.ling_guard_panel = self.topright_root.ling_guard_panel
+  self.topright_root.ling_guard_panel:SetPosition(-800, -400, 0)
+  self.topright_root.ling_guard_panel:SetScale(0.6, 0.6, 0.6)
+end)
+
 -- 添加召唤系统的RPC通信
-AddModRPCHandler("ling_summon", "summon_guard", function(player, guard_type, level)
+AddModRPCHandler("ling_summon", "summon_guard", function(player, guard_type, slot_index)
   if not player or player.prefab ~= "ling" then
     return
   end
+  if not player.components.ling_summon_manager then
+    return
+  end
 
-  -- 直接调用ling的召唤方法，让它们处理诗意检查和扣除
+  -- 直接调用召唤管理器组件的方法，让它们处理诗意检查和扣除
   if guard_type == "qingping" then
-    player:SummonQingping(level)
+    player.components.ling_summon_manager:SummonQingping(slot_index)
   elseif guard_type == "xiaoyao" then
-    player:SummonXiaoyao(level)
+    player.components.ling_summon_manager:SummonXiaoyao(slot_index)
   elseif guard_type == "xianjing" then
-    player:SummonXianjing(level)
+    player.components.ling_summon_manager:SummonXianjing(slot_index)
   end
 end)
 
@@ -118,6 +172,48 @@ AddModRPCHandler("ling_summon", "command_guards", function(player, command_type)
     end
   end
 end)
+
+AddModRPCHandler("ling_summon", "request_open_caller", function(player)
+  if player and player.components.ling_summon_manager then
+    player.components.ling_summon_manager:RequestOpenCaller()
+  end
+end)
+
+AddModRPCHandler("ling_summon", "request_close_caller", function(player)
+  if player.components.ling_summon_manager then
+    player.components.ling_summon_manager:RequestCloseCaller()
+  end
+end)
+
+AddClientModRPCHandler("ling_summon", "open_caller", function(summaries, max_slots)
+  if ThePlayer and ThePlayer.HUD and ThePlayer.HUD.controls and ThePlayer.HUD.controls.ling_poetry then
+    summaries = json.decode(summaries)
+    ThePlayer.HUD.controls.ling_poetry:OpenCallPanel(summaries, max_slots)
+  end
+end)
+
+AddModRPCHandler("ling_summon", "request_open_guard_panel", function(player, slot_index)
+  if player.components.ling_summon_manager then
+    player.components.ling_summon_manager:RequestOpenGuardPanel(slot_index)
+  end
+end)
+
+AddModRPCHandler("ling_summon", "request_close_guard_panel", function(player)
+  if player.components.ling_summon_manager then
+    player.components.ling_summon_manager:RequestCloseGuardPanel()
+  end
+end)
+
+AddClientModRPCHandler("ling_summon", "open_guard_panel", function(guard)
+  if ThePlayer and ThePlayer.HUD and ThePlayer.HUD.controls and ThePlayer.HUD.controls.ling_guard_panel then
+    guard = json.decode(guard)
+    ThePlayer.HUD.controls.ling_guard_panel:Open(guard)
+  end
+end)
+
+-- 引入全局常量
+local CONSTANTS = require "ark_constants_ling"
+local GUARD_TYPE = CONSTANTS.GUARD_TYPE
 
 -- 添加令的召唤状态图
 AddStategraphState("wilson", State{
@@ -203,7 +299,7 @@ AddStategraphState("wilson", State{
                 inst.sg.statemem.spawn_z = spawn_z
 
                 -- 创建召唤特效（除了弦惊）
-                if data.guard_type ~= "xianjing" then
+                if data.type ~= GUARD_TYPE.XIANJING then
                     local fx = SpawnPrefab("ling_summon_fx")
                     if fx then
                         fx.Transform:SetPosition(spawn_x, y, spawn_z)
@@ -226,11 +322,15 @@ AddStategraphState("wilson", State{
                 -- 如果有特效，设置召唤回调
                 if inst.sg.statemem.summon_fx and inst.sg.statemem.summon_fx:IsValid() then
                     inst.sg.statemem.summon_fx:SetSpawnCallback(function()
-                        inst:SpawnGuardAtPosition(data.guard_type, data.elite_level, spawn_x, spawn_z)
+                        if inst.components.ling_summon_manager then
+                            inst.components.ling_summon_manager:SpawnGuardAtPosition(data.type, data.level, spawn_x, spawn_z, data.slots)
+                        end
                     end)
                 else
                     -- 直接召唤（弦惊或特效创建失败）
-                    inst:SpawnGuardAtPosition(data.guard_type, data.elite_level, spawn_x, spawn_z)
+                    if inst.components.ling_summon_manager then
+                        inst.components.ling_summon_manager:SpawnGuardAtPosition(data.type, data.level, spawn_x, spawn_z, data.slots)
+                    end
                 end
             end
         end),

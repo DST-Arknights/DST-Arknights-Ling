@@ -44,7 +44,6 @@ TUNING.LING = {}
 TUNING.LING_DEBUG = true  -- 设置为true启用守卫调试日志
 
 modimport("lingmain/ark_skill")
-modimport("lingmain/ling_ui")
 modimport("lingmain/ling_elite")
 modimport("lingmain/summon_guard")
 modimport("lingmain/true_damage")
