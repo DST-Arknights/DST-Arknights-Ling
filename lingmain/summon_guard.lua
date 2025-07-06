@@ -130,10 +130,10 @@ AddClassPostConstruct("widgets/controls", function(self)
 
   
   local LingGuardPanel = require "widgets/ling_guard_panel"
-  self.topright_root.ling_guard_panel = self.topright_root:AddChild(LingGuardPanel(self.owner))
-  self.ling_guard_panel = self.topright_root.ling_guard_panel
-  self.topright_root.ling_guard_panel:SetPosition(-800, -400, 0)
-  self.topright_root.ling_guard_panel:SetScale(0.6, 0.6, 0.6)
+  self.containerroot.ling_guard_panel = self.containerroot:AddChild(LingGuardPanel(self.owner))
+  self.ling_guard_panel = self.containerroot.ling_guard_panel
+  self.containerroot.ling_guard_panel:SetPosition(0, 0, 0)
+  self.containerroot.ling_guard_panel:SetScale(1, 1, 1)
 end)
 
 -- 添加召唤系统的RPC通信
