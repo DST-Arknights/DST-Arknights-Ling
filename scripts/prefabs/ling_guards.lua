@@ -1,5 +1,6 @@
 local brain = require("brains/ling_guardbrain")
 local guard_config = require("ling_guard_config")
+local CONSTANTS = require("ark_constants_ling")
 
 local assets = {
     Asset("ANIM", "anim/loong_0.zip"),
@@ -14,11 +15,7 @@ local BEHAVIOR_MODES = {
 }
 
 -- 守卫类型常量
-local GUARD_TYPES = {
-    QINGPING = "qingping",   -- 清平
-    XIAOYAO = "xiaoyao",     -- 逍遥
-    XIANJING = "xianjing",   -- 弦惊
-}
+local GUARD_TYPE = CONSTANTS.GUARD_TYPE
 
 -- 设置行为模式
 local function SetBehaviorMode(inst, mode)
@@ -305,43 +302,19 @@ local function MakeGuard(guard_type, prefab_name, state_graph)
         inst.components.locomotor.runspeed = 5
 
         inst:AddComponent("follower")
+        inst.components.follower:KeepLeaderOnAttacked()
+        inst.components.follower.keepdeadleader = true
+
         inst:AddComponent("inspectable")
         inst:AddComponent("lootdropper")
         inst:AddComponent("knownlocations")
         inst:AddComponent("talker")
 
-        -- 集群战斗：被攻击时共享目标给附近守卫
-        inst:ListenForEvent("attacked", function(inst, data)
-            if data and data.attacker and inst.components.combat then
-                -- 使用饥荒源码的ShareTarget机制
-                inst.components.combat:ShareTarget(data.attacker, CLUSTER_SHARE_RANGE, function(guard)
-                    -- 检查是否为令的守卫且可以攻击该目标
-                    return guard:HasTag("ling_summon")
-                           and not guard.components.health:IsDead()
-                           and guard.components.combat ~= nil
-                           and IsValidClusterTarget(guard, data.attacker)
-                end, MAX_CLUSTER_SIZE)
-            end
-        end)
-
-        -- 监听目标共享事件（饥荒内置机制）
-        inst:ListenForEvent("suggest_target", function(inst, data)
-            if data and data.target and inst.components.combat and not inst.components.combat.target then
-                if IsValidClusterTarget(inst, data.target) then
-                    inst.components.combat:SetTarget(data.target)
-                end
-            end
-        end)
-
-        -- 永久追随令：当设置主人时检查是否为令
-        inst:ListenForEvent("setleader", function(inst, data)
-            if data and data.leader and data.leader.prefab == "ling" then
-                -- 设置为永久追随，不会因为距离过远而停止跟随
-                inst.components.follower.maxfollowtime = math.huge
-                -- 设置更大的跟随距离
-                inst.components.follower.targettime = math.huge
-            end
-        end)
+        if guard_type == GUARD_TYPE.QINGPING or guard_type == GUARD_TYPE.XIAOYAO then
+            inst:AddComponent("container")
+            inst.components.container:WidgetSetup(guard_type)
+            -- inst.components.container.skipautoclose = true
+        end
 
         -- 睡眠组件（仅清平和逍遥，弦惊不会睡眠）
         if guard_type ~= "xianjing" then
@@ -471,31 +444,15 @@ local function MakeGuard(guard_type, prefab_name, state_graph)
             -- 保存召唤者和插槽信息
             data.saved_summoner_userid = inst.saved_summoner_userid
             data.saved_slots = inst.saved_slots
-
-            print(string.format("[Guard] OnSave: %s - userid=%s, slot=%s, count=%s",
-                inst.guard_type or "unknown",
-                tostring(inst.saved_summoner_userid),
-                tostring(inst.saved_slots)))
-            -- Health组件会自动保存血量，不需要我们手动处理
         end
 
         inst.OnLoad = function(inst, data)
             -- 标记为从存档加载
             inst._loaded_from_save = true
-
-            print(string.format("[Guard] OnLoad: %s - 开始加载", inst.guard_type or "unknown"))
-
             if data then
                 -- 恢复召唤者和插槽信息
                 inst.saved_summoner_userid = data.saved_summoner_userid
                 inst.saved_slots = data.saved_slots
-
-                print(string.format("[Guard] OnLoad: %s - userid=%s, slot=%s, count=%s",
-                    inst.guard_type or "unknown",
-                    tostring(inst.saved_summoner_userid),
-                    tostring(inst.saved_slots)))
-            else
-                print(string.format("[Guard] OnLoad: %s - 没有数据", inst.guard_type or "unknown"))
             end
 
             -- 延迟设置等级和行为模式，确保不覆盖Health组件的加载

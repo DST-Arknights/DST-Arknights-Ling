@@ -1,3 +1,6 @@
+local ImageButton = require "widgets/imagebutton"
+local CONSTANTS = require "ark_constants_ling"
+
 -- 令的守卫召唤物配置
 TUNING.LING_GUARDS = {
   -- 清平配置
@@ -128,12 +131,65 @@ AddClassPostConstruct("widgets/controls", function(self)
     end
   end
 
-  
+  local PANEL_SCALE = CONSTANTS.LING_GUARD_PANEL_SCALE
   local LingGuardPanel = require "widgets/ling_guard_panel"
   self.containerroot.ling_guard_panel = self.containerroot:AddChild(LingGuardPanel(self.owner))
   self.ling_guard_panel = self.containerroot.ling_guard_panel
-  self.containerroot.ling_guard_panel:SetPosition(0, 0, 0)
-  self.containerroot.ling_guard_panel:SetScale(1, 1, 1)
+  self.ling_guard_panel:SetPosition(unpack(CONSTANTS.LING_GUARD_PANEL_POSITION))
+  self.ling_guard_panel:SetScale(PANEL_SCALE, PANEL_SCALE, PANEL_SCALE)
+
+  -- 关闭按钮无法单独调整图层, 需要与面板本身分开,以把容器夹在中间
+  local LingCloseContainer = require "widgets/ling_close_container"
+  self.containerroot.ling_close_container = self.containerroot:AddChild(LingCloseContainer(self.owner))
+  self.ling_close_container = self.containerroot.ling_close_container
+  local pos = Vector3(unpack(CONSTANTS.LING_GUARD_PANEL_POSITION)) + Vector3(unpack(CONSTANTS.LING_GUARD_PANEL_CLOSE_CONTAINER_POSITION)) * PANEL_SCALE
+  print("pos", pos.x, pos.y, pos.z)
+  self.ling_close_container:SetPosition(pos.x, pos.y, pos.z)
+  self.ling_close_container:SetScale(PANEL_SCALE, PANEL_SCALE, PANEL_SCALE)
+  self.ling_close_container:Hide()
+end)
+
+AddClassPostConstruct("screens/playerhud", function(self)
+  local _OpenContainer = self.OpenContainer
+  function self:OpenContainer(container, side)
+    _OpenContainer(self, container, side)
+    if self.controls.ling_guard_panel then
+      self.controls.ling_guard_panel:MoveToBack()
+      self.controls.ling_guard_panel.container_open:Hide()
+      self.controls.ling_close_container:Show()
+      self.controls.ling_close_container:MoveToFront()
+    end
+  end
+  local _CloseContainer = self.CloseContainer
+  function self:CloseContainer(container, side)
+    _CloseContainer(self, container, side)
+    if self.controls.ling_guard_panel then
+      self.controls.ling_guard_panel.container_open:Show()
+      self.controls.ling_close_container:Hide()
+    end
+  end
+end)
+
+AddComponentPostInit("container", function(self)
+  local _Open = self.Open
+  function self:Open(doer)
+    local idx = doer.components.ling_summon_manager and doer.components.ling_summon_manager:GetGuardSlotIndex(self.inst)
+    if idx then
+      doer.components.ling_summon_manager.keepContainerOpen = true
+      doer.components.ling_summon_manager:RequestOpenGuardPanel(idx)
+    end
+    return _Open(self, doer)
+  end
+
+  local _Close = self.Close
+  function self:Close(doer)
+    local keepOpen = doer and doer.components.ling_summon_manager and doer.components.ling_summon_manager.keepContainerOpen and doer.components.ling_summon_manager:GetGuardSlotIndex(self.inst)
+    if keepOpen then
+      print("keepOpen", keepOpen)
+      return
+    end
+    return _Close(self, doer)
+  end
 end)
 
 -- 添加召唤系统的RPC通信
@@ -204,10 +260,28 @@ AddModRPCHandler("ling_summon", "request_close_guard_panel", function(player)
   end
 end)
 
-AddClientModRPCHandler("ling_summon", "open_guard_panel", function(guard)
+AddClientModRPCHandler("ling_summon", "close_guard_panel", function()
+  if ThePlayer and ThePlayer.HUD and ThePlayer.HUD.controls and ThePlayer.HUD.controls.ling_guard_panel then
+    ThePlayer.HUD.controls.ling_guard_panel:Close()
+  end
+end)
+
+AddClientModRPCHandler("ling_summon", "open_guard_panel", function(guard, bindInst)
   if ThePlayer and ThePlayer.HUD and ThePlayer.HUD.controls and ThePlayer.HUD.controls.ling_guard_panel then
     guard = json.decode(guard)
-    ThePlayer.HUD.controls.ling_guard_panel:Open(guard)
+    ThePlayer.HUD.controls.ling_guard_panel:Open(guard, bindInst)
+  end
+end)
+
+AddModRPCHandler("ling_summon", "request_open_container", function(player, slot_index)
+  if player.components.ling_summon_manager then
+    player.components.ling_summon_manager:RequestOpenContainer(slot_index)
+  end
+end)
+
+AddModRPCHandler("ling_summon", "request_close_container", function(player, slot_index)
+  if player.components.ling_summon_manager then
+    player.components.ling_summon_manager:RequestCloseContainer(slot_index)
   end
 end)
 

@@ -15,7 +15,6 @@ local LingSummonManager = Class(function(self, inst)
 
   -- 召唤兽插槽管理
   self.slots = {} -- 插槽数组，每个插槽包含召唤兽信息
-  self.attached_ui = nil -- 绑定的UI组件
 
   -- 初始化插槽
   self:InitializeSlots()
@@ -25,7 +24,6 @@ end)
 function LingSummonManager:InitializeSlots()
   for i = 1, self.max_slots do
     self.slots[i] = {
-      guid = nil,
       inst = nil,
       type = nil,
       level = nil,
@@ -42,7 +40,6 @@ function LingSummonManager:SetMaxSlots(max_slots)
   if max_slots > old_max then
     for i = old_max + 1, max_slots do
       self.slots[i] = {
-        guid = nil,
         inst = nil,
         type = nil,
         level = nil,
@@ -59,34 +56,64 @@ function LingSummonManager:CanAssignToSlot(slot_index, required_slots)
   required_slots = required_slots or 1
 
   -- 检查插槽范围
-  if slot_index < 1 or slot_index + required_slots - 1 > self.max_slots then
+  if slot_index < 1 or slot_index > self.max_slots then
     return nil
   end
 
+  -- 检查指定插槽是否可用
   if self.slots[slot_index].status ~= GUARD_SLOT_STATUS.EMPTY then
     return nil
   end
-  -- 遍历所有插槽,找到满足数量可用的,并返回
-  local slots = {slot_index}
-  local count = 1
+
+  -- 如果只需要1个插槽，直接返回
+  if required_slots == 1 then
+    return {slot_index}
+  end
+
+  -- 对于需要多个插槽的情况（如弦惊），寻找任意可用插槽
+  local slots = {slot_index} -- 第一个插槽已确定
+  local found_count = 1
+
+  -- 寻找其他可用插槽
   for i = 1, self.max_slots do
     if i ~= slot_index and self.slots[i].status == GUARD_SLOT_STATUS.EMPTY then
-      count = count + 1
       table.insert(slots, i)
-      if count >= required_slots then
+      found_count = found_count + 1
+      if found_count >= required_slots then
         break
       end
     end
   end
-  if count < required_slots then
+
+  -- 检查是否找到足够的插槽
+  if found_count < required_slots then
     return nil
   end
+
   return slots
+end
+
+-- 获取某个召唤物在插槽中的索引
+function LingSummonManager:GetGuardSlotIndex(inst)
+  if inst.saved_slots then
+    local idx = inst.saved_slots[1]
+    if self.slots[idx].inst == inst then
+      return idx
+    end
+  end
+  for i = 1, self.max_slots do
+    if self.slots[i].inst == inst then
+      return i
+    end
+  end
+  return nil
 end
 
 -- 设置插槽为召唤中状态
 function LingSummonManager:SetSlotSummoning(slots)
+  -- 第一个插槽设为召唤中状态
   self.slots[slots[1]].status = GUARD_SLOT_STATUS.SUMMONING
+  -- 其他插槽（如果有）设为禁用状态
   for i = 2, #slots do
     self.slots[slots[i]].status = GUARD_SLOT_STATUS.DISABLED
   end
@@ -94,25 +121,18 @@ function LingSummonManager:SetSlotSummoning(slots)
   self:SyncStatus()
 end
 
--- 清除插槽的召唤中状态
-function LingSummonManager:ClearSlotSummoning(slots)
-  self.slots[slots[1]].status = GUARD_SLOT_STATUS.EMPTY
-  for i = 2, #slots do
-    self.slots[slots[i]].status = GUARD_SLOT_STATUS.EMPTY
-  end
-
-  -- 同步UI状态
-  self:SyncStatus()
-end
-
 function LingSummonManager:SetGuardToSlot(guard_inst, slots)
+  -- 设置主插槽为占用状态
   self.slots[slots[1]].status = GUARD_SLOT_STATUS.OCCUPIED
   self.slots[slots[1]].inst = guard_inst
-  self.slots[slots[1]].type = guard_inst.prefab
+  self.slots[slots[1]].type = guard_inst.guard_type
   self.slots[slots[1]].level = guard_inst.level
+
+  -- 设置额外插槽为禁用状态（如果有）
   for i = 2, #slots do
-    self.slots[i].status = GUARD_SLOT_STATUS.DISABLED
+    self.slots[slots[i]].status = GUARD_SLOT_STATUS.DISABLED
   end
+
   -- 同步UI状态
   self:SyncStatus()
 
@@ -133,14 +153,21 @@ function LingSummonManager:RemoveGuardFromSlot(guard_inst)
     return false
   end
 
-  local slot_index = self:FindGuardIndex(guard_inst)
-  if slot_index then
-    self.slots[slot_index].status = GUARD_SLOT_STATUS.EMPTY
-    self.slots[slot_index].inst = nil
-    self.slots[slot_index].type = nil
-    self.slots[slot_index].level = nil
-    -- 同步UI状态
-    self:SyncStatus()
+  -- 使用saved_slots直接清理所有相关插槽
+  if guard_inst.saved_slots then
+    for i = 1, #guard_inst.saved_slots do
+      local slot_index = guard_inst.saved_slots[i]
+      if slot_index >= 1 and slot_index <= self.max_slots then
+        self.slots[slot_index].status = GUARD_SLOT_STATUS.EMPTY
+        self.slots[slot_index].inst = nil
+        self.slots[slot_index].type = nil
+        self.slots[slot_index].level = nil
+      end
+    end
+    -- 如果打开了面板, 关闭面板
+    if self.openedGuardPanelInst == guard_inst then
+      self:RequestCloseGuardPanel()
+    end
     return true
   end
 
@@ -162,33 +189,7 @@ function LingSummonManager:GetSlotCount()
   return self.max_slots
 end
 
-function LingSummonManager:IsSlotEmpty(slot_index)
-  if slot_index and slot_index >= 1 and slot_index <= self.max_slots then
-    return self.slots[slot_index].guard_inst == nil
-  end
-  return false
-end
 
-function LingSummonManager:GetGuardInSlot(slot_index)
-  if slot_index and slot_index >= 1 and slot_index <= self.max_slots then
-    return self.slots[slot_index].guard_inst
-  end
-  return nil
-end
-
-function LingSummonManager:GetSlotInfo(slot_index)
-  if slot_index and slot_index >= 1 and slot_index <= self.max_slots then
-    local slot = self.slots[slot_index]
-    return {
-      guard_inst = slot.guard_inst,
-      guard_type = slot.guard_type,
-      guard_level = slot.guard_level,
-      slot_occupied = slot.slot_occupied,
-      is_empty = slot.guard_inst == nil
-    }
-  end
-  return nil
-end
 
 -- UI同步相关方法
 function LingSummonManager:SyncStatus()
@@ -214,6 +215,7 @@ function LingSummonManager:OnFollowerAdded(follower)
     print("[LingSummonManager] OnFollowerAdded: 不是自己的召唤兽，忽略")
     return
   end
+  follower.owner = self.inst
   self:SetGuardToSlot(follower, follower.saved_slots)
 end
 
@@ -246,26 +248,48 @@ function LingSummonManager:RequestOpenGuardPanel(slot_index)
   end
 
   local slot = self.slots[slot_index]
-  if not slot.guard_inst or not slot.guard_inst:IsValid() then
+  if not slot.inst or not slot.inst:IsValid() then
     return false
   end
 
   -- 生成召唤兽数据
   local guard_data = {
-    guid = slot.guard_inst.GUID,
     type = slot.guard_type,
     level = slot.guard_level,
     slot_index = slot_index,
     -- 可以添加更多召唤兽信息，如血量、状态等
-    health_percent = slot.guard_inst.components.health and slot.guard_inst.components.health:GetPercent() or 1
+    health_percent = slot.inst.components.health and slot.inst.components.health:GetPercent() or 1
   }
 
-  self.openedGuardPanelInst = slot.guard_inst
-  SendModRPCToClient(GetClientModRPC("ling_summon", "open_guard_panel"), self.inst.userid, json.encode(guard_data))
+  self.openedGuardPanelInst = slot.inst
+  SendModRPCToClient(GetClientModRPC("ling_summon", "open_guard_panel"), self.inst.userid, json.encode(guard_data), slot.inst)
   return true
 end
 
+function LingSummonManager:RequestOpenContainer(slot_index)
+  local slot = self.slots[slot_index]
+  if not slot.inst or not slot.inst:IsValid() then
+    return false
+  end
+  if slot.inst and slot.inst.components.container then
+    self.keepContainerOpen = true
+    slot.inst.components.container:Open(self.inst)
+  end
+end
+
+function LingSummonManager:RequestCloseContainer(slot_index)
+  local slot = self.slots[slot_index]
+  if not slot.inst or not slot.inst:IsValid() then
+    return false
+  end
+  if slot.inst and slot.inst.components.container then
+    self.keepContainerOpen = false
+    slot.inst.components.container:Close(self.inst)
+  end
+end
+
 function LingSummonManager:RequestCloseGuardPanel()
+  SendModRPCToClient(GetClientModRPC("ling_summon", "close_guard_panel"), self.inst.userid)
   self.openedGuardPanelInst = nil
 end
 
@@ -351,8 +375,7 @@ function LingSummonManager:SummonXianjing(slot_index)
   end
 
   local fusion_candidates = {}
-  local guid = self.slots[slot_index]
-  local current = Ents[guid]
+  local current = self.slots[slot_index].inst
   if not current or not current:IsValid() then
     return false
   end
@@ -438,8 +461,6 @@ function LingSummonManager:SpawnGuardAtPosition(guard_type, elite_level, spawn_x
 
     return true
   end
-
-  return false
 end
 
 -- 融合相关方法

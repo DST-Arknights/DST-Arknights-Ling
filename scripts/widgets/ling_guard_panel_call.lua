@@ -1,15 +1,20 @@
 local Widget = require "widgets/widget"local Image = require "widgets/image"
 local Text = require "widgets/text"local ImageButton = require "widgets/imagebutton"
+local CONSTANTS = require "ark_constants_ling"
+
+local GUARD_SLOT_STATUS = CONSTANTS.GUARD_SLOT_STATUS
+local GUARD_TYPE = CONSTANTS.GUARD_TYPE
+
 local LingGuardPanelCall = Class(Widget, function(self, callBind, owner)
     Widget._ctor(self, "LingGuardPanelCall")
     self.owner = owner
     self.callBind = callBind
     local bg;
-    if callBind.type == 'qingping' then
+    if callBind.type == GUARD_TYPE.QINGPING then
         bg = "qingping.tex"
-    elseif callBind.type == 'xiaoyao' then
+    elseif callBind.type == GUARD_TYPE.XIAOYAO then
         bg = "xiaoyao.tex"
-    elseif callBind.type == 'xianjing' then
+    elseif callBind.type == GUARD_TYPE.XIANJING then
         bg = "xianjing.tex"
     else
         bg = "summary.tex"
@@ -22,23 +27,24 @@ local LingGuardPanelCall = Class(Widget, function(self, callBind, owner)
     self.button:SetHoverText(callBind.name, { font = NEWFONT_OUTLINE, offset_x = 0, offset_y = 15, colour = {1,1,1,1}})
 
     -- 如果是召唤中状态，添加灰色蒙层
-    if callBind.status == 'summoning' then
+    if callBind.status == GUARD_SLOT_STATUS.SUMMONING then
         self.button.image:SetTint(0.5, 0.5, 0.5, 0.7)
     end
 end)
 
 function LingGuardPanelCall:OnMouseButton(button, down, x, y)
+    print("LingGuardPanelCall:OnMouseButton", self.callBind.type, self.callBind.status)
     -- 召唤中状态不响应点击
-    if self.callBind.status == 'summoning' then
+    if self.callBind.status == GUARD_SLOT_STATUS.SUMMONING then
         return true
     end
 
     if button == MOUSEBUTTON_LEFT then
         if down then
-            if self.callBind.status == 'empty' then
+            if self.callBind.status == GUARD_SLOT_STATUS.EMPTY then
                 -- 空插槽，召唤清平到指定插槽
                 SendModRPCToServer(GetModRPC("ling_summon", "summon_guard"), 'qingping', self.callBind.index)
-            elseif self.callBind.status == 'occupied' then
+            elseif self.callBind.status == GUARD_SLOT_STATUS.OCCUPIED then
                 -- 已有召唤兽，打开管理面板，传递插槽索引
                 SendModRPCToServer(GetModRPC("ling_summon", "request_open_guard_panel"), self.callBind.index)
             end

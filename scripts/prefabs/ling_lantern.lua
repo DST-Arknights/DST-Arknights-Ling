@@ -450,7 +450,7 @@ local function CreateLingLantern()
         -- 延迟更新确保所有组件都已加载
         inst:DoTaskInTime(0, function()
             UpdateWeaponEnabled(inst)
-            TurnOn(inst) -- 尝试开启（如果有燃料）
+            -- TurnOn(inst) -- 尝试开启（如果有燃料）
         end)
     end
 
