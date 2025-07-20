@@ -90,6 +90,7 @@ local states =
             TimeEvent(8*FRAMES, function(inst)
                 inst.components.combat:DoAttack(inst.sg.statemem.target)
                 -- 播放攻击音效
+                -- TODO: 修正为正常音效
                 inst.SoundEmitter:PlaySound("dontstarve/creatures/together/antlion/sfx/attack")
             end),
         },

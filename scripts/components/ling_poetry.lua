@@ -18,12 +18,28 @@ function LingPoetry:SetElite(level)
 end
 
 function LingPoetry:OnSave()
-  return {current_poetry = self.current_poetry}
+  return {
+    current_poetry = self.current_poetry,
+    max_poetry = self.max_poetry,
+    poetry_recovery_while_idle_per_frames = self.poetry_recovery_while_idle_per_frames,
+    poetry_recovery_in_dream_per_frames = self.poetry_recovery_in_dream_per_frames
+  }
 end
 
 function LingPoetry:OnLoad(data)
-  if data and data.current_poetry then
-    self:Dirty(data.current_poetry)
+  if data then
+    if data.current_poetry then
+      self:Dirty(data.current_poetry)
+    end
+    if data.max_poetry then
+      self.max_poetry = data.max_poetry
+    end
+    if data.poetry_recovery_while_idle_per_frames then
+      self.poetry_recovery_while_idle_per_frames = data.poetry_recovery_while_idle_per_frames
+    end
+    if data.poetry_recovery_in_dream_per_frames then
+      self.poetry_recovery_in_dream_per_frames = data.poetry_recovery_in_dream_per_frames
+    end
   end
 end
 

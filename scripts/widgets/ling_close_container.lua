@@ -17,14 +17,14 @@ local LingCloseContainer = Class(Widget, function(self, owner, guard_panel)
     end)
 end)
 
+function LingCloseContainer:Open()
+    self:Show()
+end
+
 -- 关闭方法，作为点击事件
 function LingCloseContainer:RequestClose()
-    local ling_guard_panel = ThePlayer and ThePlayer.HUD and ThePlayer.HUD.controls and ThePlayer.HUD.controls.ling_guard_panel
-    if not ling_guard_panel or not ling_guard_panel.data then
-        return
-    end
     -- 发送关闭容器的RPC请求
-    SendModRPCToServer(GetModRPC("ling_summon", "request_close_container"), ling_guard_panel.data.slot_index)
+    SendModRPCToServer(GetModRPC("ling_summon", "request_close_container"))
     -- 隐藏关闭按钮
     self:Hide()
 end

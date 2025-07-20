@@ -113,12 +113,12 @@ msgstr "自动解锁"
 #. STRINGS.UI.ARK_SKILL.LOCKED_DESC.LING.2
 msgctxt "STRINGS.UI.ARK_SKILL.LOCKED_DESC.LING.2"
 msgid "Elite level 1 unlock at Prestihatitator"
-msgstr "精英化一解锁 到灵子分解器完成精英化"
+msgstr "-精英化一解锁\n-到灵子分解器完成精英化"
 
 #. STRINGS.UI.ARK_SKILL.LOCKED_DESC.LING.3
 msgctxt "STRINGS.UI.ARK_SKILL.LOCKED_DESC.LING.3"
 msgid "Elite level 2 unlock at Shadow Manipulator"
-msgstr "精英化二解锁 到暗影操控器完成精英化"
+msgstr "-精英化二解锁\n-到暗影操控器完成精英化"
 
 #. STRINGS.UI.ARK_SKILL.NAMES.LING.2
 msgctxt "STRINGS.UI.ARK_SKILL.NAMES.LING.2"
@@ -324,3 +324,13 @@ msgstr "慎"
 msgctxt "STRINGS.UI.LING_GUARD_PANEL_CALL.SUMMARY"
 msgid "Summary"
 msgstr "召唤"
+
+#. STRINGS.UI.LING_SUMMON.SUMMONING
+msgctxt "STRINGS.UI.LING_SUMMON.SUMMONING"
+msgid "%s Summoning"
+msgstr "%s 正在召唤"
+
+#. STRINGS.UI.LING_SUMMON.OTHER_WORLD
+msgctxt "STRINGS.UI.LING_SUMMON.OTHER_WORLD"
+msgid "%s Not in this world"
+msgstr "%s 不在这个世界"

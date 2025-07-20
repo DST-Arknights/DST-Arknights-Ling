@@ -4,7 +4,7 @@
 local LING_GUARD_CONFIG = {
     -- 跟随参数
     FOLLOW = {
-        MIN_FOLLOW_DIST = 2,        -- 最小跟随距离
+        MIN_FOLLOW_DIST = 0,        -- 最小跟随距离
         TARGET_FOLLOW_DIST = 5,     -- 理想跟随距离
         MAX_FOLLOW_DIST = 10,       -- 最大跟随距离
         MAX_WANDER_DIST = 8,        -- 最大游荡距离

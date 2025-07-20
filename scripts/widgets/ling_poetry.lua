@@ -42,32 +42,48 @@ local LingPoetryBadge = Class(Badge, function(self, owner)
   end
   self.panelCallOpened = false
   self.buttons = {}
+  self.slot_buttons = {} -- 存储槽位按钮的映射，key为slot_index
+  self.last_slot_count = 0 -- 记录上次的槽位数量，用于检测变化
 end)
 
-function LingPoetryBadge:OpenCallPanel(summaries, max_slots)
+function LingPoetryBadge:OpenCallPanel()
   self:CloseCallPanel()
-  -- 移除disabled状态的元素
-  for i = #summaries, 1, -1 do
-    if summaries[i].status == CONSTANTS.GUARD_SLOT_STATUS.DISABLED then
-      table.remove(summaries, i)
-    end
+
+  -- 直接从 replica 获取可用槽位数据
+  local replica = self.owner.replica.ling_summon_manager
+  if not replica then
+    return
   end
-  -- 根据callSummary,的数量, 生成ling_guard_panel_call并围绕本ui做360均分旋转布局, ling_guard_panel_call的方向也要旋转朝外
-  local angle_step = 360 / #summaries
-  local radius = 105  -- 调整这个值以改变 ling_guard_panel_call 的半径
+
+  local available_slots = replica:GetAvailableSlotsData()
+  print("available_slots", #available_slots)
+  if #available_slots == 0 then
+    return
+  end
+
+  -- 记录当前槽位数量
+  self.last_slot_count = #available_slots
+
+  -- 根据可用槽位数量，生成按钮并围绕本UI做360均分旋转布局
+  local angle_step = 360 / #available_slots
+  local radius = 105  -- 调整这个值以改变按钮的半径
   local offsetX = 0
   local offsetY = 0
-  for i, callBind in ipairs(summaries) do
+
+  for i, slot_data in ipairs(available_slots) do
     -- 从90度开始(最上面)，顺时针旋转
     local angle = 90 - (i - 1) * angle_step
-    local x =  radius * math.cos(angle / 180 * math.pi)
-    local y =  radius * math.sin(angle / 180 * math.pi)
-    local callPanel = self:AddChild(ling_guard_panel_call(callBind, self.owner))
+    local x = radius * math.cos(angle / 180 * math.pi)
+    local y = radius * math.sin(angle / 180 * math.pi)
+
+    local callPanel = self:AddChild(ling_guard_panel_call(slot_data, self.owner))
     callPanel:SetPosition(x + offsetX, y + offsetY, 0)
-    print("SetRotation", angle, callPanel:GetPosition())
     callPanel:SetRotation(-angle + 90)
+
     table.insert(self.buttons, callPanel)
+    self.slot_buttons[slot_data.index] = callPanel
   end
+
   self.panelCallOpened = true
 end
 
@@ -76,6 +92,7 @@ function LingPoetryBadge:CloseCallPanel()
     button:Kill()
   end
   self.buttons = {}
+  self.slot_buttons = {} -- 清理槽位按钮映射
   self.panelCallOpened = false
 end
 
@@ -88,6 +105,41 @@ end
 function LingPoetryBadge:SetCurrent(current)
   self.current_poetry = current
   self:SetPercent(self.current_poetry / self.max_poetry, self.max_poetry)
+end
+
+-- 当槽位数据变化时调用
+function LingPoetryBadge:OnSlotDataChanged(slot_index)
+  -- 如果面板未打开，跳过
+  if not self.panelCallOpened then
+    return
+  end
+
+  -- 检查槽位数量是否发生变化
+  local replica = self.owner.replica.ling_summon_manager
+  if replica then
+    local current_slot_count = replica:GetAvailableSlotCount()
+    if current_slot_count ~= self.last_slot_count then
+      -- 槽位数量发生变化，重新绘制按钮
+      self:RedrawButtons()
+      return
+    end
+  end
+
+  -- 槽位数量没有变化，只更新对应按钮
+  local button = self.slot_buttons[slot_index]
+  if button and replica then
+    local slot_data = replica:GetSlotData(slot_index)
+    if slot_data then
+      button:UpdateSlotData(slot_data)
+    end
+  end
+end
+
+-- 重新绘制按钮
+function LingPoetryBadge:RedrawButtons()
+  if self.panelCallOpened then
+    self:OpenCallPanel() -- 重新打开面板，会自动清理旧按钮并创建新按钮
+  end
 end
 
 -- 监听屏幕大小变化
@@ -271,15 +323,6 @@ function LingPoetryBadge:ResetPosition()
   end
 end
 
-function LingPoetryBadge:RequestOpenCallPanel()
-  SendModRPCToServer(GetModRPC("ling_summon", "request_open_caller"))
-end
-
-function LingPoetryBadge:RequestCloseCallPanel()
-  self:CloseCallPanel()
-  SendModRPCToServer(GetModRPC("ling_summon", "request_close_caller"))
-end
-
 -- 重写鼠标按钮事件处理
 function LingPoetryBadge:OnMouseButton(button, down, x, y)
   print("LingPoetryBadge:OnMouseButton")
@@ -290,12 +333,12 @@ function LingPoetryBadge:OnMouseButton(button, down, x, y)
   if button == MOUSEBUTTON_LEFT then
     if down then
       if self.panelCallOpened then
-        self:RequestCloseCallPanel()
+        self:CloseCallPanel()
       else
         if (ThePlayer.HUD.controls.ling_guard_panel:IsVisible()) then
           ThePlayer.HUD.controls.ling_guard_panel:RequestClose()
         else 
-          self:RequestOpenCallPanel()
+          self:OpenCallPanel()
         end
       end
     end

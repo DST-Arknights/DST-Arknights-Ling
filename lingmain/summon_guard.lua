@@ -1,10 +1,12 @@
 local ImageButton = require "widgets/imagebutton"
 local CONSTANTS = require "ark_constants_ling"
 
+local GUARD_TYPE = CONSTANTS.GUARD_TYPE
+
 -- 令的守卫召唤物配置
 TUNING.LING_GUARDS = {
   -- 清平配置
-  QINGPING = {
+  [GUARD_TYPE.QINGPING] = {
     LEVELS = {
       -- 无精英化 (elite_level = 0)
       [0] = {
@@ -43,7 +45,7 @@ TUNING.LING_GUARDS = {
   },
 
   -- 逍遥配置（精一后解锁）
-  XIAOYAO = {
+  [GUARD_TYPE.XIAOYAO] = {
     LEVELS = {
       -- 精英化一 (elite_level = 1)
       [1] = {
@@ -71,7 +73,7 @@ TUNING.LING_GUARDS = {
   },
 
   -- 弦惊配置（精二后解锁）
-  XIANJING = {
+  [GUARD_TYPE.XIANJING] = {
     LEVELS = {
       -- 精英化二 (elite_level = 2)
       [2] = {
@@ -122,7 +124,7 @@ AddClassPostConstruct("widgets/controls", function(self)
     print("SetGhostMode", ghost_mode)
     if self.parent and self.parent.ling_poetry then
       if ghost_mode then
-        self.parent.ling_poetry:RequestCloseCallPanel()
+        self.parent.ling_poetry:CloseCallPanel()
         self.ling_guard_panel:RequestClose()
         self.parent.ling_poetry:Hide()
       else
@@ -156,36 +158,41 @@ AddClassPostConstruct("screens/playerhud", function(self)
     if self.controls.ling_guard_panel then
       self.controls.ling_guard_panel:MoveToBack()
       self.controls.ling_guard_panel.container_open:Hide()
-      self.controls.ling_close_container:Show()
+      self.controls.ling_close_container:Open()
       self.controls.ling_close_container:MoveToFront()
     end
   end
   local _CloseContainer = self.CloseContainer
   function self:CloseContainer(container, side)
-    _CloseContainer(self, container, side)
     if self.controls.ling_guard_panel then
       self.controls.ling_guard_panel.container_open:Show()
       self.controls.ling_close_container:Hide()
     end
+    _CloseContainer(self, container, side)
   end
 end)
 
 AddComponentPostInit("container", function(self)
   local _Open = self.Open
   function self:Open(doer)
-    local idx = doer.components.ling_summon_manager and doer.components.ling_summon_manager:GetGuardSlotIndex(self.inst)
+    if not doer.components.ling_summon_manager then
+      return _Open(self, doer)
+    end
+    local idx = doer.components.ling_summon_manager:GetGuardSlotIndex(self.inst)
     if idx then
-      doer.components.ling_summon_manager.keepContainerOpen = true
-      doer.components.ling_summon_manager:RequestOpenGuardPanel(idx)
+      doer.components.ling_summon_manager.openedContainerInst = self.inst
+      doer.components.ling_summon_manager:RequestOpenGuardPanel(self.inst)
+    elseif self.inst:HasTag("ling_summon") then
+      print("CloseGuardPanel")
+      doer.components.ling_summon_manager:RequestCloseGuardPanel()
     end
     return _Open(self, doer)
   end
 
   local _Close = self.Close
   function self:Close(doer)
-    local keepOpen = doer and doer.components.ling_summon_manager and doer.components.ling_summon_manager.keepContainerOpen and doer.components.ling_summon_manager:GetGuardSlotIndex(self.inst)
+    local keepOpen = doer and doer.components.ling_summon_manager and doer.components.ling_summon_manager.openedContainerInst == self.inst
     if keepOpen then
-      print("keepOpen", keepOpen)
       return
     end
     return _Close(self, doer)
@@ -202,86 +209,73 @@ AddModRPCHandler("ling_summon", "summon_guard", function(player, guard_type, slo
   end
 
   -- 直接调用召唤管理器组件的方法，让它们处理诗意检查和扣除
-  if guard_type == "qingping" then
+  if guard_type == GUARD_TYPE.QINGPING then
     player.components.ling_summon_manager:SummonQingping(slot_index)
-  elseif guard_type == "xiaoyao" then
+  elseif guard_type == GUARD_TYPE.XIAOYAO then
     player.components.ling_summon_manager:SummonXiaoyao(slot_index)
-  elseif guard_type == "xianjing" then
+  elseif guard_type == GUARD_TYPE.XIANJING then
     player.components.ling_summon_manager:SummonXianjing(slot_index)
   end
 end)
 
--- 添加命令系统的RPC通信
-AddModRPCHandler("ling_summon", "command_guards", function(player, command_type)
-  if not player or player.prefab ~= "ling" then
-    return
-  end
+-- 移除了 command_guards RPC 处理器，功能将在组件中重构
 
-  local x, y, z = player.Transform:GetWorldPosition()
-  local guards = TheSim:FindEntities(x, y, z, 30, {"ling_summon"})
 
-  for _, guard in ipairs(guards) do
-    if guard.components.follower and guard.components.follower.leader == player then
-      if command_type == "guard" or command_type == "attack" or command_type == "cautious" then
-        guard:SetBehaviorMode(command_type)
-      end
-    end
-  end
-end)
 
-AddModRPCHandler("ling_summon", "request_open_caller", function(player)
-  if player and player.components.ling_summon_manager then
-    player.components.ling_summon_manager:RequestOpenCaller()
-  end
-end)
-
-AddModRPCHandler("ling_summon", "request_close_caller", function(player)
+AddModRPCHandler("ling_summon", "request_open_guard_panel", function(player, guard_inst)
   if player.components.ling_summon_manager then
-    player.components.ling_summon_manager:RequestCloseCaller()
+    player.components.ling_summon_manager:RequestOpenGuardPanel(guard_inst)
   end
 end)
 
-AddClientModRPCHandler("ling_summon", "open_caller", function(summaries, max_slots)
-  if ThePlayer and ThePlayer.HUD and ThePlayer.HUD.controls and ThePlayer.HUD.controls.ling_poetry then
-    summaries = json.decode(summaries)
-    ThePlayer.HUD.controls.ling_poetry:OpenCallPanel(summaries, max_slots)
+AddClientModRPCHandler("ling_summon", "open_guard_panel", function(guard_inst)
+  if ThePlayer and ThePlayer.HUD and ThePlayer.HUD.controls and ThePlayer.HUD.controls.ling_guard_panel then
+    print("open_guard_panel", guard_inst and guard_inst.prefab or "nil")
+    ThePlayer.HUD.controls.ling_guard_panel:Open(guard_inst)
   end
 end)
 
-AddModRPCHandler("ling_summon", "request_open_guard_panel", function(player, slot_index)
+AddModRPCHandler("ling_summon", "request_close_guard_panel", function(player, guard_inst)
+  print("request_close_guard_panel", guard_inst and guard_inst.prefab or "nil")
   if player.components.ling_summon_manager then
-    player.components.ling_summon_manager:RequestOpenGuardPanel(slot_index)
-  end
-end)
-
-AddModRPCHandler("ling_summon", "request_close_guard_panel", function(player)
-  if player.components.ling_summon_manager then
-    player.components.ling_summon_manager:RequestCloseGuardPanel()
+    player.components.ling_summon_manager:RequestCloseGuardPanel(guard_inst)
   end
 end)
 
 AddClientModRPCHandler("ling_summon", "close_guard_panel", function()
+  print("close_guard_panel")
   if ThePlayer and ThePlayer.HUD and ThePlayer.HUD.controls and ThePlayer.HUD.controls.ling_guard_panel then
     ThePlayer.HUD.controls.ling_guard_panel:Close()
   end
 end)
 
-AddClientModRPCHandler("ling_summon", "open_guard_panel", function(guard, bindInst)
-  if ThePlayer and ThePlayer.HUD and ThePlayer.HUD.controls and ThePlayer.HUD.controls.ling_guard_panel then
-    guard = json.decode(guard)
-    ThePlayer.HUD.controls.ling_guard_panel:Open(guard, bindInst)
+AddModRPCHandler("ling_summon", "request_open_container", function(player, guard_inst)
+  if player.components.ling_summon_manager then
+    player.components.ling_summon_manager:RequestOpenContainer(guard_inst)
   end
 end)
 
-AddModRPCHandler("ling_summon", "request_open_container", function(player, slot_index)
+AddModRPCHandler("ling_summon", "request_close_container", function(player)
   if player.components.ling_summon_manager then
-    player.components.ling_summon_manager:RequestOpenContainer(slot_index)
+    player.components.ling_summon_manager:RequestCloseContainer()
   end
 end)
 
-AddModRPCHandler("ling_summon", "request_close_container", function(player, slot_index)
+AddModRPCHandler("ling_summon", "change_guard_behavior", function(player, guard_inst, mode)
+  if not player or player.prefab ~= "ling" then
+    return
+  end
+
+  if not guard_inst or not guard_inst:IsValid() then
+    return
+  end
+
+  -- 验证这个守卫是否属于这个玩家
   if player.components.ling_summon_manager then
-    player.components.ling_summon_manager:RequestCloseContainer(slot_index)
+    local is_owned = player.components.ling_summon_manager:IsGuardOwnedByPlayer(guard_inst)
+    if is_owned and guard_inst.components.ling_guard then
+      guard_inst.components.ling_guard:SetBehaviorMode(mode)
+    end
   end
 end)
 
@@ -375,10 +369,8 @@ AddStategraphState("wilson", State{
                 -- 创建召唤特效（除了弦惊）
                 if data.type ~= GUARD_TYPE.XIANJING then
                     local fx = SpawnPrefab("ling_summon_fx")
-                    if fx then
-                        fx.Transform:SetPosition(spawn_x, y, spawn_z)
-                        inst.sg.statemem.summon_fx = fx
-                    end
+                    fx.Transform:SetPosition(spawn_x, y, spawn_z)
+                    inst.sg.statemem.summon_fx = fx
                 end
             end
         end),
@@ -397,6 +389,7 @@ AddStategraphState("wilson", State{
                 if inst.sg.statemem.summon_fx and inst.sg.statemem.summon_fx:IsValid() then
                     inst.sg.statemem.summon_fx:SetSpawnCallback(function()
                         if inst.components.ling_summon_manager then
+                          print("SpawnGuardAtPosition", data.type, data.level, spawn_x, spawn_z, data.slots)
                             inst.components.ling_summon_manager:SpawnGuardAtPosition(data.type, data.level, spawn_x, spawn_z, data.slots)
                         end
                     end)

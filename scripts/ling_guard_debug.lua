@@ -10,7 +10,7 @@ local function DebugGuardBehavior(guard)
     print("=== 守卫调试信息 ===")
     print("守卫类型:", guard.guard_type or "未知")
     print("行为模式:", guard.behavior_mode or "未知")
-    print("等级:", guard.level or "未知")
+    print("等级:", guard.components.ling_guard and guard.components.ling_guard:GetLevel() or "未知")
     
     -- 战斗信息
     if guard.components.combat then

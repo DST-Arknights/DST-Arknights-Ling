@@ -35,6 +35,8 @@ Assets = {
 AddMinimapAtlas('images/map_icons/ling.xml')
 AddModCharacter("ling", "FEMALE")
 AddReplicableComponent("ling_poetry")
+AddReplicableComponent("ling_summon_manager")
+AddReplicableComponent("ling_guard")
 
 TUNING.ARK_SKILL = TUNING.ARK_SKILL or {}
 

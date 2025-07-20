@@ -19,15 +19,29 @@ return {
   MAX_SKILL_LIMIT = 6,
   MAX_SKILL_LEVEL = 10,
   GUARD_SLOT_STATUS = {
-    EMPTY = "empty",
-    SUMMONING = "summoning",
-    OCCUPIED = "occupied",
-    DISABLED = "disabled",
+    EMPTY = 0,
+    SUMMONING = 1,
+    OCCUPIED = 2,
+    DISABLED = 3,
+    OTHER_WORLD = 4,
   },
   GUARD_TYPE = {
-    QINGPING = "qingping",
-    XIAOYAO = "xiaoyao",
-    XIANJING = "xianjing",
+    QINGPING = 1,
+    XIAOYAO = 2,
+    XIANJING = 3,
+  },
+  GUARD_BEHAVIOR_MODE = {
+    CAUTIOUS = 1, -- 慎：类似阿比盖尔的行为
+    GUARD = 2,    -- 守：静止不动，攻击进入范围的敌人
+    ATTACK = 3,   -- 攻：锁定目标跟随攻击
+  },
+  GUARD_WORK_MODE = {
+    CHOP = 1, -- 伐木
+    DIG = 2,  -- 挖掘
+    DIG_LAND = 3, -- 挖地
+    HAMMER = 4, -- 锤炼
+    MINE = 5, -- 采矿
+    PLANT = 6, -- 种植
   },
   LING_GUARD_PANEL_POSITION = { -300, 100, 0},
   LING_GUARD_PANEL_OPEN_CONTAINER_POSITION = {-63, -11, 0}, -- -47, 16
