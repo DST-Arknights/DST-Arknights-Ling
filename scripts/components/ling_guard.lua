@@ -3,9 +3,9 @@ local CONSTANTS = require("ark_constants_ling")
 -- 更新等级标签的辅助函数
 local function UpdateLevelTags(inst, level)
     for i = 1, 4 do
-        inst:RemoveTag(inst.prefab .. "_level_" .. i)
+        inst:RemoveTag("ling_guard_level_" .. i)
     end
-    inst:AddTag(inst.prefab .. "_level_" .. level)
+    inst:AddTag("ling_guard_level_level_" .. level)
 end
 
 local LingGuardBehavior = Class(function(self, inst)
@@ -21,7 +21,41 @@ local LingGuardBehavior = Class(function(self, inst)
     self.level = 1
 
     self:SetBehaviorMode(CONSTANTS.GUARD_BEHAVIOR_MODE.CAUTIOUS) -- 默认值
+    self:SetWorkMode(CONSTANTS.GUARD_WORK_MODE.NONE) -- 默认值
 end)
+
+-- 工模式
+function LingGuardBehavior:SetWorkMode(mode)
+    -- 验证模式是否有效
+    local valid_mode = false
+    for _, valid in pairs(CONSTANTS.GUARD_WORK_MODE) do
+        if mode == valid then
+            valid_mode = true
+            break
+        end
+    end
+
+    if not valid_mode then
+        mode = nil -- 默认值
+    end
+
+    -- 直接设置到 replica，不在组件中存储
+    if self.inst.replica.ling_guard then
+        self.inst.replica.ling_guard:SetWorkMode(mode)
+    end
+    -- 如果是种植模式, 打开它身上的容器
+    print("SetWorkMode", mode, self.inst.plant_container)
+    if self.inst.plant_container then
+        print("plant_container", self.inst.plant_container)
+        if mode == CONSTANTS.GUARD_WORK_MODE.PLANT then
+            print("OpenContainer")
+            self.inst.plant_container.components.container:Open(self.inst.components.follower.leader)
+        else
+            print("CloseContainer")
+            self.inst.plant_container.components.container:Close(self.inst.components.follower.leader)
+        end
+    end
+end
 
 -- 设置行为模式
 function LingGuardBehavior:SetBehaviorMode(mode)
@@ -58,6 +92,14 @@ function LingGuardBehavior:GetBehaviorMode()
     return CONSTANTS.GUARD_BEHAVIOR_MODE.CAUTIOUS -- 默认值
 end
 
+-- 获取工模式
+function  LingGuardBehavior:GetWorkMode()
+    if self.inst.replica.ling_guard then
+        return self.inst.replica.ling_guard:GetWorkMode()
+    end
+    return CONSTANTS.GUARD_WORK_MODE.NONE -- 默认值    
+end
+
 -- 设置召唤者用户ID
 function LingGuardBehavior:SetSummonerUserId(userid)
     self.saved_summoner_userid = userid
@@ -80,12 +122,8 @@ end
 
 -- 设置等级（从 ling_guard_level 组件迁移过来）
 function LingGuardBehavior:SetLevel(level)
-    if not level or level < 1 or level > 4 then
-        level = 1
-    end
     local config = TUNING.LING_GUARDS[self.inst.guard_type].LEVELS[level]
     if not config then
-        print("Warning: No config found for guard type", self.inst.prefab, "level", level)
         return
     end
     if self.level == level then
@@ -104,6 +142,9 @@ function LingGuardBehavior:SetLevel(level)
     if self.inst.components.locomotor then
         self.inst.components.locomotor.walkspeed = config.WALK_SPEED
         self.inst.components.locomotor.runspeed = config.RUN_SPEED
+    end
+    if self.inst.plant_container then
+        self.inst.plant_container.replica._ling_level:set(level)
     end
     UpdateLevelTags(self.inst, level)
 end
@@ -197,6 +238,7 @@ end
 function LingGuardBehavior:OnSave()
     return {
         behavior_mode = self:GetBehaviorMode(),
+        work_mode = self:GetWorkMode(),
         saved_summoner_userid = self.saved_summoner_userid,
         saved_slots = self.saved_slots,
         level = self.level
@@ -212,15 +254,22 @@ function LingGuardBehavior:OnLoad(data)
 
         -- 加载等级信息
         if data.level then
-            self.level = data.level
-            self:SetLevel(self.level)
+            self.saved_level = data.level
         end
 
         -- 加载行为模式
         if data.behavior_mode then
             self:SetBehaviorMode(data.behavior_mode)
         end
+        if data.work_mode then
+            self:SetWorkMode(data.work_mode)
+        end
     end
+end
+
+function LingGuardBehavior:LoadPostPass()
+    self:SetLevel(self.saved_level)
+    self.saved_level = nil
 end
 
 return LingGuardBehavior

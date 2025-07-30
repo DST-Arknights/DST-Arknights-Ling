@@ -99,7 +99,18 @@ local function MakeGuard(config)
 
         inst.entity:SetPristine()
 
+        inst:AddComponent("healthsyncer")
+
         if not TheWorld.ismastersim then
+            -- 客户端监听生命变化
+            inst:ListenForEvent("clienthealthdirty", function(inst, data)
+                local leader = inst.replica.follower:GetLeader()
+                print("[LingGuard] clienthealthdirty", data.percent)
+                if leader and leader.HUD and leader.HUD.controls and leader.HUD.controls.ling_guard_panel and leader.HUD.controls.ling_guard_panel.guard_inst == inst then
+                    print("[LingGuard] clienthealthdirty update panel", data.percent)
+                    leader.HUD.controls.ling_guard_panel.health:SetPercent(data.percent, true)
+                end
+            end)
             return inst
         end
 
@@ -121,8 +132,8 @@ local function MakeGuard(config)
 
         -- 添加守卫行为管理组件
         inst:AddComponent("ling_guard")
-        -- 设置初始等级
-        inst.components.ling_guard:SetLevel(1)
+        -- 设置初始等级（0 = 无精英化）
+        inst.components.ling_guard:SetLevel(0)
 
         inst:AddComponent("inspectable")
         inst:AddComponent("lootdropper")

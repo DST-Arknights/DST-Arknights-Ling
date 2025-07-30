@@ -13,6 +13,9 @@ local LingGuardReplica = Class(function(self, inst)
         self.inst:ListenForEvent("behaviormodechanged", function()
             self:OnBehaviorModeChanged()
         end, inst)
+        self.inst:ListenForEvent("workmodechanged", function()
+            self:OnWorkModeChanged()
+        end, inst)
     end
 end)
 
@@ -54,6 +57,32 @@ function LingGuardReplica:GetBehaviorModeName()
     else
         return "未知"
     end
+end
+
+
+
+function LingGuardReplica:OnWorkModeChanged()
+    -- 更新守卫面板UI
+    local mode = self._work_mode:value()
+    print("[LingGuardBehaviorReplica] Work mode changed to:", mode)
+
+    -- 如果守卫面板正在显示这个守卫，更新UI状态
+    if ThePlayer and ThePlayer.HUD and ThePlayer.HUD.controls and ThePlayer.HUD.controls.ling_guard_panel then
+        local panel = ThePlayer.HUD.controls.ling_guard_panel
+        if panel.guard_inst == self.inst then
+            panel:OnWorkModeChanged(mode)
+        end
+    end
+end
+
+-- 设置工模式（由服务端调用）
+function LingGuardReplica:SetWorkMode(mode)
+    self._work_mode:set(mode)
+end
+
+-- 获取工模式
+function LingGuardReplica:GetWorkMode()
+    return self._work_mode:value()
 end
 
 return LingGuardReplica

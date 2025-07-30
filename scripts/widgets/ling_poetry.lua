@@ -32,14 +32,8 @@ local LingPoetryBadge = Class(Badge, function(self, owner)
 
   -- 监听窗口大小变化
   self:StartUpdating()  -- 启用 OnUpdate 来检查屏幕大小变化
-  self.ongainfocus = function(focused)
-    print("ongainfocus", focused)
-    if focused then
-      self:SetScale(1.1, 1.1, 1.1)
-    else
-      self:SetScale(1, 1, 1)
-    end
-  end
+  self:SetOnGainFocus(function() self:SetScale(1.1, 1.1, 1.1) end)
+  self:SetOnLoseFocus(function() self:SetScale(1, 1, 1) end)
   self.panelCallOpened = false
   self.buttons = {}
   self.slot_buttons = {} -- 存储槽位按钮的映射，key为slot_index

@@ -280,7 +280,9 @@ function LingSummonManager:RequestOpenContainer(guard_inst)
 end
 
 function LingSummonManager:RequestCloseContainer()
-  print("RequestCloseContainer", self.openedContainerInst and self.openedContainerInst.prefab or "nil")
+  if not self.openedContainerInst or not self.openedContainerInst:IsValid() then
+    return
+  end
   self.openedContainerInst.components.container:Close(self.inst)
   self.openedContainerInst = nil
 end
@@ -473,7 +475,12 @@ function LingSummonManager:SpawnGuardAtPosition(guard_type, elite_level, spawn_x
     if guard.components.follower then
       guard.components.follower:SetLeader(self.inst)
     end
-
+    -- 生成一个种植容器挂载上去
+    local container = SpawnPrefab("ling_guard_plant_container")
+    if container then
+      guard.plant_container = container
+      container.entity:SetParent(guard.entity)
+    end
     return true
   end
 end

@@ -8,8 +8,8 @@ TUNING.LING_GUARDS = {
   -- 清平配置
   [GUARD_TYPE.QINGPING] = {
     LEVELS = {
-      -- 无精英化 (elite_level = 0)
-      [0] = {
+      -- 无精英化 (elite_level = 1)
+      [1] = {
         HEALTH = 300,
         DAMAGE = 30,
         DAMAGE_REDUCTION = 0.1, -- 10%免伤
@@ -19,8 +19,8 @@ TUNING.LING_GUARDS = {
         ATTACK_PERIOD = 4,
         SUMMON_COST = 10, -- 召唤消耗诗意
       },
-      -- 精英化一 (elite_level = 1)
-      [1] = {
+      -- 精英化一 (elite_level = 2)
+      [2] = {
         HEALTH = 500,
         DAMAGE = 50,
         DAMAGE_REDUCTION = 0.2, -- 20%免伤
@@ -30,8 +30,8 @@ TUNING.LING_GUARDS = {
         ATTACK_PERIOD = 3,
         SUMMON_COST = 9,
       },
-      -- 精英化二 (elite_level = 2)
-      [2] = {
+      -- 精英化二 (elite_level = 3)
+      [3] = {
         HEALTH = 700,
         DAMAGE = 80,
         DAMAGE_REDUCTION = 0.4, -- 40%免伤
@@ -47,8 +47,8 @@ TUNING.LING_GUARDS = {
   -- 逍遥配置（精一后解锁）
   [GUARD_TYPE.XIAOYAO] = {
     LEVELS = {
-      -- 精英化一 (elite_level = 1)
-      [1] = {
+      -- 精英化一 (elite_level = 2)
+      [2] = {
         HEALTH = 100,
         DAMAGE = 70,
         DAMAGE_REDUCTION = 0.05, -- 5%免伤
@@ -58,8 +58,8 @@ TUNING.LING_GUARDS = {
         ATTACK_PERIOD = 5,
         SUMMON_COST = 9,
       },
-      -- 精英化二 (elite_level = 2)
-      [2] = {
+      -- 精英化二 (elite_level = 3)
+      [3] = {
         HEALTH = 200,
         DAMAGE = 100,
         DAMAGE_REDUCTION = 0.1, -- 10%免伤
@@ -75,8 +75,8 @@ TUNING.LING_GUARDS = {
   -- 弦惊配置（精二后解锁）
   [GUARD_TYPE.XIANJING] = {
     LEVELS = {
-      -- 精英化二 (elite_level = 2)
-      [2] = {
+      -- 精英化二 (elite_level = 3)
+      [3] = {
         HEALTH = 2100,
         DAMAGE = 220,
         DAMAGE_REDUCTION = 0.7, -- 70%免伤
@@ -155,21 +155,51 @@ AddClassPostConstruct("screens/playerhud", function(self)
   local _OpenContainer = self.OpenContainer
   function self:OpenContainer(container, side)
     _OpenContainer(self, container, side)
-    if self.controls.ling_guard_panel then
-      self.controls.ling_guard_panel:MoveToBack()
-      self.controls.ling_guard_panel.container_open:Hide()
-      self.controls.ling_close_container:Open()
-      self.controls.ling_close_container:MoveToFront()
+    if container.type == "ling_guard_container" then
+      local owned = ThePlayer.replica.ling_summon_manager and ThePlayer.replica.ling_summon_manager:GetGuardSlotIndex(container)
+      if owned and self.controls.ling_guard_panel then
+        self.controls.ling_guard_panel:MoveToBack()
+        self.controls.ling_guard_panel.container_open:Hide()
+        self.controls.ling_close_container:Open()
+        self.controls.ling_close_container:MoveToFront()
+      end
+    elseif container.type == "ling_guard_plant_container" then
+      local pos = container.widget.pos
+      local animPos = container.widget.animPos
+      self.controls.containers[container]:MoveTo(pos, animPos, 0.5)
+      -- 根据等级关闭多余的插槽
+      local level = container.replica.container and container.replica.container._ling_level:value() or 1
+      for idx, slot in pairs(self.controls.containers[container].widget.slots) do
+        if idx > level + 1 then
+          slot:Hide()
+        else
+          slot:Show()
+        end
+      end
     end
   end
   local _CloseContainer = self.CloseContainer
   function self:CloseContainer(container, side)
-    if self.controls.ling_guard_panel then
-      self.controls.ling_guard_panel.container_open:Show()
-      self.controls.ling_close_container:Hide()
+    if container.type == "ling_guard_container" then
+      local owned = ThePlayer.replica.ling_summon_manager and ThePlayer.replica.ling_summon_manager:GetGuardSlotIndex(container)
+      if owned and self.controls.ling_guard_panel then
+        self.controls.ling_guard_panel.container_open:Show()
+        self.controls.ling_close_container:Hide()
+      end
+    elseif container.type == "ling_guard_plant_container" then
+      local pos = container.widget.pos
+      local animPos = container.widget.animPos
+      self.controls.containers[container]:MoveTo(animPos, pos, 0.5)
     end
     _CloseContainer(self, container, side)
   end
+end)
+
+AddClassPostConstruct("components/container_replica", function(self)
+  if self.inst.prefab ~= "ling_guard_plant_container" then
+    return
+  end
+  self._ling_level = net_tinybyte(self.inst.GUID, "container._ling_level", "lingleveldirty")
 end)
 
 AddComponentPostInit("container", function(self)
@@ -178,12 +208,11 @@ AddComponentPostInit("container", function(self)
     if not doer.components.ling_summon_manager then
       return _Open(self, doer)
     end
-    local idx = doer.components.ling_summon_manager:GetGuardSlotIndex(self.inst)
-    if idx then
+    local owned = doer.components.ling_summon_manager:GetGuardSlotIndex(self.inst)
+    if owned then
       doer.components.ling_summon_manager.openedContainerInst = self.inst
       doer.components.ling_summon_manager:RequestOpenGuardPanel(self.inst)
     elseif self.inst:HasTag("ling_summon") then
-      print("CloseGuardPanel")
       doer.components.ling_summon_manager:RequestCloseGuardPanel()
     end
     return _Open(self, doer)
@@ -275,6 +304,24 @@ AddModRPCHandler("ling_summon", "change_guard_behavior", function(player, guard_
     local is_owned = player.components.ling_summon_manager:IsGuardOwnedByPlayer(guard_inst)
     if is_owned and guard_inst.components.ling_guard then
       guard_inst.components.ling_guard:SetBehaviorMode(mode)
+    end
+  end
+end)
+
+AddModRPCHandler("ling_summon", "change_guard_work", function(player, guard_inst, mode)
+  if not player or player.prefab ~= "ling" then
+    return
+  end
+
+  if not guard_inst or not guard_inst:IsValid() then
+    return
+  end
+
+  -- 验证这个守卫是否属于这个玩家
+  if player.components.ling_summon_manager then
+    local is_owned = player.components.ling_summon_manager:IsGuardOwnedByPlayer(guard_inst)
+    if is_owned and guard_inst.components.ling_guard then
+      guard_inst.components.ling_guard:SetWorkMode(mode)
     end
   end
 end)

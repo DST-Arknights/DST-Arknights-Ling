@@ -1,6 +1,6 @@
 local LingElite = Class(function(self, inst)
     self.inst = inst
-    self.elite_level = 0
+    self.elite_level = 1
 
     -- 只保存那些没有自己保存机制的组件属性
     self.speed_multiplier = 1
@@ -59,7 +59,7 @@ end
 
 -- 更新精英标签
 function LingElite:UpdateEliteTags(level)
-    for i = 1, 3 do
+    for i = 1, 4 do
         local tag = "ling_elite_" .. i
         self.inst:RemoveTag(tag)
     end
@@ -133,7 +133,7 @@ end
 
 function LingElite:OnLoad(data)
     if data then
-        self.elite_level = data.elite_level or 0
+        self.elite_level = data.elite_level or 1
         self.speed_multiplier = data.speed_multiplier or 1
         self.damage_multiplier = data.damage_multiplier or 1
         self.sleep_resistance = data.sleep_resistance or 0

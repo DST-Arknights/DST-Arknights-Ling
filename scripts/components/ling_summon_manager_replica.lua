@@ -120,4 +120,14 @@ function LingSummonManagerReplica:GetAvailableSlotsData()
   return available_slots
 end
 
+function LingSummonManagerReplica:GetGuardSlotIndex(inst)
+  for i = 1, MAX_GUARDS do
+    local slot_data = self:GetSlotData(i)
+    if slot_data and slot_data.inst == inst then
+      return i
+    end
+  end
+  return nil
+end
+
 return LingSummonManagerReplica

@@ -75,23 +75,6 @@ local function DeclareFunction(inst)
   end
 
   function inst:InDream() return false end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   -- 技能相关方法
   function inst:StartSkill1()
     local skillLevelConfig = inst.components.ark_skill_ling:GetLevelConfig(1)
