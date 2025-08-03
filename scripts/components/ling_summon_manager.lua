@@ -283,8 +283,9 @@ function LingSummonManager:RequestCloseContainer()
   if not self.openedContainerInst or not self.openedContainerInst:IsValid() then
     return
   end
-  self.openedContainerInst.components.container:Close(self.inst)
+  local openedContainerInst = self.openedContainerInst
   self.openedContainerInst = nil
+  openedContainerInst.components.container:Close(self.inst)
 end
 
 function LingSummonManager:RequestOpenGuardPanel(guard_inst)
@@ -298,14 +299,36 @@ function LingSummonManager:RequestOpenGuardPanel(guard_inst)
   end
   self.openedGuardPanelInst = guard_inst
   SendModRPCToClient(GetClientModRPC("ling_summon", "open_guard_panel"), self.inst.userid, self.openedGuardPanelInst)
+  -- 如果工作模式处于种植模式, 打开种植容器
+  if guard_inst.components.ling_guard then
+    local work_mode = guard_inst.components.ling_guard:GetWorkMode()
+    if work_mode == CONSTANTS.GUARD_WORK_MODE.PLANT then
+      if guard_inst.plant_container and guard_inst.plant_container.components.container then
+        guard_inst.plant_container.components.container:Open(self.inst)
+      end
+    end
+  end
 end
 
 function LingSummonManager:RequestCloseGuardPanel()
   if self.openedContainerInst then
     self:RequestCloseContainer()
   end
+  if not self.openedGuardPanelInst then
+    return
+  end
+  local guard_inst = self.openedGuardPanelInst
   SendModRPCToClient(GetClientModRPC("ling_summon", "close_guard_panel"), self.inst.userid)
   self.openedGuardPanelInst = nil
+  -- 如果工作模式处于种植模式, 打开种植容器
+  if guard_inst.components.ling_guard then
+    local work_mode = guard_inst.components.ling_guard:GetWorkMode()
+    if work_mode == CONSTANTS.GUARD_WORK_MODE.PLANT then
+      if guard_inst.plant_container and guard_inst.plant_container.components.container then
+        guard_inst.plant_container.components.container:Close(self.inst)
+      end
+    end
+  end
 end
 
 -- 召唤相关方法
@@ -480,6 +503,7 @@ function LingSummonManager:SpawnGuardAtPosition(guard_type, elite_level, spawn_x
     if container then
       guard.plant_container = container
       container.entity:SetParent(guard.entity)
+      container.Transform:SetPosition(0, 0, 0)
     end
     return true
   end

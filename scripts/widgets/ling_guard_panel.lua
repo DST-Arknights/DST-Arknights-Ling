@@ -34,13 +34,10 @@ local LingGuardPanel = Class(Widget, function(self, owner)
   self.fusionButton:SetFocusScale(BUTTON_FOCUS_SCALE)
   self.fusionButton:SetHoverText(STRINGS.UI.LING_GUARD_PANEL.FUSION_BUTTON)
 
-  self.plantBg = self:AddChild(Image("images/ui_ling_guard_panel.xml", "plant_bg.tex"))
-  self.plantBg:SetPosition(-184, -321, 0)
-
-  self.plantStart = self:AddChild(Image("images/ui_ling_guard_panel.xml", "plant_start.tex"))
-  self.plantStart:SetPosition(-198, -408, 0)
-
-
+  self.plant_bg = self:AddChild(Image("images/ui_ling_guard_panel.xml", "plant_bg.tex"))
+  local bg_pos = Vector3(unpack(CONSTANTS.LING_GUARD_PANEL_PLANT_CONTAINER_CLOSED_POSITION))
+  local bg_offset = Vector3(0, -39, 0)
+  self.plant_bg:SetPosition(bg_pos + bg_offset)
   -- 创建模式按钮
   self:CreateModeButtons()
 
@@ -281,11 +278,11 @@ function LingGuardPanel:OnWorkButtonClick()
     local guard_button = self.mode_buttons[GUARD_BEHAVIOR_MODE.GUARD]
     if guard_button and guard_button.is_active then
       local target_height = self:GetButtonTargetHeight(guard_button, "active")
-      self:AnimateButtonContainer(guard_button, target_height, true, function()
         -- 守widget动画完成后，打开workSelector的open动画
-        local work_mode = self.guard_inst.replica.ling_guard:GetWorkMode()
+      local work_mode = self.guard_inst.replica.ling_guard:GetWorkMode()
+      self.work_selector:ActiveWorkMode(work_mode, false, true)  -- 不使用动画直接激活
+      self:AnimateButtonContainer(guard_button, target_height, true, function()
         self.work_selector:Open()
-        self.work_selector:ActiveWorkMode(work_mode, false, true)  -- 不使用动画直接激活
       end)
     else
       -- 如果守模式按钮不是激活状态，直接打开工作选择器

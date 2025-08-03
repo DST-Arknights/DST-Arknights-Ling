@@ -132,8 +132,8 @@ local function MakeGuard(config)
 
         -- 添加守卫行为管理组件
         inst:AddComponent("ling_guard")
-        -- 设置初始等级（0 = 无精英化）
-        inst.components.ling_guard:SetLevel(0)
+        -- 设置初始等级（1 = 无精英化）
+        inst.components.ling_guard:SetLevel(1)
 
         inst:AddComponent("inspectable")
         inst:AddComponent("lootdropper")
@@ -233,9 +233,27 @@ local function MakeGuard(config)
         inst:SetBrain(brain)
         inst:SetStateGraph(config.state_graph)
 
-        -- 保存和加载功能现在完全由 ling_guard 组件处理
-        -- 包括召唤者信息、插槽信息和行为模式
-
+        -- 保存附加容器
+        inst.OnSave = function(inst, data)
+            if inst.plant_container then
+                data.plant_container = inst.plant_container:GetSaveRecord()
+            end
+        end
+        inst.OnPreLoad = function(inst, data)
+            if data and data.plant_container then
+                inst.plant_container = SpawnSaveRecord(data.plant_container)
+                if inst.plant_container then
+                    inst.plant_container.entity:SetParent(inst.entity)
+                    inst.plant_container.Transform:SetPosition(0, 0, 0)
+                end
+            end
+        end
+        inst.OnRemoveEntity = function(inst)
+            if inst.plant_container then
+                inst.plant_container.components.container:DropEverything(inst:GetPosition(), true)
+                inst.plant_container:Remove()
+            end
+        end
         return inst
     end
 

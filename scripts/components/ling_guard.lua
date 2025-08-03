@@ -44,15 +44,22 @@ function LingGuardBehavior:SetWorkMode(mode)
         self.inst.replica.ling_guard:SetWorkMode(mode)
     end
     -- 如果是种植模式, 打开它身上的容器
-    print("SetWorkMode", mode, self.inst.plant_container)
     if self.inst.plant_container then
-        print("plant_container", self.inst.plant_container)
         if mode == CONSTANTS.GUARD_WORK_MODE.PLANT then
-            print("OpenContainer")
-            self.inst.plant_container.components.container:Open(self.inst.components.follower.leader)
+            -- 检查打开人的面板是否打开
+            local leader = self.inst.components.follower.leader
+            local openedGuardPanelInst = leader and leader.components.ling_summon_manager and leader.components.ling_summon_manager.openedGuardPanelInst or nil
+            print("[LingGuardBehavior] SetWorkMode", openedGuardPanelInst, self.inst)
+            if openedGuardPanelInst == self.inst then
+                self.inst.plant_container.components.container:Open(self.inst.components.follower.leader)
+            end
         else
-            print("CloseContainer")
-            self.inst.plant_container.components.container:Close(self.inst.components.follower.leader)
+            local leader = self.inst.components.follower.leader
+            local openedGuardPanelInst = leader and leader.components.ling_summon_manager and leader.components.ling_summon_manager.openedGuardPanelInst or nil
+            if openedGuardPanelInst == self.inst then
+                self.inst.plant_container.components.container:Close(self.inst.components.follower.leader)
+                self.inst.plant_container.components.container:DropEverything()
+            end
         end
     end
 end
@@ -126,9 +133,6 @@ function LingGuardBehavior:SetLevel(level)
     if not config then
         return
     end
-    if self.level == level then
-        return
-    end
     self.level = level
     if self.inst.components.health then
         self.inst.components.health:SetMaxHealth(config.HEALTH)
@@ -143,10 +147,18 @@ function LingGuardBehavior:SetLevel(level)
         self.inst.components.locomotor.walkspeed = config.WALK_SPEED
         self.inst.components.locomotor.runspeed = config.RUN_SPEED
     end
-    if self.inst.plant_container then
-        self.inst.plant_container.replica._ling_level:set(level)
+    if self.inst.plant_container and self.inst.plant_container.replica.container then
+        self.inst:DoTaskInTime(0, function()
+            self.inst:DoTaskInTime(0, function()
+                if self.inst.plant_container.replica.container._ling_level then
+                    print("[LingGuardBehavior] [plant_container] SetLevel", level)
+                    self.inst.plant_container.replica.container._ling_level:set(level)
+                end
+            end)
+        end)
     end
     UpdateLevelTags(self.inst, level)
+    print("[LingGuardBehavior] SetLevel", level)
 end
 
 -- 获取等级

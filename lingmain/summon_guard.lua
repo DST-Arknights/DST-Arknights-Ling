@@ -155,7 +155,9 @@ AddClassPostConstruct("screens/playerhud", function(self)
   local _OpenContainer = self.OpenContainer
   function self:OpenContainer(container, side)
     _OpenContainer(self, container, side)
-    if container.type == "ling_guard_container" then
+    local containerReplica = container.replica.container
+    print("OpenContainer type", containerReplica.type)
+    if containerReplica.type == "ling_guard_container" then
       local owned = ThePlayer.replica.ling_summon_manager and ThePlayer.replica.ling_summon_manager:GetGuardSlotIndex(container)
       if owned and self.controls.ling_guard_panel then
         self.controls.ling_guard_panel:MoveToBack()
@@ -163,43 +165,59 @@ AddClassPostConstruct("screens/playerhud", function(self)
         self.controls.ling_close_container:Open()
         self.controls.ling_close_container:MoveToFront()
       end
-    elseif container.type == "ling_guard_plant_container" then
-      local pos = container.widget.pos
-      local animPos = container.widget.animPos
+    elseif containerReplica.type == "ling_guard_plant_container" then
+      print("OpenContainer", containerReplica.widget.pos, containerReplica.widget.animPos)
+      -- 关闭plant_bg
+      self.controls.ling_guard_panel.plant_bg:Hide()
+      local pos = containerReplica.widget.pos
+      local animPos = containerReplica.widget.animPos
       self.controls.containers[container]:MoveTo(pos, animPos, 0.5)
       -- 根据等级关闭多余的插槽
-      local level = container.replica.container and container.replica.container._ling_level:value() or 1
-      for idx, slot in pairs(self.controls.containers[container].widget.slots) do
-        if idx > level + 1 then
-          slot:Hide()
-        else
-          slot:Show()
+      local enalbedSlots = container.replica.ling_guard_plant and container.replica.ling_guard_plant:GetEnabledSlots()
+      if enalbedSlots then
+        for idx, inv in pairs(self.controls.containers[container].inv) do
+          local show = false
+          for _, enabledIdx in ipairs(enalbedSlots) do
+            if idx == enabledIdx then
+              show = true
+              break
+            end
+          end
+          if not show then
+            inv:Hide()
+            inv:Disable()
+          end
         end
       end
     end
   end
   local _CloseContainer = self.CloseContainer
   function self:CloseContainer(container, side)
-    if container.type == "ling_guard_container" then
+    local containerReplica = container.replica.container
+    if containerReplica.type == "ling_guard_container" then
       local owned = ThePlayer.replica.ling_summon_manager and ThePlayer.replica.ling_summon_manager:GetGuardSlotIndex(container)
       if owned and self.controls.ling_guard_panel then
         self.controls.ling_guard_panel.container_open:Show()
         self.controls.ling_close_container:Hide()
       end
-    elseif container.type == "ling_guard_plant_container" then
-      local pos = container.widget.pos
-      local animPos = container.widget.animPos
-      self.controls.containers[container]:MoveTo(animPos, pos, 0.5)
+    elseif containerReplica.type == "ling_guard_plant_container" then
+      print("CloseContainer", containerReplica.widget.pos, containerReplica.widget.animPos)
+      local pos = containerReplica.widget.pos
+      local animPos = containerReplica.widget.animPos
+      local containerWidget = self.controls.containers[container]
+      self.controls.containers[container] = nil
+      -- 期间禁用所有的插槽交互
+      for idx, inv in pairs(containerWidget.inv) do
+        inv:Disable()
+      end
+      containerWidget:MoveTo(animPos, pos, 0.1, function()
+        self.controls.ling_guard_panel.plant_bg:Show()
+        containerWidget:Close()
+      end)
+      return
     end
     _CloseContainer(self, container, side)
   end
-end)
-
-AddClassPostConstruct("components/container_replica", function(self)
-  if self.inst.prefab ~= "ling_guard_plant_container" then
-    return
-  end
-  self._ling_level = net_tinybyte(self.inst.GUID, "container._ling_level", "lingleveldirty")
 end)
 
 AddComponentPostInit("container", function(self)
@@ -224,6 +242,7 @@ AddComponentPostInit("container", function(self)
     if keepOpen then
       return
     end
+    print("container closed with out keep open")
     return _Close(self, doer)
   end
 end)

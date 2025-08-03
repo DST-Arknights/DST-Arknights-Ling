@@ -39,6 +39,7 @@ AddModCharacter("ling", "FEMALE")
 AddReplicableComponent("ling_poetry")
 AddReplicableComponent("ling_summon_manager")
 AddReplicableComponent("ling_guard")
+AddReplicableComponent("ling_guard_plant")
 
 TUNING.ARK_SKILL = TUNING.ARK_SKILL or {}
 
