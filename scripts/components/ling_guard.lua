@@ -174,6 +174,14 @@ function LingGuardBehavior:SetBehaviorMode(mode)
     end
 
     self.behavior_mode = mode
+    local follower = self.inst.components.follower
+    if follower then
+        if mode == CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD then
+            follower:StopLeashing()
+        else
+            follower:StartLeashing()
+        end
+    end
     self:RefreshGuardModeRangeMark()
     -- 更新标签
     self:UpdateBehaviorTags()

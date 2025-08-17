@@ -1,5 +1,6 @@
 local CONSTANTS = require("ark_constants_ling")
 local BitField = require("ark_utils_ling").BitField
+local LING_GUARD_CONFIG = require("ling_guard_config")
 
 -- 创建坐标BitField处理器（模块级）
 local _pos_bitfield = BitField.create({
@@ -157,6 +158,8 @@ function LingGuardReplica:UpdateGuardPositionVisual()
     if self._guard_pos then
         if not self._guard_pos_inst then
             self._guard_pos_inst = SpawnPrefab("reticuleaoecatapultwakeup")
+            local scale = LING_GUARD_CONFIG.GUARD.GUARD_RANGE / 16  -- 缩放比例，使范围大小与守卫范围一致（16为动画对应范围）
+            self._guard_pos_inst.Transform:SetScale(scale, scale, scale)  -- 设置缩放比例
         end
         if self._guard_pos_inst and self._guard_pos_inst:IsValid() then
             self._guard_pos_inst.Transform:SetPosition(self._guard_pos:Get())
@@ -171,6 +174,19 @@ function LingGuardReplica:RemoveGuardPositionVisual()
     if self._guard_pos_inst and self._guard_pos_inst:IsValid() then
         self._guard_pos_inst:Remove()
         self._guard_pos_inst = nil
+    end
+end
+
+-- 设置守卫位置标记颜色（绿色用于面板打开时）
+function LingGuardReplica:SetGuardPositionColor(is_green)
+    if self._guard_pos_inst and self._guard_pos_inst:IsValid() then
+        if is_green then
+            -- 设置为绿色（面板打开时）
+            self._guard_pos_inst.AnimState:SetMultColour(1, 0, 0, 1)
+        else
+            -- 恢复原色（白色）
+            self._guard_pos_inst.AnimState:SetMultColour(1, 1, 1, 1)
+        end
     end
 end
 

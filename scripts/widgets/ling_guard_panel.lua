@@ -484,11 +484,21 @@ function LingGuardPanel:Open(guard_inst)
   -- 更新工作按钮的 hovertext
   self:UpdateWorkButtonHoverText()
 
+  -- 如果存在位置标记实体，将其染成绿色（表示正在查看这个范围）
+  if guard_inst and guard_inst.replica.ling_guard then
+    guard_inst.replica.ling_guard:SetGuardPositionColor(true)
+  end
+
   self:RefreshPlanting()
   self:Show()
 end
 
 function LingGuardPanel:Close()
+  -- 恢复位置标记的原色
+  if self.guard_inst and self.guard_inst.replica.ling_guard then
+    self.guard_inst.replica.ling_guard:SetGuardPositionColor(false)
+  end
+
   self:Hide()
   self.guard_inst = nil
 end

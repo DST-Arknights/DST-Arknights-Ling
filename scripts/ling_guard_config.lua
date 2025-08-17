@@ -9,6 +9,13 @@ local LING_GUARD_CONFIG = {
         MAX_FOLLOW_DIST = 10,       -- 最大跟随距离
         MAX_WANDER_DIST = 8,        -- 最大游荡距离
     },
+
+    GUARD = {
+        -- 守卫范围
+        GUARD_RANGE = 16,
+        -- 追击范围
+        CHASE_RANGE = 24,
+    },
     
     -- 战斗参数
     COMBAT = {
@@ -25,40 +32,6 @@ local LING_GUARD_CONFIG = {
         SAFE_DISTANCE = 10,         -- 风筝安全距离（小于此距离开始风筝）
         RUN_DISTANCE = 6,           -- 开始逃跑的距离
         STOP_DISTANCE = 12,         -- 停止逃跑的距离
-    },
-    
-    -- 目标跟随参数（战斗中跟随敌人）
-    TARGET_FOLLOW = {
-        MIN = 6,                    -- 跟随目标最小距离
-        TARGET = 8,                 -- 跟随目标理想距离
-        MAX = 15,                   -- 跟随目标最大距离
-    },
-    
-    -- 集群战斗参数
-    CLUSTER = {
-        COMBAT_RANGE = 20,          -- 集群战斗范围
-        SHARE_RANGE = 15,           -- 目标共享范围
-        MAX_SIZE = 8,               -- 最大集群大小
-    },
-    
-    -- 行为模式特定参数
-    BEHAVIOR_MODES = {
-        GUARD = {
-            -- 守卫范围
-            GUARD_RANGE = 10,
-            -- 追击范围
-            CHASE_RANGE = 15,
-            -- 守模式：静止不动，只攻击进入范围的敌人
-            ATTACK_RANGE_MULTIPLIER = 1.0,  -- 攻击范围倍数
-        },
-        ATTACK = {
-            -- 攻模式：主动寻找并攻击敌人
-            SEARCH_RANGE = 15,               -- 主动搜索敌人的范围
-        },
-        CAUTIOUS = {
-            -- 慎模式：类似阿比盖尔，只在主人受攻击时反击
-            PROTECT_RANGE = 10,              -- 保护主人的范围
-        },
     },
 }
 
