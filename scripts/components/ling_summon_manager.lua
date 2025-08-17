@@ -289,10 +289,19 @@ function LingSummonManager:RequestCloseContainer()
 end
 
 function LingSummonManager:RequestOpenGuardPanel(guard_inst)
+  if not guard_inst or not guard_inst:IsValid() or self.openedGuardPanelInst == guard_inst then
+    return false
+  end
   local inventory = self.inst.components.inventory
   if inventory and inventory.opencontainers then
     for container, _ in pairs(inventory.opencontainers) do
-      if container:HasTag("ling_summon") and container.components.container and container.components.container:IsOpenedBy(self.inst) then
+      if container:HasTag("ling_summon") and container.components.container:IsOpenedBy(self.inst) then
+        container.components.container:Close(self.inst)
+      end
+      if container:HasTag("ling_guard_plant_club") and container.components.container:IsOpenedBy(self.inst) then
+        container.components.container:Close(self.inst)
+      end
+      if container:HasTag("ling_guard_plant_container") and container.components.container:IsOpenedBy(self.inst) then
         container.components.container:Close(self.inst)
       end
     end
@@ -305,6 +314,9 @@ function LingSummonManager:RequestOpenGuardPanel(guard_inst)
     if work_mode == CONSTANTS.GUARD_WORK_MODE.PLANT then
       if guard_inst.plant_container and guard_inst.plant_container.components.container then
         guard_inst.plant_container.components.container:Open(self.inst)
+      end
+      if guard_inst.plant_club and not guard_inst.components.ling_guard_plant:isPlanting() and guard_inst.plant_club.components.container then
+        guard_inst.plant_club.components.container:Open(self.inst)
       end
     end
   end
@@ -326,6 +338,9 @@ function LingSummonManager:RequestCloseGuardPanel()
     if work_mode == CONSTANTS.GUARD_WORK_MODE.PLANT then
       if guard_inst.plant_container and guard_inst.plant_container.components.container then
         guard_inst.plant_container.components.container:Close(self.inst)
+      end
+      if guard_inst.plant_club and guard_inst.plant_club.components.container then
+        guard_inst.plant_club.components.container:Close(self.inst)
       end
     end
   end
@@ -504,6 +519,13 @@ function LingSummonManager:SpawnGuardAtPosition(guard_type, elite_level, spawn_x
       guard.plant_container = container
       container.entity:SetParent(guard.entity)
       container.Transform:SetPosition(0, 0, 0)
+    end
+    -- 生成一个种植容器挂载上去
+    local club = SpawnPrefab("ling_guard_plant_club")
+    if club then
+      guard.plant_club = club
+      club.entity:SetParent(guard.entity)
+      club.Transform:SetPosition(0, 0, 0)
     end
     return true
   end

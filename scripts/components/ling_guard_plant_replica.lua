@@ -1,6 +1,7 @@
 local LingGuardPlantReplica = Class(function(self, inst)
     self.inst = inst
     self._level = net_tinybyte(inst.GUID, "ling_guard_plant_replica._level", "ling_guard_plant_replica.leveldirty")
+    self._planting = net_bool(inst.GUID, "ling_guard_plant_replica._planting", "ling_guard_plant_replica.plantingdirty")
     if not TheWorld.ismastersim then
         self.inst:ListenForEvent("ling_guard_plant_replica.leveldirty", function()
             self._enabledSlots = self:GetEnabledSlotsByLevel(self._level:value())
@@ -10,15 +11,11 @@ local LingGuardPlantReplica = Class(function(self, inst)
 end)
 
 function LingGuardPlantReplica:GetEnabledSlotsByLevel(level)
-    print ("[LingGuardPlantReplica] GetEnabledSlotsByLevel", level)
-    if level == 1 then
-        return { 1, 2 }
-    elseif level == 2 then
-        return { 1, 2, 3 }
-    elseif level == 3 then
-        return { 1, 2, 3, 4 }
+    local res = {}
+    for i = 1, level do
+        table.insert(res, i)
     end
-    return { 1 }
+    return res
 end
 
 function LingGuardPlantReplica:SetLevel(level)
@@ -27,6 +24,14 @@ end
 
 function LingGuardPlantReplica:GetLevel()
     return self._level:value()
+end
+
+function LingGuardPlantReplica:SetPlanting(planting)
+    self._planting:set(planting)
+end
+
+function LingGuardPlantReplica:isPlanting()
+    return self._planting:value()
 end
 
 function LingGuardPlantReplica:GetEnabledSlots()

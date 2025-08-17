@@ -8,7 +8,7 @@ local common = require("ark_common_ling")
 -- 加载语言文件
 common.LoadPOFile("scripts/languages/ling_chinese_s.po", "zh")
 
-PrefabFiles = {'ling', 'ling_lantern', 'ling_lantern_smoke', 'ling_guards', 'ling_summon_fx', 'ling_aoe_attack_fx', 'ling_guard_plant_container'}
+PrefabFiles = {'ling', 'ling_lantern', 'ling_lantern_smoke', 'ling_guards', 'ling_summon_fx', 'ling_aoe_attack_fx', 'ling_guard_plant_container', 'ling_guard_plant_club'}
 
 Assets = {
   Asset('ATLAS', 'images/saveslot_portraits/ling.xml'),
@@ -26,9 +26,11 @@ Assets = {
   Asset('ATLAS', 'images/ui_ling_guard_panel.xml'),
   Asset('ATLAS', 'images/ui_ling_guard_panel_call.xml'),
   Asset('ATLAS', 'images/ling_container_slot.xml'),
+  Asset('ATLAS', 'images/ui_ling_guard_plant_slot.xml'),
   Asset('IMAGE', 'fx/lantern_fx.tex'),
   Asset('ANIM', 'anim/ui_ling_guard_container.zip'),
   Asset('ANIM', 'anim/ui_ling_guard_plant_container.zip'),
+  Asset('ANIM', 'anim/ui_ling_guard_plant_club.zip'),
   Asset('ANIM', 'anim/ling_poetry.zip'),
   Asset('ANIM', 'anim/ling_lantern.zip'),
   Asset('ANIM', 'anim/swap_ling_lantern_stick.zip'),

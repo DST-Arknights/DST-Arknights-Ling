@@ -220,6 +220,8 @@ local function MakeGuard(config)
                 end
             end)
         end
+        inst:AddComponent("timer")
+        inst:AddComponent("ling_guard_plant")
 
         -- 设置光照效果（参考萤火虫的光照范围）
         local light_intensity = 0.5  -- 萤火虫的光照强度
@@ -238,13 +240,25 @@ local function MakeGuard(config)
             if inst.plant_container then
                 data.plant_container = inst.plant_container:GetSaveRecord()
             end
+            if inst.plant_club then
+                data.plant_club = inst.plant_club:GetSaveRecord()
+            end
         end
         inst.OnPreLoad = function(inst, data)
-            if data and data.plant_container then
-                inst.plant_container = SpawnSaveRecord(data.plant_container)
-                if inst.plant_container then
-                    inst.plant_container.entity:SetParent(inst.entity)
-                    inst.plant_container.Transform:SetPosition(0, 0, 0)
+            if data then
+                if data.plant_container then
+                    inst.plant_container = SpawnSaveRecord(data.plant_container)
+                    if inst.plant_container then
+                        inst.plant_container.entity:SetParent(inst.entity)
+                        inst.plant_container.Transform:SetPosition(0, 0, 0)
+                    end
+                end
+                if data.plant_club then
+                    inst.plant_club = SpawnSaveRecord(data.plant_club)
+                    if inst.plant_club then
+                        inst.plant_club.entity:SetParent(inst.entity)
+                        inst.plant_club.Transform:SetPosition(0, 0, 0)
+                    end
                 end
             end
         end
@@ -252,6 +266,10 @@ local function MakeGuard(config)
             if inst.plant_container then
                 inst.plant_container.components.container:DropEverything(inst:GetPosition(), true)
                 inst.plant_container:Remove()
+            end
+            if inst.plant_club then
+                inst.plant_club.components.container:DropEverything(inst:GetPosition(), true)
+                inst.plant_club:Remove()
             end
         end
         return inst

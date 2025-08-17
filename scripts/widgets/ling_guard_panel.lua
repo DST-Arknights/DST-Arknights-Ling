@@ -36,8 +36,11 @@ local LingGuardPanel = Class(Widget, function(self, owner)
 
   self.plant_bg = self:AddChild(Image("images/ui_ling_guard_panel.xml", "plant_bg.tex"))
   local bg_pos = Vector3(unpack(CONSTANTS.LING_GUARD_PANEL_PLANT_CONTAINER_CLOSED_POSITION))
-  local bg_offset = Vector3(0, -39, 0)
-  self.plant_bg:SetPosition(bg_pos + bg_offset)
+  self.plant_bg:SetPosition(bg_pos)
+
+  self.plant_club = self:AddChild(Image("images/ui_ling_guard_panel.xml", "plant_club.tex"))
+  self.plant_club:SetPosition(bg_pos + Vector3(37, -78))
+
   -- 创建模式按钮
   self:CreateModeButtons()
 
@@ -86,7 +89,7 @@ function LingGuardPanel:CreateModeButtons()
     {
       mode = GUARD_BEHAVIOR_MODE.CAUTIOUS,
       texture = "command_cautious.tex",
-      position = {186, -21, 0},
+      position = {186, -30, 0},
       name = "cautious",
       hoverHeight = HEIGHT.HOVER,
       activeHeight = HEIGHT.ACTIVE,
@@ -94,7 +97,7 @@ function LingGuardPanel:CreateModeButtons()
     {
       mode = GUARD_BEHAVIOR_MODE.ATTACK,
       texture = "command_attack.tex",
-      position = {112, -21, 0},
+      position = {112, -30, 0},
       name = "attack",
       hoverHeight = HEIGHT.HOVER,
       activeHeight = HEIGHT.ACTIVE
@@ -102,7 +105,7 @@ function LingGuardPanel:CreateModeButtons()
     {
       mode = GUARD_BEHAVIOR_MODE.GUARD,
       texture = "command_guard.tex",
-      position = {36, -21, 0},
+      position = {36, -30, 0},
       name = "guard",
       hoverHeight = HEIGHT.HOVER_GUARD,
       activeHeight = HEIGHT.ACTIVE_GUARD,
@@ -170,7 +173,10 @@ function LingGuardPanel:CreateModeButtons()
   end)
 
   self.work_button = guard_container:AddChild(ImageButton("images/ui_ling_guard_panel.xml", "work_selector.tex"))
-  self.work_button:SetPosition(0, -105, 0)
+  -- worker按钮初始位置比最终位置高20像素
+  self.work_button_final_y = -105  -- 最终位置
+  self.work_button_initial_y = self.work_button_final_y + 20  -- 初始位置（高20像素）
+  self.work_button:SetPosition(0, self.work_button_initial_y, 0)
   self.work_button.scale_on_focus = false -- 禁用默认的缩放效果
   self.work_button:SetImageFocusColour(1, 1, 1, 0.5) -- 添加白色高亮, rgba
   self.work_button:SetImageNormalColour(1, 1, 1, 1) -- 设置正常状态颜色
@@ -212,6 +218,31 @@ end
 -- 兼容旧的方法名
 function LingGuardPanel:AnimateModeButton(button, target_height, use_animation)
   self:AnimateButtonContainer(button, target_height, use_animation)
+end
+
+-- worker按钮动画
+function LingGuardPanel:AnimateWorkButton(to_final_position, use_animation, callback)
+  if not self.work_button then
+    return
+  end
+
+  -- 取消之前的移动动画
+  self.work_button:CancelMoveTo()
+
+  local target_y = to_final_position and self.work_button_final_y or self.work_button_initial_y
+  local current_pos = self.work_button:GetPosition()
+  local target_pos = Vector3(0, target_y, 0)
+
+  if use_animation == false then
+    -- 直接设置位置，不使用动画
+    self.work_button:SetPosition(target_pos)
+    if callback then
+      callback()
+    end
+  else
+    -- 使用动画
+    self.work_button:MoveTo(Vector3(current_pos.x, current_pos.y, current_pos.z), target_pos, MODE_BUTTON_ANIM_TIME, callback)
+  end
 end
 
 -- 计算按钮的目标高度
@@ -314,6 +345,10 @@ function LingGuardPanel:ActivateModeButton(mode, use_animation)
       -- 工作模式关闭动画完成后，隐藏工作选择器并继续执行模式切换
       self.work_selector:Hide()
       self:DoActivateModeButton(mode, use_animation)
+      -- 延迟执行worker按钮动画，与守按钮动画一起
+      if old_is_guard_mode and mode ~= GUARD_BEHAVIOR_MODE.GUARD then
+        self:AnimateWorkButton(false, use_animation)
+      end
     end)
 
     -- 立即设置工作模式状态
@@ -329,6 +364,8 @@ end
 
 -- 实际执行模式按钮激活的方法
 function LingGuardPanel:DoActivateModeButton(mode, use_animation)
+  local old_mode = self.current_active_mode
+
   -- 取消之前激活的按钮
   if self.current_active_mode and self.mode_buttons[self.current_active_mode] then
     local old_button = self.mode_buttons[self.current_active_mode]
@@ -346,6 +383,15 @@ function LingGuardPanel:DoActivateModeButton(mode, use_animation)
     local target_height = self:GetButtonTargetHeight(button, "active")
     self:AnimateButtonContainer(button, target_height, use_animation)
     self.current_active_mode = mode
+  end
+
+  -- worker按钮动画：守模式激活时下移，取消时上移（但不在工作模式关闭时执行，避免重复）
+  if mode == GUARD_BEHAVIOR_MODE.GUARD then
+    -- 激活守模式，worker按钮下移到最终位置
+    self:AnimateWorkButton(true, use_animation)
+  elseif old_mode == GUARD_BEHAVIOR_MODE.GUARD and not self.work_mode_active then
+    -- 从守模式切换到其他模式，worker按钮上移到初始位置（仅在工作模式未激活时）
+    self:AnimateWorkButton(false, use_animation)
   end
 end
 
@@ -390,6 +436,17 @@ function LingGuardPanel:OnWorkModeChanged(mode)
   self:UpdateWorkButtonHoverText()
 end
 
+function LingGuardPanel:RefreshPlanting()
+  if not self.guard_inst or not self.guard_inst.replica.ling_guard_plant then
+    return
+  end
+  if self.guard_inst.replica.ling_guard_plant:isPlanting() then
+    self.plant_club:Hide()
+  else
+    self.plant_club:Show()
+  end
+end
+
 function LingGuardPanel:Open(guard_inst)
   self.guard_inst = guard_inst
 
@@ -427,6 +484,7 @@ function LingGuardPanel:Open(guard_inst)
   -- 更新工作按钮的 hovertext
   self:UpdateWorkButtonHoverText()
 
+  self:RefreshPlanting()
   self:Show()
 end
 

@@ -107,8 +107,9 @@ end
 -- 状态变换
 
 function ArkSkill:UnLock(idx)
+  local status = self:GetSkillData(idx).status
   -- 如果已经解锁就返回
-  if self:GetSkillData(idx).status ~= CONSTANTS.SKILL_STATUS.LOCKED then
+  if status ~= CONSTANTS.SKILL_STATUS.LOCKED and status ~= CONSTANTS.SKILL_STATUS.ENERGY_RECOVERING  then
     return
   end
   -- 直接去充能状态

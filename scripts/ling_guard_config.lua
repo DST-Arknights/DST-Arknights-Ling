@@ -44,6 +44,10 @@ local LING_GUARD_CONFIG = {
     -- 行为模式特定参数
     BEHAVIOR_MODES = {
         GUARD = {
+            -- 守卫范围
+            GUARD_RANGE = 10,
+            -- 追击范围
+            CHASE_RANGE = 15,
             -- 守模式：静止不动，只攻击进入范围的敌人
             ATTACK_RANGE_MULTIPLIER = 1.0,  -- 攻击范围倍数
         },

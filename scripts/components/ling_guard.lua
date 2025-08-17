@@ -8,23 +8,47 @@ local function UpdateLevelTags(inst, level)
     inst:AddTag("ling_guard_level_level_" .. level)
 end
 
+-- 行为模式变化监听器
+local function onbehaviormode(self, behavior_mode)
+    self.inst.replica.ling_guard:SetBehaviorMode(behavior_mode)
+end
+
+-- 工作模式变化监听器
+local function onworkmode(self, work_mode)
+    self.inst.replica.ling_guard:SetWorkMode(work_mode)
+end
+
+-- 守卫位置变化监听器
+local function onguardpos(self, guard_pos)
+    self.inst.replica.ling_guard:SetGuardPosition(guard_pos)
+end
+
+-- 等级变化监听器
+local function onlevel(self, level)
+    -- 仅同步到 replica，具体逻辑在 SetLevel 方法中处理
+    -- 这里不需要同步到 replica，因为等级不需要网络同步
+end
+
 local LingGuardBehavior = Class(function(self, inst)
     self.inst = inst
 
-    -- 行为模式直接使用 replica 中的数据，不在组件中重复存储
+    -- 组件内部存储的变量，会自动同步到 replica
+    self.behavior_mode = CONSTANTS.GUARD_BEHAVIOR_MODE.CAUTIOUS
+    self.work_mode = CONSTANTS.GUARD_WORK_MODE.NONE
+    self.guard_pos = nil
+    self.level = 1
 
     -- 召唤者和插槽信息（从 prefab 迁移过来）
     self.saved_summoner_userid = nil
     self.saved_slots = nil
+end, nil, {
+    behavior_mode = onbehaviormode,
+    work_mode = onworkmode,
+    guard_pos = onguardpos,
+    level = onlevel,
+})
 
-    -- 等级系统（从 ling_guard_level 组件迁移过来）
-    self.level = 1
-
-    self:SetBehaviorMode(CONSTANTS.GUARD_BEHAVIOR_MODE.CAUTIOUS) -- 默认值
-    self:SetWorkMode(CONSTANTS.GUARD_WORK_MODE.NONE) -- 默认值
-end)
-
--- 工模式
+-- 设置工作模式
 function LingGuardBehavior:SetWorkMode(mode)
     -- 验证模式是否有效
     local valid_mode = false
@@ -36,30 +60,100 @@ function LingGuardBehavior:SetWorkMode(mode)
     end
 
     if not valid_mode then
-        mode = nil -- 默认值
+        mode = CONSTANTS.GUARD_WORK_MODE.NONE -- 默认值
     end
 
-    -- 直接设置到 replica，不在组件中存储
-    if self.inst.replica.ling_guard then
-        self.inst.replica.ling_guard:SetWorkMode(mode)
+    local old_mode = self.work_mode
+    self.work_mode = mode -- 设置到组件内部，监听器会自动同步到 replica
+
+    -- 处理工作模式变化的逻辑
+    self:HandleWorkModeChange(old_mode, mode)
+end
+
+-- 处理工作模式变化的逻辑
+function LingGuardBehavior:HandleWorkModeChange(old_mode, new_mode)
+    if not self.inst.plant_container then
+        return
     end
-    -- 如果是种植模式, 打开它身上的容器
+
+    local leader = self.inst.components.follower.leader
+    local openedGuardPanelInst = leader and leader.components.ling_summon_manager and leader.components.ling_summon_manager.openedGuardPanelInst or nil
+
+    -- 只有当面板打开时才处理容器操作
+    if openedGuardPanelInst ~= self.inst then
+        return
+    end
+
+    -- 从种植模式切换到非种植模式
+    if old_mode == CONSTANTS.GUARD_WORK_MODE.PLANT and new_mode ~= CONSTANTS.GUARD_WORK_MODE.PLANT then
+        self:ExitPlantMode(leader)
+    end
+
+    -- 从非种植模式切换到种植模式
+    if old_mode ~= CONSTANTS.GUARD_WORK_MODE.PLANT and new_mode == CONSTANTS.GUARD_WORK_MODE.PLANT then
+        self:EnterPlantMode(leader)
+    end
+end
+
+-- 进入种植模式
+function LingGuardBehavior:EnterPlantMode(leader)
+    if not leader then
+        return
+    end
+
+    if self.inst.plant_club then
+        if not self.inst.components.ling_guard_plant:isPlanting() then
+            self.inst.plant_club.components.container:Open(leader)
+        end
+    end
     if self.inst.plant_container then
-        if mode == CONSTANTS.GUARD_WORK_MODE.PLANT then
-            -- 检查打开人的面板是否打开
-            local leader = self.inst.components.follower.leader
-            local openedGuardPanelInst = leader and leader.components.ling_summon_manager and leader.components.ling_summon_manager.openedGuardPanelInst or nil
-            print("[LingGuardBehavior] SetWorkMode", openedGuardPanelInst, self.inst)
-            if openedGuardPanelInst == self.inst then
-                self.inst.plant_container.components.container:Open(self.inst.components.follower.leader)
+        self.inst.plant_container.components.container:Open(leader)
+    end
+end
+
+-- 退出种植模式
+function LingGuardBehavior:ExitPlantMode(leader)
+    if not leader then
+        return
+    end
+
+    -- 停止种植
+    if self.inst.components.ling_guard_plant then
+        self.inst.components.ling_guard_plant:StopPlanting()
+    end
+
+    -- 关闭容器并转移物品
+    if self.inst.plant_container then
+        self.inst.plant_container.components.container:Close(leader)
+        -- 将容器中的物品转移给守卫的主人
+        if leader.components.inventory then
+            local container = self.inst.plant_container.components.container
+            -- 使用源码中的 MoveItemFromAllOfSlot 方法转移所有物品
+            for i = 1, container.numslots do
+                if container:GetItemInSlot(i) then
+                    container:MoveItemFromAllOfSlot(i, leader, leader)
+                end
             end
         else
-            local leader = self.inst.components.follower.leader
-            local openedGuardPanelInst = leader and leader.components.ling_summon_manager and leader.components.ling_summon_manager.openedGuardPanelInst or nil
-            if openedGuardPanelInst == self.inst then
-                self.inst.plant_container.components.container:Close(self.inst.components.follower.leader)
-                self.inst.plant_container.components.container:DropEverything()
-            end
+            -- 如果没有主人或主人没有背包，就丢弃物品
+            self.inst.plant_container.components.container:DropEverything()
+        end
+    end
+
+    if self.inst.plant_club then
+        self.inst.plant_club.components.container:Close(leader)
+    end
+end
+
+
+
+function LingGuardBehavior:RefreshGuardModeRangeMark()
+    if self.behavior_mode ~= CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD then
+        self.guard_pos = nil
+    else
+        local leader = self.inst.components.follower.leader
+        if leader then
+            self.guard_pos = leader:GetPosition()
         end
     end
 end
@@ -79,32 +173,22 @@ function LingGuardBehavior:SetBehaviorMode(mode)
         mode = CONSTANTS.GUARD_BEHAVIOR_MODE.CAUTIOUS -- 默认为慎模式
     end
 
-    -- 直接设置到 replica，不在组件中存储
-    if self.inst.replica.ling_guard then
-        self.inst.replica.ling_guard:SetBehaviorMode(mode)
-    end
-
+    self.behavior_mode = mode
+    self:RefreshGuardModeRangeMark()
     -- 更新标签
     self:UpdateBehaviorTags()
-
     -- 更新战斗目标函数
     self:UpdateCombatRetargetFunction()
 end
 
--- 获取行为模式（从 replica 中获取）
+-- 获取行为模式
 function LingGuardBehavior:GetBehaviorMode()
-    if self.inst.replica.ling_guard then
-        return self.inst.replica.ling_guard:GetBehaviorMode()
-    end
-    return CONSTANTS.GUARD_BEHAVIOR_MODE.CAUTIOUS -- 默认值
+    return self.behavior_mode
 end
 
--- 获取工模式
-function  LingGuardBehavior:GetWorkMode()
-    if self.inst.replica.ling_guard then
-        return self.inst.replica.ling_guard:GetWorkMode()
-    end
-    return CONSTANTS.GUARD_WORK_MODE.NONE -- 默认值    
+-- 获取工作模式
+function LingGuardBehavior:GetWorkMode()
+    return self.work_mode
 end
 
 -- 设置召唤者用户ID
@@ -127,13 +211,16 @@ function LingGuardBehavior:GetSlots()
     return self.saved_slots
 end
 
--- 设置等级（从 ling_guard_level 组件迁移过来）
+-- 设置等级
 function LingGuardBehavior:SetLevel(level)
     local config = TUNING.LING_GUARDS[self.inst.guard_type].LEVELS[level]
     if not config then
         return
     end
-    self.level = level
+
+    self.level = level -- 设置到组件内部
+
+    -- 更新属性
     if self.inst.components.health then
         self.inst.components.health:SetMaxHealth(config.HEALTH)
     end
@@ -147,6 +234,13 @@ function LingGuardBehavior:SetLevel(level)
         self.inst.components.locomotor.walkspeed = config.WALK_SPEED
         self.inst.components.locomotor.runspeed = config.RUN_SPEED
     end
+
+    -- 更新种植组件的等级
+    if self.inst.components.ling_guard_plant then
+        self.inst.components.ling_guard_plant:SetLevel(level)
+    end
+
+    -- 更新容器等级
     if self.inst.plant_container and self.inst.plant_container.replica.container then
         self.inst:DoTaskInTime(0, function()
             self.inst:DoTaskInTime(0, function()
@@ -157,6 +251,8 @@ function LingGuardBehavior:SetLevel(level)
             end)
         end)
     end
+
+    -- 更新等级标签
     UpdateLevelTags(self.inst, level)
     print("[LingGuardBehavior] SetLevel", level)
 end
@@ -249,11 +345,12 @@ end
 -- 保存数据
 function LingGuardBehavior:OnSave()
     return {
-        behavior_mode = self:GetBehaviorMode(),
-        work_mode = self:GetWorkMode(),
+        behavior_mode = self.behavior_mode,
+        work_mode = self.work_mode,
         saved_summoner_userid = self.saved_summoner_userid,
         saved_slots = self.saved_slots,
-        level = self.level
+        level = self.level,
+        guard_pos = self.guard_pos and {self.guard_pos:Get()} or nil,
     }
 end
 
@@ -269,19 +366,24 @@ function LingGuardBehavior:OnLoad(data)
             self.saved_level = data.level
         end
 
-        -- 加载行为模式
+        -- 加载行为模式和工作模式
         if data.behavior_mode then
-            self:SetBehaviorMode(data.behavior_mode)
+            self.behavior_mode = data.behavior_mode
         end
         if data.work_mode then
-            self:SetWorkMode(data.work_mode)
+            self.work_mode = data.work_mode
+        end
+        if data.guard_pos then
+           self.guard_pos = Vector3(data.guard_pos[1], data.guard_pos[2], data.guard_pos[3])
         end
     end
 end
 
 function LingGuardBehavior:LoadPostPass()
-    self:SetLevel(self.saved_level)
-    self.saved_level = nil
+    if self.saved_level then
+        self.level = self.saved_level
+        self.saved_level = nil
+    end
 end
 
 return LingGuardBehavior

@@ -230,7 +230,7 @@ function ArkSkill:UpdateBlink(dt)
 end
 
 function ArkSkill:SyncSkillStatus(status, level, energyProgress, buffProgress, bullet, activationStacks)
-  print('SyncSkillStatus', status, level, energyProgress, buffProgress, bullet, activationStacks)
+  print('SyncSkillStatus', self.idx, status, level, energyProgress, buffProgress, bullet, activationStacks)
   self.status = status
   local wasInitComplete = self.initComplete
   self.initComplete = true

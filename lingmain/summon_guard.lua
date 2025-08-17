@@ -90,6 +90,21 @@ TUNING.LING_GUARDS = {
   }
 }
 
+TUNING.LING_GUARD_PLANT = {
+  {
+    MAX_CROP = 40,
+    TIME_PER_CROP = 8, -- * 60,
+  },
+  {
+    MAX_CROP = 60,
+    TIME_PER_CROP = 6 * 60,
+  },
+  {
+    MAX_CROP = 80,
+    TIME_PER_CROP = 4 * 60,
+  },
+}
+
 -- 诗意值ui
 AddClassPostConstruct("widgets/controls", function(self)
   if not self.owner or self.owner.prefab ~= "ling" then
@@ -156,7 +171,7 @@ AddClassPostConstruct("screens/playerhud", function(self)
   function self:OpenContainer(container, side)
     _OpenContainer(self, container, side)
     local containerReplica = container.replica.container
-    print("OpenContainer type", containerReplica.type)
+    print("OpenContainer", containerReplica.type)
     if containerReplica.type == "ling_guard_container" then
       local owned = ThePlayer.replica.ling_summon_manager and ThePlayer.replica.ling_summon_manager:GetGuardSlotIndex(container)
       if owned and self.controls.ling_guard_panel then
@@ -164,20 +179,30 @@ AddClassPostConstruct("screens/playerhud", function(self)
         self.controls.ling_guard_panel.container_open:Hide()
         self.controls.ling_close_container:Open()
         self.controls.ling_close_container:MoveToFront()
+        for con, _ in pairs(self.controls.containers) do
+          if con.replica and con.replica.container.type == "ling_guard_plant_club" then
+            self.controls.containers[con]:MoveToBack()
+          end
+        end
+        for con, _ in pairs(self.controls.containers) do
+          if con.replica and con.replica.container.type == "ling_guard_plant_container" then
+            self.controls.containers[con]:MoveToBack()
+          end
+        end
       end
     elseif containerReplica.type == "ling_guard_plant_container" then
-      print("OpenContainer", containerReplica.widget.pos, containerReplica.widget.animPos)
       -- 关闭plant_bg
       self.controls.ling_guard_panel.plant_bg:Hide()
       local pos = containerReplica.widget.pos
-      local animPos = containerReplica.widget.animPos
-      self.controls.containers[container]:MoveTo(pos, animPos, 0.5)
+      local openPos = containerReplica.widget.openPos
+      self.controls.containers[container]:MoveTo(pos, openPos, 0.5)
       -- 根据等级关闭多余的插槽
-      local enalbedSlots = container.replica.ling_guard_plant and container.replica.ling_guard_plant:GetEnabledSlots()
-      if enalbedSlots then
+      local parent = container.entity:GetParent()
+      local enabledSlots = parent and parent.replica.ling_guard_plant and parent.replica.ling_guard_plant:GetEnabledSlots() or nil
+      if enabledSlots then
         for idx, inv in pairs(self.controls.containers[container].inv) do
           local show = false
-          for _, enabledIdx in ipairs(enalbedSlots) do
+          for _, enabledIdx in ipairs(enabledSlots) do
             if idx == enabledIdx then
               show = true
               break
@@ -187,6 +212,18 @@ AddClassPostConstruct("screens/playerhud", function(self)
             inv:Hide()
             inv:Disable()
           end
+        end
+      end
+      local level = parent and parent.replica.ling_guard_plant and parent.replica.ling_guard_plant:GetLevel() or 1
+      if level == 2 then
+        self.controls.containers[container].bganim:GetAnimState():PlayAnimation("open_1")
+      elseif level == 3 then
+        self.controls.containers[container].bganim:GetAnimState():PlayAnimation("open_2")
+      end
+    elseif containerReplica.type == "ling_guard_plant_club" then
+      for con, _ in pairs(self.controls.containers) do
+        if con.replica and con.replica.container.type == "ling_guard_plant_container" then
+          self.controls.containers[con]:MoveToBack()
         end
       end
     end
@@ -201,17 +238,17 @@ AddClassPostConstruct("screens/playerhud", function(self)
         self.controls.ling_close_container:Hide()
       end
     elseif containerReplica.type == "ling_guard_plant_container" then
-      print("CloseContainer", containerReplica.widget.pos, containerReplica.widget.animPos)
       local pos = containerReplica.widget.pos
-      local animPos = containerReplica.widget.animPos
+      local openPos = containerReplica.widget.openPos
       local containerWidget = self.controls.containers[container]
       self.controls.containers[container] = nil
       -- 期间禁用所有的插槽交互
       for idx, inv in pairs(containerWidget.inv) do
         inv:Disable()
       end
-      containerWidget:MoveTo(animPos, pos, 0.1, function()
+      containerWidget:MoveTo(openPos, pos, 0.1, function()
         self.controls.ling_guard_panel.plant_bg:Show()
+        self.controls.ling_guard_panel:RefreshPlanting()
         containerWidget:Close()
       end)
       return

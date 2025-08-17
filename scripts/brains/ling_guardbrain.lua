@@ -167,7 +167,11 @@ end
 -- 检查是否应该优先处理战斗
 local function ShouldPrioritizeCombat(inst)
     -- 如果行为模式不是guard，且处于战斗模式，则优先处理战斗
-    local behavior_mode = inst.behavior_mode or "cautious"
+    local behavior_mode = "cautious" -- 默认值
+    if inst.components.ling_guard then
+        behavior_mode = inst.components.ling_guard:GetBehaviorMode()
+    end
+
     if behavior_mode ~= "guard" and IsInCombatMode(inst) then
         return true
     end

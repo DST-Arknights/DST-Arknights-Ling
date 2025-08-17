@@ -12,6 +12,13 @@ end)
 function LingElite:SetElite(level)
     self.elite_level = level
     self:ApplyEliteEffects(level)
+    if self.inst.components.ling_summon_manager then
+        self.inst.components.ling_summon_manager:OptionalAllGuard(function(guard)
+            if guard.components.ling_guard then
+                guard.components.ling_guard:SetLevel(level)
+            end
+        end)
+    end
 end
 
 -- 应用精英等级效果（统一的效果应用逻辑）
@@ -77,23 +84,23 @@ function LingElite:UpdateSkillUnlocks(level)
 
     -- ark_skill_ling 组件有自己的保存机制，这里只需要设置状态
     if level == 1 then
-        skill_component:UnLock(1)
         skill_component:SetSkillLevel(1, 1)
+        skill_component:UnLock(1)
         skill_component:Lock(2)
         skill_component:Lock(3)
     elseif level == 2 then
-        skill_component:UnLock(1)
         skill_component:SetSkillLevel(1, 2)
-        skill_component:UnLock(2)
+        skill_component:UnLock(1)
         skill_component:SetSkillLevel(2, 1)
+        skill_component:UnLock(2)
         skill_component:Lock(3)
     elseif level == 3 then
-        skill_component:UnLock(1)
         skill_component:SetSkillLevel(1, 3)
-        skill_component:UnLock(2)
+        skill_component:UnLock(1)
         skill_component:SetSkillLevel(2, 2)
-        skill_component:UnLock(3)
+        skill_component:UnLock(2)
         skill_component:SetSkillLevel(3, 1)
+        skill_component:UnLock(3)
     end
 end
 
