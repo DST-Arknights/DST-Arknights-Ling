@@ -20,15 +20,6 @@ local function isSkillActiveEnd(before, now)
   return before.status == CONSTANTS.SKILL_STATUS.BUFFING and now.status ~= CONSTANTS.SKILL_STATUS.BUFFING
 end
 
-local function common_post_init(inst)
-  inst:AddTag("ling")
-  inst:AddTag("reader")
-end
-
-local SKILL1_DAMAGE_SOURCE = "ling_skill_1"
-local SKILL2_DAMAGE_SOURCE = "ling_skill_2"
-local SKILL3_DAMAGE_SOURCE = "ling_skill_3"
-
 local function DeclareFunction(inst)
   -- 真伤状态管理
   function inst:UpdateTrueDamageState()
@@ -149,6 +140,36 @@ local function DeclareFunction(inst)
   end
 end
 
+local function OnAttacked(inst, data)
+  local attacker = data.attacker
+  if attacker == nil then
+    return
+  end
+  inst.combat:ShareTarget(attacker, 30, function(dude)
+    return dude:HasTag("ling_summon") and dude.components.follower and dude.components.follower.leader == inst
+  end, 10)
+end
+
+local function OnNewTarget(inst, data)
+  local target = data.target
+  if target == nil then
+    return
+  end
+  inst.combat:ShareTarget(target, 30, function(dude)
+    return dude:HasTag("ling_summon") and dude.components.follower and dude.components.follower.leader == inst
+  end, 10)
+end
+
+local function common_post_init(inst)
+  inst:AddTag("ling")
+  inst:AddTag("reader")
+end
+
+local SKILL1_DAMAGE_SOURCE = "ling_skill_1"
+local SKILL2_DAMAGE_SOURCE = "ling_skill_2"
+local SKILL3_DAMAGE_SOURCE = "ling_skill_3"
+
+
 local function master_post_init(inst)
   inst.MiniMapEntity:SetIcon("ling.tex")
 
@@ -223,6 +244,8 @@ local function master_post_init(inst)
 
   -- 添加催眠抗性
   inst.components.grogginess:SetResistance(10) -- 设置催眠抗性为10
+  inst:ListenForEvent("attacked", OnAttacked)
+  inst:ListenForEvent("newcombattarget", OnNewTarget)
 end
 
 return MakePlayerCharacter("ling", prefabs, assets, common_post_init, master_post_init, start_inv)

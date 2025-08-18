@@ -58,6 +58,32 @@ local GUARD_CONFIGS = {
     },
 }
 
+local function OnAttacked(inst, data)
+    if data.attacker == nil then
+        return
+    end
+    local leader = inst.components.follower.leader
+    if leader == nil then
+        return
+    end
+    inst.combat:ShareTarget(data.attacker, 30, function(dude)
+        return dude:HasTag("ling_summon") and dude.components.follower and dude.components.follower.leader == leader
+    end, 10)
+end
+
+local function OnNewTarget(inst, data)
+    if data.target == nil then
+        return
+    end
+    local leader = inst.components.follower.leader
+    if leader == nil then
+        return
+    end
+    inst.combat:ShareTarget(data.target, 30, function(dude)
+        return dude:HasTag("ling_summon") and dude.components.follower and dude.components.follower.leader == leader
+    end, 10)
+end
+
 -- 通用守卫构造函数
 local function MakeGuard(config)
     local function fn()
