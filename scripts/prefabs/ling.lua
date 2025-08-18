@@ -1,5 +1,10 @@
 local MakePlayerCharacter = require "prefabs/player_common"
 local CONSTANTS = require "ark_constants_ling"
+
+local SKILL1_DAMAGE_SOURCE = "ling_skill_1"
+local SKILL2_DAMAGE_SOURCE = "ling_skill_2"
+local SKILL3_DAMAGE_SOURCE = "ling_skill_3"
+
 local assets = {
     Asset( "ANIM", "anim/ling.zip" ),
 }
@@ -164,11 +169,6 @@ local function common_post_init(inst)
   inst:AddTag("ling")
   inst:AddTag("reader")
 end
-
-local SKILL1_DAMAGE_SOURCE = "ling_skill_1"
-local SKILL2_DAMAGE_SOURCE = "ling_skill_2"
-local SKILL3_DAMAGE_SOURCE = "ling_skill_3"
-
 
 local function master_post_init(inst)
   inst.MiniMapEntity:SetIcon("ling.tex")
