@@ -1,6 +1,7 @@
 local brain = require("brains/ling_guardbrain")
 local guard_config = require("ling_guard_config")
 local CONSTANTS = require("ark_constants_ling")
+local GetModeConfig = require("ark_common_ling").GetModeConfig
 
 local assets = {
     Asset("ANIM", "anim/loong_0.zip"),
@@ -84,6 +85,51 @@ local function OnNewTarget(inst, data)
     end, 10)
 end
 
+local function IsFriendlyToGuard(inst, guy)
+    if guy == nil or not guy:IsValid() then return true end
+    if guy == inst then return true end
+    if guy:HasTag("ling_summon") then return true end
+    local leader = inst.components.follower and inst.components.follower.leader or nil
+    if leader ~= nil then
+        if guy == leader then return true end
+        if guy.components and guy.components.follower and guy.components.follower.leader == leader then
+            return true
+        end
+    end
+    if guy.components and guy.components.follower and guy.components.follower.leader == inst then
+        return true
+    end
+    return false
+end
+
+
+local function NormalRetargetFn(inst)
+    local must_tags = { "_combat" }
+    local exclude_tags = { "playerghost", "INLIMBO", "player", "companion", "wall", "ling_summon" }
+    local cur, common, mode = GetModeConfig(inst)
+    local leader = inst.components.follower and inst.components.follower.leader or nil
+    local dist = (cur and cur.ATTACK and cur.ATTACK.CHASE_DIST) or 15
+    if inst:IsInLimbo() then return nil end
+    return FindEntity(inst, dist, function(guy)
+        if not (guy and guy:IsValid()) then return false end
+        if guy.entity and not guy.entity:IsVisible() then return false end
+        if guy.components.health and guy.components.health:IsDead() then return false end
+        if not (inst.components.combat and inst.components.combat:CanTarget(guy)) then return false end
+        if IsFriendlyToGuard(inst, guy) then return false end
+        if guy:HasTag("player") then return false end
+        -- 直接敌对：正在攻击我们或主人
+        if guy.components.combat then
+            if guy.components.combat:TargetIs(inst) then return true end
+            if leader and guy.components.combat:TargetIs(leader) then return true end
+        end
+        -- 主动清理的敌对类型
+        if guy:HasTag("monster") or guy:HasTag("pirate") or guy:HasTag("merm") or guy:HasTag("wonkey") then
+            return true
+        end
+        return false
+    end, must_tags, exclude_tags)
+end
+
 -- 通用守卫构造函数
 local function MakeGuard(config)
     local function fn()
@@ -149,6 +195,8 @@ local function MakeGuard(config)
         inst.components.health.save_maxhealth = true
 
         inst:AddComponent("combat")
+        inst.components.combat:SetRange(2)
+        inst.components.combat:SetRetargetFunction(2, NormalRetargetFn)
 
         inst:AddComponent("locomotor")
 
@@ -167,8 +215,19 @@ local function MakeGuard(config)
         inst:AddComponent("talker")
 
         if config.has_container then
+            -- 行李容器（用于自动工作产物存放）
             inst:AddComponent("container")
             inst.components.container:WidgetSetup(config.prefab_name)
+
+            inst:AddComponent("inventory")
+            -- 让拾取直接进入容器：禁用自身物品栏，并把容器当作溢出容器
+            inst.components.inventory.maxslots = 0
+            inst.components.inventory.GetOverflowContainer = function(inv)
+                if inv.ignoreoverflow then
+                    return nil
+                end
+                return inv.inst.components.container
+            end
         end
 
         -- 睡眠组件（根据配置决定是否添加）

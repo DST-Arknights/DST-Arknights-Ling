@@ -1,73 +1,98 @@
--- 令的守卫战斗配置
--- 这个文件包含所有守卫的战斗参数，可以通过修改这些值来调整守卫的行为
+-- 令的守卫配置（重构版）
+-- 结构：COMMON 通用参数 + MODE.{GUARD,CAUTIOUS,ATTACK} 按形态覆盖的参数
+-- 说明：
+--  1) 若 MODE 内未覆盖字段，则回落到 COMMON
+--  2) GUARD_RANGE 同时用作“守形态的工作半径”
 
-local LING_GUARD_CONFIG = {
-    -- 跟随参数
-    FOLLOW = {
-        MIN_FOLLOW_DIST = 0,        -- 最小跟随距离
-        TARGET_FOLLOW_DIST = 5,     -- 理想跟随距离
-        MAX_FOLLOW_DIST = 10,       -- 最大跟随距离
-        MAX_WANDER_DIST = 8,        -- 最大游荡距离
+local CONFIG = {
+    COMMON = {
+        FOLLOW = {
+            MIN = 0,          -- 最小跟随距离
+            TARGET = 5,       -- 理想跟随距离
+            MAX = 10,         -- 最大跟随距离
+            WANDER_DIST = 8,  -- 跟随点附近游荡距离
+        },
+        KITE = {              -- 风筝/规避
+            DETECTION_RANGE = 12,
+            SAFE_DISTANCE   = 10,
+            RUN_DISTANCE    = 8,
+            STOP_DISTANCE   = 12,
+        },
     },
 
-    GUARD = {
-        -- 守卫范围
-        GUARD_RANGE = 16,
-        -- 追击范围
-        CHASE_RANGE = 24,
-    },
-    
-    -- 战斗参数
-    COMBAT = {
-        ATTACK_CHASE_TIME = 25,     -- 攻击追击时间（秒）
-        ATTACK_CHASE_DIST = 20,     -- 攻击追击距离
-        
-        -- 重新定位函数调用间隔
-        RETARGET_PERIOD = 3,        -- 重新寻找目标的间隔（秒）
-    },
-    
-    -- 风筝参数
-    KITE = {
-        DETECTION_RANGE = 12,       -- 风筝检测范围（检测敌对敌人的范围）
-        SAFE_DISTANCE = 10,         -- 风筝安全距离（小于此距离开始风筝）
-        RUN_DISTANCE = 6,           -- 开始逃跑的距离
-        STOP_DISTANCE = 12,         -- 停止逃跑的距离
+    MODE = {
+        GUARD = {
+            GUARD_RANGE = 16, -- 守点/工作半径
+            CHASE_RANGE = 24, -- 守形态最大追击半径（> GUARD_RANGE）
+            ATTACK = {
+                CHASE_TIME = 25,
+                CHASE_DIST = 20,
+            },
+            WORK = {
+                SAFE_RADIUS = 10, -- 安全范围（你要求：用配置）
+                ACTIONS = { CHOP=true, MINE=true, DIG=true, HAMMER=true },
+                PICKUP = {
+                    GROUP_MODE = "around_last_work", -- 先拾最近工作点一组，再空闲清理
+                    SEARCH_ALL_IN_GUARD_RANGE = true, -- 空闲时清理守卫范围内其他掉落组
+                },
+            },
+        },
+
+        CAUTIOUS = {
+            ATTACK = {
+                CHASE_TIME = 20,
+                CHASE_DIST = 15,
+            },
+            FOLLOW = { MIN = 0, TARGET = 5, MAX = 10, WANDER_DIST = 8 },
+        },
+
+        ATTACK = {
+            -- 仅行为更激进，不改属性
+            ATTACK = {
+                CHASE_TIME = 30,
+                CHASE_DIST = 25,
+            },
+            FOLLOW = { MIN = 0, TARGET = 6, MAX = 12, WANDER_DIST = 10 },
+        },
     },
 }
 
--- 获取配置的函数
+-- 简单的获取函数，保留旧名兼容
 function GetLingGuardConfig()
-    return LING_GUARD_CONFIG
+    return CONFIG
 end
 
--- 更新配置的函数（用于运行时调整）
+-- 兼容旧的 Update 接口（仅支持一级键或两级键）
 function UpdateLingGuardConfig(category, key, value)
-    if LING_GUARD_CONFIG[category] and LING_GUARD_CONFIG[category][key] ~= nil then
-        LING_GUARD_CONFIG[category][key] = value
+    local t = CONFIG[category]
+    if t ~= nil and t[key] ~= nil then
+        t[key] = value
         print(string.format("Updated Ling Guard Config: %s.%s = %s", category, key, tostring(value)))
         return true
-    else
-        print(string.format("Invalid config path: %s.%s", category, key))
-        return false
     end
+    print(string.format("Invalid config path: %s.%s", tostring(category), tostring(key)))
+    return false
 end
 
--- 重置配置到默认值的函数
 function ResetLingGuardConfig()
-    -- 这里可以重新加载默认配置
-    print("Ling Guard Config reset to defaults")
+    print("Ling Guard Config reset to defaults (restart mod to fully reload)")
 end
 
--- 打印当前配置的函数（用于调试）
 function PrintLingGuardConfig()
-    print("=== Ling Guard Configuration ===")
-    for category, settings in pairs(LING_GUARD_CONFIG) do
-        print(string.format("[%s]", category))
-        for key, value in pairs(settings) do
-            print(string.format("  %s = %s", key, tostring(value)))
+    local function print_table(prefix, tbl)
+        for k, v in pairs(tbl) do
+            if type(v) == "table" then
+                print(prefix .. tostring(k) .. ": {")
+                print_table(prefix .. "  ", v)
+                print(prefix .. "}")
+            else
+                print(prefix .. tostring(k) .. " = " .. tostring(v))
+            end
         end
     end
-    print("================================")
+    print("=== Ling Guard Configuration (reworked) ===")
+    print_table("", CONFIG)
+    print("===========================================")
 end
 
-return LING_GUARD_CONFIG
+return CONFIG

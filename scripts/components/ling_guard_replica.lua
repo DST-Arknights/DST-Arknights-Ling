@@ -162,7 +162,10 @@ function LingGuardReplica:UpdateGuardPositionVisual()
     if self._guard_pos then
         if not self._guard_pos_inst then
             self._guard_pos_inst = SpawnPrefab("reticuleaoecatapultwakeup")
-            local scale = LING_GUARD_CONFIG.GUARD.GUARD_RANGE / 16  -- 缩放比例，使范围大小与守卫范围一致（16为动画对应范围）
+            local cfg = LING_GUARD_CONFIG
+            local guardcfg = (cfg.MODE and cfg.MODE.GUARD) or (cfg.GUARD) or {}
+            local range = guardcfg.GUARD_RANGE or 16
+            local scale = range / 16  -- 缩放比例，使范围大小与守卫范围一致（16为动画对应范围）
             self._guard_pos_inst.Transform:SetScale(scale, scale, scale)  -- 设置缩放比例
 
             -- 检查面板是否正在显示这个守卫，如果是则设置为红色
