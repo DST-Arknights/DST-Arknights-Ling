@@ -191,6 +191,19 @@ function LingSummonManager:SetGuardToSlot(guard_inst, slots)
   return true
 end
 
+-- 取消正在进行的召唤：将相关插槽重置为空
+function LingSummonManager:CancelSummon(slots)
+  if not slots then
+    return
+  end
+  for i = 1, #slots do
+    local slot_index = slots[i]
+    if slot_index >= 1 and slot_index <= self.max_slots then
+      self:SetSlotData(slot_index, nil, 0, 0, GUARD_SLOT_STATUS.EMPTY)
+    end
+  end
+end
+
 function LingSummonManager:FindGuardIndex(inst)
   for i = 1, self.max_slots do
     local slot_data = self:GetSlotData(i)
@@ -378,18 +391,21 @@ end
 function LingSummonManager:SummonXiaoyao(slot_index)
   local slots = self:CanAssignToSlot(slot_index, getSlotCount(GUARD_TYPE.XIAOYAO))
   if not slots then
+    print("[LingSummonManager] SummonXiaoyao: 无法分配插槽")
     return false
   end
 
   -- 自动获取当前精英等级，检查等级要求（需要精一，即elite_level >= 1）
   local elite_level = (self.inst.components.ling_elite and self.inst.components.ling_elite:GetEliteLevel()) or 0
   if elite_level < 1 then
+    print("[LingSummonManager] SummonXiaoyao: 精英等级不足")
     return false
   end
 
   -- 检查诗意消耗
   local poetry_component = self.inst.components.ling_poetry
   if not poetry_component then
+    print("[LingSummonManager] SummonXiaoyao: 诗意组件不存在")
     return false
   end
 
@@ -398,6 +414,7 @@ function LingSummonManager:SummonXiaoyao(slot_index)
 
   -- 检查诗意是否足够
   if not poetry_component:HasEnough(cost) then
+    print("[LingSummonManager] SummonXiaoyao: 诗意不足")
     return false
   end
 
@@ -477,6 +494,7 @@ end
 function LingSummonManager:StartSummonCasting(type, level, cost, slots)
   -- 检查是否在忙碌状态
   if self.inst.sg and self.inst.sg:HasStateTag("busy") then
+    print("[LingSummonManager] StartSummonCasting: 忙碌状态，无法施法")
     return false
   end
   self:SetSlotSummoning(slots, type, level)
@@ -663,8 +681,7 @@ end
 
 function LingSummonManager:OnLoad(data)
     if data and data.max_slots then
-        self.max_slots = data.max_slots
-        self.inst.replica.ling_summon_manager:SetMaxSlots(self.max_slots)
+        self:SetMaxSlots(data.max_slots)
     end
 end
 

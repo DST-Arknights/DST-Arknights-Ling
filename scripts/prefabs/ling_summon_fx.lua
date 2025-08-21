@@ -1,52 +1,57 @@
--- 令召唤特效预制体
-local assets =
-{
-    Asset("ANIM", "anim/cave_exit_lightsource.zip"),
-}
-
-local function OnEffectTimer(inst)
-    -- 特效结束后生成召唤物
-    if inst._spawn_callback then
-        inst._spawn_callback()
-    end
-    -- 延迟移除特效
-    inst:DoTaskInTime(0.5, inst.Remove)
+local function PlaySound(inst, sound)
+    inst.SoundEmitter:PlaySound(sound)
 end
 
-local function SetSpawnCallback(inst, callback)
-    inst._spawn_callback = callback
-end
+-- 硬编码的单一特效：ling_summon_fx
+local LING_BANK  = "fx_book_light_upgraded"
+local LING_BUILD = "fx_book_light_upgraded"
+local LING_ANIM  = "play_fx"
+local LING_SOUND = "wickerbottom_rework/book_spells/light_upgrade"
 
-local function fn()
-    local inst = CreateEntity()
+local function startfx(proxy)
+    local inst = CreateEntity("ling_summon_fx")
 
     inst.entity:AddTransform()
     inst.entity:AddAnimState()
+
+    local parent = proxy.entity:GetParent()
+    if parent ~= nil then
+        inst.entity:SetParent(parent.entity)
+    end
+
+    inst:AddTag("FX")
+    inst.entity:SetCanSleep(false)
+    inst.persists = false
+
+    inst.Transform:SetFromProxy(proxy.GUID)
+
     inst.entity:AddSoundEmitter()
-    inst.entity:AddLight()
+    inst:DoTaskInTime(0, PlaySound, LING_SOUND)
+
+    inst.AnimState:SetBank(LING_BANK)
+    inst.AnimState:SetBuild(LING_BUILD)
+    inst.AnimState:PlayAnimation(LING_ANIM)
+    inst.AnimState:SetFinalOffset(3)
+
+    inst:ListenForEvent("animover", inst.Remove)
+    if TheWorld then
+        TheWorld:PushEvent("fx_spawned", inst)
+    end
+end
+
+local function ling_fx_fn()
+    local inst = CreateEntity()
+
+    inst.entity:AddTransform()
     inst.entity:AddNetwork()
 
-    inst.AnimState:SetBank("cavelight")
-    inst.AnimState:SetBuild("cave_exit_lightsource")
-    inst.AnimState:PlayAnimation("idle_loop", true)
-    inst.AnimState:SetLightOverride(1)
+    if not TheNet:IsDedicated() then
+        inst:DoTaskInTime(0, startfx, inst)
+    end
 
-    -- 缩小版地穴光照，0.6倍大小
-    inst.Transform:SetScale(0.6, 0.6, 0.6)
+    inst.Transform:SetFourFaced()
 
-    -- 淡蓝色光效，与召唤物光照颜色一致
-    inst.AnimState:SetMultColour(0.8, 0.8, 1.0, 1.0)
-
-    inst:AddTag("NOCLICK")
     inst:AddTag("FX")
-
-    -- 光照设置 - 简单常驻光源
-    inst.Light:SetRadius(1.5)
-    inst.Light:SetIntensity(0.95)
-    inst.Light:SetFalloff(1)
-    inst.Light:SetColour(0.8, 0.8, 1.0) -- 淡蓝色光
-    inst.Light:Enable(true)
-    inst.Light:EnableClientModulation(true)
 
     inst.entity:SetPristine()
 
@@ -54,16 +59,17 @@ local function fn()
         return inst
     end
 
-    -- 播放召唤音效
-    inst.SoundEmitter:PlaySound("dontstarve/common/staff_star_create")
-
-    -- 设置回调函数
-    inst.SetSpawnCallback = SetSpawnCallback
-
-    -- 2秒后触发召唤回调并移除特效
-    inst:DoTaskInTime(2, OnEffectTimer)
+    inst.persists = false
+    inst:DoTaskInTime(1, inst.Remove)
 
     return inst
 end
 
-return Prefab("ling_summon_fx", fn, assets)
+local ling_assets = {
+    Asset("ANIM", "anim/"..LING_BUILD..".zip"),
+}
+
+
+
+
+return Prefab("ling_summon_fx", ling_fx_fn, ling_assets)

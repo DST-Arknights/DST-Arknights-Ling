@@ -150,7 +150,7 @@ local function OnAttacked(inst, data)
   if attacker == nil then
     return
   end
-  inst.combat:ShareTarget(attacker, 30, function(dude)
+  inst.components.combat:ShareTarget(attacker, 30, function(dude)
     return dude:HasTag("ling_summon") and dude.components.follower and dude.components.follower.leader == inst
   end, 10)
 end
@@ -160,7 +160,7 @@ local function OnNewTarget(inst, data)
   if target == nil then
     return
   end
-  inst.combat:ShareTarget(target, 30, function(dude)
+  inst.components.combat:ShareTarget(target, 30, function(dude)
     return dude:HasTag("ling_summon") and dude.components.follower and dude.components.follower.leader == inst
   end, 10)
 end

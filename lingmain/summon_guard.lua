@@ -1,6 +1,5 @@
 local ImageButton = require "widgets/imagebutton"
 local CONSTANTS = require "ark_constants_ling"
-
 local GUARD_TYPE = CONSTANTS.GUARD_TYPE
 
 -- 令的守卫召唤物配置
@@ -286,6 +285,7 @@ end)
 
 -- 添加召唤系统的RPC通信
 AddModRPCHandler("ling_summon", "summon_guard", function(player, guard_type, slot_index)
+  print("summon_guard", guard_type, slot_index)
   if not player or player.prefab ~= "ling" then
     return
   end
@@ -382,9 +382,6 @@ AddModRPCHandler("ling_summon", "change_guard_work", function(player, guard_inst
   end
 end)
 
--- 引入全局常量
-local CONSTANTS = require "ark_constants_ling"
-local GUARD_TYPE = CONSTANTS.GUARD_TYPE
 
 -- 添加令的召唤状态图
 AddStategraphState("wilson", State{
@@ -427,14 +424,14 @@ AddStategraphState("wilson", State{
         inst.sg.statemem.summon_data = data
         -- 标记召唤未完成
         inst.sg.statemem.summon_completed = false
-        -- 设置2秒超时
-        inst.sg:SetTimeout(2.1) -- 稍微长一点确保时间轴完成
+        -- 设置2秒超时（对齐动画帧）
+        inst.sg:SetTimeout(60*FRAMES)
     end,
 
     timeline =
     {
-        -- 0.5秒：施法开始，扣除诗意
-        TimeEvent(0.5, function(inst)
+        -- 15帧：施法开始，扣除诗意
+        TimeEvent(15 * FRAMES, function(inst)
             local data = inst.sg.statemem.summon_data
             if data then
                 -- 扣除诗意
@@ -448,8 +445,8 @@ AddStategraphState("wilson", State{
             end
         end),
 
-        -- 1.5秒：确定召唤位置，创建特效
-        TimeEvent(1.5, function(inst)
+        -- 30帧：确定召唤位置，创建特效
+        TimeEvent(30 * FRAMES, function(inst)
             local data = inst.sg.statemem.summon_data
             if data then
                 -- 确定召唤位置
@@ -478,8 +475,8 @@ AddStategraphState("wilson", State{
             end
         end),
 
-        -- 2.0秒：施法完成，执行召唤
-        TimeEvent(2.0, function(inst)
+        -- 45帧：施法完成，执行召唤
+        TimeEvent(45 * FRAMES, function(inst)
             local data = inst.sg.statemem.summon_data
             if data and not inst.sg.statemem.summon_completed then
                 inst.sg.statemem.summon_completed = true
@@ -488,19 +485,9 @@ AddStategraphState("wilson", State{
                 local spawn_x = inst.sg.statemem.spawn_x
                 local spawn_z = inst.sg.statemem.spawn_z
 
-                -- 如果有特效，设置召唤回调
-                if inst.sg.statemem.summon_fx and inst.sg.statemem.summon_fx:IsValid() then
-                    inst.sg.statemem.summon_fx:SetSpawnCallback(function()
-                        if inst.components.ling_summon_manager then
-                          print("SpawnGuardAtPosition", data.type, data.level, spawn_x, spawn_z, data.slots)
-                            inst.components.ling_summon_manager:SpawnGuardAtPosition(data.type, data.level, spawn_x, spawn_z, data.slots)
-                        end
-                    end)
-                else
-                    -- 直接召唤（弦惊或特效创建失败）
-                    if inst.components.ling_summon_manager then
-                        inst.components.ling_summon_manager:SpawnGuardAtPosition(data.type, data.level, spawn_x, spawn_z, data.slots)
-                    end
+                -- 在时间线上直接执行生成，不依赖特效回调
+                if inst.components.ling_summon_manager then
+                    inst.components.ling_summon_manager:SpawnGuardAtPosition(data.type, data.level, spawn_x, spawn_z, data.slots)
                 end
             end
         end),
@@ -549,6 +536,14 @@ AddStategraphState("wilson", State{
             inst.sg.statemem.summon_fx:Remove()
         end
 
+        -- 如果召唤未完成，回滚槽位状态
+        if not inst.sg.statemem.summon_completed then
+            local data = inst.sg.statemem.summon_data
+            if data and data.slots and inst.components.ling_summon_manager then
+                inst.components.ling_summon_manager:CancelSummon(data.slots)
+            end
+        end
+
         -- 清理召唤数据
         inst.sg.statemem.summon_data = nil
         inst.sg.statemem.summon_fx = nil
@@ -567,19 +562,19 @@ AddStategraphState("wilson_client", State{
         inst.components.locomotor:Stop()
         inst.AnimState:PlayAnimation("staff")
         inst.SoundEmitter:PlaySound("dontstarve/common/staffteleport")
-        -- 设置2秒超时
-        inst.sg:SetTimeout(2.1) -- 稍微长一点确保时间轴完成
+        -- 设置2秒超时（对齐动画帧）
+        inst.sg:SetTimeout(60 * FRAMES)
     end,
 
     timeline =
     {
-        -- 0.5秒：播放施法进行音效
-        TimeEvent(0.5, function(inst)
+        -- 15帧：播放施法进行音效
+        TimeEvent(15 * FRAMES, function(inst)
             inst.SoundEmitter:PlaySound("dontstarve/common/staff_star_create")
         end),
 
-        -- 2.0秒：施法完成，准备结束
-        TimeEvent(2.0, function(inst)
+        -- 45帧：客户端结束占位
+        TimeEvent(45 * FRAMES, function(inst)
             -- 客户端不需要执行召唤逻辑，只需要同步动画和音效
         end),
     },

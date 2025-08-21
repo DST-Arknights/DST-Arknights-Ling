@@ -130,6 +130,7 @@ function LingGuardPanelCall:OnMouseButton(button, down, x, y)
 
     if button == MOUSEBUTTON_LEFT then
         if down then
+            print("LingGuardPanelCall:OnMouseButton", "MOUSEBUTTON_LEFT", "down", self.slot_data.type, self.slot_data.status)
             if self.slot_data.status == GUARD_SLOT_STATUS.EMPTY then
                 -- 空插槽，召唤清平到指定插槽
                 SendModRPCToServer(GetModRPC("ling_summon", "summon_guard"), GUARD_TYPE.QINGPING, self.slot_data.index)

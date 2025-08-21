@@ -37,6 +37,10 @@ local LingGuardReplica = Class(function(self, inst)
         self.inst:ListenForEvent("guardposdirty", function()
             self:OnGuardPosDirty()
         end, inst)
+        -- 监听消失时, 如果有范围标志, 一同移除掉
+        self.inst:ListenForEvent("onremove", function()
+            self:RemoveGuardPositionVisual()
+        end, inst)
     end
 end)
 
@@ -160,6 +164,14 @@ function LingGuardReplica:UpdateGuardPositionVisual()
             self._guard_pos_inst = SpawnPrefab("reticuleaoecatapultwakeup")
             local scale = LING_GUARD_CONFIG.GUARD.GUARD_RANGE / 16  -- 缩放比例，使范围大小与守卫范围一致（16为动画对应范围）
             self._guard_pos_inst.Transform:SetScale(scale, scale, scale)  -- 设置缩放比例
+
+            -- 检查面板是否正在显示这个守卫，如果是则设置为红色
+            if ThePlayer and ThePlayer.HUD and ThePlayer.HUD.controls and ThePlayer.HUD.controls.ling_guard_panel then
+                local panel = ThePlayer.HUD.controls.ling_guard_panel
+                if panel:IsVisible() and panel.guard_inst == self.inst then
+                    self:SetGuardPositionColor(true)
+                end
+            end
         end
         if self._guard_pos_inst and self._guard_pos_inst:IsValid() then
             self._guard_pos_inst.Transform:SetPosition(self._guard_pos:Get())

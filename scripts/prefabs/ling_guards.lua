@@ -23,7 +23,7 @@ local GUARD_CONFIGS = {
         scale = nil, -- 默认缩放
         has_container = true,
         can_sleep = true,
-        light_radius = 1,
+        light_radius = 0.5,
         physics_radius = 10,
         physics_height = 0.5,
         tags = {},
@@ -37,7 +37,7 @@ local GUARD_CONFIGS = {
         scale = nil, -- 默认缩放
         has_container = true,
         can_sleep = true,
-        light_radius = 1,
+        light_radius = 0.5,
         physics_radius = 10,
         physics_height = 0.5,
         tags = {},
@@ -51,7 +51,7 @@ local GUARD_CONFIGS = {
         scale = 0.54, -- 0.3 * 1.8
         has_container = false,
         can_sleep = false,
-        light_radius = 3,
+        light_radius = 1.5,
         physics_radius = 10,
         physics_height = 0.5,
         tags = {"NOBLOCK"}, -- 地面单位但无体积碰撞
@@ -66,7 +66,7 @@ local function OnAttacked(inst, data)
     if leader == nil then
         return
     end
-    inst.combat:ShareTarget(data.attacker, 30, function(dude)
+    inst.components.combat:ShareTarget(data.attacker, 30, function(dude)
         return dude:HasTag("ling_summon") and dude.components.follower and dude.components.follower.leader == leader
     end, 10)
 end
@@ -79,7 +79,7 @@ local function OnNewTarget(inst, data)
     if leader == nil then
         return
     end
-    inst.combat:ShareTarget(data.target, 30, function(dude)
+    inst.components.combat:ShareTarget(data.target, 30, function(dude)
         return dude:HasTag("ling_summon") and dude.components.follower and dude.components.follower.leader == leader
     end, 10)
 end
