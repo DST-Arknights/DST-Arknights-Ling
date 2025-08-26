@@ -164,30 +164,72 @@ local function TargetWithinGuardChase(inst)
     if not (cur and target and target:IsValid()) then
         return false
     end
+    local allow_r = (cur.CHASE_RANGE or 24)
+    local leader = inst.components.follower and inst.components.follower.leader or nil
+    -- 若目标正在攻击守卫本体，直接允许
+    if target.components and target.components.combat and target.components.combat:TargetIs(inst) then
+        return true
+    end
+    -- 若目标正在攻击主人，则以“主人为中心”的半径判断
+    if leader ~= nil and target.components and target.components.combat and target.components.combat:TargetIs(leader) then
+        return leader:GetDistanceSqToInst(target) <= allow_r * allow_r
+    end
+    -- 否则按守点为中心判断
     local guardpos = GetGuardPos(inst)
     local gx, gy, gz = guardpos:Get()
     local tx, ty, tz = target.Transform:GetWorldPosition()
     local dx, dz = tx - gx, tz - gz
-    return dx*dx + dz*dz <= (cur.CHASE_RANGE or 24) * (cur.CHASE_RANGE or 24)
+    return dx*dx + dz*dz <= allow_r * allow_r
 end
 
 -- 工作目标检索（以守点为中心）
 local TOWORK_CANT_TAGS = { "fire", "smolder", "event_trigger", "waxedplant", "INLIMBO", "NOCLICK" }
-local WORK_TAGS = { "CHOP_workable", "MINE_workable", "DIG_workable", "HAMMER_workable" }
-local function PickValidActionFrom(target)
-    local w = target.components and target.components.workable or nil
-    if not (w and w:CanBeWorked()) then return nil end
-    local a = w:GetWorkAction()
-    if a == ACTIONS.CHOP or a == ACTIONS.MINE or a == ACTIONS.DIG or a == ACTIONS.HAMMER then
-        return a
+
+-- 根据当前工作模式，限定可工作的tag与Action；忽略 DIG_LAND 与 PLANT
+local function _GetCurrentWorkMode(inst)
+    local comp = inst.components and inst.components.ling_guard or nil
+    return (comp and comp:GetWorkMode()) or CONSTANTS.GUARD_WORK_MODE.NONE
+end
+
+local function _WorkModeToTags(work_mode)
+    if work_mode == CONSTANTS.GUARD_WORK_MODE.CHOP then
+        return { "CHOP_workable" }
+    elseif work_mode == CONSTANTS.GUARD_WORK_MODE.MINE then
+        return { "MINE_workable" }
+    elseif work_mode == CONSTANTS.GUARD_WORK_MODE.DIG then
+        return { "DIG_workable" }
+    elseif work_mode == CONSTANTS.GUARD_WORK_MODE.HAMMER then
+        return { "HAMMER_workable" }
     end
+    -- NONE / DIG_LAND / PLANT 或其它未实现：不做工作
     return nil
+end
+
+local function _WorkModeAcceptsAction(work_mode, act)
+    if act == nil then return false end
+    if work_mode == CONSTANTS.GUARD_WORK_MODE.CHOP then
+        return act == ACTIONS.CHOP
+    elseif work_mode == CONSTANTS.GUARD_WORK_MODE.MINE then
+        return act == ACTIONS.MINE
+    elseif work_mode == CONSTANTS.GUARD_WORK_MODE.DIG then
+        return act == ACTIONS.DIG
+    elseif work_mode == CONSTANTS.GUARD_WORK_MODE.HAMMER then
+        return act == ACTIONS.HAMMER
+    end
+    return false
 end
 
 local function TryFindWorkBufferedAction(inst)
     local modecfg, common, mode = GetModeConfig(inst)
     if mode ~= CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD then return nil end
     if inst.guard_type == CONSTANTS.GUARD_TYPE.XIANJING then return nil end
+
+    local work_mode = _GetCurrentWorkMode(inst)
+    local tags = _WorkModeToTags(work_mode)
+    if tags == nil then
+        -- 当前工作模式未实现或为 NONE：不进行任何工作
+        return nil
+    end
 
     -- 安全检测
     local safer = (modecfg.WORK and modecfg.WORK.SAFE_RADIUS) or 8
@@ -198,11 +240,12 @@ local function TryFindWorkBufferedAction(inst)
 
     local center = GetGuardPos(inst)
     local r = modecfg.GUARD_RANGE or 16
-    local ents = TheSim:FindEntities(center.x, center.y, center.z, r, nil, TOWORK_CANT_TAGS, WORK_TAGS)
+    local ents = TheSim:FindEntities(center.x, center.y, center.z, r, nil, TOWORK_CANT_TAGS, tags)
     for _, tgt in ipairs(ents) do
         if tgt.entity:IsVisible() and (not tgt.components.burnable or (not tgt.components.burnable:IsBurning() and not tgt.components.burnable:IsSmoldering())) then
-            local act = PickValidActionFrom(tgt)
-            if act ~= nil then
+            local w = tgt.components and tgt.components.workable or nil
+            local act = w and w:GetWorkAction() or nil
+            if w and w:CanBeWorked() and _WorkModeAcceptsAction(work_mode, act) then
                 return BufferedAction(inst, tgt, act)
             end
         end
@@ -221,6 +264,19 @@ local function _PickupCooldownActive(inst)
     return colldown
 end
 
+
+
+-- 竞争锁：拾取目标的临时预定，避免重叠范围的守卫竞争同一物品
+local function _IsReservedByOther(item, inst)
+    local until_t = item._ling_pick_reserved_until
+    local by = item._ling_pick_reserved_by
+    return until_t ~= nil and GetTime() < until_t and by ~= nil and by ~= inst
+end
+
+local function _ReserveItemFor(item, inst, dur)
+    item._ling_pick_reserved_by = inst
+    item._ling_pick_reserved_until = GetTime() + (dur or 1.0)
+end
 
 local function CanAcceptPickup(inst, item)
     if item == nil or item.components == nil or item.components.inventoryitem == nil then
@@ -271,6 +327,7 @@ local function TryPickupAnyInGuardRange(inst)
         if item:IsValid() and invitem
             and (invitem.canbepickedup ~= false) and not invitem:IsHeld()
             and not (item.components.burnable and (item.components.burnable:IsBurning() or item.components.burnable:IsSmoldering()))
+            and not _IsReservedByOther(item, inst)
             and CanAcceptPickup(inst, item)
         then
             local d = inst:GetDistanceSqToInst(item)
@@ -281,6 +338,8 @@ local function TryPickupAnyInGuardRange(inst)
         end
     end
     if nearest ~= nil then
+        -- 先行预定，防止其他守卫在本tick竞争
+        _ReserveItemFor(nearest, inst, 0.6)
         inst._ling_pick_cooldown_end = GetTime() + 0.20
         return BufferedAction(inst, nearest, ACTIONS.PICKUP)
     end

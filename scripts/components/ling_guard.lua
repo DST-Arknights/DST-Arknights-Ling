@@ -185,8 +185,6 @@ function LingGuardBehavior:SetBehaviorMode(mode)
     self:RefreshGuardModeRangeMark()
     -- 更新标签
     self:UpdateBehaviorTags()
-    -- 更新战斗目标函数
-    self:UpdateCombatRetargetFunction()
 end
 
 -- 获取行为模式
@@ -282,73 +280,6 @@ function LingGuardBehavior:UpdateBehaviorTags()
     self.inst:AddTag("behavior_mode_" .. current_mode)
 end
 
--- 更新战斗目标函数
-function LingGuardBehavior:UpdateCombatRetargetFunction()
-    if not self.inst.components.combat then
-        return
-    end
-    
-    -- 设置重新寻找目标的函数
-    self.inst.components.combat:SetRetargetFunction(3, function(inst)
-        -- 融合过程中不寻找目标
-        if inst.is_fusing then
-            return nil
-        end
-        return self:GetRetargetFunction()
-    end)
-end
-
--- 获取战斗目标的函数（根据行为模式）
-function LingGuardBehavior:GetRetargetFunction()
-    local mode = self:GetBehaviorMode()
-    
-    -- 检查是否为有效的战斗目标
-    local function IsValidTarget(target)
-        return target and target:IsValid()
-               and self.inst.components.combat:CanTarget(target)
-               and target:HasTag("monster")
-               and not target:HasTag("ling_summon")
-               and not target:HasTag("player")
-               and not target:HasTag("companion")
-    end
-    
-    if mode == CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD then
-        -- 守模式：只攻击进入攻击范围的敌人，不主动追击
-        local range = self.inst.components.combat.attackrange or 4
-        return FindEntity(self.inst, range, IsValidTarget, {"_combat"}, {"player", "companion", "wall", "INLIMBO"})
-        
-    elseif mode == CONSTANTS.GUARD_BEHAVIOR_MODE.ATTACK then
-        -- 攻模式：主动寻找并攻击敌人
-        return FindEntity(self.inst, 15, IsValidTarget, {"_combat"}, {"player", "companion", "wall", "INLIMBO"})
-        
-    else -- CAUTIOUS 慎模式
-        -- 慎模式：优先攻击主人的目标，然后攻击攻击主人的敌人，最后主动攻击附近敌人
-        local leader = self.inst.components.follower and self.inst.components.follower.leader
-        
-        -- 1. 优先攻击主人的目标
-        if leader and leader.components.combat then
-            local leader_target = leader.components.combat.target
-            if IsValidTarget(leader_target) then
-                return leader_target
-            end
-        end
-        
-        -- 2. 攻击正在攻击主人的敌人
-        if leader then
-            local leader_x, leader_y, leader_z = leader.Transform:GetWorldPosition()
-            local monsters = TheSim:FindEntities(leader_x, leader_y, leader_z, 10, {"monster", "_combat"}, {"player", "companion", "wall", "INLIMBO", "ling_summon"})
-            for _, monster in ipairs(monsters) do
-                if monster.components.combat and monster.components.combat.target == leader
-                   and IsValidTarget(monster) then
-                    return monster
-                end
-            end
-        end
-        
-        -- 3. 主动攻击附近的敌人（较小范围，保持慎重）
-        return FindEntity(self.inst, 8, IsValidTarget, {"_combat"}, {"player", "companion", "wall", "INLIMBO"})
-    end
-end
 
 -- 保存数据
 function LingGuardBehavior:OnSave()

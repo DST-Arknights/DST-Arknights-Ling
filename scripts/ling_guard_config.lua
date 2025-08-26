@@ -18,6 +18,7 @@ local CONFIG = {
             RUN_DISTANCE    = 8,
             STOP_DISTANCE   = 12,
         },
+        LEADER_DEFENSE_DIST = 8,
     },
 
     MODE = {
@@ -26,7 +27,7 @@ local CONFIG = {
             CHASE_RANGE = 24, -- 守形态最大追击半径（> GUARD_RANGE）
             ATTACK = {
                 CHASE_TIME = 25,
-                CHASE_DIST = 20,
+                CHASE_DIST = 8,
             },
             WORK = {
                 SAFE_RADIUS = 10, -- 安全范围（你要求：用配置）
@@ -41,7 +42,7 @@ local CONFIG = {
         CAUTIOUS = {
             ATTACK = {
                 CHASE_TIME = 20,
-                CHASE_DIST = 15,
+                CHASE_DIST = 10,
             },
             FOLLOW = { MIN = 0, TARGET = 5, MAX = 10, WANDER_DIST = 8 },
         },
@@ -50,7 +51,7 @@ local CONFIG = {
             -- 仅行为更激进，不改属性
             ATTACK = {
                 CHASE_TIME = 30,
-                CHASE_DIST = 25,
+                CHASE_DIST = 16,
             },
             FOLLOW = { MIN = 0, TARGET = 6, MAX = 12, WANDER_DIST = 10 },
         },

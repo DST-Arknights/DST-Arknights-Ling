@@ -2,9 +2,9 @@ require("stategraphs/commonstates")
 
 local actionhandlers = {
     ActionHandler(ACTIONS.CHOP,   "work_attack0"),
-    ActionHandler(ACTIONS.MINE,   "work_attack0"),
-    ActionHandler(ACTIONS.DIG,    "work_attack0"),
-    ActionHandler(ACTIONS.HAMMER, "work_attack0"),
+    ActionHandler(ACTIONS.MINE,   "work_mine"),
+    ActionHandler(ACTIONS.DIG,    "work_dig_pick"),
+    ActionHandler(ACTIONS.HAMMER, "work_hammer"),
     ActionHandler(ACTIONS.PICKUP, "pick"),
 }
 
@@ -129,6 +129,82 @@ local states =
             end),
         },
     },
+
+    -- 采矿：使用 attack_0 动作 + 稿子敲石头音效
+    State{
+        name = "work_mine",
+        tags = { "busy" },
+        onenter = function(inst)
+            inst.Physics:Stop()
+            inst.AnimState:PlayAnimation("attack_0")
+        end,
+        timeline = {
+            TimeEvent(15*FRAMES, function(inst)
+                inst:PerformBufferedAction()
+                if inst.SoundEmitter ~= nil then
+                    inst.SoundEmitter:PlaySound("dontstarve/wilson/use_pick_rock")
+                end
+            end),
+        },
+        events = {
+            EventHandler("animover", function(inst)
+                if inst.AnimState:AnimDone() then
+                    inst.sg:GoToState("idle")
+                end
+            end),
+        },
+    },
+
+    -- 挖掘：使用 pick 动作 + 铲子音效
+    State{
+        name = "work_dig_pick",
+        tags = { "busy" },
+        onenter = function(inst)
+            inst.Physics:Stop()
+            inst.AnimState:PlayAnimation("pick")
+        end,
+        timeline = {
+            TimeEvent(6*FRAMES, function(inst)
+                inst:PerformBufferedAction()
+                if inst.SoundEmitter ~= nil then
+                    inst.SoundEmitter:PlaySound("dontstarve/wilson/dig")
+                end
+            end),
+        },
+        events = {
+            EventHandler("animover", function(inst)
+                if inst.AnimState:AnimDone() then
+                    inst.sg:GoToState("idle")
+                end
+            end),
+        },
+    },
+
+    -- 砸东西：使用 attack_0 动作 + 锤击音效
+    State{
+        name = "work_hammer",
+        tags = { "busy" },
+        onenter = function(inst)
+            inst.Physics:Stop()
+            inst.AnimState:PlayAnimation("attack_0")
+        end,
+        timeline = {
+            TimeEvent(15*FRAMES, function(inst)
+                inst:PerformBufferedAction()
+                if inst.SoundEmitter ~= nil then
+                    inst.SoundEmitter:PlaySound("dontstarve/wilson/hit")
+                end
+            end),
+        },
+        events = {
+            EventHandler("animover", function(inst)
+                if inst.AnimState:AnimDone() then
+                    inst.sg:GoToState("idle")
+                end
+            end),
+        },
+    },
+
 
     -- 拾取：使用 pick 动画
     State{
