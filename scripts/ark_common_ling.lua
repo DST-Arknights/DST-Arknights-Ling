@@ -46,24 +46,7 @@ local function genArkSkillLevelTag(idx, level)
   return 'ark_skill_level_' .. idx .. '_' .. level
 end
 
-
-local CONSTANTS = require("ark_constants_ling")
-local LING_GUARD_CONFIG = require("ling_guard_config")
-
--- 便捷访问：当前形态配置，未覆盖时回落 COMMON
-local function GetModeConfig(inst)
-    local mode = inst.components.ling_guard and inst.components.ling_guard:GetBehaviorMode() or CONSTANTS.GUARD_BEHAVIOR_MODE.CAUTIOUS
-    local bymode = LING_GUARD_CONFIG.MODE or {}
-    local common = LING_GUARD_CONFIG.COMMON or {}
-    local cur = (mode == CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD and bymode.GUARD)
-            or (mode == CONSTANTS.GUARD_BEHAVIOR_MODE.ATTACK and bymode.ATTACK)
-            or bymode.CAUTIOUS
-            or {}
-    return cur, common, mode
-end
-
 return {
   LoadPOFile = LoadPOFile,
   genArkSkillLevelTag = genArkSkillLevelTag,
-  GetModeConfig = GetModeConfig,
 }

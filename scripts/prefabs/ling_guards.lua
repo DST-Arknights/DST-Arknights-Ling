@@ -1,7 +1,6 @@
 local brain = require("brains/ling_guardbrain")
-local guard_config = require("ling_guard_config")
+local getGuardConfig = require("ling_guard_config").getGuardConfig
 local CONSTANTS = require("ark_constants_ling")
-local GetModeConfig = require("ark_common_ling").GetModeConfig
 
 local assets = {
     Asset("ANIM", "anim/loong_0.zip"),
@@ -94,6 +93,42 @@ local function NormalRetargetFn(inst)
     return targeting.SelectTarget(inst)
 end
 
+
+-- 保持目标：对齐守模式的追击范围约束，避免拖太远
+local function KeepTargetFn(inst, target)
+    if target == nil or not target:IsValid() then return false end
+    if target:HasTag("INLIMBO") then return false end
+    if target.components and target.components.health and target.components.health:IsDead() then return false end
+    if not (inst.components and inst.components.combat and inst.components.combat:CanTarget(target)) then return false end
+
+    local guardConfig = getGuardConfig(inst)
+    local mode = inst.components.ling_guard and inst.components.ling_guard:GetBehaviorMode() or CONSTANTS.GUARD_BEHAVIOR_MODE.CAUTIOUS
+
+    if mode == CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD then
+        -- 特判：若目标正在攻击守卫本体，直接允许
+        if target.components and target.components.combat and target.components.combat:TargetIs(inst) then
+            return true
+        end
+        -- 正在攻击主人：以主人为中心判定
+        local leader = inst.components.follower and inst.components.follower.leader or nil
+        if leader ~= nil and target.components and target.components.combat and target.components.combat:TargetIs(leader) then
+            local allow_r = guardConfig.LEADER_DEFENSE_DIST
+            return leader:GetDistanceSqToInst(target) <= allow_r * allow_r
+        end
+        -- 否则按守点为中心判定
+        local guardpos = inst.components.ling_guard and inst.components.ling_guard.guard_pos or (inst.components.follower and inst.components.follower.leader and inst.components.follower.leader:GetPosition()) or inst:GetPosition()
+        local gx, gy, gz = guardpos:Get()
+        local tx, ty, tz = target.Transform:GetWorldPosition()
+        local dx, dz = tx - gx, tz - gz
+        local allow_r = guardConfig.CHASE_RANGE
+        return dx*dx + dz*dz <= allow_r * allow_r
+    else
+        -- 其它形态：使用攻击追击距离
+        local chase_d = guardConfig.LEADER_DEFENSE_DIST
+        return inst:GetDistanceSqToInst(target) <= chase_d * chase_d
+    end
+end
+
 -- 通用守卫构造函数
 local function MakeGuard(config)
     local function fn()
@@ -159,9 +194,10 @@ local function MakeGuard(config)
         inst.components.health.save_maxhealth = true
 
         inst:AddComponent("combat")
-        inst.components.combat:SetRange(1)
-        -- 更高频的重选目标，保证守模式下对主人威胁的快速响应
+        inst.components.combat:SetRange(0.1)
+        -- Retarget 更频繁、并设置 KeepTarget，参考官方猪人
         inst.components.combat:SetRetargetFunction(1, NormalRetargetFn)
+        inst.components.combat:SetKeepTargetFunction(KeepTargetFn)
 
         inst:AddComponent("locomotor")
 

@@ -1,9 +1,15 @@
+
 GLOBAL.setmetatable(env, {
   __index = function(t, k)
     return GLOBAL.rawget(GLOBAL, k)
   end
 })
 local common = require("ark_common_ling")
+
+function GLOBAL.lprint(...)
+  local args = {...}
+  print(unpack(args))
+end
 
 -- 加载语言文件
 common.LoadPOFile("scripts/languages/ling_chinese_s.po", "zh")
@@ -60,3 +66,36 @@ modimport("lingmain/true_damage")
 modimport("lingmain/attack_speed")
 modimport("lingmain/ling_skill2_attack")
 modimport("lingmain/ling_guard_containers")
+
+-- 自定义动作：守卫挖地皮（无需工具）
+local LING_TERRAFORM = AddAction("LING_TERRAFORM", "Terraform", function(act)
+    if act.doer == nil then return false end
+    local pt = act:GetActionPoint()
+    if pt == nil then return false end
+
+    local world = TheWorld
+    local map = world and world.Map or nil
+    if map == nil then return false end
+
+    local px, py, pz = pt:Get()
+    if not map:CanTerraformAtPoint(px, py, pz) then
+        return false
+    end
+
+    local original_tile_type = map:GetTileAtPoint(px, py, pz)
+    local tx, ty = map:GetTileCoordsAtPoint(px, py, pz)
+    local undertile = TheWorld.components.undertile and TheWorld.components.undertile:GetTileUnderneath(tx, ty) or WORLD_TILES.DIRT
+
+    map:SetTile(tx, ty, undertile)
+
+    -- 触发地皮挖掘后的掉落与效果
+    if HandleDugGround ~= nil then
+        HandleDugGround(original_tile_type, px, py, pz)
+    end
+
+
+    return true
+end)
+
+-- 将动作绑定到守卫的状态图（使用现有的挖掘动画/音效状态）
+AddStategraphActionHandler("ling_guards", ActionHandler(ACTIONS.LING_TERRAFORM, "work_dig_pick"))

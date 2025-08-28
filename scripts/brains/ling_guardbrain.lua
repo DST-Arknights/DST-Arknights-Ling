@@ -5,8 +5,10 @@ require "behaviours/runaway"
 require "behaviours/doaction"
 require "behaviours/leash"
 
+local BrainCommon = require "brains/braincommon"
+
 local CONSTANTS = require("ark_constants_ling")
-local GetModeConfig = require("ark_common_ling").GetModeConfig
+local getGuardConfig = require("ling_guard_config").getGuardConfig
 
 
 -- 调试输出（风筝相关）
@@ -15,6 +17,13 @@ local function KDbg(inst, ...)
     -- print("[LingAI]", inst.prefab or "", inst.GUID, ...)
 end
 
+local function GetLeader(inst)
+    return inst.components.follower.leader
+end
+
+local function RescueLeaderAction(inst)
+    return BufferedAction(inst, GetLeader(inst), ACTIONS.UNPIN)
+end
 -- 寻找最近的玩家（优先主人）
 local function FindNearestPlayer(inst)
     if inst.components.follower and inst.components.follower.leader then
@@ -90,67 +99,47 @@ local function FindNearbyHostileEnemies(inst, radius)
     return hostile
 end
 
--- 风筝
-local function ShouldKite(inst)
-    local _, common = GetModeConfig(inst)
-    local in_cd = inst.components and inst.components.combat and inst.components.combat:InCooldown()
-    if not in_cd then
-        if inst._ling_is_kiting then inst._ling_is_kiting = false end
-        return false
-    end
-    -- 仅针对当前战斗目标计算距离，避免误选其它单位
-    local target = inst.components and inst.components.combat and inst.components.combat.target or nil
-    if target == nil or not target:IsValid() then
-        if inst._ling_is_kiting then inst._ling_is_kiting = false end
-        return false
-    end
-    local mind2 = inst:GetDistanceSqToInst(target)
-    local run_d = common.KITE.RUN_DISTANCE or 8
-    local stop_d = common.KITE.STOP_DISTANCE or (run_d + 2)
-    local running = inst._ling_is_kiting == true
-    if running then
-        if mind2 < stop_d * stop_d then
-            -- 调试: kiting
-            return true
-        else
-            -- 调试: exit_kite: pass stop
-            inst._ling_is_kiting = false
-            return false
+
+
+-- 根据模式返回“理想逃跑安全点”以影响 RunAway 的方向
+-- 守模式：若在守圈内，不特殊处理；若在守圈外，引导朝守点方向撤退
+-- 其它模式：若在主人 LEADER_DEFENSE_DIST 内，不特殊处理；若在圈外，引导朝主人方向撤退
+local function GetKiteSafePoint(inst)
+    local mode = inst.components.ling_guard and inst.components.ling_guard:GetBehaviorMode()
+    local cfg = getGuardConfig(inst)
+
+    if mode == CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD then
+        local guard_pos = GetGuardPos(inst)
+        if guard_pos ~= nil then
+            local r = (cfg.GUARD_RANGE or 0)
+            if r > 0 then
+                local distsq = inst:GetDistanceSqToPoint(guard_pos.x, guard_pos.y, guard_pos.z)
+                if distsq > r * r then
+                    -- 在守圈外：回圈撤退
+                    return guard_pos
+                end
+            end
         end
+        -- 在守圈内：无需特殊处理
+        return nil
     else
-        if mind2 < run_d * run_d then
-            -- 调试: enter_kite
-            inst._ling_is_kiting = true
-            return true
-        else
-            -- 调试: no_enter_kite
-            return false
+        local leader = GetLeader(inst)
+        if leader ~= nil and leader:IsValid() then
+            local defend = cfg.LEADER_DEFENSE_DIST or 0
+            if defend > 0 then
+                local distsq = inst:GetDistanceSqToInst(leader)
+                if distsq > defend * defend then
+                    -- 超出主人防御半径：朝主人方向撤退
+                    return leader:GetPosition()
+                end
+            end
         end
+        -- 在主人防御半径内或没有主人：无需特殊处理
+        return nil
     end
-
-local function ShouldKiteTarget(hunter, inst)
-    -- 仅对当前战斗目标进行规避
-    return inst.components and inst.components.combat and inst.components.combat:TargetIs(hunter)
-        and hunter ~= nil and hunter:IsValid()
-        and (hunter.components.health == nil or not hunter.components.health:IsDead())
 end
 
-end
 
-local function GetKiteTarget(inst)
-    local _, common = GetModeConfig(inst)
-    local hostile = FindNearbyHostileEnemies(inst, common.KITE.DETECTION_RANGE)
-    local closest, best = nil, math.huge
-    for _, e in ipairs(hostile) do
-        local d = inst:GetDistanceSqToInst(e)
-        if d < best then
-            best = d
-            closest = e
-        end
-    end
-    -- 调试: kite_target
-    return closest
-end
 
 -- 战斗态
 local function IsInCombatMode(inst)
@@ -158,38 +147,10 @@ local function IsInCombatMode(inst)
 end
 
 -- 守态：追击范围限制（相对守点）
-local function TargetWithinGuardChase(inst)
-    local cur = select(1, GetModeConfig(inst))
-    local target = inst.components.combat and inst.components.combat.target or nil
-    if not (cur and target and target:IsValid()) then
-        return false
-    end
-    local allow_r = (cur.CHASE_RANGE or 24)
-    local leader = inst.components.follower and inst.components.follower.leader or nil
-    -- 若目标正在攻击守卫本体，直接允许
-    if target.components and target.components.combat and target.components.combat:TargetIs(inst) then
-        return true
-    end
-    -- 若目标正在攻击主人，则以“主人为中心”的半径判断
-    if leader ~= nil and target.components and target.components.combat and target.components.combat:TargetIs(leader) then
-        return leader:GetDistanceSqToInst(target) <= allow_r * allow_r
-    end
-    -- 否则按守点为中心判断
-    local guardpos = GetGuardPos(inst)
-    local gx, gy, gz = guardpos:Get()
-    local tx, ty, tz = target.Transform:GetWorldPosition()
-    local dx, dz = tx - gx, tz - gz
-    return dx*dx + dz*dz <= allow_r * allow_r
-end
 
 -- 工作目标检索（以守点为中心）
 local TOWORK_CANT_TAGS = { "fire", "smolder", "event_trigger", "waxedplant", "INLIMBO", "NOCLICK" }
 
--- 根据当前工作模式，限定可工作的tag与Action；忽略 DIG_LAND 与 PLANT
-local function _GetCurrentWorkMode(inst)
-    local comp = inst.components and inst.components.ling_guard or nil
-    return (comp and comp:GetWorkMode()) or CONSTANTS.GUARD_WORK_MODE.NONE
-end
 
 local function _WorkModeToTags(work_mode)
     if work_mode == CONSTANTS.GUARD_WORK_MODE.CHOP then
@@ -219,39 +180,139 @@ local function _WorkModeAcceptsAction(work_mode, act)
     return false
 end
 
-local function TryFindWorkBufferedAction(inst)
-    local modecfg, common, mode = GetModeConfig(inst)
-    if mode ~= CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD then return nil end
-    if inst.guard_type == CONSTANTS.GUARD_TYPE.XIANJING then return nil end
+-- 挖掘（DIG）竞争锁：避免多个守卫同时挖同一目标
+local function _IsDigReservedByOther(target, inst)
+    local until_t = target._ling_dig_reserved_until
+    local by = target._ling_dig_reserved_by
+    return until_t ~= nil and GetTime() < until_t and by ~= nil and by ~= inst
+end
 
-    local work_mode = _GetCurrentWorkMode(inst)
+local function _ReserveDigFor(target, inst, dur)
+    target._ling_dig_reserved_by = inst
+    target._ling_dig_reserved_until = GetTime() + (dur or 1.2)
+end
+
+-- 开始工作条件
+local function StartWorkingCondition(inst)
+    local guardConfig = getGuardConfig(inst)
+    local mode = inst.components.ling_guard and inst.components.ling_guard:GetBehaviorMode()
+    if mode ~= CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD then return false end
+    if IsInCombatMode(inst) then return false end
+    local work_mode = inst.components.ling_guard:GetWorkMode()
     local tags = _WorkModeToTags(work_mode)
-    if tags == nil then
-        -- 当前工作模式未实现或为 NONE：不进行任何工作
-        return nil
-    end
+    if tags == nil then return false end
 
-    -- 安全检测
-    local safer = (modecfg.WORK and modecfg.WORK.SAFE_RADIUS) or 8
-    local hostile = FindNearbyHostileEnemies(inst, safer)
-    if #hostile > 0 or IsInCombatMode(inst) then
-        return nil
-    end
-
-    local center = GetGuardPos(inst)
-    local r = modecfg.GUARD_RANGE or 16
-    local ents = TheSim:FindEntities(center.x, center.y, center.z, r, nil, TOWORK_CANT_TAGS, tags)
-    for _, tgt in ipairs(ents) do
-        if tgt.entity:IsVisible() and (not tgt.components.burnable or (not tgt.components.burnable:IsBurning() and not tgt.components.burnable:IsSmoldering())) then
-            local w = tgt.components and tgt.components.workable or nil
-            local act = w and w:GetWorkAction() or nil
-            if w and w:CanBeWorked() and _WorkModeAcceptsAction(work_mode, act) then
-                return BufferedAction(inst, tgt, act)
+    -- 缓存检查：如果已有工作目标且仍有效，直接返回 true
+    local cached_target = inst._ling_work_target
+    if cached_target and cached_target:IsValid() then
+        local w = cached_target.components and cached_target.components.workable
+        if w and w:CanBeWorked() then
+            local act = w:GetWorkAction()
+            if _WorkModeAcceptsAction(work_mode, act) then
+                return true
             end
         end
     end
+
+    -- 简化目标搜索：只检查是否存在，不详细验证
+    local center = GetGuardPos(inst)
+    local r = guardConfig.GUARD_RANGE
+    local ents = TheSim:FindEntities(center.x, center.y, center.z, r, tags, TOWORK_CANT_TAGS)
+    if #ents > 0 then return true end
+
+    -- 砍树模式下检查树桩
+    if work_mode == CONSTANTS.GUARD_WORK_MODE.CHOP then
+        local stump_ents = TheSim:FindEntities(center.x, center.y, center.z, r, { "DIG_workable", "stump" }, TOWORK_CANT_TAGS)
+        if #stump_ents > 0 then return true end
+    end
+
+    return false
+end
+
+-- 猪人风格工作流：保持工作动作（优化版）
+local function KeepWorkingAction(inst)
+    local guardConfig = getGuardConfig(inst)
+    local mode = inst.components.ling_guard:GetBehaviorMode()
+    if mode ~= CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD then
+        inst._ling_work_target = nil
+        return nil
+    end
+    if IsInCombatMode(inst) then
+        inst._ling_work_target = nil
+        return nil
+    end
+
+    local work_mode = inst.components.ling_guard:GetWorkMode()
+    local tags = _WorkModeToTags(work_mode)
+    if tags == nil then
+        inst._ling_work_target = nil
+        return nil
+    end
+
+    -- 优先继续记忆目标
+    local target = inst._ling_work_target
+    if target and target:IsValid() then
+        local w = target.components and target.components.workable
+        if w and w:CanBeWorked() then
+            local act = w:GetWorkAction()
+            if _WorkModeAcceptsAction(work_mode, act) and inst:IsNear(target, (guardConfig.GUARD_RANGE or 16) + 2) then
+                if act == ACTIONS.DIG then
+                    _ReserveDigFor(target, inst, 1.2) -- 续期挖掘锁，防止并发
+                end
+                return BufferedAction(inst, target, act)
+            end
+        end
+        -- 记忆目标无效，清除
+        inst._ling_work_target = nil
+    end
+
+    -- 寻找新工作目标（优化：减少条件检查）
+    local center = GetGuardPos(inst)
+    local r = guardConfig.GUARD_RANGE or 16
+
+    -- 砍树模式：找树桩
+    if work_mode == CONSTANTS.GUARD_WORK_MODE.CHOP then
+        local stump_ents = TheSim:FindEntities(center.x, center.y, center.z, r, { "DIG_workable", "stump" }, TOWORK_CANT_TAGS)
+        for _, tgt in ipairs(stump_ents) do
+            if tgt.entity:IsVisible() and tgt:HasTag("stump") then
+                local w = tgt.components and tgt.components.workable
+                if w and w:CanBeWorked() and w:GetWorkAction() == ACTIONS.DIG then
+                    if not _IsDigReservedByOther(tgt, inst) then
+                        inst._ling_work_target = tgt
+                        _ReserveDigFor(tgt, inst, 1.2)
+                        return BufferedAction(inst, tgt, ACTIONS.DIG)
+                    end
+                end
+            end
+        end
+    end
+    -- 先找主要工作目标（带 DIG 锁）
+    local ents = TheSim:FindEntities(center.x, center.y, center.z, r, tags, TOWORK_CANT_TAGS)
+    for _, tgt in ipairs(ents) do
+        if tgt.entity:IsVisible() then
+            local w = tgt.components and tgt.components.workable
+            if w and w:CanBeWorked() then
+                local act = w:GetWorkAction()
+                if _WorkModeAcceptsAction(work_mode, act) then
+                    -- 若是挖掘类工作，加锁避免并发
+                    if act == ACTIONS.DIG and _IsDigReservedByOther(tgt, inst) then
+                        -- 被其他人预定，跳过
+                    else
+                        inst._ling_work_target = tgt
+                        if act == ACTIONS.DIG then
+                            _ReserveDigFor(tgt, inst, 1.2)
+                        end
+                        return BufferedAction(inst, tgt, act)
+                    end
+                end
+            end
+        end
+    end
+
     return nil
 end
+
+
 
 -- 拾取可用性：允许“有 inventory”或“有容器且未满”均可
 local function HasPickupCapacity(inst)
@@ -318,8 +379,8 @@ local function TryPickupAnyInGuardRange(inst)
     if inst.sg:HasStateTag("busy") or _PickupCooldownActive(inst) then return nil end
     if not HasPickupCapacity(inst) then return nil end
     local center = GetGuardPos(inst)
-    local modecfg = GetModeConfig(inst)
-    local r = (modecfg and modecfg.GUARD_RANGE) or 16
+    local guardConfig = getGuardConfig(inst)
+    local r = guardConfig.GUARD_RANGE or 16
     local ents = TheSim:FindEntities(center.x, center.y, center.z, r, nil, {"INLIMBO", "NOCLICK"})
     local nearest, best = nil, math.huge
     for _, item in ipairs(ents) do
@@ -351,100 +412,52 @@ local LingGuardBrain = Class(Brain, function(self, inst)
 end)
 
 function LingGuardBrain:OnStart()
-    local modecfg, common, mode = GetModeConfig(self.inst)
+    local guardConfig = getGuardConfig(self.inst)
 
-    local children = {
+    local root = PriorityNode({
+        -- 追击
+        WhileNode(function() local combat = self.inst.components and self.inst.components.combat or nil return combat ~= nil and (combat.target == nil or not combat:InCooldown()) end, "AttackNoCD",
+            ChaseAndAttack(self.inst)),
+        -- 救援
+        WhileNode( function() return GetLeader(self.inst) and GetLeader(self.inst).components.pinnable and GetLeader(self.inst).components.pinnable:IsStuck() end, "Leader Phlegmed",
+            DoAction(self.inst, RescueLeaderAction, "Rescue Leader", true) ),
         -- 风筝
         WhileNode(function()
-            local r = ShouldKite(self.inst)
-            -- 调试: cond_kite
-            return r
+            local c = self.inst.components and self.inst.components.combat or nil
+            return c ~= nil and c.target ~= nil and c:InCooldown()
         end, "KiteHostileEnemies",
-            RunAway(self.inst, { fn = function(guy) return self.inst.components and self.inst.components.combat and self.inst.components.combat:TargetIs(guy) end, tags = {"_combat"}, notags = {"INLIMBO"} }, common.KITE.RUN_DISTANCE, common.KITE.STOP_DISTANCE)),
-    }
+            RunAway(self.inst, { fn = function(guy) return self.inst.components and self.inst.components.combat and self.inst.components.combat:TargetIs(guy) end, tags = {"_combat"}, notags = {"INLIMBO"} }, guardConfig.KITE.DETECTION_RANGE or guardConfig.KITE.RUN_DISTANCE, guardConfig.KITE.STOP_DISTANCE, nil, nil, nil, nil, GetKiteSafePoint)),
 
-    -- 调试: tick
+        -- 先拾取后工作：PickupGuardRange 提前于 GuardWork
+        WhileNode(function()
+            local mode = self.inst.components.ling_guard and self.inst.components.ling_guard:GetBehaviorMode() or CONSTANTS.GUARD_BEHAVIOR_MODE.CAUTIOUS
+            return mode == CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD
+        end, "PickupGuardRange",
+            DoAction(self.inst, function()
+                return TryPickupAnyInGuardRange(self.inst)
+            end)),
 
-    -- 守形态分支
-    table.insert(children, WhileNode(function()
-        local m = select(3, GetModeConfig(self.inst))
-        local cond = m == CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD and IsInCombatMode(self.inst) and TargetWithinGuardChase(self.inst)
-        -- 调试: cond_guard_chase
-        return cond
-    end, "GuardChase",
-        ChaseAndAttack(self.inst, modecfg.ATTACK.CHASE_TIME, modecfg.ATTACK.CHASE_DIST)))
-
-    -- 先拾取后工作：PickupGuardRange 提前于 GuardWork
-    table.insert(children, WhileNode(function()
-        local cond = select(3, GetModeConfig(self.inst)) == CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD
-        -- 调试: cond_pickup_guard
-        return cond
-    end, "PickupGuardRange",
-        DoAction(self.inst, function()
-            local act = TryPickupAnyInGuardRange(self.inst)
-            return act
-        end)))
-
-    table.insert(children, WhileNode(function()
-        local cond = select(3, GetModeConfig(self.inst)) == CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD
-        -- 调试: cond_guard_work
-        return cond
-    end, "GuardWork",
-        DoAction(self.inst, function()
-            local act = TryFindWorkBufferedAction(self.inst)
-            return act
-        end)))
-
-    -- 慎/攻：战斗追击
-    table.insert(children, WhileNode(function()
-        local cfg, _, m = GetModeConfig(self.inst)
-        local cond = m ~= CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD and IsInCombatMode(self.inst)
-        -- 调试: cond_chase_other
-        return cond
-    end, "ChaseOtherModes",
-        ChaseAndAttack(self.inst, (select(1, GetModeConfig(self.inst)).ATTACK or {}).CHASE_TIME or 20, (select(1, GetModeConfig(self.inst)).ATTACK or {}).CHASE_DIST or 15)))
-
-    -- 守形态：回守点
-    table.insert(children, WhileNode(function()
-        local cond = select(3, GetModeConfig(self.inst)) == CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD
-        -- 调试: cond_leash_guard
-        return cond
-    end, "LeashToGuard",
-        Leash(self.inst, function() return GetGuardPos(self.inst) end, ((select(1, GetModeConfig(self.inst)).GUARD_RANGE) or 16), 0.5)))
-
-    -- 慎/攻：跟随
-    table.insert(children, WhileNode(function()
-        local cond = select(3, GetModeConfig(self.inst)) ~= CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD
-        -- 调试: cond_follow_other
-        return cond
-    end, "FollowLeader",
-        Follow(self.inst, FindNearestPlayer,
-            (select(1, GetModeConfig(self.inst)).FOLLOW or {}).MIN or common.FOLLOW.MIN,
-            (select(1, GetModeConfig(self.inst)).FOLLOW or {}).TARGET or common.FOLLOW.TARGET,
-            (select(1, GetModeConfig(self.inst)).FOLLOW or {}).MAX or common.FOLLOW.MAX)))
-
-    -- 游荡（非守形态围绕跟随点，守形态围绕守点小范围）
-    table.insert(children, WhileNode(function()
-        local cond = select(3, GetModeConfig(self.inst)) ~= CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD
-        KDbg(self.inst, "cond_wander_follow", cond and "true" or "false")
-        return cond
-    end, "WanderFollowPos",
-        Wander(self.inst, GetFollowPos, (select(1, GetModeConfig(self.inst)).FOLLOW or {}).WANDER_DIST or common.FOLLOW.WANDER_DIST)))
-
-    table.insert(children, WhileNode(function()
-        local cur, common, m = GetModeConfig(self.inst)
-        local in_cd = self.inst.components and self.inst.components.combat and self.inst.components.combat:InCooldown()
-        local has_hostile = false
-        if in_cd then
-            has_hostile = #FindNearbyHostileEnemies(self.inst, common.KITE.DETECTION_RANGE) > 0
-        end
-        local ok = m == CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD and not (in_cd and has_hostile)
-        -- 调试: cond_wander_guard
-        return ok
-    end, "WanderGuardPos",
-        Wander(self.inst, GetGuardPos, math.min(((select(1, GetModeConfig(self.inst)).GUARD_RANGE) or 16) * .25, 6))))
-
-    local root = PriorityNode(children, .25)
+        -- 守形态：工作循环（猪人风格，去掉调试日志）
+        WhileNode(function()
+            return StartWorkingCondition(self.inst)
+        end, "GuardWork",
+            LoopNode{
+                DoAction(self.inst, function()
+                    return KeepWorkingAction(self.inst)
+                end, "work", true)
+            }),
+        Leash(self.inst, function() return GetGuardPos(self.inst) end, 30, 10),
+        -- 慎/攻：跟随
+        WhileNode(function()
+            local mode = self.inst.components.ling_guard and self.inst.components.ling_guard:GetBehaviorMode() or CONSTANTS.GUARD_BEHAVIOR_MODE.CAUTIOUS
+            return mode ~= CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD
+        end, "FollowLeader",
+            Follow(self.inst, FindNearestPlayer,
+                guardConfig.FOLLOW.MIN or 0,
+                guardConfig.FOLLOW.TARGET or 5,
+                guardConfig.FOLLOW.MAX or 10)),
+        Wander(self.inst, GetGuardPos, 16),
+    }, .5)
     self.bt = BT(self.inst, root)
 end
 

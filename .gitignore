@@ -49,5 +49,6 @@ exported/
 anim/
 temp/
 /imageSource
+.VSCodeCounter
 
 out
