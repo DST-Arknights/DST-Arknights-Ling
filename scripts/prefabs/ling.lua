@@ -188,7 +188,7 @@ local function master_post_init(inst)
 
   -- 设置leader组件的回调函数
   inst.components.leader.onfolloweradded = function(leader, follower)
-    print("[Ling] onfolloweradded: 检测到follower添加", follower and follower.prefab or "nil")
+    print("[Ling] onfolloweradded: 检测到follower添加", follower)
     inst:DoTaskInTime(0, function()
       if inst.components.ling_summon_manager then
         inst.components.ling_summon_manager:OnFollowerAdded(follower)
@@ -197,7 +197,7 @@ local function master_post_init(inst)
   end
 
   inst.components.leader.onremovefollower = function(leader, follower)
-    print("[Ling] onremovefollower: 检测到follower移除", follower and follower.prefab or "nil")
+    print("[Ling] onremovefollower: 检测到follower移除", follower)
     if inst.components.ling_summon_manager then
       inst.components.ling_summon_manager:OnFollowerLost(follower)
     end

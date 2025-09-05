@@ -159,12 +159,7 @@ function LingSummonManager:IsGuardOwnedByPlayer(guard_inst)
     return true
   end
 
-  -- 额外检查：验证召唤者ID
-  if guard_inst.components.ling_guard then
-    local summoner_userid = guard_inst.components.ling_guard:GetSummonerUserId()
-    return summoner_userid == self.inst.userid
-  end
-
+  -- 额外检查移除：不再使用召唤者ID
   return false
 end
 
@@ -263,19 +258,12 @@ end
 function LingSummonManager:OnFollowerAdded(follower)
   print("[LingSummonManager] OnFollowerAdded: 检测到follower添加", follower and follower.prefab or "nil")
 
-  -- 检查是否是召唤兽
+  -- 仅处理令的召唤兽
   if not follower or not follower:HasTag("ling_summon") then
     print("[LingSummonManager] OnFollowerAdded: 不是召唤兽，忽略")
     return
   end
-
-  -- 检查召唤者ID
   if follower.components.ling_guard then
-    local summoner_userid = follower.components.ling_guard:GetSummonerUserId()
-    if summoner_userid ~= self.inst.userid then
-      print("[LingSummonManager] OnFollowerAdded: 不是自己的召唤兽，忽略")
-      return
-    end
     follower.owner = self.inst
     local saved_slots = follower.components.ling_guard:GetSlots()
     self:SetGuardToSlot(follower, saved_slots)
@@ -303,6 +291,7 @@ end
 
 function LingSummonManager:RequestOpenGuardPanel(guard_inst)
   if not guard_inst or not guard_inst:IsValid() or self.openedGuardPanelInst == guard_inst then
+    print("[LingSummonManager] RequestOpenGuardPanel: guard_inst is invalid or already opened", guard_inst, guard_inst and guard_inst:IsValid() )
     return false
   end
   local inventory = self.inst.components.inventory
@@ -320,6 +309,20 @@ function LingSummonManager:RequestOpenGuardPanel(guard_inst)
     end
   end
   self.openedGuardPanelInst = guard_inst
+  -- 打开面板时让清平表演 nerd 动作（避免打断繁忙/死亡状态）
+  if guard_inst and guard_inst.sg and guard_inst.guard_type == CONSTANTS.GUARD_TYPE.QINGPING then
+    local ok = true
+    if guard_inst.components and guard_inst.components.health and guard_inst.components.health:IsDead() then
+      ok = false
+    end
+    if ok and guard_inst.sg:HasStateTag("busy") then
+      ok = false
+    end
+    if ok then
+      guard_inst.sg:GoToState("nerd")
+    end
+  end
+
   SendModRPCToClient(GetClientModRPC("ling_summon", "open_guard_panel"), self.inst.userid, self.openedGuardPanelInst)
   -- 如果工作模式处于种植模式, 打开种植容器
   if guard_inst.components.ling_guard then
@@ -523,7 +526,6 @@ function LingSummonManager:SpawnGuardAtPosition(guard_type, elite_level, spawn_x
     -- 使用组件设置召唤者和插槽信息
     if guard.components.ling_guard then
       guard.components.ling_guard:SetSlots(slots)
-      guard.components.ling_guard:SetSummonerUserId(self.inst.userid)
       guard.components.ling_guard:SetLevel(elite_level)
     end
 
@@ -653,7 +655,6 @@ function LingSummonManager:CompleteFusion(guard1, guard2, center_x, center_z, el
     -- 使用组件设置召唤者和插槽信息
     if xianjing.components.ling_guard then
       xianjing.components.ling_guard:SetSlots(slots)
-      xianjing.components.ling_guard:SetSummonerUserId(self.inst.userid)
       xianjing.components.ling_guard:SetLevel(elite_level)
     end
 

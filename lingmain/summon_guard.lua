@@ -382,6 +382,30 @@ AddModRPCHandler("ling_summon", "change_guard_work", function(player, guard_inst
   end
 end)
 
+-- 守卫世界管理
+local OWNER_SHARD = {}
+AddShardModRPCHandler("ling_summon", "LingHere", function(src_shard, userid, enter)
+   if TheWorld.ismastershard then
+    if enter then
+      OWNER_SHARD[userid] = src_shard
+    else
+      OWNER_SHARD[userid] = nil
+    end
+  end
+end)
+
+AddShardModRPCHandler("ling_summon", "LingGuardStatus", function(src_shard, userid, slot_index, alive)
+  local target = OWNER_SHARD[userid]
+  if target then
+    TheWorld:DoTaskInTime(0, function()
+      SendModRPCToShard(GetShardModRPC("ling_summon", "UpdateLingGuardStatus"), target, userid, slot_index, alive)
+    end)
+  end
+end)
+
+AddShardModRPCHandler("ling_summon", "UpdateLingGuardStatus", function(src_shard, userid, slot_index, alive)
+  -- TODO: 同步给主人的组件状态
+end)
 
 -- 添加令的召唤状态图
 AddStategraphState("wilson", State{

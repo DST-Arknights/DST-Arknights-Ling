@@ -99,7 +99,6 @@ local states =
         {
             TimeEvent(8*FRAMES, function(inst)
                 inst.components.combat:DoAttack(inst.sg.statemem.target)
-                inst.SoundEmitter:PlaySound("dontstarve/creatures/together/antlion/sfx/attack")
             end),
         },
 
@@ -218,6 +217,26 @@ local states =
             EventHandler("animover", goto_idle),
         },
     },
+
+    State{
+        name = "nerd",
+        tags = { "busy" },
+
+        onenter = function(inst)
+            inst.Physics:Stop()
+            inst.AnimState:PlayAnimation("nerd")
+        end,
+
+        events =
+        {
+            EventHandler("animover", function(inst)
+                if inst.AnimState:AnimDone() then
+                    inst.sg:GoToState("idle")
+                end
+            end),
+        },
+    },
+
 
     State{
         name = "level_up",

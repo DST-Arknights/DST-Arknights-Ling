@@ -24,7 +24,7 @@ local GUARD_CONFIGS = {
         has_container = true,
         can_sleep = true,
         light_radius = 0.5,
-        physics_radius = 10,
+        physics_radius = 50,
         physics_height = 0.5,
         tags = {},
     },
@@ -38,7 +38,7 @@ local GUARD_CONFIGS = {
         has_container = true,
         can_sleep = true,
         light_radius = 0.5,
-        physics_radius = 10,
+        physics_radius = 50,
         physics_height = 0.5,
         tags = {},
     },
@@ -52,7 +52,7 @@ local GUARD_CONFIGS = {
         has_container = false,
         can_sleep = false,
         light_radius = 1.5,
-        physics_radius = 10,
+        physics_radius = 50,
         physics_height = 0.5,
         tags = {"NOBLOCK"}, -- 地面单位但无体积碰撞
     },
@@ -141,6 +141,8 @@ local function MakeGuard(config)
         inst.entity:AddLight()
         inst.entity:AddNetwork()
 
+        inst.entity:SetCanSleep(false)
+
         -- 设置动画
         inst.AnimState:SetBank(config.anim_bank)
         inst.AnimState:SetBuild(config.anim_build)
@@ -198,13 +200,24 @@ local function MakeGuard(config)
         -- Retarget 更频繁、并设置 KeepTarget，参考官方猪人
         inst.components.combat:SetRetargetFunction(1, NormalRetargetFn)
         inst.components.combat:SetKeepTargetFunction(KeepTargetFn)
+        inst.components.combat:SetAttackPeriod(1)
 
         inst:AddComponent("locomotor")
 
         inst:AddComponent("follower")
         inst.components.follower:KeepLeaderOnAttacked()
         inst.components.follower.keepdeadleader = true
-
+        inst.components.follower.cached_player_join_fn = function(world, player)
+            if inst.components.follower.cached_player_leader_userid == player.userid then
+                local now = GetTime()
+                local tleft = inst.components.follower.cached_player_leader_timeleft
+                inst.components.follower:SetLeader(player)
+                inst.components.follower.targettime = nil
+                if tleft and tleft > now then
+                    inst.components.follower:AddLoyaltyTime(tleft - now)
+                end
+            end
+        end
         -- 添加守卫行为管理组件
         inst:AddComponent("ling_guard")
         -- 设置初始等级（1 = 无精英化）

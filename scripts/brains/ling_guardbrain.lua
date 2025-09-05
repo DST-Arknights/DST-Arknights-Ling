@@ -10,6 +10,8 @@ local BrainCommon = require "brains/braincommon"
 local CONSTANTS = require("ark_constants_ling")
 local getGuardConfig = require("ling_guard_config").getGuardConfig
 
+local Targeting = require("ling_targeting")
+
 
 -- 调试输出（风筝相关）
 local function KDbg(inst, ...)
@@ -101,13 +103,18 @@ end
 
 
 
--- 根据模式返回“理想逃跑安全点”以影响 RunAway 的方向
--- 守模式：若在守圈内，不特殊处理；若在守圈外，引导朝守点方向撤退
--- 其它模式：若在主人 LEADER_DEFENSE_DIST 内，不特殊处理；若在圈外，引导朝主人方向撤退
+-- 根据模式与附近威胁，返回“理想逃跑安全点”用于影响 RunAway 的朝向
+-- 思路：
+-- 1) 先确定基础锚点（守点/主人），仅在“越界”时启用作为吸引项；
+-- 2) 扫描附近威胁（复用 ling_targeting 的威胁判定），构造“远离向量（排斥合力）”；
+-- 3) 将排斥合力与锚点吸引向量做矢量合成，得到期望的逃离方向；
+-- 4) 返回 inst 附近朝该方向的一点作为 safe_point，RunAway 内部会用 sp 与“远离猎手”的方向做 0.5 插值，避免直线撞墙。
 local function GetKiteSafePoint(inst)
     local mode = inst.components.ling_guard and inst.components.ling_guard:GetBehaviorMode()
-    local cfg = getGuardConfig(inst)
+    local cfg = getGuardConfig(inst) or {}
 
+    -- 1) 基础锚点判定：仅在越界时吸引回锚点
+    local anchor = nil
     if mode == CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD then
         local guard_pos = GetGuardPos(inst)
         if guard_pos ~= nil then
@@ -115,28 +122,105 @@ local function GetKiteSafePoint(inst)
             if r > 0 then
                 local distsq = inst:GetDistanceSqToPoint(guard_pos.x, guard_pos.y, guard_pos.z)
                 if distsq > r * r then
-                    -- 在守圈外：回圈撤退
-                    return guard_pos
+                    anchor = guard_pos -- 越界：回守圈
                 end
             end
         end
-        -- 在守圈内：无需特殊处理
-        return nil
     else
         local leader = GetLeader(inst)
         if leader ~= nil and leader:IsValid() then
-            local defend = cfg.LEADER_DEFENSE_DIST or 0
+            local defend = (cfg.LEADER_DEFENSE_DIST or 0)
             if defend > 0 then
                 local distsq = inst:GetDistanceSqToInst(leader)
                 if distsq > defend * defend then
-                    -- 超出主人防御半径：朝主人方向撤退
-                    return leader:GetPosition()
+                    anchor = leader:GetPosition() -- 越界：回主人
                 end
             end
         end
-        -- 在主人防御半径内或没有主人：无需特殊处理
-        return nil
     end
+
+    -- 2) 扫描威胁，构造排斥合力（避免只“远离当前 target”而冲向其他敌人堆）
+    local function add_threats_from(center, radius, acc, seen)
+        if center == nil or radius == nil or radius <= 0 then return end
+        local ents = TheSim:FindEntities(center.x, center.y, center.z, radius, {"_combat"}, {"playerghost","INLIMBO","player","companion","wall","ling_summon"})
+        for _, e in ipairs(ents) do
+            if e ~= nil and e:IsValid() and not seen[e] and Targeting.IsThreatToGuard(inst, e) then
+                seen[e] = true
+                table.insert(acc, e)
+            end
+        end
+    end
+
+    local threats, seen = {}, {}
+    local pt = inst:GetPosition()
+    local detect_r = (cfg.KITE and (cfg.KITE.DETECTION_RANGE or cfg.KITE.RUN_DISTANCE)) or 12
+    add_threats_from(pt, detect_r, threats, seen)
+
+    local leader = GetLeader(inst)
+    if leader ~= nil and leader:IsValid() then
+        local defend = (cfg.LEADER_DEFENSE_DIST or 0)
+        if defend > 0 then
+            add_threats_from(leader:GetPosition(), defend, threats, seen)
+        end
+    end
+    if mode == CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD then
+        local guard_pos = GetGuardPos(inst)
+        local guard_r = (cfg.GUARD_RANGE or 0)
+        if guard_pos ~= nil and guard_r > 0 then
+            add_threats_from(guard_pos, guard_r, threats, seen)
+        end
+    end
+
+    -- 3) 合成方向：排斥合力 + 锚点吸引
+    local rx, rz = 0, 0
+    if #threats > 0 then
+        local x, y, z = pt:Get()
+        for _, e in ipairs(threats) do
+            local ex, ey, ez = e.Transform:GetWorldPosition()
+            local dx, dz = x - ex, z - ez
+            local d2 = dx*dx + dz*dz
+            if d2 > 0.25 then -- 避免极小距离的爆表
+                local d = math.sqrt(d2)
+                -- 基础权重：离得越近排斥越强；若其正在攻击自己/主人，权重再提高
+                local w = 1 / math.max(d, 1)
+                if e.components and e.components.combat then
+                    if e.components.combat:TargetIs(inst) or (leader and e.components.combat:TargetIs(leader)) then
+                        w = w * 1.6
+                    end
+                end
+                rx = rx + (dx / d) * w
+                rz = rz + (dz / d) * w
+            end
+        end
+    end
+
+    local ax, az = 0, 0
+    if anchor ~= nil then
+        local x, y, z = pt:Get()
+        local tx, ty, tz = anchor:Get()
+        local dx, dz = tx - x, tz - z
+        local d2 = dx*dx + dz*dz
+        if d2 > 0.0001 then
+            local d = math.sqrt(d2)
+            local w_anchor = 0.9 -- 锚点吸引权重（只在越界时存在）
+            ax = (dx / d) * w_anchor
+            az = (dz / d) * w_anchor
+        end
+    end
+
+    local vx, vz = rx + ax, rz + az
+    local len2 = vx*vx + vz*vz
+    if len2 < 0.0001 then
+        -- 无法计算合成方向：
+        -- 1) 若越界，有锚点则返回锚点；
+        -- 2) 否则返回 nil，交由 RunAway 使用默认“反猎手”方向
+        return anchor
+    end
+
+    local len = math.sqrt(len2)
+    local dirx, dirz = vx/len, vz/len
+    local lookahead = 8 -- 提前量长度仅用于取角度
+    return pt + Vector3(dirx * lookahead, 0, dirz * lookahead)
 end
 
 

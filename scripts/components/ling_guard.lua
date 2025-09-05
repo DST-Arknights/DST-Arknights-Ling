@@ -38,8 +38,7 @@ local LingGuardBehavior = Class(function(self, inst)
     self.guard_pos = nil
     self.level = 1
 
-    -- 召唤者和插槽信息（从 prefab 迁移过来）
-    self.saved_summoner_userid = nil
+    -- 插槽信息（从 prefab 迁移过来）
     self.saved_slots = nil
 end, nil, {
     behavior_mode = onbehaviormode,
@@ -197,15 +196,7 @@ function LingGuardBehavior:GetWorkMode()
     return self.work_mode
 end
 
--- 设置召唤者用户ID
-function LingGuardBehavior:SetSummonerUserId(userid)
-    self.saved_summoner_userid = userid
-end
 
--- 获取召唤者用户ID
-function LingGuardBehavior:GetSummonerUserId()
-    return self.saved_summoner_userid
-end
 
 -- 设置插槽信息
 function LingGuardBehavior:SetSlots(slots)
@@ -286,7 +277,6 @@ function LingGuardBehavior:OnSave()
     return {
         behavior_mode = self.behavior_mode,
         work_mode = self.work_mode,
-        saved_summoner_userid = self.saved_summoner_userid,
         saved_slots = self.saved_slots,
         level = self.level,
         guard_pos = self.guard_pos and {self.guard_pos:Get()} or nil,
@@ -296,8 +286,7 @@ end
 -- 加载数据
 function LingGuardBehavior:OnLoad(data)
     if data then
-        -- 加载召唤者和插槽信息
-        self.saved_summoner_userid = data.saved_summoner_userid
+        -- 加载插槽信息
         self.saved_slots = data.saved_slots
 
         -- 加载等级信息
