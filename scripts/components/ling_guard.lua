@@ -224,6 +224,8 @@ function LingGuardBehavior:SetLevel(level)
     if self.inst.components.combat then
         self.inst.components.combat:SetDefaultDamage(config.DAMAGE)
         self.inst.components.combat:SetRange(config.ATTACK_RANGE)
+        -- 同步近战基准给远程形态切换逻辑，避免卸下远程后近战距离错误导致“抖动”
+        self.inst._ling_melee_range = config.ATTACK_RANGE
         self.inst.components.combat:SetAttackPeriod(config.ATTACK_PERIOD)
         self.inst.components.combat.externaldamagetakenmultipliers:SetModifier(self.inst, config.DAMAGE_REDUCTION, "level_damage_reduction")
     end

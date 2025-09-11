@@ -89,7 +89,7 @@ function LingGuardPanel:CreateModeButtons()
     {
       mode = GUARD_BEHAVIOR_MODE.CAUTIOUS,
       texture = "command_cautious.tex",
-      position = {186, -30, 0},
+      position = {186, -40, 0},
       name = "cautious",
       hoverHeight = HEIGHT.HOVER,
       activeHeight = HEIGHT.ACTIVE,
@@ -97,7 +97,7 @@ function LingGuardPanel:CreateModeButtons()
     {
       mode = GUARD_BEHAVIOR_MODE.ATTACK,
       texture = "command_attack.tex",
-      position = {112, -30, 0},
+      position = {112, -40, 0},
       name = "attack",
       hoverHeight = HEIGHT.HOVER,
       activeHeight = HEIGHT.ACTIVE
@@ -105,7 +105,7 @@ function LingGuardPanel:CreateModeButtons()
     {
       mode = GUARD_BEHAVIOR_MODE.GUARD,
       texture = "command_guard.tex",
-      position = {36, -30, 0},
+      position = {36, -40, 0},
       name = "guard",
       hoverHeight = HEIGHT.HOVER_GUARD,
       activeHeight = HEIGHT.ACTIVE_GUARD,

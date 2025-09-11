@@ -7,10 +7,75 @@ local assets = {
     Asset("ANIM", "anim/loong_1.zip"),
 }
 
--- 移除旧的行为模式常量，现在使用 CONSTANTS.GUARD_BEHAVIOR_MODE
-
 -- 守卫类型常量
 local GUARD_TYPE = CONSTANTS.GUARD_TYPE
+
+-- 私有：远程参数（清平解锁后生效）
+local RANGED = {
+    QINGPING = {
+        RANGE = 15,          -- 远程攻击距离（就绪时临时切到这个范围）
+        EXTRA_CD =15,        -- 远程额外冷却（秒），叠加在 combat 攻击节奏之外
+        PROJECTILE = "bishop_charge", -- 复用官方投射物，后续可替换自定义
+    },
+}
+
+-- 内部工具：开关远程/近战形态
+local function SetRangedForm(inst, on)
+    -- 仅清平启用该机制
+    if inst.guard_type ~= GUARD_TYPE.QINGPING then return end
+    -- 近战范围：使用当前 combat 的范围作为“近战基准”，避免与等级配置脱节
+    inst._ling_melee_range = inst._ling_melee_range or (inst.components.combat and inst.components.combat:GetAttackRange()) or 2.5
+
+    if on then
+        if inst._ling_ranged_weapon ~= nil then
+            inst.components.combat:SetRange(RANGED.QINGPING.RANGE)
+        end
+    else
+        inst.components.combat:SetRange(inst._ling_melee_range)
+    end
+end
+
+-- 内部工具：创建远程武器（仅服务器）
+local function CreateRangedWeapon(inst)
+    local ent = CreateEntity()
+    ent.entity:AddTransform() -- weapon 组件需要 entity
+    ent:AddTag("NOCLICK")
+    ent:AddTag("NOBLOCK")
+
+    -- 不加网络/物理，纯服务端私有实体
+    ent.persists = false
+
+    ent:AddComponent("weapon")
+    ent.components.weapon:SetRange(2, RANGED.QINGPING.RANGE) -- 最小2以便贴脸也能发
+    -- ent.components.weapon:SetProjectile(RANGED.QINGPING.PROJECTILE)
+    ent.components.weapon:SetDamage(function(attacker, target)
+        -- 使用守卫当下默认伤害，保持与等级同步
+        return attacker.components.combat and attacker.components.combat.defaultdamage or 20
+    end)
+
+    ent.components.weapon:SetOnAttack(function(weapon, attacker, target)
+        lprint("[LingGuardBehavior] ranged attack")
+        weapon.components.rechargeable:Discharge(RANGED.QINGPING.EXTRA_CD)
+    end)
+
+    ent:AddComponent("rechargeable")
+    ent.components.rechargeable:SetOnDischargedFn(function(weapon)
+        lprint("[LingGuardBehavior] ranged discharged")
+        SetRangedForm(weapon._owner, false)
+    end)
+    ent.components.rechargeable:SetOnChargedFn(function(weapon)
+        lprint("[LingGuardBehavior] ranged charged")
+        SetRangedForm(weapon._owner, true)
+    end)
+
+    -- 便于回溯 owner
+    ent._owner = inst
+
+    -- 跟随生命周期
+    ent:ListenForEvent("onremove", function() if ent and ent:IsValid() then ent:Remove() end end, inst)
+
+    return ent
+end
 
 -- 守卫配置表
 local GUARD_CONFIGS = {
@@ -223,6 +288,11 @@ local function MakeGuard(config)
         -- 设置初始等级（1 = 无精英化）
         inst.components.ling_guard:SetLevel(1)
 
+        if config.guard_type == GUARD_TYPE.QINGPING then
+            inst._ling_ranged_weapon = CreateRangedWeapon(inst)
+            SetRangedForm(inst, true)
+        end
+
         inst:AddComponent("inspectable")
         inst:AddComponent("lootdropper")
         inst:AddComponent("knownlocations")
@@ -369,6 +439,10 @@ local function MakeGuard(config)
             if inst.plant_club then
                 inst.plant_club.components.container:DropEverything(inst:GetPosition(), true)
                 inst.plant_club:Remove()
+            end
+            if inst._ling_ranged_weapon ~= nil and inst._ling_ranged_weapon:IsValid() then
+                inst._ling_ranged_weapon:Remove()
+                inst._ling_ranged_weapon = nil
             end
         end
         return inst

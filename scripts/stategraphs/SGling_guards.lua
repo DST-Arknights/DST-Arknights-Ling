@@ -1,4 +1,6 @@
 require("stategraphs/commonstates")
+local CONSTANTS = require("ark_constants_ling")
+local GUARD_TYPE = CONSTANTS.GUARD_TYPE
 
 local actionhandlers = {
     ActionHandler(ACTIONS.CHOP,   "chop"),
@@ -87,18 +89,33 @@ local states =
             inst.Physics:Stop()
             inst.components.combat:StartAttack()
             local attack_anim = "attack_0"
-            if inst.guard_type == "xiaoyao" then
+            if inst.guard_type == GUARD_TYPE.XIAOYAO then
                 attack_anim = "attack_1"
-            elseif inst.guard_type == "xianjing" then
+            elseif inst.guard_type == GUARD_TYPE.XIANJING then
                 attack_anim = "attack"
+            elseif inst.guard_type == GUARD_TYPE.QINGPING then
+                local ready = false
+                if inst._ling_ranged_weapon then
+                    ready = inst._ling_ranged_weapon.components.rechargeable:IsCharged()
+                    lprint("[LingGuardBehavior] attack ready", ready)
+                end
+                attack_anim = (ready and "attack_1") or "attack_0"
             end
+            lprint("[LingGuardBehavior] attack_anim", attack_anim)
             inst.AnimState:PlayAnimation(attack_anim)
         end,
 
         timeline =
         {
             TimeEvent(8*FRAMES, function(inst)
-                inst.components.combat:DoAttack(inst.sg.statemem.target)
+                local weapon = nil
+                if inst.guard_type == GUARD_TYPE.QINGPING
+                and inst.components.ling_guard:GetLevel() >= 2
+                and inst._ling_ranged_weapon
+                and inst._ling_ranged_weapon.components.rechargeable:IsCharged() then
+                    weapon = inst._ling_ranged_weapon
+                end
+                inst.components.combat:DoAttack(inst.sg.statemem.target, weapon)
             end),
         },
 
