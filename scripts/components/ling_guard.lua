@@ -1,11 +1,14 @@
 local CONSTANTS = require("ark_constants_ling")
 
+local LING_TUNING = require("ling_guard_tuning")
+local FORM = CONSTANTS.GUARD_FORM
+
 -- 更新等级标签的辅助函数
 local function UpdateLevelTags(inst, level)
     for i = 1, 4 do
         inst:RemoveTag("ling_guard_level_" .. i)
     end
-    inst:AddTag("ling_guard_level_level_" .. level)
+    inst:AddTag("ling_guard_level_" .. level)
 end
 
 -- 行为模式变化监听器
@@ -195,6 +198,31 @@ end
 function LingGuardBehavior:GetWorkMode()
     return self.work_mode
 end
+-- 形态/类型判断统一由 ling_guard 提供
+function LingGuardBehavior:IsQingping()
+    if self.inst.prefab == "ling_guard_elite" or self.inst.prefab == "xianjing" then
+        return false
+    end
+    if self.inst.components.ling_guard_form and self.inst.components.ling_guard_form.GetForm then
+        return self.inst.components.ling_guard_form:GetForm() == FORM.QINGPING
+    end
+    return self.inst:HasTag(FORM.QINGPING)
+end
+
+function LingGuardBehavior:IsXiaoyao()
+    if self.inst.prefab == "ling_guard_elite" or self.inst.prefab == "xianjing" then
+        return false
+    end
+    if self.inst.components.ling_guard_form and self.inst.components.ling_guard_form.GetForm then
+        return self.inst.components.ling_guard_form:GetForm() == FORM.XIAOYAO
+    end
+    return self.inst:HasTag(FORM.XIAOYAO)
+end
+
+function LingGuardBehavior:IsXianjing()
+    return self.inst.prefab == "ling_guard_elite" or self.inst.prefab == "xianjing"
+end
+
 
 
 
@@ -210,28 +238,43 @@ end
 
 -- 设置等级
 function LingGuardBehavior:SetLevel(level)
-    local config = TUNING.LING_GUARDS[self.inst.guard_type].LEVELS[level]
-    if not config then
-        return
-    end
+    self.level = level
 
-    self.level = level -- 设置到组件内部
+    local cfg
+    if self:IsXianjing() then
+        cfg = LING_TUNING.GetEliteLevel(level)
+    else
+        local form = self:IsXiaoyao() and FORM.XIAOYAO or FORM.QINGPING
+        cfg = LING_TUNING.GetBasicFormLevel(level, form)
+        local qcfg, xcfg = LING_TUNING.GetBasicBothForms(level)
+        if qcfg then self.inst._ling_melee_range = qcfg.ATTACK_RANGE end
+        if xcfg then self.inst._ling_ranged_range = xcfg.ATTACK_RANGE end
+    end
+    if not cfg then return end
 
     -- 更新属性
     if self.inst.components.health then
-        self.inst.components.health:SetMaxHealth(config.HEALTH)
+        self.inst.components.health:SetMaxHealth(cfg.HEALTH)
     end
     if self.inst.components.combat then
-        self.inst.components.combat:SetDefaultDamage(config.DAMAGE)
-        self.inst.components.combat:SetRange(config.ATTACK_RANGE)
-        -- 同步近战基准给远程形态切换逻辑，避免卸下远程后近战距离错误导致“抖动”
-        self.inst._ling_melee_range = config.ATTACK_RANGE
-        self.inst.components.combat:SetAttackPeriod(config.ATTACK_PERIOD)
-        self.inst.components.combat.externaldamagetakenmultipliers:SetModifier(self.inst, config.DAMAGE_REDUCTION, "level_damage_reduction")
+        self.inst.components.combat:SetDefaultDamage(cfg.DAMAGE)
+        -- 同步当前形态的攻击范围（统一用组件判断）
+        if self:IsXianjing() then
+            self.inst.components.combat:SetRange(cfg.ATTACK_RANGE)
+        else
+            local is_x = self:IsXiaoyao()
+            if is_x then
+                self.inst.components.combat:SetRange(self.inst._ling_ranged_range or cfg.ATTACK_RANGE)
+            else
+                self.inst.components.combat:SetRange(self.inst._ling_melee_range or cfg.ATTACK_RANGE)
+            end
+        end
+        self.inst.components.combat:SetAttackPeriod(cfg.ATTACK_PERIOD)
+        self.inst.components.combat.externaldamagetakenmultipliers:SetModifier(self.inst, cfg.DAMAGE_REDUCTION, "level_damage_reduction")
     end
     if self.inst.components.locomotor then
-        self.inst.components.locomotor.walkspeed = config.WALK_SPEED
-        self.inst.components.locomotor.runspeed = config.RUN_SPEED
+        self.inst.components.locomotor.walkspeed = cfg.WALK_SPEED
+        self.inst.components.locomotor.runspeed = cfg.RUN_SPEED
     end
 
     -- 更新种植组件的等级
@@ -253,6 +296,16 @@ function LingGuardBehavior:SetLevel(level)
 
     -- 更新等级标签
     UpdateLevelTags(self.inst, level)
+    -- 同步槽位网络等级到 UI
+    local leader = (self.inst.components.follower and self.inst.components.follower.leader) or nil
+    if leader and leader.components.ling_summon_manager then
+        local mgr = leader.components.ling_summon_manager
+        local idx = mgr:FindGuardIndex(self.inst)
+        if idx then
+            local slot = mgr:GetSlotData(idx)
+            mgr:SetSlotData(idx, self.inst, slot and slot.type or 0, level, CONSTANTS.GUARD_SLOT_STATUS.OCCUPIED)
+        end
+    end
     print("[LingGuardBehavior] SetLevel", level)
 end
 

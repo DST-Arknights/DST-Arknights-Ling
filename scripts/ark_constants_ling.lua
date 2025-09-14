@@ -25,10 +25,15 @@ return {
     DISABLED = 3,
     OTHER_WORLD = 4,
   },
-  GUARD_TYPE = {
-    QINGPING = 1,
-    XIAOYAO = 2,
-    XIANJING = 3,
+  -- 槽位类型（仅基础/高级，用于网络槽位与召唤链路）
+  GUARD_SLOT_TYPE = {
+    BASIC = 1,
+    ELITE = 2,
+  },
+  -- 形态常量（用于普通守卫的清平/逍遥切换）
+  GUARD_FORM = {
+    QINGPING = "qingping",
+    XIAOYAO = "xiaoyao",
   },
   GUARD_BEHAVIOR_MODE = {
     CAUTIOUS = 1, -- 慎：类似阿比盖尔的行为

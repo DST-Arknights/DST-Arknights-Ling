@@ -16,7 +16,7 @@ local function cubeitemtestfn(container, item, slot)
 end
 
 -- 3*3
-containers.params.qingping = {
+containers.params.ling_guard_basic = {
   widget = {
     slotpos = {},
     slotbg  = {},
@@ -31,12 +31,12 @@ containers.params.qingping = {
 }
 for y = 2, 0, -1 do
   for x = 0, 2 do
-    table.insert(containers.params.qingping.widget.slotpos, Vector3(80 * x - 80 * 2 + 80, 80 * y - 80 * 2 + 80, 0))
-    table.insert(containers.params.qingping.widget.slotbg, shallowcopy(slotAtlas))
+    table.insert(containers.params.ling_guard_basic.widget.slotpos, Vector3(80 * x - 80 * 2 + 80, 80 * y - 80 * 2 + 80, 0))
+    table.insert(containers.params.ling_guard_basic.widget.slotbg, shallowcopy(slotAtlas))
   end
 end
 
-containers.params.xiaoyao = deepcopy(containers.params.qingping)
+containers.params.xiaoyao = deepcopy(containers.params.ling_guard_basic)
 
 local function planitemtestfn(container, item, slot)
   return container.loading or item:HasTag("ling_guard_crop")

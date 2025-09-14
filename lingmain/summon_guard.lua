@@ -1,108 +1,12 @@
 local ImageButton = require "widgets/imagebutton"
 local CONSTANTS = require "ark_constants_ling"
-local GUARD_TYPE = CONSTANTS.GUARD_TYPE
+local SLOT_TYPE = CONSTANTS.GUARD_SLOT_TYPE
 
--- 令的守卫召唤物配置
-TUNING.LING_GUARDS = {
-  -- 清平配置
-  [GUARD_TYPE.QINGPING] = {
-    LEVELS = {
-      -- 无精英化 (elite_level = 1)
-      [1] = {
-        HEALTH = 300,
-        DAMAGE = 30,
-        DAMAGE_REDUCTION = 0.1, -- 10%免伤
-        ATTACK_RANGE = 4,
-        WALK_SPEED = 2.5,
-        RUN_SPEED = 5,
-        ATTACK_PERIOD = 4,
-        SUMMON_COST = 10, -- 召唤消耗诗意
-      },
-      -- 精英化一 (elite_level = 2)
-      [2] = {
-        HEALTH = 500,
-        DAMAGE = 50,
-        DAMAGE_REDUCTION = 0.2, -- 20%免伤
-        ATTACK_RANGE = 4,
-        WALK_SPEED = 3,
-        RUN_SPEED = 6,
-        ATTACK_PERIOD = 3,
-        SUMMON_COST = 9,
-      },
-      -- 精英化二 (elite_level = 3)
-      [3] = {
-        HEALTH = 700,
-        DAMAGE = 80,
-        DAMAGE_REDUCTION = 0.4, -- 40%免伤
-        ATTACK_RANGE = 4,
-        WALK_SPEED = 3.5,
-        RUN_SPEED = 7,
-        ATTACK_PERIOD = 2,
-        SUMMON_COST = 8,
-      },
-    }
-  },
+-- 守卫数值与消耗配置已迁移至 scripts/ling_guard_tuning.lua（通过 require("ling_guard_tuning") 使用）
+local LING_TUNING = require("ling_guard_tuning")
 
-  -- 逍遥配置（精一后解锁）
-  [GUARD_TYPE.XIAOYAO] = {
-    LEVELS = {
-      -- 精英化一 (elite_level = 2)
-      [2] = {
-        HEALTH = 100,
-        DAMAGE = 70,
-        DAMAGE_REDUCTION = 0.05, -- 5%免伤
-        ATTACK_RANGE = 15,
-        WALK_SPEED = 3,
-        RUN_SPEED = 7,
-        ATTACK_PERIOD = 5,
-        SUMMON_COST = 9,
-      },
-      -- 精英化二 (elite_level = 3)
-      [3] = {
-        HEALTH = 200,
-        DAMAGE = 100,
-        DAMAGE_REDUCTION = 0.1, -- 10%免伤
-        ATTACK_RANGE = 15,
-        WALK_SPEED = 3.5,
-        RUN_SPEED = 8,
-        ATTACK_PERIOD = 5,
-        SUMMON_COST = 8,
-      },
-    }
-  },
 
-  -- 弦惊配置（精二后解锁）
-  [GUARD_TYPE.XIANJING] = {
-    LEVELS = {
-      -- 精英化二 (elite_level = 3)
-      [3] = {
-        HEALTH = 2100,
-        DAMAGE = 220,
-        DAMAGE_REDUCTION = 0.7, -- 70%免伤
-        ATTACK_RANGE = 4,
-        WALK_SPEED = 5,
-        RUN_SPEED = 5,
-        ATTACK_PERIOD = 3,
-        SUMMON_COST = 16, -- 相当于两个召唤物
-      },
-    }
-  }
-}
-
-TUNING.LING_GUARD_PLANT = {
-  {
-    MAX_CROP = 40,
-    TIME_PER_CROP = 8, -- * 60,
-  },
-  {
-    MAX_CROP = 60,
-    TIME_PER_CROP = 6 * 60,
-  },
-  {
-    MAX_CROP = 80,
-    TIME_PER_CROP = 4 * 60,
-  },
-}
+-- 守卫种植系统配置同样迁移至 scripts/ling_guard_tuning.lua（LING_TUNING.PLANT）
 
 -- 诗意值ui
 AddClassPostConstruct("widgets/controls", function(self)
@@ -284,23 +188,16 @@ AddComponentPostInit("container", function(self)
 end)
 
 -- 添加召唤系统的RPC通信
-AddModRPCHandler("ling_summon", "summon_guard", function(player, guard_type, slot_index)
-  print("summon_guard", guard_type, slot_index)
+AddModRPCHandler("ling_summon", "summon_guard", function(player, slot_index)
+  print("summon_guard", slot_index)
   if not player or player.prefab ~= "ling" then
     return
   end
   if not player.components.ling_summon_manager then
     return
   end
-
-  -- 直接调用召唤管理器组件的方法，让它们处理诗意检查和扣除
-  if guard_type == GUARD_TYPE.QINGPING then
-    player.components.ling_summon_manager:SummonQingping(slot_index)
-  elseif guard_type == GUARD_TYPE.XIAOYAO then
-    player.components.ling_summon_manager:SummonXiaoyao(slot_index)
-  elseif guard_type == GUARD_TYPE.XIANJING then
-    player.components.ling_summon_manager:SummonXianjing(slot_index)
-  end
+  -- 统一：召唤基础守卫
+  player.components.ling_summon_manager:SummonBasic(slot_index)
 end)
 
 -- 移除了 command_guards RPC 处理器，功能将在组件中重构
@@ -491,7 +388,7 @@ AddStategraphState("wilson", State{
                 inst.sg.statemem.spawn_z = spawn_z
 
                 -- 创建召唤特效（除了弦惊）
-                if data.type ~= GUARD_TYPE.XIANJING then
+                if data.type ~= SLOT_TYPE.ELITE then
                     local fx = SpawnPrefab("ling_summon_fx")
                     fx.Transform:SetPosition(spawn_x, y, spawn_z)
                     inst.sg.statemem.summon_fx = fx

@@ -1,19 +1,20 @@
 local CONSTANTS = require "ark_constants_ling"
 
-local GUARD_SLOT_STATUS = CONSTANTS.GUARD_SLOT_STATUS
-local GUARD_TYPE = CONSTANTS.GUARD_TYPE
+local LING_TUNING = require("ling_guard_tuning")
+local FORM = CONSTANTS.GUARD_FORM
 
-local function getSlotCount(type)
-  return type == GUARD_TYPE.XIANJING and 2 or 1
+local GUARD_SLOT_STATUS = CONSTANTS.GUARD_SLOT_STATUS
+local SLOT_TYPE = CONSTANTS.GUARD_SLOT_TYPE
+
+local function getSlotCount(slot_type)
+  return slot_type == SLOT_TYPE.ELITE and 2 or 1
 end
 
-local function GuardTypeToString(guard_type_int)
-  if guard_type_int == GUARD_TYPE.QINGPING then
-    return "qingping"
-  elseif guard_type_int == GUARD_TYPE.XIAOYAO then
-    return "xiaoyao"
-  elseif guard_type_int == GUARD_TYPE.XIANJING then
-    return "xianjing"
+local function SlotTypeToPrefab(slot_type)
+  if slot_type == SLOT_TYPE.BASIC then
+    return "ling_guard_basic"
+  elseif slot_type == SLOT_TYPE.ELITE then
+    return "ling_guard_elite"
   end
 end
 
@@ -164,9 +165,9 @@ function LingSummonManager:IsGuardOwnedByPlayer(guard_inst)
 end
 
 -- 设置插槽为召唤中状态
-function LingSummonManager:SetSlotSummoning(slots, guard_type, level)
-  -- 第一个插槽设为召唤中状态，并设置类型和等级
-  self:SetSlotData(slots[1], nil, guard_type or 0, level or 0, GUARD_SLOT_STATUS.SUMMONING)
+function LingSummonManager:SetSlotSummoning(slots, slot_type, level)
+  -- 第一个插槽设为召唤中状态，并设置类型（基础/高级）和等级
+  self:SetSlotData(slots[1], nil, slot_type or 0, level or 0, GUARD_SLOT_STATUS.SUMMONING)
 
   -- 其他插槽（如果有）设为禁用状态
   for i = 2, #slots do
@@ -175,8 +176,15 @@ function LingSummonManager:SetSlotSummoning(slots, guard_type, level)
 end
 
 function LingSummonManager:SetGuardToSlot(guard_inst, slots)
+  -- 通过组件判断基础/高级与等级
+  local slot_type = SLOT_TYPE.BASIC
+  if guard_inst.components.ling_guard and guard_inst.components.ling_guard:IsXianjing() then
+    slot_type = SLOT_TYPE.ELITE
+  end
+  local lvl = (guard_inst.components.ling_guard and guard_inst.components.ling_guard.level) or 0
+
   -- 设置主插槽为占用状态
-  self:SetSlotData(slots[1], guard_inst, guard_inst.guard_type, guard_inst.level, GUARD_SLOT_STATUS.OCCUPIED)
+  self:SetSlotData(slots[1], guard_inst, slot_type, lvl, GUARD_SLOT_STATUS.OCCUPIED)
 
   -- 设置额外插槽为禁用状态（如果有）
   for i = 2, #slots do
@@ -310,7 +318,7 @@ function LingSummonManager:RequestOpenGuardPanel(guard_inst)
   end
   self.openedGuardPanelInst = guard_inst
   -- 打开面板时让清平表演 nerd 动作（避免打断繁忙/死亡状态）
-  if guard_inst and guard_inst.sg and guard_inst.guard_type == CONSTANTS.GUARD_TYPE.QINGPING then
+  if guard_inst and guard_inst.sg and guard_inst.components.ling_guard and guard_inst.components.ling_guard:IsQingping() then
     local ok = true
     if guard_inst.components and guard_inst.components.health and guard_inst.components.health:IsDead() then
       ok = false
@@ -363,8 +371,8 @@ function LingSummonManager:RequestCloseGuardPanel()
 end
 
 -- 召唤相关方法
-function LingSummonManager:SummonQingping(slot_index)
-  local slots = self:CanAssignToSlot(slot_index, getSlotCount(GUARD_TYPE.QINGPING))
+function LingSummonManager:SummonBasic(slot_index)
+  local slots = self:CanAssignToSlot(slot_index, getSlotCount(SLOT_TYPE.BASIC))
   if not slots then
     return false
   end
@@ -372,14 +380,13 @@ function LingSummonManager:SummonQingping(slot_index)
   -- 自动获取当前精英等级
   local elite_level = (self.inst.components.ling_elite and self.inst.components.ling_elite:GetEliteLevel()) or 0
 
-  -- 检查诗意消耗
+  -- 检查诗意消耗（基础召唤默认按清平成本）
   local poetry_component = self.inst.components.ling_poetry
   if not poetry_component then
     return false
   end
 
-  local config = TUNING.LING_GUARDS[GUARD_TYPE.QINGPING].LEVELS[elite_level]
-  local cost = config and config.SUMMON_COST or 10
+  local cost = LING_TUNING.GetSummonCost("basic", elite_level, FORM.QINGPING) or 10
 
   -- 检查诗意是否足够
   if not poetry_component:HasEnough(cost) then
@@ -387,43 +394,17 @@ function LingSummonManager:SummonQingping(slot_index)
   end
 
   -- 开始施法动作，传递插槽信息
-  self:StartSummonCasting(GUARD_TYPE.QINGPING, elite_level, cost, slots)
+  self:StartSummonCasting(SLOT_TYPE.BASIC, elite_level, cost, slots)
   return true
+end
+function LingSummonManager:SummonQingping(slot_index)
+  -- 统一改为基础召唤
+  return self:SummonBasic(slot_index)
 end
 
 function LingSummonManager:SummonXiaoyao(slot_index)
-  local slots = self:CanAssignToSlot(slot_index, getSlotCount(GUARD_TYPE.XIAOYAO))
-  if not slots then
-    print("[LingSummonManager] SummonXiaoyao: 无法分配插槽")
-    return false
-  end
-
-  -- 自动获取当前精英等级，检查等级要求（需要精一，即elite_level >= 1）
-  local elite_level = (self.inst.components.ling_elite and self.inst.components.ling_elite:GetEliteLevel()) or 0
-  if elite_level < 1 then
-    print("[LingSummonManager] SummonXiaoyao: 精英等级不足")
-    return false
-  end
-
-  -- 检查诗意消耗
-  local poetry_component = self.inst.components.ling_poetry
-  if not poetry_component then
-    print("[LingSummonManager] SummonXiaoyao: 诗意组件不存在")
-    return false
-  end
-
-  local config = TUNING.LING_GUARDS[GUARD_TYPE.XIAOYAO].LEVELS[elite_level]
-  local cost = config and config.SUMMON_COST or 12
-
-  -- 检查诗意是否足够
-  if not poetry_component:HasEnough(cost) then
-    print("[LingSummonManager] SummonXiaoyao: 诗意不足")
-    return false
-  end
-
-  -- 开始施法动作，传递插槽信息
-  self:StartSummonCasting(GUARD_TYPE.XIAOYAO, elite_level, cost, slots)
-  return true
+  -- 统一改为基础召唤
+  return self:SummonBasic(slot_index)
 end
 
 function LingSummonManager:SummonXianjing(slot_index)
@@ -439,8 +420,7 @@ function LingSummonManager:SummonXianjing(slot_index)
     return false
   end
 
-  local config = TUNING.LING_GUARDS[GUARD_TYPE.XIANJING].LEVELS[elite_level]
-  local cost = config and config.SUMMON_COST or 15
+  local cost = LING_TUNING.GetSummonCost("elite", elite_level) or 15
 
   -- 检查诗意是否足够
   if not poetry_component:HasEnough(cost) then
@@ -460,7 +440,7 @@ function LingSummonManager:SummonXianjing(slot_index)
   for _, guard in ipairs(guards) do
     if guard.components.follower and guard.components.follower.leader == self.inst
       and guard ~= current
-      and (guard.guard_type == GUARD_TYPE.QINGPING or guard.guard_type == GUARD_TYPE.XIAOYAO)
+      and guard.components.ling_guard and (guard.components.ling_guard:IsQingping() or guard.components.ling_guard:IsXiaoyao())
       and not guard.components.health:IsDead() then
       table.insert(fusion_candidates, guard)
     end
@@ -482,7 +462,7 @@ function LingSummonManager:SummonXianjing(slot_index)
   local guard1 = current
   local guard2 = fusion_candidates[1]
   local slots = { slot_index, self:FindGuardIndex(guard2) }
-  self:SetSlotSummoning(slots, GUARD_TYPE.XIANJING, 0)
+  self:SetSlotSummoning(slots, SLOT_TYPE.ELITE, 0)
 
   -- 扣除诗意
   poetry_component:Dirty(-cost)
@@ -494,16 +474,16 @@ function LingSummonManager:SummonXianjing(slot_index)
 end
 
 -- 施法和生成相关方法
-function LingSummonManager:StartSummonCasting(type, level, cost, slots)
+function LingSummonManager:StartSummonCasting(slot_type, level, cost, slots)
   -- 检查是否在忙碌状态
   if self.inst.sg and self.inst.sg:HasStateTag("busy") then
     print("[LingSummonManager] StartSummonCasting: 忙碌状态，无法施法")
     return false
   end
-  self:SetSlotSummoning(slots, type, level)
+  self:SetSlotSummoning(slots, slot_type, level)
   -- 设置召唤数据
   self.inst.summon_data = {
-    type = type,
+    type = slot_type,
     level = level,
     cost = cost,
     slots = slots,
@@ -517,11 +497,13 @@ function LingSummonManager:StartSummonCasting(type, level, cost, slots)
   return true
 end
 
-function LingSummonManager:SpawnGuardAtPosition(guard_type, elite_level, spawn_x, spawn_z, slots)
+function LingSummonManager:SpawnGuardAtPosition(slot_type, elite_level, spawn_x, spawn_z, slots)
 
-  local guard = SpawnPrefab(GuardTypeToString(guard_type))
+  local guard = SpawnPrefab(SlotTypeToPrefab(slot_type))
   if guard then
     guard.Transform:SetPosition(spawn_x, 0, spawn_z)
+
+    -- 基础守卫默认形态由 prefab 内部设置为清平
 
     -- 使用组件设置召唤者和插槽信息
     if guard.components.ling_guard then
@@ -648,19 +630,19 @@ function LingSummonManager:CompleteFusion(guard1, guard2, center_x, center_z, el
   guard2:Remove()
 
   -- 立即生成弦惊，播放start动画
-  local xianjing = SpawnPrefab("xianjing")
-  if xianjing then
-    xianjing.Transform:SetPosition(center_x, 0, center_z)
+  local elite_guard = SpawnPrefab("ling_guard_elite")
+  if elite_guard then
+    elite_guard.Transform:SetPosition(center_x, 0, center_z)
 
     -- 使用组件设置召唤者和插槽信息
-    if xianjing.components.ling_guard then
-      xianjing.components.ling_guard:SetSlots(slots)
-      xianjing.components.ling_guard:SetLevel(elite_level)
+    if elite_guard.components.ling_guard then
+      elite_guard.components.ling_guard:SetSlots(slots)
+      elite_guard.components.ling_guard:SetLevel(elite_level)
     end
 
     -- 设置跟随
-    if xianjing.components.follower then
-      xianjing.components.follower:SetLeader(self.inst)
+    if elite_guard.components.follower then
+      elite_guard.components.follower:SetLeader(self.inst)
     end
   end
 end

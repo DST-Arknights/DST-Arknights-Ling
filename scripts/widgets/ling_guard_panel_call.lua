@@ -5,7 +5,7 @@ local ImageButton = require "widgets/imagebutton"
 local CONSTANTS = require "ark_constants_ling"
 
 local GUARD_SLOT_STATUS = CONSTANTS.GUARD_SLOT_STATUS
-local GUARD_TYPE = CONSTANTS.GUARD_TYPE
+local SLOT_TYPE = CONSTANTS.GUARD_SLOT_TYPE
 
 local LingGuardPanelCall = Class(Widget, function(self, slot_data, owner)
     Widget._ctor(self, "LingGuardPanelCall")
@@ -30,12 +30,10 @@ end
 
 -- 获取按钮贴图
 function LingGuardPanelCall:GetButtonTexture()
-    if self.slot_data.type == GUARD_TYPE.QINGPING then
-        return "qingping.tex"
-    elseif self.slot_data.type == GUARD_TYPE.XIAOYAO then
-        return "xiaoyao.tex"
-    elseif self.slot_data.type == GUARD_TYPE.XIANJING then
+    if self.slot_data.type == SLOT_TYPE.ELITE then
         return "xianjing.tex"
+    elseif self.slot_data.type == SLOT_TYPE.BASIC then
+        return "qingping.tex"
     else
         return "summary.tex"
     end
@@ -87,12 +85,10 @@ end
 
 -- 获取类型名称
 function LingGuardPanelCall:GetTypeName()
-    if self.slot_data.type == GUARD_TYPE.QINGPING then
-        return STRINGS.UI.LING_SUMMON.QINGPING
-    elseif self.slot_data.type == GUARD_TYPE.XIAOYAO then
-        return STRINGS.UI.LING_SUMMON.XIAOYAO
-    elseif self.slot_data.type == GUARD_TYPE.XIANJING then
+    if self.slot_data.type == SLOT_TYPE.ELITE then
         return STRINGS.UI.LING_SUMMON.XIANJING
+    elseif self.slot_data.type == SLOT_TYPE.BASIC then
+        return STRINGS.UI.LING_SUMMON.QINGPING
     else
         return STRINGS.UI.LING_GUARD_PANEL_CALL.SUMMARY
     end
@@ -133,7 +129,7 @@ function LingGuardPanelCall:OnMouseButton(button, down, x, y)
             print("LingGuardPanelCall:OnMouseButton", "MOUSEBUTTON_LEFT", "down", self.slot_data.type, self.slot_data.status)
             if self.slot_data.status == GUARD_SLOT_STATUS.EMPTY then
                 -- 空插槽，召唤清平到指定插槽
-                SendModRPCToServer(GetModRPC("ling_summon", "summon_guard"), GUARD_TYPE.QINGPING, self.slot_data.index)
+                SendModRPCToServer(GetModRPC("ling_summon", "summon_guard"), self.slot_data.index)
             elseif self.slot_data.status == GUARD_SLOT_STATUS.OCCUPIED then
                 SendModRPCToServer(GetModRPC("ling_summon", "request_open_guard_panel"), self.slot_data.inst)
             end

@@ -1,4 +1,8 @@
+local LING_TUNING = require("ling_guard_tuning")
+
 local function onlevel(self, level)
+
+
   self.inst.replica.ling_guard_plant:SetLevel(level)
   self._enabledSlots = self.inst.replica.ling_guard_plant:GetEnabledSlotsByLevel(level)
 end
@@ -128,8 +132,8 @@ end
 -- 定时器完成回调
 function LingGuardPlant:OnPlantTimerDone()
     self:ProduceCrop()
-    
-    local config = TUNING.LING_GUARD_PLANT[self.level]
+
+    local config = LING_TUNING.PLANT[self.level]
     if not config or self.completed_tasks >= config.MAX_CROP then
         self:StopPlanting()
         return
@@ -146,7 +150,7 @@ function LingGuardPlant:SetupPlantingTimer()
         self.inst.components.timer:StopTimer("plant_crop")
     end
 
-    local config = TUNING.LING_GUARD_PLANT[self.level]
+    local config = LING_TUNING.PLANT[self.level]
     if not config then
         return
     end

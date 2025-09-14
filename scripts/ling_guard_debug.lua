@@ -8,7 +8,11 @@ local function DebugGuardBehavior(guard)
     end
     
     print("=== 守卫调试信息 ===")
-    print("守卫类型:", guard.guard_type or "未知")
+    local type_str = "未知"
+    if guard.components and guard.components.ling_guard then
+        type_str = guard.components.ling_guard:IsXianjing() and "ELITE" or "BASIC"
+    end
+    print("守卫类型:", type_str)
     print("行为模式:", guard.behavior_mode or "未知")
     print("等级:", guard.components.ling_guard and guard.components.ling_guard:GetLevel() or "未知")
     

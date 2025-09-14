@@ -1,6 +1,6 @@
 require("stategraphs/commonstates")
 local CONSTANTS = require("ark_constants_ling")
-local GUARD_TYPE = CONSTANTS.GUARD_TYPE
+
 
 local actionhandlers = {
     ActionHandler(ACTIONS.CHOP,   "chop"),
@@ -63,11 +63,8 @@ local states =
 
         onenter = function(inst)
             inst.Physics:Stop()
-            local spawn_anim = "start"
-            if inst.guard_type == "xianjing" then
-                spawn_anim = "start"
-            end
-            inst.AnimState:PlayAnimation(spawn_anim)
+            -- 简化：按标签或默认均使用同一登场动画
+            inst.AnimState:PlayAnimation("start")
         end,
 
         events =
@@ -89,19 +86,13 @@ local states =
             inst.Physics:Stop()
             inst.components.combat:StartAttack()
             local attack_anim = "attack_0"
-            if inst.guard_type == GUARD_TYPE.XIAOYAO then
-                attack_anim = "attack_1"
-            elseif inst.guard_type == GUARD_TYPE.XIANJING then
+            local is_elite = (inst.components.ling_guard ~= nil and inst.components.ling_guard:IsXianjing())
+            if is_elite then
                 attack_anim = "attack"
-            elseif inst.guard_type == GUARD_TYPE.QINGPING then
-                local ready = false
-                if inst._ling_ranged_weapon then
-                    ready = inst._ling_ranged_weapon.components.rechargeable:IsCharged()
-                    lprint("[LingGuardBehavior] attack ready", ready)
-                end
-                attack_anim = (ready and "attack_1") or "attack_0"
+            else
+                local is_xiaoyao = (inst.components.ling_guard ~= nil and inst.components.ling_guard:IsXiaoyao())
+                attack_anim = is_xiaoyao and "attack_1" or "attack_0"
             end
-            lprint("[LingGuardBehavior] attack_anim", attack_anim)
             inst.AnimState:PlayAnimation(attack_anim)
         end,
 
@@ -109,11 +100,9 @@ local states =
         {
             TimeEvent(8*FRAMES, function(inst)
                 local weapon = nil
-                if inst.guard_type == GUARD_TYPE.QINGPING
-                and inst.components.ling_guard:GetLevel() >= 2
-                and inst._ling_ranged_weapon
-                and inst._ling_ranged_weapon.components.rechargeable:IsCharged() then
-                    weapon = inst._ling_ranged_weapon
+                local is_xiaoyao = (inst.components.ling_guard ~= nil and inst.components.ling_guard:IsXiaoyao())
+                if is_xiaoyao and inst._ling_fixed_weapon and inst._ling_fixed_weapon:IsValid() then
+                    weapon = inst._ling_fixed_weapon
                 end
                 inst.components.combat:DoAttack(inst.sg.statemem.target, weapon)
             end),
