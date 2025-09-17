@@ -398,7 +398,7 @@ AddStategraphState("wilson", State{
 
                 -- 创建召唤特效（除了弦惊）
                 if data.type ~= SLOT_TYPE.ELITE then
-                    local fx = SpawnPrefab("ling_summon_fx")
+                    local fx = SpawnPrefab("ling_guard_basic_start_fx")
                     fx.Transform:SetPosition(spawn_x, y, spawn_z)
                     inst.sg.statemem.summon_fx = fx
                 end

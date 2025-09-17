@@ -14,7 +14,7 @@ end
 -- 加载语言文件
 common.LoadPOFile("scripts/languages/ling_chinese_s.po", "zh")
 
-PrefabFiles = {'ling', 'ling_lantern', 'ling_lantern_smoke', 'ling_guards', 'ling_summon_fx', 'ling_aoe_attack_fx', 'ling_guard_plant_container', 'ling_guard_plant_club'}
+PrefabFiles = {'ling', 'ling_lantern', 'ling_lantern_smoke', 'ling_guards', 'ling_guard_basic_start_fx', 'ling_guard_basic_fusion_fx', 'ling_aoe_attack_fx', 'ling_guard_plant_container', 'ling_guard_plant_club'}
 
 Assets = {
   Asset('ATLAS', 'images/saveslot_portraits/ling.xml'),
