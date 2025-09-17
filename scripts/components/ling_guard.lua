@@ -3,6 +3,28 @@ local CONSTANTS = require("ark_constants_ling")
 local LING_TUNING = require("ling_guard_tuning")
 local FORM = CONSTANTS.GUARD_FORM
 
+-- 内部应用形态：切标签 + 同步 replica + 广播事件
+local function _apply_form(self, form)
+    local inst = self.inst
+    -- 清理旧标签
+    inst:RemoveTag(FORM.QINGPING)
+    inst:RemoveTag(FORM.XIAOYAO)
+    -- 添加新标签
+    if form == FORM.XIAOYAO then
+        inst:AddTag(FORM.XIAOYAO)
+    else
+        form = FORM.QINGPING
+        inst:AddTag(FORM.QINGPING)
+    end
+    self.form = form
+    -- 同步到 replica tinybyte（0=清平,1=逍遥）
+    if inst.replica and inst.replica.ling_guard and inst.replica.ling_guard.SetFormValue then
+        inst.replica.ling_guard:SetFormValue(form == FORM.XIAOYAO and 1 or 0)
+    end
+    -- 事件通知（prefab 用于挂载武器等）
+    inst:PushEvent("ling_form_changed", { form = form })
+end
+
 -- 更新等级标签的辅助函数
 local function UpdateLevelTags(inst, level)
     for i = 1, 4 do
@@ -28,8 +50,10 @@ end
 
 -- 等级变化监听器
 local function onlevel(self, level)
-    -- 仅同步到 replica，具体逻辑在 SetLevel 方法中处理
-    -- 这里不需要同步到 replica，因为等级不需要网络同步
+    -- 同步到 replica：用于客户端 UI 读取等级
+    if self.inst.replica and self.inst.replica.ling_guard and self.inst.replica.ling_guard.SetLevel then
+        self.inst.replica.ling_guard:SetLevel(level or 1)
+    end
 end
 
 local LingGuardBehavior = Class(function(self, inst)
@@ -40,6 +64,7 @@ local LingGuardBehavior = Class(function(self, inst)
     self.work_mode = CONSTANTS.GUARD_WORK_MODE.NONE
     self.guard_pos = nil
     self.level = 1
+    self.form = FORM.QINGPING
 
     -- 插槽信息（从 prefab 迁移过来）
     self.saved_slots = nil
@@ -203,24 +228,49 @@ function LingGuardBehavior:IsQingping()
     if self.inst.prefab == "ling_guard_elite" or self.inst.prefab == "xianjing" then
         return false
     end
-    if self.inst.components.ling_guard_form and self.inst.components.ling_guard_form.GetForm then
-        return self.inst.components.ling_guard_form:GetForm() == FORM.QINGPING
-    end
-    return self.inst:HasTag(FORM.QINGPING)
+    return (self.form == FORM.QINGPING)
 end
 
 function LingGuardBehavior:IsXiaoyao()
     if self.inst.prefab == "ling_guard_elite" or self.inst.prefab == "xianjing" then
         return false
     end
-    if self.inst.components.ling_guard_form and self.inst.components.ling_guard_form.GetForm then
-        return self.inst.components.ling_guard_form:GetForm() == FORM.XIAOYAO
-    end
-    return self.inst:HasTag(FORM.XIAOYAO)
+    return (self.form == FORM.XIAOYAO)
 end
 
 function LingGuardBehavior:IsXianjing()
     return self.inst.prefab == "ling_guard_elite" or self.inst.prefab == "xianjing"
+end
+
+-- 设置/获取/切换 形态（门槛：自身等级>=2；弦惊不可切换；初始化时总是应用）
+function LingGuardBehavior:SetForm(form)
+    if self:IsXianjing() then return false end
+    if form ~= FORM.QINGPING and form ~= FORM.XIAOYAO then
+        form = FORM.QINGPING
+    end
+    local inst = self.inst
+    local is_initial = (not inst:HasTag(FORM.QINGPING) and not inst:HasTag(FORM.XIAOYAO))
+    if (self.form == form) and not is_initial then
+        return true
+    end
+    if (not is_initial) and ((self.level or 1) < 2) then
+        return false
+    end
+    _apply_form(self, form)
+    if not is_initial then
+        -- 切换后根据当前等级刷新一次数值
+        self:SetLevel(self.level or 1)
+    end
+    return true
+end
+
+function LingGuardBehavior:GetForm()
+    return self.form
+end
+
+function LingGuardBehavior:ToggleForm()
+    local target = (self.form == FORM.XIAOYAO) and FORM.QINGPING or FORM.XIAOYAO
+    return self:SetForm(target)
 end
 
 
@@ -241,10 +291,11 @@ function LingGuardBehavior:SetLevel(level)
     self.level = level
 
     local cfg
-    if self:IsXianjing() then
+    if self.inst and self.inst.replica and self.inst.replica.ling_guard and self.inst.replica.ling_guard.IsXianjing and self.inst.replica.ling_guard:IsXianjing() then
         cfg = LING_TUNING.GetEliteLevel(level)
     else
-        local form = self:IsXiaoyao() and FORM.XIAOYAO or FORM.QINGPING
+        local is_x = (self.inst and self.inst.replica and self.inst.replica.ling_guard and self.inst.replica.ling_guard.IsXiaoyao and self.inst.replica.ling_guard:IsXiaoyao()) or false
+        local form = is_x and FORM.XIAOYAO or FORM.QINGPING
         cfg = LING_TUNING.GetBasicFormLevel(level, form)
         local qcfg, xcfg = LING_TUNING.GetBasicBothForms(level)
         if qcfg then self.inst._ling_melee_range = qcfg.ATTACK_RANGE end
@@ -258,11 +309,11 @@ function LingGuardBehavior:SetLevel(level)
     end
     if self.inst.components.combat then
         self.inst.components.combat:SetDefaultDamage(cfg.DAMAGE)
-        -- 同步当前形态的攻击范围（统一用组件判断）
-        if self:IsXianjing() then
+        -- 同步当前形态的攻击范围（统一用 replica 判断）
+        if self.inst and self.inst.replica and self.inst.replica.ling_guard and self.inst.replica.ling_guard.IsXianjing and self.inst.replica.ling_guard:IsXianjing() then
             self.inst.components.combat:SetRange(cfg.ATTACK_RANGE)
         else
-            local is_x = self:IsXiaoyao()
+            local is_x = (self.inst and self.inst.replica and self.inst.replica.ling_guard and self.inst.replica.ling_guard.IsXiaoyao and self.inst.replica.ling_guard:IsXiaoyao()) or false
             if is_x then
                 self.inst.components.combat:SetRange(self.inst._ling_ranged_range or cfg.ATTACK_RANGE)
             else
@@ -334,6 +385,7 @@ function LingGuardBehavior:OnSave()
         work_mode = self.work_mode,
         saved_slots = self.saved_slots,
         level = self.level,
+        form = self.form,
         guard_pos = self.guard_pos and {self.guard_pos:Get()} or nil,
     }
 end
@@ -347,6 +399,10 @@ function LingGuardBehavior:OnLoad(data)
         -- 加载等级信息
         if data.level then
             self.saved_level = data.level
+        end
+        -- 加载形态信息
+        if data.form then
+            self.saved_form = data.form
         end
 
         -- 加载行为模式和工作模式
@@ -366,6 +422,11 @@ function LingGuardBehavior:LoadPostPass()
     if self.saved_level then
         self.level = self.saved_level
         self.saved_level = nil
+    end
+    if self.saved_form then
+        -- 直接应用形态（不受切换门槛限制）
+        _apply_form(self, self.saved_form)
+        self.saved_form = nil
     end
 end
 

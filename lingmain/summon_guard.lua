@@ -279,6 +279,15 @@ AddModRPCHandler("ling_summon", "change_guard_work", function(player, guard_inst
   end
 end)
 
+AddModRPCHandler("ling_summon", "change_guard_form", function(player, guard_inst, target)
+  if not player or player.prefab ~= "ling" then return end
+  if not guard_inst or not guard_inst:IsValid() then return end
+  if not guard_inst.components or not guard_inst.components.ling_guard then return end
+  -- 仅检查组件存在，其余校验在 SetForm 内部按自身 level 处理
+  guard_inst.components.ling_guard:SetForm(target)
+end)
+
+
 -- 守卫世界管理
 local OWNER_SHARD = {}
 AddShardModRPCHandler("ling_summon", "LingHere", function(src_shard, userid, enter)

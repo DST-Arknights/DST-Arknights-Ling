@@ -409,3 +409,25 @@ msgstr "采矿"
 msgctxt "STRINGS.UI.LING_GUARD_WORKMODE.PLANT"
 msgid "Plant"
 msgstr "种植"
+
+
+#. STRINGS.UI.LING_GUARD_PANEL.SWITCH_TO_QINGPING
+msgctxt "STRINGS.UI.LING_GUARD_PANEL.SWITCH_TO_QINGPING"
+msgid "Switch: Qingping"
+msgstr "切换:清平"
+
+#. STRINGS.UI.LING_GUARD_PANEL.SWITCH_TO_XIAOYAO
+msgctxt "STRINGS.UI.LING_GUARD_PANEL.SWITCH_TO_XIAOYAO"
+msgid "Switch: Xiaoyao"
+msgstr "切换:逍遥"
+
+#. STRINGS.UI.LING_GUARD_PANEL.LOCKED_SUFFIX
+msgctxt "STRINGS.UI.LING_GUARD_PANEL.LOCKED_SUFFIX"
+msgid " (Locked)"
+msgstr "(未解锁)"
+
+
+#. STRINGS.UI.LING_GUARD_PANEL.HEALTH_PERCENT
+msgctxt "STRINGS.UI.LING_GUARD_PANEL.HEALTH_PERCENT"
+msgid "Health: %d%%"
+msgstr "生命值: %d%%"

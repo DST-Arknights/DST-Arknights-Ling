@@ -119,14 +119,8 @@ function LingPoetryBadge:OnSlotDataChanged(slot_index)
     end
   end
 
-  -- 槽位数量没有变化，只更新对应按钮
-  local button = self.slot_buttons[slot_index]
-  if button and replica then
-    local slot_data = replica:GetSlotData(slot_index)
-    if slot_data then
-      button:UpdateSlotData(slot_data)
-    end
-  end
+  -- 槽位数量没有变化：由子按钮（ling_guard_panel_call）自行监听 dirty 事件并增量更新
+  -- 此处不再代理到子按钮，避免重复刷新
 end
 
 -- 重新绘制按钮

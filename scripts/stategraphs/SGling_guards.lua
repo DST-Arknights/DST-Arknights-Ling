@@ -86,11 +86,11 @@ local states =
             inst.Physics:Stop()
             inst.components.combat:StartAttack()
             local attack_anim = "attack_0"
-            local is_elite = (inst.components.ling_guard ~= nil and inst.components.ling_guard:IsXianjing())
+            local is_elite = (inst.replica and inst.replica.ling_guard and inst.replica.ling_guard.IsXianjing and inst.replica.ling_guard:IsXianjing())
             if is_elite then
                 attack_anim = "attack"
             else
-                local is_xiaoyao = (inst.components.ling_guard ~= nil and inst.components.ling_guard:IsXiaoyao())
+                local is_xiaoyao = (inst.replica and inst.replica.ling_guard and inst.replica.ling_guard.IsXiaoyao and inst.replica.ling_guard:IsXiaoyao())
                 attack_anim = is_xiaoyao and "attack_1" or "attack_0"
             end
             inst.AnimState:PlayAnimation(attack_anim)
@@ -100,7 +100,7 @@ local states =
         {
             TimeEvent(8*FRAMES, function(inst)
                 local weapon = nil
-                local is_xiaoyao = (inst.components.ling_guard ~= nil and inst.components.ling_guard:IsXiaoyao())
+                local is_xiaoyao = (inst.replica and inst.replica.ling_guard and inst.replica.ling_guard.IsXiaoyao and inst.replica.ling_guard:IsXiaoyao())
                 if is_xiaoyao and inst._ling_fixed_weapon and inst._ling_fixed_weapon:IsValid() then
                     weapon = inst._ling_fixed_weapon
                 end

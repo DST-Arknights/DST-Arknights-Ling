@@ -15,9 +15,81 @@ local LingGuardPanelCall = Class(Widget, function(self, slot_data, owner)
     -- 创建按钮
     self:CreateButton()
 
+    -- 注册槽位 dirty 监听（创建-销毁模型）
+    self:_AttachSlotDirtyListeners()
+    -- 基于当前 slot_data 做一次增量应用（含必要的实例监听挂载）
+    self:_OnSlotDataDirty(self.slot_data)
+
     -- 初始化按钮状态
     self:UpdateButtonState()
 end)
+
+-- 监听玩家副本上的槽位 dirty 事件（创建-销毁模型专用）
+function LingGuardPanelCall:_AttachSlotDirtyListeners()
+    local owner = self.owner
+    local idx = self.slot_data and self.slot_data.index
+    if not (owner and idx) then return end
+    if self._slot_dirty_owner == owner and self._slot_dirty_index == idx then return end
+    self:_DetachSlotDirtyListeners()
+    self._slot_dirty_owner = owner
+    self._slot_dirty_index = idx
+    local function handler()
+        local rep = owner.replica and owner.replica.ling_summon_manager
+        if not rep then return end
+        local new_data = rep:GetSlotData(idx)
+        if new_data then
+            self:_OnSlotDataDirty(new_data)
+        end
+    end
+    self._on_slotinstdirty_proxy = self._on_slotinstdirty_proxy or handler
+    self._on_slottypedirty_proxy = self._on_slottypedirty_proxy or handler
+    self._on_slotleveldirty_proxy = self._on_slotleveldirty_proxy or handler
+    self._on_slotstatusdirty_proxy = self._on_slotstatusdirty_proxy or handler
+    owner:ListenForEvent("slotinstdirty_" .. idx, self._on_slotinstdirty_proxy, owner)
+    owner:ListenForEvent("slottypedirty_" .. idx, self._on_slottypedirty_proxy, owner)
+    owner:ListenForEvent("slotleveldirty_" .. idx, self._on_slotleveldirty_proxy, owner)
+    owner:ListenForEvent("slotstatusdirty_" .. idx, self._on_slotstatusdirty_proxy, owner)
+end
+
+function LingGuardPanelCall:_DetachSlotDirtyListeners()
+    local owner = self._slot_dirty_owner
+    local idx = self._slot_dirty_index
+    if owner and idx then
+        if self._on_slotinstdirty_proxy then owner:RemoveEventCallback("slotinstdirty_" .. idx, self._on_slotinstdirty_proxy, owner) end
+        if self._on_slottypedirty_proxy then owner:RemoveEventCallback("slottypedirty_" .. idx, self._on_slottypedirty_proxy, owner) end
+        if self._on_slotleveldirty_proxy then owner:RemoveEventCallback("slotleveldirty_" .. idx, self._on_slotleveldirty_proxy, owner) end
+        if self._on_slotstatusdirty_proxy then owner:RemoveEventCallback("slotstatusdirty_" .. idx, self._on_slotstatusdirty_proxy, owner) end
+    end
+    self._slot_dirty_owner = nil
+    self._slot_dirty_index = nil
+end
+
+-- 槽位数据脏更新（增量刷新）
+function LingGuardPanelCall:_OnSlotDataDirty(new_data)
+    local old = self.slot_data or {}
+    self.slot_data = new_data
+
+    -- 根据占用状态挂/卸守卫实例监听
+    if new_data.status == GUARD_SLOT_STATUS.OCCUPIED and new_data.inst and new_data.inst:IsValid() then
+        self:_AttachInstListeners()
+    else
+        self:_DetachInstListeners()
+    end
+
+    -- 贴图：类型或实例变化需要刷新；基础类型下形态变化由 inst 的 formdirty 处理
+    if (old.type ~= new_data.type) or (old.inst ~= new_data.inst) then
+        if self.button then
+            local new_texture = self:GetButtonTexture()
+            self.button:SetTextures("images/ui_ling_guard_panel_call.xml", new_texture)
+        end
+    end
+
+    -- 状态或名称变化：刷新交互与 hover
+    if (old.status ~= new_data.status) or (old.inst ~= new_data.inst) or (old.level ~= new_data.level) then
+        self:UpdateButtonState()
+    end
+end
+
 
 -- 创建按钮
 function LingGuardPanelCall:CreateButton()
@@ -33,7 +105,9 @@ function LingGuardPanelCall:GetButtonTexture()
     if self.slot_data.type == SLOT_TYPE.ELITE then
         return "xianjing.tex"
     elseif self.slot_data.type == SLOT_TYPE.BASIC then
-        return "qingping.tex"
+        local inst = self.slot_data.inst
+        local is_x = (inst and inst:IsValid() and inst.replica and inst.replica.ling_guard and inst.replica.ling_guard.IsXiaoyao and inst.replica.ling_guard:IsXiaoyao()) or false
+        return is_x and "xiaoyao.tex" or "qingping.tex"
     else
         return "summary.tex"
     end
@@ -88,32 +162,14 @@ function LingGuardPanelCall:GetTypeName()
     if self.slot_data.type == SLOT_TYPE.ELITE then
         return STRINGS.UI.LING_SUMMON.XIANJING
     elseif self.slot_data.type == SLOT_TYPE.BASIC then
-        return STRINGS.UI.LING_SUMMON.QINGPING
+        local inst = self.slot_data.inst
+        local is_x = (inst and inst:IsValid() and inst.replica and inst.replica.ling_guard and inst.replica.ling_guard.IsXiaoyao and inst.replica.ling_guard:IsXiaoyao()) or false
+        return is_x and STRINGS.UI.LING_SUMMON.XIAOYAO or STRINGS.UI.LING_SUMMON.QINGPING
     else
         return STRINGS.UI.LING_GUARD_PANEL_CALL.SUMMARY
     end
 end
 
--- 更新槽位数据
-function LingGuardPanelCall:UpdateSlotData(slot_data)
-    print("LingGuardPanelCall:UpdateSlotData")
-    if not slot_data then
-        return
-    end
-    print("LingGuardPanelCall:UpdateSlotData", slot_data.type, slot_data.status)
-
-    -- 更新slot_data
-    self.slot_data = slot_data
-
-    -- 更新按钮贴图
-    if self.button then
-        local new_texture = self:GetButtonTexture()
-        self.button:SetTextures("images/ui_ling_guard_panel_call.xml", new_texture)
-    end
-
-    -- 更新按钮状态
-    self:UpdateButtonState()
-end
 
 function LingGuardPanelCall:OnMouseButton(button, down, x, y)
     print("LingGuardPanelCall:OnMouseButton", self.slot_data.type, self.slot_data.status)
@@ -136,6 +192,54 @@ function LingGuardPanelCall:OnMouseButton(button, down, x, y)
         end
         return true
     end
+end
+
+
+-- 监听/反监听 槽位里的守卫实例（用于形态变化实时更新贴图）
+function LingGuardPanelCall:_AttachInstListeners()
+    local inst = self.slot_data and self.slot_data.inst
+    if not (inst and inst:IsValid()) then
+        return
+    end
+    if self._listened_inst == inst then
+        return
+    end
+    self:_DetachInstListeners()
+    self._listened_inst = inst
+    if not self._on_formdirty_proxy then
+        self._on_formdirty_proxy = function() self:OnInstFormDirty() end
+    end
+    if not self._on_inst_onremove_proxy then
+        self._on_inst_onremove_proxy = function() self:_DetachInstListeners() end
+    end
+    inst:ListenForEvent("ling_guard_formdirty", self._on_formdirty_proxy, inst)
+    inst:ListenForEvent("onremove", self._on_inst_onremove_proxy, inst)
+end
+
+function LingGuardPanelCall:_DetachInstListeners()
+    local inst = self._listened_inst
+    if inst and inst:IsValid() then
+        if self._on_formdirty_proxy then
+            inst:RemoveEventCallback("ling_guard_formdirty", self._on_formdirty_proxy, inst)
+        end
+        if self._on_inst_onremove_proxy then
+            inst:RemoveEventCallback("onremove", self._on_inst_onremove_proxy, inst)
+        end
+    end
+    self._listened_inst = nil
+end
+
+function LingGuardPanelCall:OnInstFormDirty()
+    -- 仅需刷新按钮贴图；hover 文案由 UpdateButtonState 统一管理
+    if self.button then
+        local new_texture = self:GetButtonTexture()
+        self.button:SetTextures("images/ui_ling_guard_panel_call.xml", new_texture)
+    end
+end
+
+function LingGuardPanelCall:OnRemove()
+    self:_DetachInstListeners()
+    self:_DetachSlotDirtyListeners()
 end
 
 return LingGuardPanelCall

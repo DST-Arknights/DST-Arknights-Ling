@@ -234,12 +234,6 @@ local function ling_guard_basic_fn()
     inst:AddComponent("healthsyncer")
 
     if not TheWorld.ismastersim then
-        inst:ListenForEvent("clienthealthdirty", function(inst, data)
-            local leader = inst.replica.follower and inst.replica.follower:GetLeader() or nil
-            if leader and leader.HUD and leader.HUD.controls and leader.HUD.controls.ling_guard_panel and leader.HUD.controls.ling_guard_panel.guard_inst == inst then
-                leader.HUD.controls.ling_guard_panel.health:SetPercent(data.percent, true)
-            end
-        end)
         return inst
     end
 
@@ -294,12 +288,13 @@ local function ling_guard_basic_fn()
     inst:SetBrain(brain)
     inst:SetStateGraph("SGling_guards")
 
-    -- 形态组件：默认清平
-    inst:AddComponent("ling_guard_form")
+    -- 形态：默认清平（由 ling_guard 组件管理）
     inst:ListenForEvent("ling_form_changed", function(inst, data)
         SetupBasicForm(inst, data and data.form or FORM.QINGPING)
     end)
-    inst.components.ling_guard_form:SetForm(FORM.QINGPING)
+    if inst.components and inst.components.ling_guard then
+        inst.components.ling_guard:SetForm(FORM.QINGPING)
+    end
 
     -- 附属容器保存/加载/清理（共用）
     inst.OnSave = OnSave_Common

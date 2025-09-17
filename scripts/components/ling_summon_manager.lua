@@ -408,9 +408,9 @@ function LingSummonManager:SummonXiaoyao(slot_index)
 end
 
 function LingSummonManager:SummonXianjing(slot_index)
-  -- 自动获取当前精英等级，检查等级要求（需要精二，即elite_level >= 2）
+  -- 自动获取当前精英等级，检查等级要求（需要精三，即 elite_level >= 3）
   local elite_level = (self.inst.components.ling_elite and self.inst.components.ling_elite:GetEliteLevel()) or 0
-  if elite_level < 2 then
+  if elite_level < 3 then
     return false
   end
 

@@ -21,18 +21,17 @@ local LingGuardReplica = Class(function(self, inst)
     -- 守卫位置网络变量 - 使用BitField打包坐标
     self._guard_pos_data = net_uint(inst.GUID, "ling_guard_._guard_pos_data", "guardposdirty")
 
+    -- 等级网络变量
+    self._level = net_tinybyte(inst.GUID, "ling_guard_._level", "levelchanged")
+
+    -- 形态网络变量：0=清平,1=逍遥（节省带宽）
+    self._form = net_tinybyte(inst.GUID, "ling_guard_._form", "ling_guard_formdirty")
+
     -- 客户端状态
     self._guard_pos = nil
     self._guard_pos_inst = nil
 
     if not TheWorld.ismastersim then
-        -- 监听行为模式变化
-        self.inst:ListenForEvent("behaviormodechanged", function()
-            self:OnBehaviorModeChanged()
-        end, inst)
-        self.inst:ListenForEvent("workmodechanged", function()
-            -- self:OnWorkModeChanged()
-        end, inst)
         -- 监听守卫位置变化
         self.inst:ListenForEvent("guardposdirty", function()
             self:OnGuardPosDirty()
@@ -44,20 +43,6 @@ local LingGuardReplica = Class(function(self, inst)
     end
 end)
 
--- 当行为模式变化时调用
-function LingGuardReplica:OnBehaviorModeChanged()
-    -- 更新守卫面板UI
-    local mode = self._behavior_mode:value()
-    print("[LingGuardBehaviorReplica] Behavior mode changed to:", mode)
-
-    -- 如果守卫面板正在显示这个守卫，更新UI状态
-    if ThePlayer and ThePlayer.HUD and ThePlayer.HUD.controls and ThePlayer.HUD.controls.ling_guard_panel then
-        local panel = ThePlayer.HUD.controls.ling_guard_panel
-        if panel.guard_inst == self.inst then
-            panel:OnBehaviorModeChanged(mode)
-        end
-    end
-end
 
 -- 设置行为模式（由服务端调用）
 function LingGuardReplica:SetBehaviorMode(mode)
@@ -93,6 +78,16 @@ end
 -- 获取工模式
 function LingGuardReplica:GetWorkMode()
     return self._work_mode:value()
+end
+
+-- 设置等级（由服务端调用）
+function LingGuardReplica:SetLevel(level)
+    self._level:set(level or 1)
+end
+
+-- 获取等级（客户端用于 UI 展示）
+function LingGuardReplica:GetLevel()
+    return self._level:value()
 end
 
 -- 设置守卫位置（由服务端调用）
@@ -193,6 +188,41 @@ end
 -- 组件移除时清理
 function LingGuardReplica:OnRemoveFromEntity()
     self:RemoveGuardPositionVisual()
+end
+
+-- 设置/获取形态网络值（由服务端调用 SetForm 时同步）
+function LingGuardReplica:SetFormValue(v)
+    self._form:set(v or 0)
+end
+function LingGuardReplica:GetFormValue()
+    return self._form:value()
+end
+
+-- 形态/类型查询（服务器环境下优先读组件，避免延时）
+function LingGuardReplica:IsXianjing()
+    if TheWorld.ismastersim and self.inst.components and self.inst.components.ling_guard and self.inst.components.ling_guard.IsXianjing then
+        return self.inst.components.ling_guard:IsXianjing()
+    end
+    return self.inst.prefab == "ling_guard_elite" or self.inst.prefab == "xianjing"
+end
+
+function LingGuardReplica:IsXiaoyao()
+    if TheWorld.ismastersim and self.inst.components and self.inst.components.ling_guard then
+        return self.inst.components.ling_guard.form == CONSTANTS.GUARD_FORM.XIAOYAO
+    end
+    return self._form:value() == 1
+end
+
+function LingGuardReplica:IsQingping()
+    if TheWorld.ismastersim and self.inst.components and self.inst.components.ling_guard then
+        return self.inst.components.ling_guard.form == CONSTANTS.GUARD_FORM.QINGPING
+    end
+    return self._form:value() == 0
+end
+
+function LingGuardReplica:GetForm()
+    if self:IsXiaoyao() then return CONSTANTS.GUARD_FORM.XIAOYAO end
+    return CONSTANTS.GUARD_FORM.QINGPING
 end
 
 return LingGuardReplica

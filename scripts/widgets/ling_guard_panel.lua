@@ -108,8 +108,24 @@ local LingGuardPanel = Class(Widget, function(self, owner)
   self.recall:SetFocusScale(BUTTON_FOCUS_SCALE)
   self.recall:SetHoverText(STRINGS.UI.LING_GUARD_PANEL.RECALL)
 
-  self.name = self:AddChild(Image("images/ui_ling_guard_panel.xml", "name_qingping.tex"))
+  -- 名称图标即为“形态切换按钮”
+  self.name = self:AddChild(ImageButton("images/ui_ling_guard_panel.xml", "name_qingping.tex"))
   self.name:SetPosition(222, 48, 0)
+  self.name:SetFocusScale(BUTTON_FOCUS_SCALE)
+  self.name:SetOnClick(function()
+    if not self.guard_inst or not self.guard_inst:IsValid() then return end
+    -- 弦惊不可切换
+    if self.guard_inst.prefab == "ling_guard_elite" then return end
+    local lvl = (self.guard_inst and self.guard_inst.replica and self.guard_inst.replica.ling_guard and self.guard_inst.replica.ling_guard.GetLevel and self.guard_inst.replica.ling_guard:GetLevel()) or 1
+    local unlocked = lvl >= 2
+    if not unlocked then return end
+    local FORM = CONSTANTS.GUARD_FORM
+    local is_x = (self.guard_inst and self.guard_inst.replica and self.guard_inst.replica.ling_guard and self.guard_inst.replica.ling_guard.IsXiaoyao and self.guard_inst.replica.ling_guard:IsXiaoyao()) or false
+    local target = is_x and FORM.QINGPING or FORM.XIAOYAO
+    SendModRPCToServer(GetModRPC("ling_summon", "change_guard_form"), self.guard_inst, target)
+    -- 客户端刷新名称贴图与 hover
+    self:UpdateNameButton()
+  end)
 
   self.container_open = self:AddChild(ImageButton("images/ui_ling_guard_panel.xml", "container_open.tex"))
   self.container_open:SetPosition(unpack(CONSTANTS.LING_GUARD_PANEL_OPEN_CONTAINER_POSITION))
@@ -118,6 +134,22 @@ local LingGuardPanel = Class(Widget, function(self, owner)
   self.container_open.onclick = function() self:OpenContainer() end
 
   self.close:SetOnClick(function() self:RequestClose() end)
+
+  -- 事件代理（用于安全移除监听）
+  self._on_behavior_mode_changed_proxy = function() self:_OnGuardBehaviorModeChanged() end
+  self._on_guard_onremove_proxy = function() self:DetachGuard() end
+  self._on_clienthealthdirty_proxy = function()
+    self:RefreshHealthFromGuard()
+  end
+  -- 监听 replica form tinybyte 变更
+  self._on_formdirty_proxy = function()
+    self:UpdateNameButton()
+  end
+  -- 监听等级变化
+  self._on_levelchanged_proxy = function()
+    self:UpdateNameButton()
+  end
+
 
   self:Hide()
 end)
@@ -379,38 +411,128 @@ function LingGuardPanel:RefreshPlanting()
   end
 end
 
-function LingGuardPanel:Open(guard_inst)
-  if not guard_inst or not guard_inst:IsValid() or not guard_inst.replica.ling_guard then
+-- 绑定/解绑守卫实例与监听（仿照 LingGuardWorkMode 的 Attach/Detach 模式）
+function LingGuardPanel:AttachGuard(inst)
+  if self.guard_inst == inst then
     return
   end
-  self.guard_inst = guard_inst
-  self.work_selector:AttachGuard(self.guard_inst)
+  self:DetachGuard()
+  if inst and inst:IsValid() then
+    self.guard_inst = inst
+    -- 监听行为模式变化与移除
+    inst:ListenForEvent("behaviormodechanged", self._on_behavior_mode_changed_proxy, inst)
+    inst:ListenForEvent("onremove", self._on_guard_onremove_proxy, inst)
+    inst:ListenForEvent("clienthealthdirty", self._on_clienthealthdirty_proxy, inst)
+    inst:ListenForEvent("ling_guard_formdirty", self._on_formdirty_proxy, inst)
+    inst:ListenForEvent("levelchanged", self._on_levelchanged_proxy, inst)
 
-  local current_mode = guard_inst.replica.ling_guard:GetBehaviorMode()
-  self:ActivateModeButton(current_mode, false)
 
-  -- 读取并设置血量百分比
-  if guard_inst.components.healthsyncer then
-    local health_percent = guard_inst.components.healthsyncer:GetPercent()
-    self.health:SetPercent(health_percent, false)  -- 打开时不使用动画
+    -- 子控件：工作选择器也附着到守卫
+    if self.work_selector then
+      self.work_selector:AttachGuard(inst)
+    end
+    -- 面板打开效果：守卫范围标记改为绿色；并同步当前模式到按钮（无动画，直接对齐）
+    if inst.replica and inst.replica.ling_guard then
+      inst.replica.ling_guard:SetGuardPositionColor(true)
+      local current_mode = inst.replica.ling_guard:GetBehaviorMode()
+      self:ActivateModeButton(current_mode, false)
+    end
+    -- 初次同步：名称贴图/hover 与 血量
+    self:UpdateNameButton()
+    self:RefreshHealthFromGuard()
+  end
+end
+
+function LingGuardPanel:DetachGuard()
+  if not self.guard_inst then
+    return
+  end
+  local inst = self.guard_inst
+  if inst and inst:IsValid() then
+    inst:RemoveEventCallback("behaviormodechanged", self._on_behavior_mode_changed_proxy, inst)
+    inst:RemoveEventCallback("onremove", self._on_guard_onremove_proxy, inst)
+    inst:RemoveEventCallback("clienthealthdirty", self._on_clienthealthdirty_proxy, inst)
+    inst:RemoveEventCallback("ling_guard_formdirty", self._on_formdirty_proxy, inst)
+    inst:RemoveEventCallback("levelchanged", self._on_levelchanged_proxy, inst)
+    if inst.replica and inst.replica.ling_guard then
+      inst.replica.ling_guard:SetGuardPositionColor(false)
+    end
   end
 
-  -- 如果存在位置标记实体，将其染成绿色（表示正在查看这个范围）
-  guard_inst.replica.ling_guard:SetGuardPositionColor(true)
+  if self.work_selector then
+    self.work_selector:DetachGuard()
+  end
+  self.guard_inst = nil
+end
+
+function LingGuardPanel:UpdateNameButton()
+  if not self.name then return end
+  local inst = self.guard_inst
+  if not inst or not inst:IsValid() then return end
+  if inst.prefab == "ling_guard_elite" then
+    self.name:SetTextures("images/ui_ling_guard_panel.xml", "name_xianjing.tex", "images/ui_ling_guard_panel.xml")
+    self.name:SetHoverText(nil)
+    return
+  end
+  local is_x = (inst and inst.replica and inst.replica.ling_guard and inst.replica.ling_guard.IsXiaoyao and inst.replica.ling_guard:IsXiaoyao()) or false
+  local lvl = (inst and inst.replica and inst.replica.ling_guard and inst.replica.ling_guard.GetLevel and inst.replica.ling_guard:GetLevel()) or 1
+  local unlocked = lvl >= 2
+  if is_x then
+    self.name:SetTextures("images/ui_ling_guard_panel.xml", "name_xiaoyao.tex", "name_xiaoyao.tex")
+  else
+    self.name:SetTextures("images/ui_ling_guard_panel.xml", "name_qingping.tex", "name_qingping.tex")
+  end
+  local hover = is_x and STRINGS.UI.LING_GUARD_PANEL.SWITCH_TO_QINGPING or STRINGS.UI.LING_GUARD_PANEL.SWITCH_TO_XIAOYAO
+  if not unlocked then hover = hover .. STRINGS.UI.LING_GUARD_PANEL.LOCKED_SUFFIX end
+  self.name:SetHoverText(hover, { offset_x = 0, offset_y = 80 })
+end
+
+function LingGuardPanel:RefreshHealthFromGuard()
+  if not self.guard_inst or not self.guard_inst:IsValid() then return end
+  local p
+  if self.guard_inst.components and self.guard_inst.components.healthsyncer then
+    p = self.guard_inst.components.healthsyncer:GetPercent()
+  end
+  if p ~= nil then
+    self.health:SetPercent(p, false)
+    local hover_fmt = (STRINGS and STRINGS.UI and STRINGS.UI.LING_GUARD_PANEL and STRINGS.UI.LING_GUARD_PANEL.HEALTH_PERCENT) or "Health: %d%%"
+    local percent_text = string.format(hover_fmt, math.floor(p * 100 + 0.5))
+    if self.health.SetHoverText then
+      self.health:SetHoverText(percent_text, { offset_x = 0, offset_y = -80 })
+    end
+  end
+end
+
+function LingGuardPanel:_OnGuardBehaviorModeChanged()
+  if not self.guard_inst or not self.guard_inst:IsValid() then
+    return
+  end
+  if not self.guard_inst.replica or not self.guard_inst.replica.ling_guard then
+    return
+  end
+  local mode = self.guard_inst.replica.ling_guard:GetBehaviorMode()
+  -- 行为模式变化：用动画反馈
+  self:ActivateModeButton(mode, true)
+end
+
+function LingGuardPanel:Open(guard_inst)
+  if not guard_inst or not guard_inst:IsValid() or not (guard_inst.replica and guard_inst.replica.ling_guard) then
+    return
+  end
+  --
+  self:AttachGuard(guard_inst)
 
   self:RefreshPlanting()
   self:Show()
 end
 
 function LingGuardPanel:Close()
-  if not self.guard_inst or not self.guard_inst:IsValid() then
+  if not self.guard_inst then
+    self:Hide()
     return
   end
-  -- 恢复位置标记的原色
-  self.guard_inst.replica.ling_guard:SetGuardPositionColor(false)
-  self.work_selector:DetachGuard()
+  self:DetachGuard()
   self:Hide()
-  self.guard_inst = nil
 end
 
 function LingGuardPanel:RequestClose(guard_inst)
