@@ -86,18 +86,25 @@ local states =
             inst.Physics:Stop()
             inst.components.combat:StartAttack()
             local attack_anim = "attack_0"
-            local is_elite = (inst.replica and inst.replica.ling_guard and inst.replica.ling_guard.IsXianjing and inst.replica.ling_guard:IsXianjing())
-            if is_elite then
+            if inst.replica.ling_guard:IsXianjing() then
                 attack_anim = "attack"
             else
-                local is_xiaoyao = (inst.replica and inst.replica.ling_guard and inst.replica.ling_guard.IsXiaoyao and inst.replica.ling_guard:IsXiaoyao())
-                attack_anim = is_xiaoyao and "attack_1" or "attack_0"
+                attack_anim = inst.replica.ling_guard:IsXiaoyao() and "attack_1" or "attack_0"
             end
             inst.AnimState:PlayAnimation(attack_anim)
         end,
 
         timeline =
         {
+            TimeEvent(7*FRAMES, function(inst)
+                if inst.replica.ling_guard:IsXianjing() then
+                    local target = inst.sg.statemem.target
+                    local x, y, z = target.Transform:GetWorldPosition()
+                    local fx = SpawnPrefab("ling_guard_elite_attack_hit_fx")
+                    lprint("elite attack hit fx spawned at", x, y, z)
+                    fx.Transform:SetPosition(x, y, z)
+                end
+            end),
             TimeEvent(8*FRAMES, function(inst)
                 local weapon = nil
                 local is_xiaoyao = (inst.replica and inst.replica.ling_guard and inst.replica.ling_guard.IsXiaoyao and inst.replica.ling_guard:IsXiaoyao())

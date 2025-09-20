@@ -240,11 +240,16 @@ local function ling_guard_basic_fn()
     inst:AddComponent("health")
     inst.components.health.save_maxhealth = true
 
+
     inst:AddComponent("combat")
     inst.components.combat:SetRange(0.1)
     inst.components.combat:SetRetargetFunction(1, NormalRetargetFn)
     inst.components.combat:SetKeepTargetFunction(KeepTargetFn)
     inst.components.combat:SetAttackPeriod(1)
+    -- 守卫行为管理
+    inst:AddComponent("ling_guard")
+    inst.components.ling_guard:SetLevel(1)
+    inst.components.ling_guard:SetForm(FORM.QINGPING)
 
     inst:AddComponent("locomotor")
 
@@ -252,9 +257,6 @@ local function ling_guard_basic_fn()
     inst.components.follower:KeepLeaderOnAttacked()
     inst.components.follower.keepdeadleader = true
 
-    -- 守卫行为管理
-    inst:AddComponent("ling_guard")
-    inst.components.ling_guard:SetLevel(1)
 
     inst:AddComponent("inspectable")
     inst:AddComponent("lootdropper")
@@ -292,9 +294,6 @@ local function ling_guard_basic_fn()
     inst:ListenForEvent("ling_form_changed", function(inst, data)
         SetupBasicForm(inst, data and data.form or FORM.QINGPING)
     end)
-    if inst.components and inst.components.ling_guard then
-        inst.components.ling_guard:SetForm(FORM.QINGPING)
-    end
 
     -- 附属容器保存/加载/清理（共用）
     inst.OnSave = OnSave_Common
@@ -344,10 +343,13 @@ local function ling_guard_elite_fn()
     inst.components.health.save_maxhealth = true
 
     inst:AddComponent("combat")
-    inst.components.combat:SetRange(0.1)
+    inst.components.combat:SetRange(3)
     inst.components.combat:SetRetargetFunction(1, NormalRetargetFn)
     inst.components.combat:SetKeepTargetFunction(KeepTargetFn)
     inst.components.combat:SetAttackPeriod(1)
+
+    inst:AddComponent("ling_guard")
+    inst.components.ling_guard:SetLevel(3)
 
     inst:AddComponent("locomotor")
 
@@ -372,6 +374,11 @@ local function ling_guard_elite_fn()
     inst:SetBrain(brain)
     inst:SetStateGraph("SGling_guards")
 
+    inst:ListenForEvent("onhitother", function(inst, data)
+        if data and data.target and data.target.prefab == "ling_guard_elite" then
+            inst.components.combat:PauseAttacks(1)
+        end
+    end)
     -- 附属容器保存/加载/清理（共用）
     inst.OnSave = OnSave_Common
     inst.OnPreLoad = OnPreLoad_Common

@@ -148,6 +148,7 @@ local LingGuardPanel = Class(Widget, function(self, owner)
   -- 监听等级变化
   self._on_levelchanged_proxy = function()
     self:UpdateNameButton()
+    if self.UpdateFusionButton then self:UpdateFusionButton() end
   end
 
 
@@ -367,6 +368,11 @@ function LingGuardPanel:DoActivateModeButton(mode, use_animation)
     if mode == GUARD_BEHAVIOR_MODE.GUARD then
       self:AnimateButtonContainer(button, target_height, use_animation, function()
         if not self.work_selector then return end
+        -- 弦惊不展示工作选择器
+        if self.guard_inst and self.guard_inst.prefab == "ling_guard_elite" then
+          self.work_selector:Hide()
+          return
+        end
         self.work_selector:Show()
         if use_animation then
           -- 动画方式下放（位置由 is_open 决定是否额外下降）
@@ -431,6 +437,15 @@ function LingGuardPanel:AttachGuard(inst)
     if self.work_selector then
       self.work_selector:AttachGuard(inst)
     end
+
+    -- 弦惊不展示容器按钮与工作选择器
+    if inst.prefab == "ling_guard_elite" then
+      if self.container_open then self.container_open:Hide() end
+      if self.work_selector then self.work_selector:Hide() end
+    else
+      if self.container_open then self.container_open:Show() end
+    end
+
     -- 面板打开效果：守卫范围标记改为绿色；并同步当前模式到按钮（无动画，直接对齐）
     if inst.replica and inst.replica.ling_guard then
       inst.replica.ling_guard:SetGuardPositionColor(true)
@@ -440,6 +455,7 @@ function LingGuardPanel:AttachGuard(inst)
     -- 初次同步：名称贴图/hover 与 血量
     self:UpdateNameButton()
     self:RefreshHealthFromGuard()
+    if self.UpdateFusionButton then self:UpdateFusionButton() end
   end
 end
 
@@ -462,8 +478,51 @@ function LingGuardPanel:DetachGuard()
   if self.work_selector then
     self.work_selector:DetachGuard()
   end
+  if self.fusionButton then
+    self.fusionButton:Hide()
+  end
   self.guard_inst = nil
 end
+
+function LingGuardPanel:UpdateFusionButton()
+  if not self.fusionButton then return end
+  local inst = self.guard_inst
+  if not inst or not inst:IsValid() then
+    self.fusionButton:Hide()
+    return
+  end
+  -- 弦惊面板不显示融合按钮
+  if inst.prefab == "ling_guard_elite" then
+    self.fusionButton:Hide()
+    return
+  end
+  self.fusionButton:Show()
+
+  local lvl = (inst and inst.replica and inst.replica.ling_guard and inst.replica.ling_guard.GetLevel and inst.replica.ling_guard:GetLevel()) or 1
+  local unlocked = lvl >= 2
+
+  if unlocked then
+    self.fusionButton:SetHoverText(STRINGS.UI.LING_GUARD_PANEL.FUSION_BUTTON)
+    if self.fusionButton.image then self.fusionButton.image:SetTint(1,1,1,1) end
+    self.fusionButton:SetClickable(true)
+    self.fusionButton:SetOnClick(function()
+      if self.guard_inst and self.guard_inst:IsValid() then
+        SendModRPCToServer(GetModRPC("ling_summon", "request_fusion_guard"), self.guard_inst)
+        self:RequestClose()
+      end
+    end)
+  else
+    local prefix = (STRINGS and STRINGS.UI and STRINGS.UI.LING_GUARD_PANEL_CALL and STRINGS.UI.LING_GUARD_PANEL_CALL.SUMMARY) or "Summon"
+    local name = (STRINGS and STRINGS.UI and STRINGS.UI.LING_SUMMON and STRINGS.UI.LING_SUMMON.XIANJING) or "Xianjing"
+    local suffix = (STRINGS and STRINGS.UI and STRINGS.UI.LING_GUARD_PANEL and STRINGS.UI.LING_GUARD_PANEL.LOCKED_SUFFIX) or " (Locked)"
+    local hover = string.format("%s:%s%s", prefix, name, suffix)
+    self.fusionButton:SetHoverText(hover)
+    if self.fusionButton.image then self.fusionButton.image:SetTint(0.5,0.5,0.5,0.7) end
+    self.fusionButton:SetClickable(false)
+    self.fusionButton:SetOnClick(nil)
+  end
+end
+
 
 function LingGuardPanel:UpdateNameButton()
   if not self.name then return end
@@ -471,7 +530,7 @@ function LingGuardPanel:UpdateNameButton()
   if not inst or not inst:IsValid() then return end
   if inst.prefab == "ling_guard_elite" then
     self.name:SetTextures("images/ui_ling_guard_panel.xml", "name_xianjing.tex", "images/ui_ling_guard_panel.xml")
-    self.name:SetHoverText(nil)
+    self.name:ClearHoverText()
     return
   end
   local is_x = (inst and inst.replica and inst.replica.ling_guard and inst.replica.ling_guard.IsXiaoyao and inst.replica.ling_guard:IsXiaoyao()) or false

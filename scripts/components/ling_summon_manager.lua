@@ -397,20 +397,11 @@ function LingSummonManager:SummonBasic(slot_index)
   self:StartSummonCasting(SLOT_TYPE.BASIC, elite_level, cost, slots)
   return true
 end
-function LingSummonManager:SummonQingping(slot_index)
-  -- 统一改为基础召唤
-  return self:SummonBasic(slot_index)
-end
-
-function LingSummonManager:SummonXiaoyao(slot_index)
-  -- 统一改为基础召唤
-  return self:SummonBasic(slot_index)
-end
 
 function LingSummonManager:SummonXianjing(slot_index)
-  -- 自动获取当前精英等级，检查等级要求（需要精三，即 elite_level >= 3）
+  -- 自动获取当前精英等级，检查等级要求（精英化2解锁）
   local elite_level = (self.inst.components.ling_elite and self.inst.components.ling_elite:GetEliteLevel()) or 0
-  if elite_level < 3 then
+  if elite_level < 2 then
     return false
   end
 
@@ -427,22 +418,22 @@ function LingSummonManager:SummonXianjing(slot_index)
     return false
   end
 
-  local fusion_candidates = {}
-  local current = self.slots[slot_index].inst
+  local current = (self:GetSlotData(slot_index) or {}).inst
   if not current or not current:IsValid() then
     return false
   end
 
-  -- 寻找跟随令的清平和逍遥
-  local x, y, z = self.inst.Transform:GetWorldPosition()
-  local guards = TheSim:FindEntities(x, y, z, 30, {"ling_summon"}, {"INLIMBO"})
-
-  for _, guard in ipairs(guards) do
-    if guard.components.follower and guard.components.follower.leader == self.inst
-      and guard ~= current
-      and guard.components.ling_guard and (guard.components.ling_guard:IsQingping() or guard.components.ling_guard:IsXiaoyao())
-      and not guard.components.health:IsDead() then
-      table.insert(fusion_candidates, guard)
+  local fusion_candidates = {}
+  local all = self:GetAllSlots()
+  for _, slot_data in pairs(all) do
+    if slot_data.status == GUARD_SLOT_STATUS.OCCUPIED
+      and slot_data.inst
+      and slot_data.inst:IsValid()
+      and slot_data.inst ~= current
+      and slot_data.type == SLOT_TYPE.BASIC
+      and not slot_data.inst.components.health:IsDead()
+      and slot_data.inst.components.ling_guard:GetWorkMode() == CONSTANTS.GUARD_WORK_MODE.NONE then
+        table.insert(fusion_candidates, slot_data.inst)
     end
   end
 
@@ -462,7 +453,7 @@ function LingSummonManager:SummonXianjing(slot_index)
   local guard1 = current
   local guard2 = fusion_candidates[1]
   local slots = { slot_index, self:FindGuardIndex(guard2) }
-  self:SetSlotSummoning(slots, SLOT_TYPE.ELITE, 0)
+  self:SetSlotSummoning(slots, SLOT_TYPE.ELITE, elite_level)
 
   -- 扣除诗意
   poetry_component:Dirty(-cost)
@@ -535,71 +526,50 @@ end
 
 -- 融合相关方法
 function LingSummonManager:StartGuardFusion(guard1, guard2, elite_level, slots)
-  -- 计算融合中心点
-  local g1_x, g1_y, g1_z = guard1.Transform:GetWorldPosition()
-  local g2_x, g2_y, g2_z = guard2.Transform:GetWorldPosition()
-  local center_x = (g1_x + g2_x) / 2
-  local center_z = (g1_z + g2_z) / 2
-
-  -- 停止守卫的所有行为
-  guard1.components.locomotor:Stop()
-  guard2.components.locomotor:Stop()
-
-  -- 设置融合标记，防止被其他系统干扰
-  guard1.is_fusing = true
-  guard2.is_fusing = true
-
-  -- 设置无敌状态，防止融合过程被打断
-  if guard1.components.health then
-    guard1.components.health.invulnerable = true
-  end
-  if guard2.components.health then
-    guard2.components.health.invulnerable = true
-  end
-
-  -- 让两个守卫互相移动接近
-  local function MoveToCenter(guard, target_x, target_z)
-    if guard and guard:IsValid() and not guard.components.health:IsDead() then
-      guard.components.locomotor:GoToPoint(Vector3(target_x, 0, target_z))
-    end
-  end
-
-  MoveToCenter(guard1, center_x, center_z)
-  MoveToCenter(guard2, center_x, center_z)
-
-  -- 检查融合进度的任务
-  local fusion_task
-  fusion_task = self.inst:DoPeriodicTask(0.1, function()
-    -- 检查守卫是否还存在且有效
-    if not guard1:IsValid() or not guard2:IsValid() or guard1.components.health:IsDead()
-      or guard2.components.health:IsDead() then
-      if fusion_task then
-        fusion_task:Cancel()
+  -- 直接献祭两名守卫：播放特效后移除
+  local function SacrificeGuard(guard)
+    if guard and guard:IsValid() then
+      local gx, gy, gz = guard.Transform:GetWorldPosition()
+      local fx = SpawnPrefab("ling_guard_basic_fusion_fx")
+      if fx then
+        fx.Transform:SetPosition(gx, 0, gz)
       end
-      return
+      guard:Remove()
     end
+  end
 
-    -- 检查距离
-    local g1_x, g1_y, g1_z = guard1.Transform:GetWorldPosition()
-    local g2_x, g2_y, g2_z = guard2.Transform:GetWorldPosition()
-    local distance = math.sqrt((g1_x - g2_x) ^ 2 + (g1_z - g2_z) ^ 2)
+  SacrificeGuard(guard1)
+  SacrificeGuard(guard2)
 
-    -- 当两个守卫足够接近时开始融合动画
-    if distance < 2 then
-      fusion_task:Cancel()
-      self:StartFusionAnimation(guard1, guard2, center_x, center_z, elite_level, slots)
-    end
-  end)
+  -- 在召唤者周围生成弦惊，并播放起手特效
+  local leader = self.inst
+  if leader and leader:IsValid() then
+    local lx, ly, lz = leader.Transform:GetWorldPosition()
+    local radius = 2 + math.random() * 1.5
+    local angle = math.random() * 2 * math.pi
+    local sx = lx + math.cos(angle) * radius
+    local sz = lz + math.sin(angle) * radius
 
-  -- 超时保护，10秒后强制融合
-  self.inst:DoTaskInTime(10, function()
-    if fusion_task then
-      fusion_task:Cancel()
+    local elite_guard = SpawnPrefab("ling_guard_elite")
+    if elite_guard then
+      elite_guard.Transform:SetPosition(sx, 0, sz)
+
+      -- 起手 FX（临时使用 basic_start_fx）
+      local startfx = SpawnPrefab("ling_guard_basic_start_fx")
+      if startfx then
+        startfx.Transform:SetPosition(sx, 0, sz)
+      end
+
+      if elite_guard.components.ling_guard then
+        elite_guard.components.ling_guard:SetSlots(slots)
+        elite_guard.components.ling_guard:SetLevel(elite_level)
+      end
+
+      if elite_guard.components.follower then
+        elite_guard.components.follower:SetLeader(leader)
+      end
     end
-    if guard1:IsValid() and guard2:IsValid() then
-      self:StartFusionAnimation(guard1, guard2, center_x, center_z, elite_level, slots)
-    end
-  end)
+  end
 end
 
 function LingSummonManager:StartFusionAnimation(guard1, guard2, center_x, center_z, elite_level, slots)

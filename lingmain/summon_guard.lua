@@ -287,6 +287,17 @@ AddModRPCHandler("ling_summon", "change_guard_form", function(player, guard_inst
   guard_inst.components.ling_guard:SetForm(target)
 end)
 
+-- 客户端点击融合（以当前守卫所在槽位为主位）
+AddModRPCHandler("ling_summon", "request_fusion_guard", function(player, guard_inst)
+  if not player or player.prefab ~= "ling" then return end
+  if not (player.components and player.components.ling_summon_manager) then return end
+  if not (guard_inst and guard_inst:IsValid()) then return end
+  local mgr = player.components.ling_summon_manager
+  local idx = mgr:FindGuardIndex(guard_inst)
+  if idx then
+    mgr:SummonXianjing(idx)
+  end
+end)
 
 -- 守卫世界管理
 local OWNER_SHARD = {}

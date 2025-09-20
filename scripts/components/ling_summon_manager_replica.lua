@@ -112,8 +112,7 @@ function LingSummonManagerReplica:GetAvailableSlotsData()
   local max_slots = self._max_slots:value()
   for i = 1, max_slots do
     local slot_data = self:GetSlotData(i)
-    if slot_data then
-      print("[LingSummonManagerReplica] GetAvailableSlotsData", i, slot_data.type, slot_data.status)
+    if slot_data and slot_data.status ~= CONSTANTS.GUARD_SLOT_STATUS.DISABLED then
       table.insert(available_slots, slot_data)
     end
   end

@@ -3,17 +3,17 @@ local function PlaySound(inst, sound)
 end
 
 -- 硬编码的单一特效：ling_guard_basic_start_fx
-local BANK  = "shadow_teleport"
-local BUILD = "shadow_teleport"
-local ANIM  = "portal_out"
+local BANK  = "loong_1_attack_hit_fx"
+local BUILD = "loong_1_attack_hit_fx"
+local ANIM  = "attack_fx_up"
 -- local SOUND = "wickerbottom_rework/book_spells/light_upgrade"
 
 local function startfx(proxy)
-    local inst = CreateEntity("ling_guard_basic_start_fx")
+    local inst = CreateEntity("ling_guard_elite_attack_hit_fx")
 
     inst.entity:AddTransform()
     inst.entity:AddAnimState()
-    inst.Transform:SetScale(1.4, 1.4, 1.4)
+
     local parent = proxy.entity:GetParent()
     if parent ~= nil then
         inst.entity:SetParent(parent.entity)
@@ -25,7 +25,7 @@ local function startfx(proxy)
 
     inst.Transform:SetFromProxy(proxy.GUID)
 
-    inst.entity:AddSoundEmitter()
+    -- inst.entity:AddSoundEmitter()
     -- inst:DoTaskInTime(0, PlaySound, LING_SOUND)
 
     inst.AnimState:SetBank(BANK)
@@ -33,8 +33,8 @@ local function startfx(proxy)
     inst.AnimState:PlayAnimation(ANIM)
     inst.AnimState:SetFinalOffset(3)
     -- inst.AnimState:SetOrientation(ANIM_ORIENTATION.OnGround)
-    inst.AnimState:SetLayer(LAYER_BACKGROUND)
-
+    -- inst.AnimState:SetLayer(LAYER_BACKGROUND)
+    lprint("elite attack hit fx playing animation", ANIM)
     inst:ListenForEvent("animover", inst.Remove)
     if TheWorld then
         TheWorld:PushEvent("fx_spawned", inst)
@@ -74,4 +74,4 @@ local assets = {
 
 
 
-return Prefab("ling_guard_basic_fusion_fx", fn, assets)
+return Prefab("ling_guard_elite_attack_hit_fx", fn, assets)
