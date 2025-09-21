@@ -28,4 +28,12 @@ function SilenceFatigueReplica:SetPoetry(current_poetry)
   self._current_poetry:set(current_poetry)
 end
 
+function SilenceFatigueReplica:GetCurrent()
+  return self._current_poetry:value()
+end
+
+function SilenceFatigueReplica:GetMax()
+  return self._max_poetry:value()
+end
+
 return SilenceFatigueReplica

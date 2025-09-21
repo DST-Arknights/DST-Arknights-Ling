@@ -62,6 +62,8 @@ function LingElite:ApplyEliteEffects(level)
 
     -- 更新技能解锁状态
     self:UpdateSkillUnlocks(level)
+    -- 解锁书桌
+    self:UnlockSciencePrototyper(level)
 end
 
 -- 更新精英标签
@@ -70,10 +72,8 @@ function LingElite:UpdateEliteTags(level)
         local tag = "ling_elite_" .. i
         self.inst:RemoveTag(tag)
     end
-    if level > 0 then
-        local tag = "ling_elite_" .. level
-        self.inst:AddTag(tag)
-    end
+    local tag = "ling_elite_" .. level
+    self.inst:AddTag(tag)
 end
 
 function LingElite:UpdateSkillUnlocks(level)
@@ -101,6 +101,15 @@ function LingElite:UpdateSkillUnlocks(level)
         skill_component:UnLock(2)
         skill_component:SetSkillLevel(3, 1)
         skill_component:UnLock(3)
+    end
+end
+
+function LingElite:UnlockSciencePrototyper(level)
+    if level == 2 then
+        local builder = self.inst.components.builder
+        if builder then
+            builder:UnlockRecipe("ling_desk")
+        end
     end
 end
 

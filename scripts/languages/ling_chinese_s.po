@@ -80,6 +80,116 @@ msgctxt "STRINGS.NAMES.LING_ELITE_3"
 msgid "Elite Level 2"
 msgstr "精英化 2级"
 
+#. STRINGS.NAMES.LING_POETRY
+msgctxt "STRINGS.NAMES.LING_POETRY"
+msgid "Poetry"
+msgstr "诗意"
+
+#. STRINGS.NAMES.POEM_0
+msgctxt "STRINGS.NAMES.POEM_0"
+msgid "Poem 0"
+msgstr "诗句"
+
+#. STRINGS.NAMES.POEM_1
+msgctxt "STRINGS.NAMES.POEM_1"
+msgid "Poem 1"
+msgstr "诗篇"
+
+#. STRINGS.NAMES.POEM_2
+msgctxt "STRINGS.NAMES.POEM_2"
+msgid "Poem 2"
+msgstr "诗卷"
+
+#. STRINGS.NAMES.POEM_3
+msgctxt "STRINGS.NAMES.POEM_3"
+msgid "Poem 3"
+msgstr "诗经"
+
+#. STRINGS.RECIPE_DESC.POEM_0
+msgctxt "STRINGS.RECIPE_DESC.POEM_0"
+msgid "A poem."
+msgstr "一首诗。"
+
+#. STRINGS.RECIPE_DESC.POEM_1
+msgctxt "STRINGS.RECIPE_DESC.POEM_1"
+msgid "A poem."
+msgstr "一篇诗。"
+
+#. STRINGS.RECIPE_DESC.POEM_2
+msgctxt "STRINGS.RECIPE_DESC.POEM_2"
+msgid "A poem."
+msgstr "一卷诗。"
+
+#. STRINGS.RECIPE_DESC.POEM_3
+msgctxt "STRINGS.RECIPE_DESC.POEM_3"
+msgid "A poem."
+msgstr "无限诗。"
+
+#. STRINGS.CHARACTERS.GENERIC.DESCRIBE.POEM_0
+msgctxt "STRINGS.CHARACTERS.GENERIC.DESCRIBE.POEM_0"
+msgid "A poem."
+msgstr "一首诗。"
+
+#. STRINGS.CHARACTERS.GENERIC.DESCRIBE.POEM_1
+msgctxt "STRINGS.CHARACTERS.GENERIC.DESCRIBE.POEM_1"
+msgid "A poem."
+msgstr "一篇诗。"
+
+#. STRINGS.CHARACTERS.GENERIC.DESCRIBE.POEM_2
+msgctxt "STRINGS.CHARACTERS.GENERIC.DESCRIBE.POEM_2"
+msgid "A poem."
+msgstr "一卷诗。"
+
+#. STRINGS.CHARACTERS.GENERIC.DESCRIBE.POEM_3
+msgctxt "STRINGS.CHARACTERS.GENERIC.DESCRIBE.POEM_3"
+msgid "A poem."
+msgstr "无限诗。"
+
+#. STRINGS.ACTIONS.USE_POEM.GENERIC
+msgctxt "STRINGS.ACTIONS.USE_POEM.GENERIC"
+msgid "Read"
+msgstr "阅读"
+
+#. STRINGS.UI.CRAFTING.NEEDSPOETRY_ONE
+msgctxt "STRINGS.UI.CRAFTING.NEEDSPOETRY_ONE"
+msgid "Needs Poetry Desk"
+msgstr "在诗台绘制"
+
+#. STRINGS.UI.CRAFTING.NEEDSLING_DESK_ONE
+msgctxt "STRINGS.UI.CRAFTING.NEEDSLING_DESK_ONE"
+msgid "Needs Elite Level 1"
+msgstr "精英化一解锁"
+
+#. STRINGS.UI.CRAFTING_FILTERS.LING_DESK
+msgctxt "STRINGS.UI.CRAFTING_FILTERS.LING_DESK"
+msgid "Poetry Desk"
+msgstr "诗台"
+
+#. STRINGS.UI.CRAFTING_STATION_FILTERS.LING_DESK
+msgctxt "STRINGS.UI.CRAFTING_STATION_FILTERS.LING_DESK"
+msgid "Poetry Desk"
+msgstr "绘写"
+
+#. STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_DESK
+msgctxt "STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_DESK"
+msgid "A desk for writing poetry."
+msgstr "一个写诗的桌子。"
+
+#. STRINGS.ACTIONS.OPEN_CRAFTING.LING_DESK
+msgctxt "STRINGS.ACTIONS.OPEN_CRAFTING.LING_DESK"
+msgid "Poetry Desk"
+msgstr "绘写"
+
+#. STRINGS.NAMES.LING_DESK
+msgctxt "STRINGS.NAMES.LING_DESK"
+msgid "Poetry Desk"
+msgstr "诗台"
+
+#. 诗台在制作栏的描述
+msgctxt "STRINGS.RECIPE_DESC.LING_DESK"
+msgid "A desk for writing poetry."
+msgstr "一个写诗的桌子。"
+
 #. STRINGS.RECIPE_DESC.LING_ELITE_2
 msgctxt "STRINGS.RECIPE_DESC.LING_ELITE_2"
 msgid "Elite level upgraded to level 1"

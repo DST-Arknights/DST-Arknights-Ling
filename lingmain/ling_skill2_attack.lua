@@ -27,7 +27,7 @@ local function ShackleTarget(target, duration)
 end
 
 local _attackFn = ACTIONS.ATTACK.fn
-local AREAATTACK_EXCLUDETAGS = { "noauradamage", "INLIMBO", "notarget", "noattack", "flight", "invisible", "playerghost" }
+local AREAATTACK_EXCLUDETAGS = { "noauradamage", "INLIMBO", "notarget", "noattack", "flight", "invisible", "playerghost", "ling_summon" }
 ACTIONS.ATTACK.fn = function(act)
   local weapon = act.doer.components.combat:GetWeapon()
   if weapon and weapon.prefab == "ling_lantern" and act.doer.components.ark_skill_ling and act.doer.components.ark_skill_ling:GetActivationStacks(2) > 0 then

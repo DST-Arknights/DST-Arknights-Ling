@@ -14,17 +14,21 @@ end
 -- 加载语言文件
 common.LoadPOFile("scripts/languages/ling_chinese_s.po", "zh")
 
-PrefabFiles = {'ling', 'ling_lantern', 'ling_lantern_smoke', 'ling_guards', 'ling_guard_basic_start_fx', 'ling_guard_basic_fusion_fx', 'ling_aoe_attack_fx', 'ling_guard_elite_attack_hit_fx', 'ling_guard_plant_container', 'ling_guard_plant_club'}
+PrefabFiles = {'ling', 'ling_lantern', 'ling_lantern_smoke', 'ling_guards', 'ling_guard_basic_start_fx', 'ling_guard_basic_fusion_fx', 'ling_aoe_attack_fx', 'ling_guard_elite_attack_hit_fx', 'ling_guard_plant_container', 'ling_guard_plant_club', 'poem_0', 'poem_1', 'poem_2', 'poem_3', 'ling_desk'}
 
 Assets = {
   Asset('ATLAS', 'images/saveslot_portraits/ling.xml'),
   Asset('ATLAS', 'images/selectscreen_portraits/ling.xml'),
   Asset('ATLAS', 'images/map_icons/ling.xml'),
+  Asset('ATLAS', 'images/map_icons/ling_desk.xml'),
   Asset('ATLAS', 'images/avatars/avatar_ling.xml'),
   Asset('ATLAS', 'images/avatars/avatar_ghost_ling.xml'),
   Asset('ATLAS', 'images/avatars/self_inspect_ling.xml'),
   Asset('ATLAS', 'images/inventoryimages/ling_lantern.xml'),
   Asset('ATLAS', 'images/inventoryimages/ling_elite.xml'),
+  Asset('ATLAS', 'images/inventoryimages/ling_poetry.xml'),
+  Asset('ATLAS', 'images/inventoryimages/poem.xml'),
+  Asset('ATLAS', 'images/inventoryimages/ling_desk.xml'),
   Asset('ATLAS', 'bigportraits/ling.xml'),
   Asset('ATLAS', 'images/names_ling.xml'),
   Asset('ATLAS', 'images/ark_skill.xml'),
@@ -33,6 +37,7 @@ Assets = {
   Asset('ATLAS', 'images/ui_ling_guard_panel_call.xml'),
   Asset('ATLAS', 'images/ling_container_slot.xml'),
   Asset('ATLAS', 'images/ui_ling_guard_plant_slot.xml'),
+  Asset('ATLAS', 'images/ling_desk_prototyper.xml'),
   Asset('IMAGE', 'fx/lantern_fx.tex'),
   Asset('ANIM', 'anim/ui_ling_guard_container.zip'),
   Asset('ANIM', 'anim/ui_ling_guard_plant_container.zip'),
@@ -67,6 +72,9 @@ modimport("lingmain/true_damage")
 modimport("lingmain/attack_speed")
 modimport("lingmain/ling_skill2_attack")
 modimport("lingmain/ling_guard_containers")
+modimport("lingmain/ling_poetry")
+modimport("lingmain/ling_desk")
+modimport("lingmain/poem")
 
 -- 自定义动作：守卫挖地皮（无需工具）
 local LING_TERRAFORM = AddAction("LING_TERRAFORM", "Terraform", function(act)

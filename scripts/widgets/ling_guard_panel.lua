@@ -74,9 +74,6 @@ local LingGuardPanel = Class(Widget, function(self, owner)
   local bg_pos = Vector3(unpack(CONSTANTS.LING_GUARD_PANEL_PLANT_CONTAINER_CLOSED_POSITION))
   self.plant_bg:SetPosition(bg_pos)
 
-  self.plant_club = self:AddChild(Image("images/ui_ling_guard_panel.xml", "plant_club.tex"))
-  self.plant_club:SetPosition(bg_pos + Vector3(37, -78))
-
   -- 创建模式按钮
   self:CreateModeButtons()
 
@@ -411,9 +408,9 @@ function LingGuardPanel:RefreshPlanting()
     return
   end
   if self.guard_inst.replica.ling_guard_plant:isPlanting() then
-    self.plant_club:Hide()
+    -- self.plant_club:Hide()
   else
-    self.plant_club:Show()
+    -- self.plant_club:Show()
   end
 end
 
