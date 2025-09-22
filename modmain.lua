@@ -14,7 +14,7 @@ end
 -- 加载语言文件
 common.LoadPOFile("scripts/languages/ling_chinese_s.po", "zh")
 
-PrefabFiles = {'ling', 'ling_lantern', 'ling_lantern_smoke', 'ling_guards', 'ling_guard_basic_start_fx', 'ling_guard_basic_fusion_fx', 'ling_aoe_attack_fx', 'ling_guard_elite_attack_hit_fx', 'ling_guard_plant_container', 'ling_guard_plant_club', 'poem_0', 'poem_1', 'poem_2', 'poem_3', 'ling_desk'}
+PrefabFiles = {'ling', 'ling_lantern', 'ling_lantern_smoke', 'ling_guards', 'ling_guard_basic_start_fx', 'ling_guard_basic_fusion_fx', 'ling_aoe_attack_fx', 'ling_guard_elite_attack_hit_fx', 'ling_guard_plant_container', 'ling_guard_plant_club', 'poem_0', 'poem_1', 'poem_2', 'poem_3', 'ling_desk', 'wine_jars'}
 
 Assets = {
   Asset('ATLAS', 'images/saveslot_portraits/ling.xml'),
@@ -46,6 +46,7 @@ Assets = {
   Asset('ANIM', 'anim/ling_lantern.zip'),
   Asset('ANIM', 'anim/swap_ling_lantern_stick.zip'),
   Asset('ANIM', 'anim/loong_1_attack_hit_fx.zip'),
+  Asset('ANIM', 'anim/wine_jars.zip'),
 }
 
 AddMinimapAtlas('images/map_icons/ling.xml')

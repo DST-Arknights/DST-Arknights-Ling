@@ -3,6 +3,7 @@ require "prefabutil"
 local assets =
 {
     Asset("ANIM", "anim/ling_desk.zip"),
+    Asset("Atlas", "images/map_icons/ling_desk.xml"),
 }
 
 local prefabs =
@@ -73,7 +74,7 @@ local function fn()
     MakeObstaclePhysics(inst, .4)
 
     inst.MiniMapEntity:SetPriority(5)
-    inst.MiniMapEntity:SetIcon("ling_desk.png")
+    inst.MiniMapEntity:SetIcon("ling_desk.tex")
 
     inst.AnimState:SetBank("ling_desk")
     inst.AnimState:SetBuild("ling_desk")
