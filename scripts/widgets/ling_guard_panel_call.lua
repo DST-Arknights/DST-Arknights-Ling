@@ -150,8 +150,8 @@ end
 
 -- 获取召唤兽名字
 function LingGuardPanelCall:GetGuardName()
-    if self.slot_data.inst and self.slot_data.inst:IsValid() and self.slot_data.inst.components.named then
-        return self.slot_data.inst.components.named.name
+    if self.slot_data.inst and self.slot_data.inst:IsValid() and self.slot_data.inst.replica.named then
+        return self.slot_data.inst.replica.named._name:value()
     else
         return self:GetTypeName()
     end

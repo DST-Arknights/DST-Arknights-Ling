@@ -390,16 +390,6 @@ msgctxt "STRINGS.UI.ARK_SKILL.LEVEL.10"
 msgid "Rank Ⅲ"
 msgstr "Rank Ⅲ"
 
-#. STRINGS.UI.LING_SUMMON.SUMMON
-msgctxt "STRINGS.UI.LING_SUMMON.SUMMON"
-msgid "Summon"
-msgstr "召唤"
-
-#. STRINGS.UI.LING_SUMMON.COMMAND
-msgctxt "STRINGS.UI.LING_SUMMON.COMMAND"
-msgid "Command"
-msgstr "命令"
-
 #. STRINGS.UI.LING_SUMMON.QINGPING
 msgctxt "STRINGS.UI.LING_SUMMON.QINGPING"
 msgid "Qingping"
@@ -414,6 +404,26 @@ msgstr "逍遥"
 msgctxt "STRINGS.UI.LING_SUMMON.XIANJING"
 msgid "Xianjing"
 msgstr "弦惊"
+
+#. STRINGS.NAMES.LING_GUARD_BASIC
+msgctxt "STRINGS.NAMES.LING_GUARD_BASIC"
+msgid "Guard Basic"
+msgstr "令的守卫"
+
+#. STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_GUARD_BASIC
+msgctxt "STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_GUARD_BASIC"
+msgid "Ling's Guard Basic"
+msgstr "令的守卫描述[占位符]"
+
+#. STRINGS.NAMES.LING_GUARD_ELITE
+msgctxt "STRINGS.NAMES.LING_GUARD_ELITE"
+msgid "Guard Basic"
+msgstr "令的高级守卫"
+
+#. STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_GUARD_ELITE
+msgctxt "STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_GUARD_ELITE"
+msgid "Ling's Guard Basic"
+msgstr "令的高级守卫描述[占位符]"
 
 #. STRINGS.UI.LING_COMMAND.GUARD
 msgctxt "STRINGS.UI.LING_COMMAND.GUARD"

@@ -110,18 +110,7 @@ local LingGuardPanel = Class(Widget, function(self, owner)
   self.name:SetPosition(222, 48, 0)
   self.name:SetFocusScale(BUTTON_FOCUS_SCALE)
   self.name:SetOnClick(function()
-    if not self.guard_inst or not self.guard_inst:IsValid() then return end
-    -- 弦惊不可切换
-    if self.guard_inst.prefab == "ling_guard_elite" then return end
-    local lvl = (self.guard_inst and self.guard_inst.replica and self.guard_inst.replica.ling_guard and self.guard_inst.replica.ling_guard.GetLevel and self.guard_inst.replica.ling_guard:GetLevel()) or 1
-    local unlocked = lvl >= 2
-    if not unlocked then return end
-    local FORM = CONSTANTS.GUARD_FORM
-    local is_x = (self.guard_inst and self.guard_inst.replica and self.guard_inst.replica.ling_guard and self.guard_inst.replica.ling_guard.IsXiaoyao and self.guard_inst.replica.ling_guard:IsXiaoyao()) or false
-    local target = is_x and FORM.QINGPING or FORM.XIAOYAO
-    SendModRPCToServer(GetModRPC("ling_summon", "change_guard_form"), self.guard_inst, target)
-    -- 客户端刷新名称贴图与 hover
-    self:UpdateNameButton()
+    self:OnNameButtonClick()
   end)
 
   self.container_open = self:AddChild(ImageButton("images/ui_ling_guard_panel.xml", "container_open.tex"))
@@ -530,9 +519,10 @@ function LingGuardPanel:UpdateNameButton()
     self.name:ClearHoverText()
     return
   end
-  local is_x = (inst and inst.replica and inst.replica.ling_guard and inst.replica.ling_guard.IsXiaoyao and inst.replica.ling_guard:IsXiaoyao()) or false
-  local lvl = (inst and inst.replica and inst.replica.ling_guard and inst.replica.ling_guard.GetLevel and inst.replica.ling_guard:GetLevel()) or 1
-  local unlocked = lvl >= 2
+  local lg = inst.replica and inst.replica.ling_guard
+  if not lg then return end
+  local is_x = lg:IsXiaoyao()
+  local unlocked = (lg:GetLevel() or 1) >= 2
   if is_x then
     self.name:SetTextures("images/ui_ling_guard_panel.xml", "name_xiaoyao.tex", "name_xiaoyao.tex")
   else
@@ -629,5 +619,17 @@ function LingGuardPanel:UpdateAllModeButtonHoverTexts()
   end
 end
 
+
+function LingGuardPanel:OnNameButtonClick()
+  local inst = self.guard_inst
+  if not inst or not inst:IsValid() then return end
+  if inst.prefab == "ling_guard_elite" then return end
+  local lg = inst.replica and inst.replica.ling_guard
+  if not lg then return end
+  if (lg:GetLevel() or 1) < 2 then return end
+  local FORM = CONSTANTS.GUARD_FORM
+  local target = lg:IsXiaoyao() and FORM.QINGPING or FORM.XIAOYAO
+  SendModRPCToServer(GetModRPC("ling_summon", "change_guard_form"), inst, target)
+end
 
 return LingGuardPanel

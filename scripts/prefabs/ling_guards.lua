@@ -237,6 +237,11 @@ local function ling_guard_basic_fn()
         return inst
     end
 
+    inst:AddComponent("named")
+    -- TODO: 设置正确的名称
+    inst.components.named.possiblenames = STRINGS.PIGNAMES
+    inst.components.named:PickNewName()
+
     inst:AddComponent("health")
     inst.components.health.save_maxhealth = true
 
@@ -339,6 +344,11 @@ local function ling_guard_elite_fn()
         return inst
     end
 
+    inst:AddComponent("named")
+    -- TODO: 设置正确的名称
+    inst.components.named.possiblenames = STRINGS.PIGNAMES
+    inst.components.named:PickNewName()
+
     inst:AddComponent("health")
     inst.components.health.save_maxhealth = true
 
@@ -359,7 +369,6 @@ local function ling_guard_elite_fn()
 
     inst:AddComponent("inspectable")
     inst:AddComponent("lootdropper")
-    inst:AddComponent("knownlocations")
     inst:AddComponent("talker")
 
     inst:AddComponent("timer")
