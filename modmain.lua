@@ -108,5 +108,7 @@ local LING_TERRAFORM = AddAction("LING_TERRAFORM", "Terraform", function(act)
     return true
 end)
 
--- 将动作绑定到守卫的状态图（使用现有的挖掘动画/音效状态）
-AddStategraphActionHandler("ling_guards", ActionHandler(ACTIONS.LING_TERRAFORM, "work_dig_pick"))
+-- 自定义动作：回收守卫（由守卫自身执行，交给状态图处理）
+local LING_RECALL_GUARD = AddAction("LING_RECALL_GUARD", "Recall", function(act)
+    return true
+end)

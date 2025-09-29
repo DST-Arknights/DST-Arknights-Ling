@@ -127,6 +127,12 @@ local LingGuardPanel = Class(Widget, function(self, owner)
   self.recall:SetPosition(178, -90, 0)
   self.recall:SetFocusScale(BUTTON_FOCUS_SCALE)
   self.recall:SetHoverText(STRINGS.UI.LING_GUARD_PANEL.RECALL)
+  self.recall:SetOnClick(function()
+    if self.guard_inst and self.guard_inst:IsValid() then
+      SendModRPCToServer(GetModRPC("ling_summon", "recall_guard"), self.guard_inst)
+      self:RequestClose()
+    end
+  end)
 
   -- 名称图标即为“形态切换按钮”
   self.name = self:AddChild(ImageButton("images/ui_ling_guard_panel.xml", "name_qingping.tex"))

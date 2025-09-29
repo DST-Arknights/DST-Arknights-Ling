@@ -299,6 +299,14 @@ AddModRPCHandler("ling_summon", "request_fusion_guard", function(player, guard_i
   end
 end)
 
+-- 回收守卫：丢出背包物品 -> 播放死亡动画 -> 移除
+AddModRPCHandler("ling_summon", "recall_guard", function(player, guard_inst)
+  if not player or player.prefab ~= "ling" then return end
+  if not (player.components and player.components.ling_summon_manager) then return end
+  if not (guard_inst and guard_inst:IsValid()) then return end
+  player.components.ling_summon_manager:RecallGuard(guard_inst)
+end)
+
 -- 守卫世界管理
 local OWNER_SHARD = {}
 AddShardModRPCHandler("ling_summon", "LingHere", function(src_shard, userid, enter)

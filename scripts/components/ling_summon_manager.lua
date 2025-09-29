@@ -297,6 +297,30 @@ function LingSummonManager:RequestCloseContainer()
   openedContainerInst.components.container:Close(self.inst)
 end
 
+-- 回收守卫：通过 Action 驱动状态机执行
+function LingSummonManager:RecallGuard(guard_inst)
+  if not guard_inst or not guard_inst:IsValid() then
+    return false
+  end
+  if not self:IsGuardOwnedByPlayer(guard_inst) then
+    return false
+  end
+  -- 关闭相关UI
+  if self.openedContainerInst == guard_inst then
+    self:RequestCloseContainer()
+  end
+  if self.openedGuardPanelInst == guard_inst then
+    self:RequestCloseGuardPanel(guard_inst)
+  end
+  -- 停止移动并派发带参动作到守卫自身
+  if guard_inst.components and guard_inst.components.locomotor then
+    guard_inst.components.locomotor:Stop()
+  end
+  local act = BufferedAction(guard_inst, guard_inst, ACTIONS.LING_RECALL_GUARD)
+  guard_inst:PushBufferedAction(act)
+  return true
+end
+
 function LingSummonManager:RequestOpenGuardPanel(guard_inst)
   if not guard_inst or not guard_inst:IsValid() or self.openedGuardPanelInst == guard_inst then
     print("[LingSummonManager] RequestOpenGuardPanel: guard_inst is invalid or already opened", guard_inst, guard_inst and guard_inst:IsValid() )

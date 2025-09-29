@@ -9,6 +9,8 @@ local actionhandlers = {
     ActionHandler(ACTIONS.HAMMER, "hammer"),
     ActionHandler(ACTIONS.PICKUP, "pick"),
     ActionHandler(ACTIONS.UNPIN, "unpin"),
+    ActionHandler(ACTIONS.LING_RECALL_GUARD, "recall"),
+    ActionHandler(ACTIONS.LING_TERRAFORM, "work_dig_pick"),
 }
 
 local events =
@@ -288,6 +290,37 @@ local states =
             EventHandler("animover", function(inst)
                 if inst.AnimState:AnimDone() then
                     -- 保持该状态直到外部移除
+                end
+            end),
+        },
+    },
+
+    -- 回收：先爆背包再播放死亡动画并删除
+    State{
+        name = "recall",
+        tags = { "busy" },
+
+        onenter = function(inst)
+            inst.Physics:Stop()
+            -- 丢出守卫自身容器内物品
+            if inst.components and inst.components.container then
+                inst.components.container:DropEverything(inst:GetPosition(), true)
+            end
+            -- 丢出附属容器内物品（若存在）
+            if inst.plant_container and inst.plant_container.components and inst.plant_container.components.container then
+                inst.plant_container.components.container:DropEverything(inst:GetPosition(), true)
+            end
+            if inst.plant_club and inst.plant_club.components and inst.plant_club.components.container then
+                inst.plant_club.components.container:DropEverything(inst:GetPosition(), true)
+            end
+            inst.AnimState:PlayAnimation("die")
+        end,
+
+        events =
+        {
+            EventHandler("animover", function(inst)
+                if inst.AnimState:AnimDone() then
+                    inst:Remove()
                 end
             end),
         },
