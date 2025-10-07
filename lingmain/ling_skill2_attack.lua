@@ -34,8 +34,8 @@ ACTIONS.ATTACK.fn = function(act)
     local x, y, z = act.target.Transform:GetWorldPosition()
     local AOEarc = act.doer.components.ark_skill_ling:GetLevelConfig(2).AOEarc
     -- 排查所有友好目标
-    local fx = SpawnPrefab("wanda_attack_pocketwatch_old_fx")
-    fx.Transform:SetPosition(x, y, z)
+    local fx = SpawnPrefab("ling_guard_skill_halo_fx")
+    fx.Transform:SetPosition(x, 1, z)
     act.doer.components.ark_skill_ling:ActivateSkill(2)
     -- 束缚目标
     local shackleTime = act.doer.components.ark_skill_ling:GetLevelConfig(2).shackleTime

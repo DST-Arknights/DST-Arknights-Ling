@@ -36,17 +36,13 @@ local function DeclareFunction(inst)
 
     -- 检查哪些技能正在激活且有真伤配置
     local shouldEnableTrueDamage = false
-    local shouldEnableGuardTrueDamage = false
 
     for skillIndex = 1, 3 do
       if skill_component:IsSkillActive(skillIndex) then
         local levelConfig = skill_component:GetLevelConfig(skillIndex)
         if levelConfig and levelConfig.trueDamage then
           shouldEnableTrueDamage = true
-          -- 只有技能1的真伤状态影响守卫
-          if skillIndex == 1 and levelConfig.affectGuards then
-            shouldEnableGuardTrueDamage = true
-          end
+          break
         end
       end
     end
@@ -58,16 +54,7 @@ local function DeclareFunction(inst)
       inst.components.combat:DisableTrueDamage()
     end
 
-    -- 更新守卫真伤状态
-    if inst.components.ling_summon_manager then
-      inst.components.ling_summon_manager:OptionalAllGuard(function(guard)
-        if shouldEnableGuardTrueDamage then
-          guard.components.combat:EnableTrueDamage()
-        else
-          guard.components.combat:DisableTrueDamage()
-        end
-      end)
-    end
+    -- 守卫的真伤状态由ling_guard_skill组件管理，不在这里处理
   end
 
   function inst:InDream() return false end
@@ -77,26 +64,27 @@ local function DeclareFunction(inst)
     inst.components.combat.externaldamagemultipliers:SetModifier(inst, skillLevelConfig.damageMultiplier, SKILL1_DAMAGE_SOURCE)
     inst.components.combat:SetAttackSpeed(skillLevelConfig.attackSpeed)
 
-    -- 为守卫应用技能1效果（如果配置允许）
-    if skillLevelConfig.affectGuards then
-      inst.components.ling_summon_manager:OptionalAllGuard(function(guard)
-        guard.components.combat.externaldamagemultipliers:SetModifier(inst, skillLevelConfig.damageMultiplier, SKILL1_DAMAGE_SOURCE)
-        guard.components.combat:SetAttackSpeed(skillLevelConfig.attackSpeed)
-      end)
-    end
+    -- 通知所有守卫激活技能1（守卫组件自行决定是否启用）
+    inst.components.ling_summon_manager:OptionalAllGuard(function(guard)
+      if guard.components.ling_guard_skill then
+        guard.components.ling_guard_skill:ActivateSkill(1)
+      end
+    end)
 
     -- 更新真伤状态
     inst:UpdateTrueDamageState()
   end
 
   function inst:EndSkill1()
+    lprint("EndSkill1")
     inst.components.combat.externaldamagemultipliers:RemoveModifier(inst, SKILL1_DAMAGE_SOURCE)
     inst.components.combat:SetAttackSpeed(1)
 
-    -- 移除守卫的技能1效果
+    -- 通知所有守卫取消技能1
     inst.components.ling_summon_manager:OptionalAllGuard(function(guard)
-      guard.components.combat.externaldamagemultipliers:RemoveModifier(inst, SKILL1_DAMAGE_SOURCE)
-      guard.components.combat:SetAttackSpeed(1)
+      if guard.components.ling_guard_skill then
+        guard.components.ling_guard_skill:DeactivateSkill(1)
+      end
     end)
 
     -- 更新真伤状态
@@ -124,23 +112,23 @@ local function DeclareFunction(inst)
     inst.components.combat.externaldamagemultipliers:SetModifier(inst, skillLevelConfig.damageMultiplier, SKILL3_DAMAGE_SOURCE)
     inst.components.combat.externaldamagetakenmultipliers:SetModifier(inst, skillLevelConfig.damageAbsorption, SKILL3_DAMAGE_SOURCE)
 
-    -- 为守卫应用技能3效果（如果配置允许）
-    if skillLevelConfig.affectGuards then
-      inst.components.ling_summon_manager:OptionalAllGuard(function(guard)
-        guard.components.combat.externaldamagemultipliers:SetModifier(inst, skillLevelConfig.damageMultiplier, SKILL3_DAMAGE_SOURCE)
-        guard.components.combat.externaldamagetakenmultipliers:SetModifier(inst, skillLevelConfig.damageAbsorption, SKILL3_DAMAGE_SOURCE)
-      end)
-    end
+    -- 通知所有守卫激活技能3（守卫组件自行决定是否启用）
+    inst.components.ling_summon_manager:OptionalAllGuard(function(guard)
+      if guard.components.ling_guard_skill then
+        guard.components.ling_guard_skill:ActivateSkill(3)
+      end
+    end)
   end
 
   function inst:EndSkill3()
     inst.components.combat.externaldamagemultipliers:RemoveModifier(inst, SKILL3_DAMAGE_SOURCE)
     inst.components.combat.externaldamagetakenmultipliers:RemoveModifier(inst, SKILL3_DAMAGE_SOURCE)
 
-    -- 移除守卫的技能3效果
+    -- 通知所有守卫取消技能3
     inst.components.ling_summon_manager:OptionalAllGuard(function(guard)
-      guard.components.combat.externaldamagemultipliers:RemoveModifier(inst, SKILL3_DAMAGE_SOURCE)
-      guard.components.combat.externaldamagetakenmultipliers:RemoveModifier(inst, SKILL3_DAMAGE_SOURCE)
+      if guard.components.ling_guard_skill then
+        guard.components.ling_guard_skill:DeactivateSkill(3)
+      end
     end)
   end
 end

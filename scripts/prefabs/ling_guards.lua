@@ -283,6 +283,7 @@ local function ling_guard_basic_fn()
 
     inst:AddComponent("timer")
     inst:AddComponent("ling_guard_plant")
+    inst:AddComponent("ling_guard_skill")
 
     -- 光照
     inst.Light:SetRadius(0.5)
@@ -373,6 +374,7 @@ local function ling_guard_elite_fn()
 
     inst:AddComponent("timer")
     inst:AddComponent("ling_guard_plant")
+    inst:AddComponent("ling_guard_skill")
 
     inst.Light:SetRadius(1.5)
     inst.Light:SetIntensity(0.5)

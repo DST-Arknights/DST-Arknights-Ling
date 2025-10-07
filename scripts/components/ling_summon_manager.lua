@@ -260,6 +260,11 @@ end
 -- UI同步相关方法已移除，现在直接通过网络变量同步
 
 function LingSummonManager:OnFollowerLost(follower)
+    -- 取消关联时，关闭召唤兽的技能
+    if follower and follower.components.ling_guard_skill then
+      follower.components.ling_guard_skill:DeactivateAllSkills()
+    end
+
     self:RemoveGuardFromSlot(follower)
 end
 
@@ -275,6 +280,11 @@ function LingSummonManager:OnFollowerAdded(follower)
     follower.owner = self.inst
     local saved_slots = follower.components.ling_guard:GetSlots()
     self:SetGuardToSlot(follower, saved_slots)
+
+    -- 关联时，检查令的技能状态并同步
+    if follower.components.ling_guard_skill then
+      follower.components.ling_guard_skill:SyncWithOwner()
+    end
   end
 end
 
