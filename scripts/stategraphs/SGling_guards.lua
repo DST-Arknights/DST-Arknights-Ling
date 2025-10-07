@@ -224,7 +224,30 @@ local states =
             inst.AnimState:PlayAnimation("pick")
         end,
         timeline = {
-            TimeEvent(21*FRAMES, function(inst)
+            TimeEvent(14*FRAMES, function(inst)
+                inst:PerformBufferedAction()
+            end),
+        },
+        events = {
+            EventHandler("animover", goto_idle),
+        },
+    },
+
+    -- 铲地皮：使用 attack_0 动画（守卫没有草叉，用攻击动作直接铲地皮）
+    State{
+        name = "work_dig_pick",
+        tags = { "busy" },
+        onenter = function(inst)
+            inst.Physics:Stop()
+            inst.AnimState:PlayAnimation("attack_0")
+        end,
+        timeline = {
+            TimeEvent(14*FRAMES, function(inst)
+                if inst.SoundEmitter ~= nil then
+                    inst.SoundEmitter:PlaySound("dontstarve/wilson/dig")
+                end
+            end),
+            TimeEvent(18*FRAMES, function(inst)
                 inst:PerformBufferedAction()
             end),
         },

@@ -245,8 +245,11 @@ local function _WorkModeToTags(work_mode)
         return { "DIG_workable" }
     elseif work_mode == CONSTANTS.GUARD_WORK_MODE.HAMMER then
         return { "HAMMER_workable" }
+    elseif work_mode == CONSTANTS.GUARD_WORK_MODE.DIG_LAND then
+        -- DIG_LAND模式不依赖标签，而是直接检查地皮
+        return nil
     end
-    -- NONE / DIG_LAND / PLANT 或其它未实现：不做工作
+    -- NONE / PLANT 或其它未实现：不做工作
     return nil
 end
 
@@ -260,6 +263,8 @@ local function _WorkModeAcceptsAction(work_mode, act)
         return act == ACTIONS.DIG
     elseif work_mode == CONSTANTS.GUARD_WORK_MODE.HAMMER then
         return act == ACTIONS.HAMMER
+    elseif work_mode == CONSTANTS.GUARD_WORK_MODE.DIG_LAND then
+        return act == ACTIONS.LING_TERRAFORM
     end
     return false
 end
@@ -283,6 +288,24 @@ local function StartWorkingCondition(inst)
     if mode ~= CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD then return false end
     if IsInCombatMode(inst) then return false end
     local work_mode = inst.components.ling_guard:GetWorkMode()
+
+    -- DIG_LAND模式特殊处理：检查是否有可铲除的地皮
+    if work_mode == CONSTANTS.GUARD_WORK_MODE.DIG_LAND then
+        local center = GetGuardPos(inst)
+        local r = guardConfig.GUARD_RANGE
+        -- 检查守卫范围内是否有可以铲除的地皮
+        for i = 1, 10 do -- 随机检查几个点
+            local angle = math.random() * 2 * math.pi
+            local dist = math.random() * r
+            local x = center.x + math.cos(angle) * dist
+            local z = center.z + math.sin(angle) * dist
+            if TheWorld.Map:CanTerraformAtPoint(x, 0, z) then
+                return true
+            end
+        end
+        return false
+    end
+
     local tags = _WorkModeToTags(work_mode)
     if tags == nil then return false end
 
@@ -327,6 +350,38 @@ local function KeepWorkingAction(inst)
     end
 
     local work_mode = inst.components.ling_guard:GetWorkMode()
+
+    -- DIG_LAND模式特殊处理：直接寻找可铲除的地皮
+    if work_mode == CONSTANTS.GUARD_WORK_MODE.DIG_LAND then
+        local center = GetGuardPos(inst)
+        local r = guardConfig.GUARD_RANGE or 16
+
+        -- 寻找最近的可铲除地皮点
+        local best_point = nil
+        local best_dist = math.huge
+
+        for i = 1, 20 do -- 检查更多点以找到合适的地皮
+            local angle = math.random() * 2 * math.pi
+            local dist = math.random() * r
+            local x = center.x + math.cos(angle) * dist
+            local z = center.z + math.sin(angle) * dist
+            local pt = Vector3(x, 0, z)
+
+            if TheWorld.Map:CanTerraformAtPoint(x, 0, z) then
+                local d = inst:GetDistanceSqToPoint(x, 0, z)
+                if d < best_dist then
+                    best_dist = d
+                    best_point = pt
+                end
+            end
+        end
+
+        if best_point then
+            return BufferedAction(inst, nil, ACTIONS.LING_TERRAFORM, nil, best_point)
+        end
+        return nil
+    end
+
     local tags = _WorkModeToTags(work_mode)
     if tags == nil then
         inst._ling_work_target = nil
