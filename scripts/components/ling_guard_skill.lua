@@ -2,6 +2,8 @@
 -- 用于管理召唤兽受到令的技能影响
 -- 组件自行管理技能配置，不依赖令的技能配置
 
+local ling_targeting = require("ling_targeting")
+
 local SKILL1_DAMAGE_SOURCE = "ling_skill_1"
 local SKILL3_DAMAGE_SOURCE = "ling_skill_3"
 
@@ -13,18 +15,19 @@ local GUARD_SKILL_CONFIG = {
         damageMultiplier = 1.5,  -- 伤害倍率
         attackSpeed = 1.5,  -- 攻击速度
         trueDamage = true,  -- 真伤
-        fxColor = {1, 0.5, 0.5, 1},  -- 红色光环
     },
     [2] = {
         -- 技能2：不影响召唤兽
         enabled = false,
     },
     [3] = {
-        -- 技能3：伤害和防御提升
+        -- 技能3：伤害和防御提升 + 伤害光环
         enabled = true,  -- 是否启用此技能
         damageMultiplier = 1.4,  -- 伤害倍率
         damageAbsorption = 0.6,  -- 伤害吸收
-        fxColor = {0.5, 0.5, 1, 1},  -- 蓝色光环
+        auraRange = 2,  -- 光环范围
+        auraDamagePercent = 0.2,  -- 光环伤害百分比（令攻击力的20%）
+        auraInterval = 0.5,  -- 光环伤害间隔
     },
 }
 
@@ -44,6 +47,9 @@ local LingGuardSkill = Class(function(self, inst)
         [2] = nil,
         [3] = nil,
     }
+
+    -- 技能3光环相关
+    self.skill3_aura_task = nil  -- 光环伤害任务
 end)
 
 -- 检查是否有主人
@@ -136,9 +142,6 @@ function LingGuardSkill:ActivateSkill1()
         end
     end
 
-    -- 播放技能特效
-    self:SpawnSkillEffect(1)
-
     return true
 end
 
@@ -172,8 +175,6 @@ function LingGuardSkill:DeactivateSkill1()
         end
     end
     lprint("DeactivateSkill1", "after remove")
-    -- 移除技能特效
-    self:RemoveSkillEffect(1)
 
     return true
 end
@@ -209,6 +210,9 @@ function LingGuardSkill:ActivateSkill3()
     -- 播放技能特效
     self:SpawnSkillEffect(3)
 
+    -- 启动光环伤害
+    self:StartAuraDamage()
+
     return true
 end
 
@@ -233,6 +237,9 @@ function LingGuardSkill:DeactivateSkill3()
         )
     end
 
+    -- 停止光环伤害
+    self:StopAuraDamage()
+    lprint("DeactivateSkill3", "after stop aura damage")
     -- 移除技能特效
     self:RemoveSkillEffect(3)
 
@@ -241,14 +248,13 @@ end
 
 -- 播放技能特效
 function LingGuardSkill:SpawnSkillEffect(skill_index)
-    -- 移除旧特效
-    self:RemoveSkillEffect(skill_index)
-
-    local config = self:GetSkillConfig(skill_index)
-    if not config or not config.fxColor then
+    -- 只有技能3才有特效
+    if skill_index ~= 3 then
         return
     end
 
+    -- 移除旧特效
+    self:RemoveSkillEffect(skill_index)
     -- 创建新特效
     local fx = SpawnPrefab("ling_guard_skill_halo_fx")
     if fx then
@@ -301,9 +307,100 @@ function LingGuardSkill:IsSkillActive(skill_index)
     return self.active_skills[skill_index] or false
 end
 
+-- 启动光环伤害
+function LingGuardSkill:StartAuraDamage()
+    self:StopAuraDamage()  -- 先停止之前的任务
+
+    local config = self:GetSkillConfig(3)
+    if not config then
+        return
+    end
+
+    -- 创建定时任务
+    self.skill3_aura_task = self.inst:DoPeriodicTask(config.auraInterval, function()
+        self:DoAuraDamage()
+    end)
+end
+
+-- 停止光环伤害
+function LingGuardSkill:StopAuraDamage()
+    if self.skill3_aura_task then
+        self.skill3_aura_task:Cancel()
+        self.skill3_aura_task = nil
+    end
+end
+
+-- 执行光环伤害
+function LingGuardSkill:DoAuraDamage()
+    local config = self:GetSkillConfig(3)
+    if not config then
+        return
+    end
+
+    local owner = self:GetOwner()
+    if not owner or not owner.components.combat then
+        return
+    end
+
+    -- 获取令的当前攻击力
+    local owner_damage = self:GetOwnerAttackDamage(owner)
+    if owner_damage <= 0 then
+        return
+    end
+
+    -- 计算光环伤害（令攻击力的20%）
+    local aura_damage = owner_damage * config.auraDamagePercent
+
+    -- 使用 ling_targeting 的方法获取范围内的敌人
+    local x, y, z = self.inst.Transform:GetWorldPosition()
+    local ents = TheSim:FindEntities(x, y, z, config.auraRange, {"_combat"},
+        {"playerghost", "INLIMBO", "player", "companion", "wall", "ling_summon"})
+
+    for _, target in ipairs(ents) do
+        -- 使用 ling_targeting 的威胁判定方法
+        -- if ling_targeting.IsThreatToGuard(self.inst, target) then
+            -- 造成真实伤害
+            target.components.combat:GetAttacked(self.inst, aura_damage, nil, "ling_skill_3_aura")
+        -- end
+    end
+end
+
+-- 获取令的攻击力
+function LingGuardSkill:GetOwnerAttackDamage(owner)
+    if not owner or not owner.components.combat then
+        return 0
+    end
+
+    -- 获取武器
+    local weapon = owner.components.combat:GetWeapon()
+
+    -- 计算基础伤害（模拟CalcDamage的逻辑，但不需要目标）
+    local basedamage = 0
+    local basemultiplier = owner.components.combat.damagemultiplier or 1
+    local externaldamagemultipliers = owner.components.combat.externaldamagemultipliers
+    local bonus = owner.components.combat.damagebonus or 0
+
+    if weapon and weapon.components.weapon then
+        -- 使用武器伤害
+        basedamage = weapon.components.weapon.damage or 0
+        if type(basedamage) == "function" then
+            basedamage = basedamage(weapon, owner, nil)
+        end
+    else
+        -- 使用默认伤害
+        basedamage = owner.components.combat.defaultdamage or 0
+    end
+
+    -- 计算最终伤害
+    local damage = basedamage * basemultiplier * (externaldamagemultipliers and externaldamagemultipliers:Get() or 1) + bonus
+
+    return math.max(0, damage)
+end
+
 -- 组件移除时清理
 function LingGuardSkill:OnRemoveFromEntity()
     self:DeactivateAllSkills()
+    self:StopAuraDamage()
 end
 
 return LingGuardSkill
