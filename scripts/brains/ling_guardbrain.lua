@@ -293,14 +293,16 @@ local function StartWorkingCondition(inst)
     if work_mode == CONSTANTS.GUARD_WORK_MODE.DIG_LAND then
         local center = GetGuardPos(inst)
         local r = guardConfig.GUARD_RANGE
-        -- 检查守卫范围内是否有可以铲除的地皮
-        for i = 1, 10 do -- 随机检查几个点
-            local angle = math.random() * 2 * math.pi
-            local dist = math.random() * r
-            local x = center.x + math.cos(angle) * dist
-            local z = center.z + math.sin(angle) * dist
-            if TheWorld.Map:CanTerraformAtPoint(x, 0, z) then
-                return true
+        -- 检查守卫范围内所有点是否有可以铲除的地皮
+        local step = 2 -- 每2个单位检查一个点，避免检查过密
+        for x = center.x - r, center.x + r, step do
+            for z = center.z - r, center.z + r, step do
+                local dist_sq = (x - center.x) * (x - center.x) + (z - center.z) * (z - center.z)
+                if dist_sq <= r * r then -- 在圆形范围内
+                    if TheWorld.Map:CanTerraformAtPoint(x, 0, z) then
+                        return true
+                    end
+                end
             end
         end
         return false
@@ -360,18 +362,19 @@ local function KeepWorkingAction(inst)
         local best_point = nil
         local best_dist = math.huge
 
-        for i = 1, 20 do -- 检查更多点以找到合适的地皮
-            local angle = math.random() * 2 * math.pi
-            local dist = math.random() * r
-            local x = center.x + math.cos(angle) * dist
-            local z = center.z + math.sin(angle) * dist
-            local pt = Vector3(x, 0, z)
-
-            if TheWorld.Map:CanTerraformAtPoint(x, 0, z) then
-                local d = inst:GetDistanceSqToPoint(x, 0, z)
-                if d < best_dist then
-                    best_dist = d
-                    best_point = pt
+        -- 系统性地检查范围内所有点
+        local step = 2 -- 每2个单位检查一个点，避免检查过密
+        for x = center.x - r, center.x + r, step do
+            for z = center.z - r, center.z + r, step do
+                local dist_sq = (x - center.x) * (x - center.x) + (z - center.z) * (z - center.z)
+                if dist_sq <= r * r then -- 在圆形范围内
+                    if TheWorld.Map:CanTerraformAtPoint(x, 0, z) then
+                        local d = inst:GetDistanceSqToPoint(x, 0, z)
+                        if d < best_dist then
+                            best_dist = d
+                            best_point = Vector3(x, 0, z)
+                        end
+                    end
                 end
             end
         end
