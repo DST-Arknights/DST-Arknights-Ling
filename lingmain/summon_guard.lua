@@ -6,7 +6,41 @@ local SLOT_TYPE = CONSTANTS.GUARD_SLOT_TYPE
 local LING_TUNING = require("ling_guard_tuning")
 
 
--- 守卫种植系统配置同样迁移至 scripts/ling_guard_tuning.lua（LING_TUNING.PLANT）
+
+-- 自定义动作：守卫挖地皮（无需工具）
+local LING_TERRAFORM = AddAction("LING_TERRAFORM", "Terraform", function(act)
+    if act.doer == nil then return false end
+    local pt = act:GetActionPoint()
+    if pt == nil then return false end
+
+    local world = TheWorld
+    local map = world and world.Map or nil
+    if map == nil then return false end
+
+    local px, py, pz = pt:Get()
+    if not map:CanTerraformAtPoint(px, py, pz) then
+        return false
+    end
+
+    local original_tile_type = map:GetTileAtPoint(px, py, pz)
+    local tx, ty = map:GetTileCoordsAtPoint(px, py, pz)
+    local undertile = TheWorld.components.undertile and TheWorld.components.undertile:GetTileUnderneath(tx, ty) or WORLD_TILES.DIRT
+
+    map:SetTile(tx, ty, undertile)
+
+    -- 触发地皮挖掘后的掉落与效果
+    if HandleDugGround ~= nil then
+        HandleDugGround(original_tile_type, px, py, pz)
+    end
+
+
+    return true
+end)
+
+-- 自定义动作：回收守卫（由守卫自身执行，交给状态图处理）
+local LING_RECALL_GUARD = AddAction("LING_RECALL_GUARD", "Recall", function(act)
+    return true
+end)
 
 -- 诗意值ui
 AddClassPostConstruct("widgets/controls", function(self)

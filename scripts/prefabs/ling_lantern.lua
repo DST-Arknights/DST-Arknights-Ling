@@ -1,5 +1,6 @@
 local assets = {
     Asset("ATLAS", "images/inventoryimages/ling_lantern.xml"),
+    Asset("ANIM", "anim/swap_ling_lantern_stick.zip"),
     Asset("ANIM", "anim/ling_lantern.zip"),
 }
 
