@@ -172,6 +172,7 @@ local function master_post_init(inst)
   inst:AddComponent("planarentity")
   inst:AddComponent("reader")
   inst:AddComponent("ling_summon_manager")
+  inst:AddComponent("ling_cloud_pavilion_transfer")
   inst.components.sanity.dapperness = TUNING.DAPPERNESS_MED
 
   -- 设置leader组件的回调函数

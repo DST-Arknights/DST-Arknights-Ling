@@ -551,3 +551,18 @@ msgstr "(未解锁)"
 msgctxt "STRINGS.UI.LING_GUARD_PANEL.HEALTH_PERCENT"
 msgid "Health: %d%%"
 msgstr "生命值: %d%%"
+
+#. 云山亭进入房间
+msgctxt "STRINGS.ACTIONS.ENTER_CLOUD_PAVILION"
+msgid "Enter"
+msgstr "进入"
+
+#. 云山亭离开房间
+msgctxt "STRINGS.ACTIONS.EXIT_CLOUD_PAVILION"
+msgid "Exit"
+msgstr "离开"
+
+#. 云山亭房间名
+msgctxt "STRINGS.NAMES.LING_CLOUD_PAVILION_EXIT_DOOR"
+msgid "Cloud Pavilion"
+msgstr "云山亭"
