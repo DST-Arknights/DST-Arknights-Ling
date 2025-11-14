@@ -1,53 +1,20 @@
 -- 进入动作
-
-local EnterCloudPavilionAction = Action()
-EnterCloudPavilionAction.id = "ENTER_CLOUD_PAVILION"
-EnterCloudPavilionAction.str = STRINGS.ACTIONS.ENTER_CLOUD_PAVILION.ENTER_CLOUD_PAVILION
-EnterCloudPavilionAction.fn = function(act)
-    if act.target.components.ling_cloud_pavilion_transfer then
-        act.target.components.ling_cloud_pavilion_transfer:EnterCloudPavilion(act.doer)
+AddAction('ENTER_CLOUD_PAVILION', STRINGS.ACTIONS.ENTER_CLOUD_PAVILION, function(act)
+    if act.target.components.ling_cloud_pavilion_enter then
+        act.target.components.ling_cloud_pavilion_enter:EnterCloudPavilion(act.doer)
+        return true
     end
-end
-AddAction(EnterCloudPavilionAction)
-
-AddStategraphActionHandler("wilson", ActionHandler(ACTIONS.ENTER_CLOUD_PAVILION, "ling_enter_cloud_pavilion"))
-AddStategraphActionHandler("wilson_client", ActionHandler(ACTIONS.ENTER_CLOUD_PAVILION, "ling_enter_cloud_pavilion"))
+end)
 
 AddComponentAction("SCENE", "ling_cloud_pavilion_enter", function(inst, doer, actions, right)
-    if right and doer.components.ling_cloud_pavilion_transfer then
+    if right then
         table.insert(actions, ACTIONS.ENTER_CLOUD_PAVILION)
     end
 end)
 
-AddStategraphState("wilson", {
-    name = "ling_enter_cloud_pavilion",
-    tags = { "doing", "busy", "canrotate" },
+AddStategraphActionHandler("wilson", ActionHandler(ACTIONS.ENTER_CLOUD_PAVILION, "doshortaction"))
+AddStategraphActionHandler("wilson_client", ActionHandler(ACTIONS.ENTER_CLOUD_PAVILION, "doshortaction"))
 
-    onenter = function(inst, data)
-        inst.components.locomotor:Stop()
-        inst.sg:SetTimeout(30 * FRAMES)
-        -- 执行action
-        inst:PerformBufferedAction()
-    end,
-    ontimeout = function(inst)
-        inst.sg:GoToState("idle")
-    end,
-})
-
-AddStategraphState("wilson_client", {
-    name = "ling_enter_cloud_pavilion",
-    tags = { "doing", "busy", "canrotate" },
-
-    onenter = function(inst, data)
-        inst.components.locomotor:Stop()
-        inst.sg:SetTimeout(30 * FRAMES)
-        -- 执行action
-        inst:PerformBufferedAction()
-    end,
-    ontimeout = function(inst)
-        inst.sg:GoToState("idle")
-    end,
-})
 -- 帐篷作为云山亭的入口
 
 AddPrefabPostInit("tent", function(inst)
@@ -57,56 +24,84 @@ AddPrefabPostInit("tent", function(inst)
     inst:AddComponent("ling_cloud_pavilion_enter")
 end)
 
+
 -- 离开动作
-local ExitCloudPavilionAction = Action()
-ExitCloudPavilionAction.id = "EXIT_CLOUD_PAVILION"
-ExitCloudPavilionAction.str = STRINGS.ACTIONS.EXIT_CLOUD_PAVILION.EXIT_CLOUD_PAVILION
-ExitCloudPavilionAction.fn = function(act)
-    lprint("EXIT_CLOUD_PAVILION")
+AddAction('EXIT_CLOUD_PAVILION', STRINGS.ACTIONS.EXIT_CLOUD_PAVILION, function(act)
+    lprint('EXIT_CLOUD_PAVILION')
     if act.target.components.ling_cloud_pavilion_exit then
         act.target.components.ling_cloud_pavilion_exit:ExitCloudPavilion(act.doer)
-    end
-end
-AddAction(ExitCloudPavilionAction)
-
-AddStategraphActionHandler("wilson", ActionHandler(ACTIONS.EXIT_CLOUD_PAVILION, "ling_exit_cloud_pavilion"))
-AddStategraphActionHandler("wilson_client", ActionHandler(ACTIONS.EXIT_CLOUD_PAVILION, "ling_exit_cloud_pavilion"))
-
-AddComponentAction("SCENE", "ling_cloud_pavilion_exit", function(inst, doer, actions, right)
-    if not right then
-        table.insert(actions, ACTIONS.EXIT_CLOUD_PAVILION)
+        return true
     end
 end)
+ACTIONS.EXIT_CLOUD_PAVILION.distance = 2
 
-AddStategraphState("wilson", {
-    name = "ling_exit_cloud_pavilion",
-    tags = { "doing", "busy", "canrotate" },
-    onenter = function(inst, data)
-        lprint("ling_exit_cloud_pavilion")
-        inst.components.locomotor:Stop()
-        inst.sg:SetTimeout(30 * FRAMES)
-        -- 执行action
-        inst:PerformBufferedAction()
-    end,
-    ontimeout = function(inst)
-        inst.sg:GoToState("idle")
-    end,
-})
+AddComponentAction("SCENE", "ling_cloud_pavilion_exit", function(inst, doer, actions)
+    table.insert(actions, ACTIONS.EXIT_CLOUD_PAVILION)
+end)
 
-AddStategraphState("wilson_client", {
-    name = "ling_exit_cloud_pavilion",
-    tags = { "doing", "busy", "canrotate" },
-    onenter = function(inst, data)
-        lprint("ling_exit_cloud_pavilion")
-        inst.components.locomotor:Stop()
-        inst.sg:SetTimeout(30 * FRAMES)
-        -- 执行action
-        inst:PerformBufferedAction()
-    end,
-    ontimeout = function(inst)
-        inst.sg:GoToState("idle")
-    end,
-})
+AddStategraphActionHandler("wilson", ActionHandler(ACTIONS.EXIT_CLOUD_PAVILION, "doshortaction"))
+AddStategraphActionHandler("wilson_client", ActionHandler(ACTIONS.EXIT_CLOUD_PAVILION, "doshortaction"))
+
+local ARRIVE_STEP = .15
+AddComponentPostInit("locomotor", function(self)
+    local _GoToEntity = self.GoToEntity
+        self.GoToEntity = function(self, target, bufferedaction, run)
+        self.dest = Dest(target)
+        self.throttle = 1
+
+        self:CancelPredictMoveTimer() --if we reach here, means client is not predicting
+
+        self:SetBufferedAction(bufferedaction)
+        self.wantstomoveforward = true
+
+        local arrive_dist
+
+        if bufferedaction ~= nil and bufferedaction.arrivedist ~= nil then
+            arrive_dist = bufferedaction.arrivedist
+
+        elseif bufferedaction ~= nil and bufferedaction.distance ~= nil then
+            --NOTE: use actual physics (ignoring physicsradiusoverride)
+            --      as fallback if bufferedaction.distance is too small
+            local owner = target.components.inventoryitem and target.components.inventoryitem:GetGrandOwner() or target
+            arrive_dist = ARRIVE_STEP + (owner.Physics and owner.Physics:GetRadius() or 0) + self.inst.Physics:GetRadius()
+            arrive_dist = math.max(arrive_dist, bufferedaction.distance)
+
+        else
+            local owner = target.components.inventoryitem and target.components.inventoryitem:GetGrandOwner() or target
+            arrive_dist = ARRIVE_STEP + owner:GetPhysicsRadius(0) + self.inst:GetPhysicsRadius(0)
+
+            local extra_arrive_dist = (bufferedaction ~= nil and bufferedaction.action ~= nil and bufferedaction.action.extra_arrive_dist) or nil
+            if extra_arrive_dist ~= nil then
+                arrive_dist = arrive_dist + extra_arrive_dist(self.inst, self.dest)
+            end
+
+            if bufferedaction ~= nil and bufferedaction.action.mindistance ~= nil and bufferedaction.action.mindistance > arrive_dist then
+                arrive_dist = bufferedaction.action.mindistance
+            end
+        end
+
+        self.arrive_dist = arrive_dist
+
+        if self.directdrive then
+            if run then
+                self:RunForward()
+            else
+                self:WalkForward()
+            end
+        else
+            self:FindPath()
+        end
+
+        self.wantstorun = run
+        --self.arrive_step_dist = ARRIVE_STEP
+        self:StartUpdatingInternal()
+
+        --Try instant arrive check if we're not moving
+        if not (self.inst.sg and self.inst.sg:HasStateTag("moving")) then
+            self:OnUpdate(0, true)
+        end
+    end
+end)
 
 -- ============================================================================
 -- 私有工具函数 (从 ptribe_utils/utils.lua 简化版本)
