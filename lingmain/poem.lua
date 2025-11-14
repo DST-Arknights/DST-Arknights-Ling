@@ -46,23 +46,21 @@ end)
 AddStategraphActionHandler("wilson", ActionHandler(ACTIONS.USE_POEM, "doshortaction"))
 AddStategraphActionHandler("wilson_client", ActionHandler(ACTIONS.USE_POEM, "doshortaction"))
 
-local sgWilson = require("stategraphs/SGwilson")
-local _ReadActionHandlerCondition = sgWilson.actionhandlers[ACTIONS.READ].condition
-local function ReadActionHandlerCondition(inst)
+local _ReadCondition = ACTIONS.READ.condition
+ACTIONS.READ.condition = function(inst)
   local action = inst:GetBufferedAction()
   local targe = action.target or action.invobject
-  if targe ~= nil and targe.components.rechargeable ~= nil then
+  if targe ~= nil and targe.components.poem_useable ~= nil and targe.components.rechargeable ~= nil then
     lprint("ReadActionHandlerCondition", targe.components.rechargeable:IsCharged())
     return targe.components.rechargeable:IsCharged()
   end
-  if _ReadActionHandlerCondition ~= nil then
-    return _ReadActionHandlerCondition(inst)
+  if _ReadCondition ~= nil then
+    return _ReadCondition(inst)
   end
   return true
 end
-sgWilson.actionhandlers[ACTIONS.READ].condition = ReadActionHandlerCondition
 
--- 如果书未充能完毕, 则不显示阅读选项
+-- 如果书未充能完毕, 则不显示阅读选项开关
 local removeReadActionIfNotCharged = true
 if removeReadActionIfNotCharged then
   local function IsChargedClient(item)
@@ -79,6 +77,7 @@ if removeReadActionIfNotCharged then
           end
       end
   end
+  
 
   -- destructive effect: cover source code
   AddComponentAction('INVENTORY', 'book', function (inst, doer, actions, right)

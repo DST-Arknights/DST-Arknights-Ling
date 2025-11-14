@@ -66,6 +66,9 @@ function ArkSkill:SetupSkillConfig(prefab)
   self.inst:StartUpdatingComponent(self)
   -- 下次调度让客户端安装UI
   self.inst:DoTaskInTime(0, function()
+    if self.inst.userid == '' then
+      return
+    end
     SendModRPCToClient(GetClientModRPC("arkSkill_ling", "SetupArkSkillUi"), self.inst.userid, json.encode(config))
   end)
 end

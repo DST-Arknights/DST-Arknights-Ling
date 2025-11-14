@@ -1,3 +1,4 @@
+local CONSTANTS = require "ark_constants_ling"
 -- 进入动作
 AddAction('ENTER_CLOUD_PAVILION', STRINGS.ACTIONS.ENTER_CLOUD_PAVILION, function(act)
     if act.target.components.ling_cloud_pavilion_enter then
@@ -27,13 +28,14 @@ end)
 
 -- 离开动作
 AddAction('EXIT_CLOUD_PAVILION', STRINGS.ACTIONS.EXIT_CLOUD_PAVILION, function(act)
-    lprint('EXIT_CLOUD_PAVILION')
+    lprint('EXIT_CLOUD_PAVILION--------------------')
     if act.target.components.ling_cloud_pavilion_exit then
         act.target.components.ling_cloud_pavilion_exit:ExitCloudPavilion(act.doer)
         return true
     end
 end)
 ACTIONS.EXIT_CLOUD_PAVILION.distance = 2
+-- ACTIONS.EXIT_CLOUD_PAVILION.instant = true
 
 AddComponentAction("SCENE", "ling_cloud_pavilion_exit", function(inst, doer, actions)
     table.insert(actions, ACTIONS.EXIT_CLOUD_PAVILION)
@@ -41,67 +43,6 @@ end)
 
 AddStategraphActionHandler("wilson", ActionHandler(ACTIONS.EXIT_CLOUD_PAVILION, "doshortaction"))
 AddStategraphActionHandler("wilson_client", ActionHandler(ACTIONS.EXIT_CLOUD_PAVILION, "doshortaction"))
-
-local ARRIVE_STEP = .15
-AddComponentPostInit("locomotor", function(self)
-    local _GoToEntity = self.GoToEntity
-        self.GoToEntity = function(self, target, bufferedaction, run)
-        self.dest = Dest(target)
-        self.throttle = 1
-
-        self:CancelPredictMoveTimer() --if we reach here, means client is not predicting
-
-        self:SetBufferedAction(bufferedaction)
-        self.wantstomoveforward = true
-
-        local arrive_dist
-
-        if bufferedaction ~= nil and bufferedaction.arrivedist ~= nil then
-            arrive_dist = bufferedaction.arrivedist
-
-        elseif bufferedaction ~= nil and bufferedaction.distance ~= nil then
-            --NOTE: use actual physics (ignoring physicsradiusoverride)
-            --      as fallback if bufferedaction.distance is too small
-            local owner = target.components.inventoryitem and target.components.inventoryitem:GetGrandOwner() or target
-            arrive_dist = ARRIVE_STEP + (owner.Physics and owner.Physics:GetRadius() or 0) + self.inst.Physics:GetRadius()
-            arrive_dist = math.max(arrive_dist, bufferedaction.distance)
-
-        else
-            local owner = target.components.inventoryitem and target.components.inventoryitem:GetGrandOwner() or target
-            arrive_dist = ARRIVE_STEP + owner:GetPhysicsRadius(0) + self.inst:GetPhysicsRadius(0)
-
-            local extra_arrive_dist = (bufferedaction ~= nil and bufferedaction.action ~= nil and bufferedaction.action.extra_arrive_dist) or nil
-            if extra_arrive_dist ~= nil then
-                arrive_dist = arrive_dist + extra_arrive_dist(self.inst, self.dest)
-            end
-
-            if bufferedaction ~= nil and bufferedaction.action.mindistance ~= nil and bufferedaction.action.mindistance > arrive_dist then
-                arrive_dist = bufferedaction.action.mindistance
-            end
-        end
-
-        self.arrive_dist = arrive_dist
-
-        if self.directdrive then
-            if run then
-                self:RunForward()
-            else
-                self:WalkForward()
-            end
-        else
-            self:FindPath()
-        end
-
-        self.wantstorun = run
-        --self.arrive_step_dist = ARRIVE_STEP
-        self:StartUpdatingInternal()
-
-        --Try instant arrive check if we're not moving
-        if not (self.inst.sg and self.inst.sg:HasStateTag("moving")) then
-            self:OnUpdate(0, true)
-        end
-    end
-end)
 
 -- ============================================================================
 -- 私有工具函数 (从 ptribe_utils/utils.lua 简化版本)
@@ -406,4 +347,41 @@ AddPlayerPostInit(function(inst)
     _FnDecorator(inst.components.temperature, "OnUpdate", _ling_OnTemperatureUpdateBefore)
     _FnDecorator(inst.components.moisture, "OnUpdate", _ling_OnMoistureUpdateBefore)
     _FnDecorator(inst, "GetCurrentTileType", _ling_GetCurrentTileTypeBefore)
+end)
+
+AddComponentPostInit("sleepingbaguser", function(self)
+    local _DoSleep = self.DoSleep
+    lprint("sleepingbaguser:DoSleep", self.inst)
+    function self:DoSleep(bed)
+        if not TheWorld.ismastershard then
+            return _DoSleep(self, bed)
+        end
+        if not TheWorld.ismastersim then
+            return _DoSleep(self, bed)
+        end
+        if not self.inst.components.ling_cloud_pavilion_transfer then
+            return _DoSleep(self, bed)
+        end
+        local res = { _DoSleep(self, bed) }
+        -- 4-6秒后随机迁移
+        local timeout = math.random(4, 6)
+        self.inst:DoTaskInTime(timeout, function()
+            if not self.inst.sleepingbag then
+                return
+            end
+            -- 检查附近有没有 ling_cloud_pavilion_exit_door, 有就跳出, 没有就进入
+            local x, y, z = self.inst.Transform:GetWorldPosition()
+            local ents = TheSim:FindEntities(x, y, z, 10, { "ling_cloud_pavilion_exit_door" })
+            if #ents > 0 then
+                self.inst.components.ling_cloud_pavilion_transfer:ExitCloudPavilion()
+            else
+                self.inst.components.ling_cloud_pavilion_transfer:EnterCloudPavilion()
+                self.inst:DoTaskInTime(CONSTANTS.LING_TRANSFER_FADE_TIME, function()
+                    self.inst.AnimState:PlayAnimation("bedroll_sleep_loop", true)
+                    self.inst:Show()
+                end)
+            end
+        end)
+        return unpack(res)
+    end
 end)

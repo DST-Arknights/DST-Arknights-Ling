@@ -1,3 +1,4 @@
+local CONSTANTS = require "ark_constants_ling"
 local LingCloudPavilionTransfer = Class(function(self, inst)
     self.inst = inst
     self.enterPos = nil
@@ -37,11 +38,21 @@ local function Teleport(inst, targetPos)
     return
   end
   inst:SnapCamera()
-  inst:ScreenFade(false, 1)
-  inst:DoTaskInTime(1, function()
+  inst:ScreenFade(false, CONSTANTS.LING_TRANSFER_FADE_TIME)
+  if inst.components.fader then
+    inst.components.fader:Fade(1, 0, CONSTANTS.LING_TRANSFER_FADE_TIME, function(val)
+      inst.AnimState:SetMultColour(1, 1, 1, val)
+    end)
+  end
+  inst:DoTaskInTime(CONSTANTS.LING_TRANSFER_FADE_TIME, function()
     inst.Transform:SetPosition(targetPos[1], targetPos[2], targetPos[3])
     inst:SnapCamera()
-    inst:ScreenFade(true, 1)
+    inst:ScreenFade(true, CONSTANTS.LING_TRANSFER_FADE_TIME)
+    if inst.components.fader then
+      inst.components.fader:Fade(0, 1, CONSTANTS.LING_TRANSFER_FADE_TIME, function(val)
+        inst.AnimState:SetMultColour(1, 1, 1, val)
+      end)
+    end
   end)
 end
 
