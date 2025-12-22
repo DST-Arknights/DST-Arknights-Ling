@@ -412,7 +412,7 @@ function LingSummonManager:SummonBasic(slot_index)
   end
 
   -- 自动获取当前精英等级
-  local elite_level = (self.inst.components.ling_elite and self.inst.components.ling_elite:GetEliteLevel()) or 0
+  local elite_level = (self.inst.components.ark_elite and self.inst.components.ark_elite.elite) or 1
 
   -- 检查诗意消耗（基础召唤默认按清平成本）
   local poetry_component = self.inst.components.ling_poetry
@@ -434,8 +434,8 @@ end
 
 function LingSummonManager:SummonXianjing(slot_index)
   -- 自动获取当前精英等级，检查等级要求（精英化2解锁）
-  local elite_level = (self.inst.components.ling_elite and self.inst.components.ling_elite:GetEliteLevel()) or 0
-  if elite_level < 2 then
+  local elite_level = (self.inst.components.ark_elite and self.inst.components.ark_elite.elite) or 1
+  if elite_level < 1 then
     return false
   end
 

@@ -47,3 +47,6 @@ configuration_options = { {
     }},
     default = "auto"
 }}
+mod_dependencies = {
+    {["DST-ArknightsItemPackage"] = false},
+}

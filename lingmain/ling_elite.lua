@@ -70,8 +70,8 @@ AddPrefabPostInit("researchlab4", function(self)
   local _onactivate = self.components.prototyper.onactivate
   self.components.prototyper.onactivate = function(inst, doer, recipe)
     if recipe.name == "ling_elite_2" then
-      if doer.components.ling_elite then
-        doer.components.ling_elite:SetElite(2)
+      if doer.components.ark_elite then
+        doer.components.ark_elite:EliteUp()
       else
         if doer.components.talker then
           doer.components.talker:Say(GetActionFailString(doer, 'BUILD', nil))
@@ -89,11 +89,11 @@ AddPrefabPostInit("researchlab3", function(self)
   local _onactivate = self.components.prototyper.onactivate
   self.components.prototyper.onactivate = function(inst, doer, recipe)
     if recipe.name == "ling_elite_3" or recipe.name == "ling_elite_2" then
-      if doer.components.ling_elite then
+      if doer.components.ark_elite then
         if recipe.name == "ling_elite_2" then
-          doer.components.ling_elite:SetElite(2)
+        doer.components.ark_elite:EliteUp()
         else
-          doer.components.ling_elite:SetElite(3)
+        doer.components.ark_elite:EliteUp()
         end
       else
         if doer.components.talker then

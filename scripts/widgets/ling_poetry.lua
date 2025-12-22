@@ -5,7 +5,7 @@ local CONSTANTS = require "ark_constants_ling"
 
 local LingPoetryBadge = Class(Badge, function(self, owner)
   Badge._ctor(self, "ling_poetry", owner)
-  self.max_poetry = 0
+  self.max_poetry = 1
   self.current_poetry = 0
 
   -- 拖拽相关状态
@@ -38,6 +38,13 @@ local LingPoetryBadge = Class(Badge, function(self, owner)
   self.buttons = {}
   self.slot_buttons = {} -- 存储槽位按钮的映射，key为slot_index
   self.last_slot_count = 0 -- 记录上次的槽位数量，用于检测变化
+  self.owner:DoTaskInTime(0, function()
+    local poe_rep_state = self.owner.replica.ling_poetry and self.owner.replica.ling_poetry.state
+    if poe_rep_state then
+      self:SetMax(poe_rep_state.max_poetry)
+      self:SetCurrent(poe_rep_state.current_poetry)
+    end
+  end)
 end)
 
 function LingPoetryBadge:OpenCallPanel()
@@ -92,6 +99,9 @@ end
 
 
 function LingPoetryBadge:SetMax(max)
+  if max == 0 then
+    return
+  end
   self.max_poetry = max
   self:SetPercent(self.current_poetry / self.max_poetry, self.max_poetry)
 end
@@ -116,11 +126,14 @@ function LingPoetryBadge:OnSlotDataChanged(slot_index)
       -- 槽位数量发生变化，重新绘制按钮
       self:RedrawButtons()
       return
+    else
+      -- 槽位数量没有变化，更新指定的按钮
+      local button = self.slot_buttons[slot_index]
+      if button then
+        button:OnSlotDataChanged(slot_index)
+      end
     end
   end
-
-  -- 槽位数量没有变化：由子按钮（ling_guard_panel_call）自行监听 dirty 事件并增量更新
-  -- 此处不再代理到子按钮，避免重复刷新
 end
 
 -- 重新绘制按钮

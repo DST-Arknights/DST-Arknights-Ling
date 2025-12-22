@@ -54,6 +54,7 @@ AddReplicableComponent("ling_guard_plant")
 
 TUNING.ARK_SKILL = TUNING.ARK_SKILL or {}
 
+ArkLogger:DeclareLogger('TRACE', 'ling')
 -- 常量配置
 TUNING.LING = {}
 
@@ -62,12 +63,8 @@ TUNING.LING = {}
 TUNING.LING_DEBUG = true  -- 设置为true启用守卫调试日志
 
 modimport("lingmain/widget_extension")
-modimport("lingmain/ark_skill")
 modimport("lingmain/ling_elite")
 modimport("lingmain/summon_guard")
-modimport("lingmain/true_damage")
-modimport("lingmain/attack_speed")
-modimport("lingmain/ling_skill2_attack")
 modimport("lingmain/ling_guard_containers")
 modimport("lingmain/ling_jars")
 modimport("lingmain/ling_poetry")

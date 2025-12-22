@@ -106,10 +106,15 @@ function InteriorSpawner:SpawnWall(x, z)
 end
 
 function InteriorSpawner:OnSave()
-    return {
+    local data = {
         count = self.count,
-        globalInstance = self.globalInstance and self.globalInstance.GUID
-    }, { self.globalInstance.GUID }
+    }
+    local ents = {}
+    if self.globalInstance then
+        data.globalInstance = self.globalInstance.GUID
+        table.insert(ents, self.globalInstance.GUID)
+    end
+    return data, ents
 end
 
 function InteriorSpawner:OnLoad(data)

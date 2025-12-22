@@ -7,85 +7,57 @@ for k, v in pairs(TUNING.LING.ELITE) do
   MAX_GUARDS = math.max(MAX_GUARDS, v.MAX_GUARDS)
 end
 
-local LingSummonManagerReplica = Class(function(self, inst)
-  self.inst = inst
-  self._slots = {}
-
-  -- 添加 max_slots 网络变量
-  self._max_slots = net_tinybyte(inst.GUID, "ling_summon_manager._max_slots", "maxslotsdirty")
-
-  if not TheWorld.ismastersim then
-    -- 监听 max_slots 变化
-    self.inst:ListenForEvent("maxslotsdirty", function()
-      print("[LingSummonManagerReplica] maxslotsdirty", self._max_slots:value())
-      self:OnMaxSlotsChanged()
-    end, inst)
-  end
-
-  for i = 1, MAX_GUARDS do
-    self._slots[i] = {}
-    self._slots[i].inst = net_entity(inst.GUID, "ling_summon_manager._slots_" .. i .. "_inst", "slotinstdirty_" .. i)
-    self._slots[i].type = net_tinybyte(inst.GUID, "ling_summon_manager._slots_" .. i .. "_type", "slottypedirty_" .. i)
-    self._slots[i].level = net_tinybyte(inst.GUID, "ling_summon_manager._slots_" .. i .. "_level", "slotleveldirty_" .. i)
-    self._slots[i].status = net_tinybyte(inst.GUID, "ling_summon_manager._slots_" .. i .. "_status", "slotstatusdirty_" .. i)
-    self._slots[i].status:set(CONSTANTS.GUARD_SLOT_STATUS.DISABLED)
-    if not TheWorld.ismastersim then
-      -- 监听每个槽位的网络变量变化，分别监听不同的dirty事件但触发同一个方法
-      self.inst:ListenForEvent("slotinstdirty_" .. i, function()
-        print("[LingSummonManagerReplica] slotinstdirty_" .. i)
-        self:OnSlotChanged(i)
-      end, inst)
-      self.inst:ListenForEvent("slottypedirty_" .. i, function()
-        print("[LingSummonManagerReplica] slottypedirty_" .. i)
-        self:OnSlotChanged(i)
-      end, inst)
-      self.inst:ListenForEvent("slotleveldirty_" .. i, function()
-        print("[LingSummonManagerReplica] slotleveldirty_" .. i)
-        self:OnSlotChanged(i)
-      end, inst)
-      self.inst:ListenForEvent("slotstatusdirty_" .. i, function()
-        print("[LingSummonManagerReplica] slotstatusdirty_" .. i)
-        self:OnSlotChanged(i)
-      end, inst)
-    end
-  end
+local SafeCallLingPoetryUI = GenSafeCall(function(inst)
+  return inst and inst.HUD and inst.HUD.controls and inst.HUD.controls.ling_poetry
 end)
 
--- 当槽位数据变化时调用
-function LingSummonManagerReplica:OnSlotChanged(slot_index)
-  if ThePlayer and ThePlayer.HUD and ThePlayer.HUD.controls and ThePlayer.HUD.controls.ling_poetry then
-    -- 通知 UI 更新槽位按钮
-    ThePlayer.HUD.controls.ling_poetry:OnSlotDataChanged(slot_index)
+local LingSummonManagerReplica = Class(function(self, inst)
+  self.inst = inst
+  local stateDefine = {
+    max_slots = "tinybyte:classified",
+  }
+  local watchGroup = {}
+  for i = 1, MAX_GUARDS do
+    stateDefine["inst_" .. i] = "entity:classified"
+    stateDefine["type_" .. i] = "tinybyte:classified"
+    stateDefine["level_" .. i] = "tinybyte:classified"
+    stateDefine["status_" .. i] = "tinybyte:classified"
+    watchGroup[i] = {
+      "inst_" .. i,
+      "type_" .. i,
+      "level_" .. i,
+      "status_" .. i,
+    }
   end
-end
-
--- 当最大槽位数变化时调用
-function LingSummonManagerReplica:OnMaxSlotsChanged()
-  if ThePlayer and ThePlayer.HUD and ThePlayer.HUD.controls and ThePlayer.HUD.controls.ling_poetry then
-    -- 通知 UI 重新绘制按钮（槽位数量变化）
-    ThePlayer.HUD.controls.ling_poetry:RedrawButtons()
+  self.state = NetState(self.inst, stateDefine)
+  self.state:Attach(self.inst)
+  for i, v in pairs(watchGroup) do
+    self.state:WatchGroup(v, function()
+      SafeCallLingPoetryUI(self.inst):OnSlotDataChanged(i)
+    end)
   end
-end
-
+  self.state:Watch("max_slots", function()
+    SafeCallLingPoetryUI(self.inst):OnMaxSlotsChanged()
+  end)
+end)
 -- 设置最大槽位数（由服务端调用）
 function LingSummonManagerReplica:SetMaxSlots(max_slots)
-  self._max_slots:set(max_slots)
+  self.state.max_slots = max_slots
 end
 
 -- 获取最大槽位数
 function LingSummonManagerReplica:GetMaxSlots()
-  return self._max_slots:value()
+  return self.state.max_slots
 end
 
 -- 获取槽位数据
 function LingSummonManagerReplica:GetSlotData(slot_index)
-  if slot_index and slot_index >= 1 and slot_index <= MAX_GUARDS and self._slots[slot_index] then
-    local slot = self._slots[slot_index]
+  if slot_index and slot_index >= 1 and slot_index <= MAX_GUARDS then
     return {
-      inst = slot.inst:value(),
-      type = slot.type:value(),
-      level = slot.level:value(),
-      status = slot.status:value(),
+      inst = self.state["inst_" .. slot_index],
+      type = self.state["type_" .. slot_index],
+      level = self.state["level_" .. slot_index],
+      status = self.state["status_" .. slot_index],
       index = slot_index
     }
   end
@@ -103,13 +75,13 @@ end
 
 -- 获取可用的槽位数量（基于 max_slots，更可靠）
 function LingSummonManagerReplica:GetAvailableSlotCount()
-  return self._max_slots:value()
+  return self.state.max_slots
 end
 
 -- 获取可用的槽位数据列表（基于 max_slots）
 function LingSummonManagerReplica:GetAvailableSlotsData()
   local available_slots = {}
-  local max_slots = self._max_slots:value()
+  local max_slots = self.state.max_slots
   for i = 1, max_slots do
     local slot_data = self:GetSlotData(i)
     if slot_data and slot_data.status ~= CONSTANTS.GUARD_SLOT_STATUS.DISABLED then

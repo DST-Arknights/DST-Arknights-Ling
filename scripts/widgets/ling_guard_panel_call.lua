@@ -18,54 +18,14 @@ local LingGuardPanelCall = Class(Widget, function(self, slot_data, owner)
     -- 注册槽位 dirty 监听（创建-销毁模型）
     self:_AttachSlotDirtyListeners()
     -- 基于当前 slot_data 做一次增量应用（含必要的实例监听挂载）
-    self:_OnSlotDataDirty(self.slot_data)
+    self:OnSlotDataDirty(self.slot_data)
 
     -- 初始化按钮状态
     self:UpdateButtonState()
 end)
 
--- 监听玩家副本上的槽位 dirty 事件（创建-销毁模型专用）
-function LingGuardPanelCall:_AttachSlotDirtyListeners()
-    local owner = self.owner
-    local idx = self.slot_data and self.slot_data.index
-    if not (owner and idx) then return end
-    if self._slot_dirty_owner == owner and self._slot_dirty_index == idx then return end
-    self:_DetachSlotDirtyListeners()
-    self._slot_dirty_owner = owner
-    self._slot_dirty_index = idx
-    local function handler()
-        local rep = owner.replica and owner.replica.ling_summon_manager
-        if not rep then return end
-        local new_data = rep:GetSlotData(idx)
-        if new_data then
-            self:_OnSlotDataDirty(new_data)
-        end
-    end
-    self._on_slotinstdirty_proxy = self._on_slotinstdirty_proxy or handler
-    self._on_slottypedirty_proxy = self._on_slottypedirty_proxy or handler
-    self._on_slotleveldirty_proxy = self._on_slotleveldirty_proxy or handler
-    self._on_slotstatusdirty_proxy = self._on_slotstatusdirty_proxy or handler
-    owner:ListenForEvent("slotinstdirty_" .. idx, self._on_slotinstdirty_proxy, owner)
-    owner:ListenForEvent("slottypedirty_" .. idx, self._on_slottypedirty_proxy, owner)
-    owner:ListenForEvent("slotleveldirty_" .. idx, self._on_slotleveldirty_proxy, owner)
-    owner:ListenForEvent("slotstatusdirty_" .. idx, self._on_slotstatusdirty_proxy, owner)
-end
-
-function LingGuardPanelCall:_DetachSlotDirtyListeners()
-    local owner = self._slot_dirty_owner
-    local idx = self._slot_dirty_index
-    if owner and idx then
-        if self._on_slotinstdirty_proxy then owner:RemoveEventCallback("slotinstdirty_" .. idx, self._on_slotinstdirty_proxy, owner) end
-        if self._on_slottypedirty_proxy then owner:RemoveEventCallback("slottypedirty_" .. idx, self._on_slottypedirty_proxy, owner) end
-        if self._on_slotleveldirty_proxy then owner:RemoveEventCallback("slotleveldirty_" .. idx, self._on_slotleveldirty_proxy, owner) end
-        if self._on_slotstatusdirty_proxy then owner:RemoveEventCallback("slotstatusdirty_" .. idx, self._on_slotstatusdirty_proxy, owner) end
-    end
-    self._slot_dirty_owner = nil
-    self._slot_dirty_index = nil
-end
-
 -- 槽位数据脏更新（增量刷新）
-function LingGuardPanelCall:_OnSlotDataDirty(new_data)
+function LingGuardPanelCall:OnSlotDataDirty(new_data)
     local old = self.slot_data or {}
     self.slot_data = new_data
 
@@ -239,7 +199,6 @@ end
 
 function LingGuardPanelCall:OnRemove()
     self:_DetachInstListeners()
-    self:_DetachSlotDirtyListeners()
 end
 
 return LingGuardPanelCall
