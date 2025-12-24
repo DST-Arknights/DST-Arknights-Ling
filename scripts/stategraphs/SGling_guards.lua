@@ -9,7 +9,7 @@ local actionhandlers = {
     ActionHandler(ACTIONS.HAMMER, "hammer"),
     ActionHandler(ACTIONS.PICKUP, "pick"),
     ActionHandler(ACTIONS.UNPIN, "unpin"),
-    ActionHandler(ACTIONS.LING_RECALL_GUARD, "recall"),
+    ActionHandler(ACTIONS.LING_GUARD_RECALL, "recall"),
     ActionHandler(ACTIONS.LING_TERRAFORM, "work_dig_pick"),
 }
 
@@ -88,10 +88,12 @@ local states =
             inst.Physics:Stop()
             inst.components.combat:StartAttack()
             local attack_anim = "attack_0"
-            if inst.replica.ling_guard:IsXianjing() then
+            if inst.components.ling_guard.form == CONSTANTS.GUARD_FORM.XIANJING then
                 attack_anim = "attack"
-            else
-                attack_anim = inst.replica.ling_guard:IsXiaoyao() and "attack_1" or "attack_0"
+            elseif inst.components.ling_guard.form == CONSTANTS.GUARD_FORM.XIAOYAO then
+                attack_anim = "attack_1"
+            elseif inst.components.ling_guard.form == CONSTANTS.GUARD_FORM.QINGPING then
+                attack_anim = "attack_0"
             end
             inst.AnimState:PlayAnimation(attack_anim)
         end,
@@ -99,7 +101,8 @@ local states =
         timeline =
         {
             TimeEvent(7*FRAMES, function(inst)
-                if inst.replica.ling_guard:IsXianjing() then
+                -- 弦惊特效
+                if inst.components.ling_guard.form == CONSTANTS.GUARD_FORM.XIANJING then
                     local target = inst.sg.statemem.target
                     local x, y, z = target.Transform:GetWorldPosition()
                     local fx = SpawnPrefab("ling_guard_elite_attack_hit_fx")
@@ -325,17 +328,6 @@ local states =
 
         onenter = function(inst)
             inst.Physics:Stop()
-            -- 丢出守卫自身容器内物品
-            if inst.components and inst.components.container then
-                inst.components.container:DropEverything(inst:GetPosition(), true)
-            end
-            -- 丢出附属容器内物品（若存在）
-            if inst.plant_container and inst.plant_container.components and inst.plant_container.components.container then
-                inst.plant_container.components.container:DropEverything(inst:GetPosition(), true)
-            end
-            if inst.plant_club and inst.plant_club.components and inst.plant_club.components.container then
-                inst.plant_club.components.container:DropEverything(inst:GetPosition(), true)
-            end
             inst.AnimState:PlayAnimation("die")
         end,
 

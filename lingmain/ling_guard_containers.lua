@@ -22,7 +22,7 @@ containers.params.ling_guard_basic = {
     slotbg  = {},
     animbank = "ui_ling_guard_container",
     animbuild = "ui_ling_guard_container",
-    pos = Vector3(unpack(CONSTANTS.LING_GUARD_PANEL_POSITION)) + Vector3(unpack(CONSTANTS.LING_GUARD_PANEL_CONTAINER_POSITION)) * CONSTANTS.LING_GUARD_PANEL_SCALE,
+    pos = CONSTANTS.LING_GUARD_PANEL_POSITION + CONSTANTS.LING_GUARD_PANEL_CONTAINER_POSITION * CONSTANTS.LING_GUARD_PANEL_SCALE,
     side_align_tip = 160,
   },
   skipopensnd = true,
@@ -42,8 +42,8 @@ local function planitemtestfn(container, item, slot)
   return container.loading or item:HasTag("ling_guard_crop")
 end
 
-local plantContainerPos = Vector3(unpack(CONSTANTS.LING_GUARD_PANEL_POSITION)) + Vector3(unpack(CONSTANTS.LING_GUARD_PANEL_PLANT_CONTAINER_CLOSED_POSITION)) * CONSTANTS.LING_GUARD_PANEL_SCALE
-local openPos = Vector3(unpack(CONSTANTS.LING_GUARD_PANEL_POSITION)) + Vector3(unpack(CONSTANTS.LING_GUARD_PANEL_PLANT_CONTAINER_POSITION)) * CONSTANTS.LING_GUARD_PANEL_SCALE
+local plantContainerPos = CONSTANTS.LING_GUARD_PANEL_POSITION + CONSTANTS.LING_GUARD_PANEL_PLANT_CONTAINER_CLOSED_POSITION * CONSTANTS.LING_GUARD_PANEL_SCALE
+local openPos = CONSTANTS.LING_GUARD_PANEL_POSITION + CONSTANTS.LING_GUARD_PANEL_PLANT_CONTAINER_POSITION * CONSTANTS.LING_GUARD_PANEL_SCALE
 containers.params.ling_guard_plant_container = {
   widget = {
     slotpos = {Vector3(-119, -40, 0), Vector3(-119, 40, 0), Vector3(-39, -40, 0)},

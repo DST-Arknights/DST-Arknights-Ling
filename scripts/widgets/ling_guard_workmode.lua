@@ -26,11 +26,6 @@ local LingGuardWorkMode = Class(Widget, function(self, owner)
   self.SCISSOR_TIME = 0.2
   self.MOVE_TIME = 0.2
 
-
-  -- 事件代理（用于安全移除监听）
-  self._on_workmode_changed_proxy = function() self:_OnGuardWorkModeChanged() end
-  self._on_guard_onremove_proxy = function() self:DetachGuard() end
-
   self:CreateWorkButtons()
   self:CreateWorkSwitch()
   self.is_open = false
@@ -124,59 +119,11 @@ function LingGuardWorkMode:CreateWorkButtons()
   self.bg:Hide()
 end
 
--- 绑定/解绑守卫实例与监听
-function LingGuardWorkMode:AttachGuard(inst)
-  if self._guard_inst == inst then
-    return
+function LingGuardWorkMode:SetWorkMode(mode, use_animation, force)
+  self:ActiveWorkMode(mode, use_animation, force)
+  if not self.is_open then
+    self:_SyncScissorWithState()
   end
-  self:DetachGuard()
-  if inst and inst:IsValid() then
-    self._guard_inst = inst
-    -- 监听工作模式变化
-    inst:ListenForEvent("workmodechanged", self._on_workmode_changed_proxy, inst)
-    -- 守卫被移除时自动解绑
-    inst:ListenForEvent("onremove", self._on_guard_onremove_proxy, inst)
-    -- 同步当前模式并将容器位移到正确位置（无动画，强制）
-    if inst.replica and inst.replica.ling_guard then
-      local wm = inst.replica.ling_guard:GetWorkMode()
-      self:ActiveWorkMode(wm, false, true)
-      if not self.is_open then
-        self:_SyncScissorWithState()
-      end
-      if wm ~= GUARD_WORK_MODE.NONE then
-        self:Open(false)
-      else
-        self:Close(false)
-      end
-    end
-  end
-end
-
-function LingGuardWorkMode:DetachGuard()
-  if self._guard_inst ~= nil then
-    self._guard_inst:RemoveEventCallback("workmodechanged", self._on_workmode_changed_proxy, self._guard_inst)
-    self._guard_inst:RemoveEventCallback("onremove", self._on_guard_onremove_proxy, self._guard_inst)
-    self._guard_inst = nil
-  end
-end
-
-function LingGuardWorkMode:_OnGuardWorkModeChanged()
-  if not self._guard_inst or not self._guard_inst.replica or not self._guard_inst.replica.ling_guard then
-    return
-  end
-  local mode = self._guard_inst.replica.ling_guard:GetWorkMode()
-  -- 若与当前一致则无需处理（避免重复位移），否则对齐到新模式（无动画、强制）
-  if mode ~= self.current_active_mode then
-    self:ActiveWorkMode(mode, false, true)
-    if not self.is_open then
-      self:_SyncScissorWithState()
-    end
-  end
-end
-
-function LingGuardWorkMode:OnRemove()
-  -- Widget销毁时，解除监听
-  self:DetachGuard()
 end
 
 -- 创建工作选择器按钮
@@ -303,10 +250,6 @@ function LingGuardWorkMode:ActiveWorkMode(mode, use_animation, force)
   self:UpdateWorkSwitchHoverText()
 end
 
-
-
-
-
 function LingGuardWorkMode:OnWorkModeButtonClick(mode)
     -- 先更新自身UI
     self:ActiveWorkMode(mode, true)
@@ -314,7 +257,6 @@ function LingGuardWorkMode:OnWorkModeButtonClick(mode)
     if self._guard_inst and self._guard_inst:IsValid() then
         SendModRPCToServer(GetModRPC("ling_summon", "change_guard_work"), self._guard_inst, mode)
     end
-
 end
 
 -- 打开动画：从中心向两边展开

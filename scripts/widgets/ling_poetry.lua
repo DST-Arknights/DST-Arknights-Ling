@@ -47,38 +47,34 @@ local LingPoetryBadge = Class(Badge, function(self, owner)
   end)
 end)
 
+function LingPoetryBadge:SetMaxSlots(max_slots)
+  self.max_slots = max_slots
+  self:RedrawButtons()
+end
+
 function LingPoetryBadge:OpenCallPanel()
   self:CloseCallPanel()
 
-  -- 直接从 replica 获取可用槽位数据
   local replica = self.owner.replica.ling_summon_manager
-  if not replica then
-    return
-  end
+  if not replica then return end
 
   local available_slots = replica:GetAvailableSlotsData()
-  print("available_slots", #available_slots)
-  if #available_slots == 0 then
-    return
-  end
+  if #available_slots == 0 then return end
 
-  -- 记录当前槽位数量
   self.last_slot_count = #available_slots
 
-  -- 根据可用槽位数量，生成按钮并围绕本UI做360均分旋转布局
+  -- 围绕本UI做360均分旋转布局
   local angle_step = 360 / #available_slots
-  local radius = 105  -- 调整这个值以改变按钮的半径
-  local offsetX = 0
-  local offsetY = 0
+  local radius = 105
 
   for i, slot_data in ipairs(available_slots) do
-    -- 从90度开始(最上面)，顺时针旋转
     local angle = 90 - (i - 1) * angle_step
     local x = radius * math.cos(angle / 180 * math.pi)
     local y = radius * math.sin(angle / 180 * math.pi)
 
-    local callPanel = self:AddChild(ling_guard_panel_call(slot_data, self.owner))
-    callPanel:SetPosition(x + offsetX, y + offsetY, 0)
+    local callPanel = self:AddChild(ling_guard_panel_call(self.owner))
+    callPanel:SetSlotData(slot_data)
+    callPanel:SetPosition(x, y, 0)
     callPanel:SetRotation(-angle + 90)
 
     table.insert(self.buttons, callPanel)
@@ -111,27 +107,26 @@ function LingPoetryBadge:SetCurrent(current)
   self:SetPercent(self.current_poetry / self.max_poetry, self.max_poetry)
 end
 
--- 当槽位数据变化时调用
+-- 当槽位数据变化时调用（由 ling_summon_manager_replica 的 WatchGroup 触发）
 function LingPoetryBadge:OnSlotDataChanged(slot_index)
-  -- 如果面板未打开，跳过
-  if not self.panelCallOpened then
+  if not self.panelCallOpened then return end
+
+  local replica = self.owner.replica.ling_summon_manager
+  if not replica then return end
+
+  -- 槽位数量变化则重绘
+  local current_slot_count = replica:GetAvailableSlotCount()
+  if current_slot_count ~= self.last_slot_count then
+    self:RedrawButtons()
     return
   end
 
-  -- 检查槽位数量是否发生变化
-  local replica = self.owner.replica.ling_summon_manager
-  if replica then
-    local current_slot_count = replica:GetAvailableSlotCount()
-    if current_slot_count ~= self.last_slot_count then
-      -- 槽位数量发生变化，重新绘制按钮
-      self:RedrawButtons()
-      return
-    else
-      -- 槽位数量没有变化，更新指定的按钮
-      local button = self.slot_buttons[slot_index]
-      if button then
-        button:OnSlotDataChanged(slot_index)
-      end
+  -- 更新指定按钮
+  local button = self.slot_buttons[slot_index]
+  if button then
+    local new_data = replica:GetSlotData(slot_index)
+    if new_data then
+      button:SetSlotData(new_data)
     end
   end
 end
@@ -336,9 +331,13 @@ function LingPoetryBadge:OnMouseButton(button, down, x, y)
       if self.panelCallOpened then
         self:CloseCallPanel()
       else
-        if (ThePlayer.HUD.controls.ling_guard_panel:IsVisible()) then
-          ThePlayer.HUD.controls.ling_guard_panel:RequestClose()
-        else 
+        -- 找到所有打开的面吧
+        local opened_panels = ThePlayer.HUD:GetAllGuardPanels()
+        if next(opened_panels) then
+          for guard_inst in pairs(opened_panels) do
+            guard_inst.replica.ling_guard:ClosePanel(ThePlayer)
+          end
+        else
           self:OpenCallPanel()
         end
       end
@@ -400,6 +399,14 @@ function LingPoetryBadge:Kill()
 
   -- 调用父类的 Kill 方法
   Badge.Kill(self)
+end
+
+function LingPoetryBadge:SetGhostMode(ghost_mode)
+  if ghost_mode then
+    self:Hide()
+  else
+    self:Show()
+  end
 end
 
 return LingPoetryBadge

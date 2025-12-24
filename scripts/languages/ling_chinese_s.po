@@ -332,8 +332,8 @@ msgstr "%s 正在召唤"
 
 #. STRINGS.UI.LING_SUMMON.OTHER_WORLD
 msgctxt "STRINGS.UI.LING_SUMMON.OTHER_WORLD"
-msgid "%s Not in this world"
-msgstr "%s 不在这个世界"
+msgid "It is not in this world"
+msgstr "它不在这个世界"
 
 #. STRINGS.UI.LING_GUARD_PANEL.FUSION_BUTTON
 msgctxt "STRINGS.UI.LING_GUARD_PANEL.FUSION_BUTTON"

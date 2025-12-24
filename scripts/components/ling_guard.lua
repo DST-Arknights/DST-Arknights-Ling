@@ -1,59 +1,44 @@
 local CONSTANTS = require("ark_constants_ling")
-
-local LING_TUNING = require("ling_guard_tuning")
+local LING_GUARD_TUNING = require("ling_guard_tuning")
 local FORM = CONSTANTS.GUARD_FORM
-
--- 内部应用形态：切标签 + 同步 replica + 广播事件
-local function _apply_form(self, form)
-    local inst = self.inst
-    -- 清理旧标签
-    inst:RemoveTag(FORM.QINGPING)
-    inst:RemoveTag(FORM.XIAOYAO)
-    -- 添加新标签
-    if form == FORM.XIAOYAO then
-        inst:AddTag(FORM.XIAOYAO)
-    else
-        form = FORM.QINGPING
-        inst:AddTag(FORM.QINGPING)
-    end
-    self.form = form
-    -- 同步到 replica tinybyte（0=清平,1=逍遥）
-    if inst.replica and inst.replica.ling_guard and inst.replica.ling_guard.SetFormValue then
-        inst.replica.ling_guard:SetFormValue(form == FORM.XIAOYAO and 1 or 0)
-    end
-    -- 事件通知（prefab 用于挂载武器等）
-    inst:PushEvent("ling_form_changed", { form = form })
-end
-
--- 更新等级标签的辅助函数
-local function UpdateLevelTags(inst, level)
-    for i = 1, 4 do
-        inst:RemoveTag("ling_guard_level_" .. i)
-    end
-    inst:AddTag("ling_guard_level_" .. level)
-end
-
 -- 行为模式变化监听器
-local function onbehaviormode(self, behavior_mode)
-    self.inst.replica.ling_guard:SetBehaviorMode(behavior_mode)
+local function onbehaviormode(self, value)
+    self.inst.replica.ling_guard.state.behavior_mode = value
 end
 
 -- 工作模式变化监听器
-local function onworkmode(self, work_mode)
-    self.inst.replica.ling_guard:SetWorkMode(work_mode)
+local function onworkmode(self, value)
+    self.inst.replica.ling_guard.state.work_mode = value
 end
 
 -- 守卫位置变化监听器
-local function onguardpos(self, guard_pos)
-    self.inst.replica.ling_guard:SetGuardPosition(guard_pos)
+local function onguardpos(self, value)
+    if value == nil then
+        value = Vector3(0, 0, 0)
+    end
+    self.inst.replica.ling_guard.state.guard_pos_x = value.x
+    self.inst.replica.ling_guard.state.guard_pos_y = value.y
+    self.inst.replica.ling_guard.state.guard_pos_z = value.z
 end
 
 -- 等级变化监听器
 local function onlevel(self, level)
-    -- 同步到 replica：用于客户端 UI 读取等级
-    if self.inst.replica and self.inst.replica.ling_guard and self.inst.replica.ling_guard.SetLevel then
-        self.inst.replica.ling_guard:SetLevel(level or 1)
+    self.inst.replica.ling_guard.state.level = level
+end
+
+-- 形态变化监听器
+local function onform(self, value)
+    self.inst.replica.ling_guard.state.form = value
+end
+
+local function OnRemove(inst)
+    local comp = inst.components.ling_guard
+    if comp and comp.panel_opener then
+        comp:ClosePanel(comp.panel_opener)
     end
+    comp:ThrowContainerItems(self.inst.plant_container)
+    comp:ThrowContainerItems(self.inst.plant_club)
+    comp:ThrowContainerItems(self.inst)
 end
 
 local LingGuardBehavior = Class(function(self, inst)
@@ -65,153 +50,124 @@ local LingGuardBehavior = Class(function(self, inst)
     self.guard_pos = nil
     self.level = 1
     self.form = FORM.QINGPING
-
+    self.panel_opener = nil
     -- 插槽信息（从 prefab 迁移过来）
     self.saved_slots = nil
+    inst:ListenForEvent("onremove", OnRemove)
 end, nil, {
     behavior_mode = onbehaviormode,
     work_mode = onworkmode,
     guard_pos = onguardpos,
     level = onlevel,
+    form = onform,
 })
+
+function LingGuardBehavior:OpenPlantContainer(doer)
+    if self.work_mode == CONSTANTS.GUARD_WORK_MODE.PLANT then
+        if self.inst.plant_container then
+            self.inst.plant_container.components.container:Open(doer)
+        end
+        if self.inst.plant_club then
+            -- 种植中时关闭容器，否则打开
+            if not self.inst.components.ling_guard_plant:isPlanting() then
+                self.inst.plant_club.components.container:Open(doer)
+            elseif self.inst.plant_club.components.container:IsOpenedBy(doer) then
+                self.inst.plant_club.components.container:Close(doer)
+            end
+        end
+    end
+end
+
+function LingGuardBehavior:ClosePlantContainer(doer)
+    if self.inst.plant_container and self.inst.plant_container.components.container:IsOpenedBy(doer) then
+        self.inst.plant_container.components.container:Close(doer)
+    end
+    if self.inst.plant_club and self.inst.plant_club.components.container:IsOpenedBy(doer) then
+        self.inst.plant_club.components.container:Close(doer)
+    end
+end
+
+function LingGuardBehavior:OpenPanel(doer)
+    ArkLogger:Debug("LingGuardBehavior:OpenPanel", doer, self.inst)
+    -- 关闭之前打开的面板
+    if doer.components.leader then
+        for follower, _ in pairs(doer.components.leader.followers) do
+            if follower.components.ling_guard and follower.components.ling_guard:IsPanelOpenedBy(doer) then
+                follower.components.ling_guard:ClosePanel(doer)
+            end
+        end
+    end
+    self.panel_opener = doer
+    self.inst.replica.ling_guard.state:Attach(doer)
+    self:OpenPlantContainer(doer)
+end
+
+function LingGuardBehavior:ClosePanel(doer)
+    ArkLogger:Debug("LingGuardBehavior:ClosePanel", doer, self.inst)
+    self.inst.replica.ling_guard.state:Attach(self.inst)
+    self.panel_opener = nil
+    self:ClosePlantContainer(doer)
+end
+
+function LingGuardBehavior:IsPanelOpenedBy(doer)
+    return self.panel_opener == doer
+end
+
+function LingGuardBehavior:ThrowContainerItems(container)
+    if not container or not container.components or not container.components.container then
+        return
+    end
+    local leader = self.inst.components.follower.leader
+    if leader and leader.components.inventory then
+        local container = container.components.container
+        -- 使用源码中的 MoveItemFromAllOfSlot 方法转移所有物品
+        for i = 1, container.numslots do
+            if container:GetItemInSlot(i) then
+                container:MoveItemFromAllOfSlot(i, leader, leader)
+            end
+        end
+    else
+        -- 如果没有主人或主人没有背包，就丢弃物品
+        container.components.container:DropEverything()
+    end
+end
 
 -- 设置工作模式
 function LingGuardBehavior:SetWorkMode(mode)
-    -- 验证模式是否有效
-    local valid_mode = false
-    for _, valid in pairs(CONSTANTS.GUARD_WORK_MODE) do
-        if mode == valid then
-            valid_mode = true
-            break
-        end
-    end
-
-    if not valid_mode then
-        mode = CONSTANTS.GUARD_WORK_MODE.NONE -- 默认值
-    end
-
     local old_mode = self.work_mode
     self.work_mode = mode -- 设置到组件内部，监听器会自动同步到 replica
-
-    -- 处理工作模式变化的逻辑
-    self:HandleWorkModeChange(old_mode, mode)
-end
-
--- 处理工作模式变化的逻辑
-function LingGuardBehavior:HandleWorkModeChange(old_mode, new_mode)
-    if not self.inst.plant_container then
-        return
-    end
-
-    local leader = self.inst.components.follower.leader
-    local openedGuardPanelInst = leader and leader.components.ling_summon_manager and leader.components.ling_summon_manager.openedGuardPanelInst or nil
-
-    -- 只有当面板打开时才处理容器操作
-    if openedGuardPanelInst ~= self.inst then
-        return
-    end
-
-    -- 从种植模式切换到非种植模式
-    if old_mode == CONSTANTS.GUARD_WORK_MODE.PLANT and new_mode ~= CONSTANTS.GUARD_WORK_MODE.PLANT then
-        self:ExitPlantMode(leader)
-    end
-
-    -- 从非种植模式切换到种植模式
-    if old_mode ~= CONSTANTS.GUARD_WORK_MODE.PLANT and new_mode == CONSTANTS.GUARD_WORK_MODE.PLANT then
-        self:EnterPlantMode(leader)
-    end
-end
-
--- 进入种植模式
-function LingGuardBehavior:EnterPlantMode(leader)
-    if not leader then
-        return
-    end
-
-    if self.inst.plant_club then
-        if not self.inst.components.ling_guard_plant:isPlanting() then
-            self.inst.plant_club.components.container:Open(leader)
+    -- 进入种植模式要处理种植容器的显示
+    if old_mode ~= CONSTANTS.GUARD_WORK_MODE.PLANT and mode == CONSTANTS.GUARD_WORK_MODE.PLANT then
+        if self.panel_opener then
+            self:OpenPlantContainer(self.panel_opener)
         end
     end
-    if self.inst.plant_container then
-        self.inst.plant_container.components.container:Open(leader)
-    end
-end
-
--- 退出种植模式
-function LingGuardBehavior:ExitPlantMode(leader)
-    if not leader then
-        return
-    end
-
-    -- 停止种植
-    if self.inst.components.ling_guard_plant then
+    -- 退出种植模式要处理种植容器的隐藏
+    if old_mode == CONSTANTS.GUARD_WORK_MODE.PLANT and mode ~= CONSTANTS.GUARD_WORK_MODE.PLANT then
+        -- 停止种植
         self.inst.components.ling_guard_plant:StopPlanting()
-    end
-
-    -- 关闭容器并转移物品
-    if self.inst.plant_container then
-        self.inst.plant_container.components.container:Close(leader)
-        -- 将容器中的物品转移给守卫的主人
-        if leader.components.inventory then
-            local container = self.inst.plant_container.components.container
-            -- 使用源码中的 MoveItemFromAllOfSlot 方法转移所有物品
-            for i = 1, container.numslots do
-                if container:GetItemInSlot(i) then
-                    container:MoveItemFromAllOfSlot(i, leader, leader)
-                end
-            end
-        else
-            -- 如果没有主人或主人没有背包，就丢弃物品
-            self.inst.plant_container.components.container:DropEverything()
+        if self.panel_opener then
+            self:ClosePlantContainer(self.panel_opener)
         end
-    end
-
-    if self.inst.plant_club then
-        self.inst.plant_club.components.container:Close(leader)
-    end
-end
-
-
-
-function LingGuardBehavior:RefreshGuardModeRangeMark()
-    if self.behavior_mode ~= CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD then
-        self.guard_pos = nil
-    else
-        local leader = self.inst.components.follower.leader
-        if leader then
-            self.guard_pos = leader:GetPosition()
-        end
+        -- 物品抛出
+        self:ThrowContainerItems(self.inst.plant_container)
     end
 end
 
 -- 设置行为模式
 function LingGuardBehavior:SetBehaviorMode(mode)
-    -- 验证模式是否有效
-    local valid_mode = false
-    for _, valid in pairs(CONSTANTS.GUARD_BEHAVIOR_MODE) do
-        if mode == valid then
-            valid_mode = true
-            break
-        end
-    end
-
-    if not valid_mode then
-        mode = CONSTANTS.GUARD_BEHAVIOR_MODE.CAUTIOUS -- 默认为慎模式
-    end
-
     self.behavior_mode = mode
-    local follower = self.inst.components.follower
-    if follower then
-        if mode == CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD then
-            follower:StopLeashing()
-        else
-            follower:StartLeashing()
+    if mode == CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD then
+        self.inst.components.follower:StopLeashing()
+        local leader = self.inst.components.follower.leader
+        if leader then
+            local pos = leader:GetPosition()
+            self.inst.components.knownlocations:RememberLocation("home", pos)
+            self.guard_pos = pos
         end
+    else
+        self.inst.components.follower:StartLeashing()
     end
-    self:RefreshGuardModeRangeMark()
-    -- 更新标签
-    self:UpdateBehaviorTags()
 end
 
 -- 获取行为模式
@@ -223,44 +179,17 @@ end
 function LingGuardBehavior:GetWorkMode()
     return self.work_mode
 end
--- 形态/类型判断统一由 ling_guard 提供
-function LingGuardBehavior:IsQingping()
-    if self.inst.prefab == "ling_guard_elite" or self.inst.prefab == "xianjing" then
-        return false
-    end
-    return (self.form == FORM.QINGPING)
-end
-
-function LingGuardBehavior:IsXiaoyao()
-    if self.inst.prefab == "ling_guard_elite" or self.inst.prefab == "xianjing" then
-        return false
-    end
-    return (self.form == FORM.XIAOYAO)
-end
-
-function LingGuardBehavior:IsXianjing()
-    return self.inst.prefab == "ling_guard_elite" or self.inst.prefab == "xianjing"
-end
 
 -- 设置/获取/切换 形态（门槛：自身等级>=2；弦惊不可切换；初始化时总是应用）
 function LingGuardBehavior:SetForm(form)
-    if self:IsXianjing() then return false end
-    if form ~= FORM.QINGPING and form ~= FORM.XIAOYAO then
-        form = FORM.QINGPING
-    end
-    local inst = self.inst
-    local is_initial = (not inst:HasTag(FORM.QINGPING) and not inst:HasTag(FORM.XIAOYAO))
-    if (self.form == form) and not is_initial then
-        return true
-    end
-    if (not is_initial) and ((self.level or 1) < 2) then
+    if self.level < 2 then
         return false
     end
-    _apply_form(self, form)
-    if not is_initial then
-        -- 切换后根据当前等级刷新一次数值
-        self:SetLevel(self.level or 1)
-    end
+    self.form = form
+    -- 事件通知（prefab 用于挂载武器等）
+    self.inst:PushEvent("ling_form_changed", { form = form })
+    -- 切换后根据当前等级刷新一次数值
+    self:SetLevel(self.level)
     return true
 end
 
@@ -273,9 +202,6 @@ function LingGuardBehavior:ToggleForm()
     return self:SetForm(target)
 end
 
-
-
-
 -- 设置插槽信息
 function LingGuardBehavior:SetSlots(slots)
     self.saved_slots = slots
@@ -286,78 +212,34 @@ function LingGuardBehavior:GetSlots()
     return self.saved_slots
 end
 
--- 设置等级
-function LingGuardBehavior:SetLevel(level)
-    self.level = level
-
-    local cfg
-    if self.inst and self.inst.replica and self.inst.replica.ling_guard and self.inst.replica.ling_guard.IsXianjing and self.inst.replica.ling_guard:IsXianjing() then
-        cfg = LING_TUNING.GetEliteLevel(level)
-    else
-        local is_x = (self.inst and self.inst.replica and self.inst.replica.ling_guard and self.inst.replica.ling_guard.IsXiaoyao and self.inst.replica.ling_guard:IsXiaoyao()) or false
-        local form = is_x and FORM.XIAOYAO or FORM.QINGPING
-        cfg = LING_TUNING.GetBasicFormLevel(level, form)
-        local qcfg, xcfg = LING_TUNING.GetBasicBothForms(level)
-        if qcfg then self.inst._ling_melee_range = qcfg.ATTACK_RANGE end
-        if xcfg then self.inst._ling_ranged_range = xcfg.ATTACK_RANGE end
-    end
+function LingGuardBehavior:ApplyLevelEffects()
+    local level = self.level
+    local cfg = LING_GUARD_TUNING.GetLevelConfig(self.form, level)
     if not cfg then return end
-
-    -- 更新属性
     if self.inst.components.health then
         self.inst.components.health:SetMaxHealth(cfg.HEALTH)
     end
     if self.inst.components.combat then
         self.inst.components.combat:SetDefaultDamage(cfg.DAMAGE)
-        -- 同步当前形态的攻击范围（统一用 replica 判断）
-        if self.inst and self.inst.replica and self.inst.replica.ling_guard and self.inst.replica.ling_guard.IsXianjing and self.inst.replica.ling_guard:IsXianjing() then
-            self.inst.components.combat:SetRange(cfg.ATTACK_RANGE)
-        else
-            local is_x = (self.inst and self.inst.replica and self.inst.replica.ling_guard and self.inst.replica.ling_guard.IsXiaoyao and self.inst.replica.ling_guard:IsXiaoyao()) or false
-            if is_x then
-                self.inst.components.combat:SetRange(self.inst._ling_ranged_range or cfg.ATTACK_RANGE)
-            else
-                self.inst.components.combat:SetRange(self.inst._ling_melee_range or cfg.ATTACK_RANGE)
-            end
-        end
         self.inst.components.combat:SetAttackPeriod(cfg.ATTACK_PERIOD)
+        self.inst.components.combat:SetRange(cfg.ATTACK_RANGE)
         self.inst.components.combat.externaldamagetakenmultipliers:SetModifier(self.inst, cfg.DAMAGE_REDUCTION, "level_damage_reduction")
     end
     if self.inst.components.locomotor then
         self.inst.components.locomotor.walkspeed = cfg.WALK_SPEED
         self.inst.components.locomotor.runspeed = cfg.RUN_SPEED
     end
-
-    -- 更新种植组件的等级
     if self.inst.components.ling_guard_plant then
         self.inst.components.ling_guard_plant:SetLevel(level)
     end
+    -- 同步给manager
+    self.inst:PushEvent("ling_guard_level_changed", { level = level })
+end
 
-    -- 更新容器等级
-    if self.inst.plant_container and self.inst.plant_container.replica.container then
-        self.inst:DoTaskInTime(0, function()
-            self.inst:DoTaskInTime(0, function()
-                if self.inst.plant_container.replica.container._ling_level then
-                    print("[LingGuardBehavior] [plant_container] SetLevel", level)
-                    self.inst.plant_container.replica.container._ling_level:set(level)
-                end
-            end)
-        end)
-    end
-
-    -- 更新等级标签
-    UpdateLevelTags(self.inst, level)
-    -- 同步槽位网络等级到 UI
-    local leader = (self.inst.components.follower and self.inst.components.follower.leader) or nil
-    if leader and leader.components.ling_summon_manager then
-        local mgr = leader.components.ling_summon_manager
-        local idx = mgr:FindGuardIndex(self.inst)
-        if idx then
-            local slot = mgr:GetSlotData(idx)
-            mgr:SetSlotData(idx, self.inst, slot and slot.type or 0, level, CONSTANTS.GUARD_SLOT_STATUS.OCCUPIED)
-        end
-    end
-    print("[LingGuardBehavior] SetLevel", level)
+-- 设置等级
+function LingGuardBehavior:SetLevel(level)
+    self.level = level
+    self:ApplyLevelEffects()
 end
 
 -- 获取等级
@@ -365,18 +247,10 @@ function LingGuardBehavior:GetLevel()
     return self.level
 end
 
--- 更新行为标签
-function LingGuardBehavior:UpdateBehaviorTags()
-    -- 移除所有行为标签
-    for _, mode in pairs(CONSTANTS.GUARD_BEHAVIOR_MODE) do
-        self.inst:RemoveTag("behavior_mode_" .. mode)
-    end
-
-    -- 添加当前行为标签（从 replica 中获取）
-    local current_mode = self:GetBehaviorMode()
-    self.inst:AddTag("behavior_mode_" .. current_mode)
+-- 融合 TODO:
+function LingGuardBehavior:Fusion()
+    return nil
 end
-
 
 -- 保存数据
 function LingGuardBehavior:OnSave()
@@ -398,11 +272,11 @@ function LingGuardBehavior:OnLoad(data)
 
         -- 加载等级信息
         if data.level then
-            self.saved_level = data.level
+            self.level = data.level
         end
         -- 加载形态信息
         if data.form then
-            self.saved_form = data.form
+            self.form = data.form
         end
 
         -- 加载行为模式和工作模式
@@ -415,19 +289,13 @@ function LingGuardBehavior:OnLoad(data)
         if data.guard_pos then
            self.guard_pos = Vector3(data.guard_pos[1], data.guard_pos[2], data.guard_pos[3])
         end
+        self:ApplyLevelEffects()
     end
 end
 
-function LingGuardBehavior:LoadPostPass()
-    if self.saved_level then
-        self.level = self.saved_level
-        self.saved_level = nil
-    end
-    if self.saved_form then
-        -- 直接应用形态（不受切换门槛限制）
-        _apply_form(self, self.saved_form)
-        self.saved_form = nil
-    end
+function LingGuardBehavior:OnRemoveFromEntity()
+    OnRemove(self.inst)
+    self.inst:RemoveEventCallback("onremove", OnRemove)
 end
 
 return LingGuardBehavior

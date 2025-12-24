@@ -1,228 +1,204 @@
 local CONSTANTS = require("ark_constants_ling")
-local BitField = require("ark_utils_ling").BitField
 local LING_GUARD_CONFIG = require("ling_guard_config")
 
--- 创建坐标BitField处理器（模块级）
-local _pos_bitfield = BitField.create({
-    enabled = {bits = 1, default = 0},  -- 是否启用位置标记
-    x = {bits = 15, signed = true, default = 0},  -- X坐标 (-16384 到 16383)
-    z = {bits = 15, signed = true, default = 0},  -- Z坐标 (-16384 到 16383)
-    -- 剩余1位保留
-})
-
-local LingGuardReplica = Class(function(self, inst)
-    self.inst = inst
-
-    -- 行为模式网络变量
-    self._behavior_mode = net_tinybyte(inst.GUID, "ling_guard_._behavior_mode", "behaviormodechanged")
-
-    self._work_mode = net_tinybyte(inst.GUID, "ling_guard_._work_mode", "workmodechanged")
-
-    -- 守卫位置网络变量 - 使用BitField打包坐标
-    self._guard_pos_data = net_uint(inst.GUID, "ling_guard_._guard_pos_data", "guardposdirty")
-
-    -- 等级网络变量
-    self._level = net_tinybyte(inst.GUID, "ling_guard_._level", "levelchanged")
-
-    -- 形态网络变量：0=清平,1=逍遥（节省带宽）
-    self._form = net_tinybyte(inst.GUID, "ling_guard_._form", "ling_guard_formdirty")
-
-    -- 客户端状态
-    self._guard_pos = nil
-    self._guard_pos_inst = nil
-
-    if not TheWorld.ismastersim then
-        -- 监听守卫位置变化
-        self.inst:ListenForEvent("guardposdirty", function()
-            self:OnGuardPosDirty()
-        end, inst)
-        -- 监听消失时, 如果有范围标志, 一同移除掉
-        self.inst:ListenForEvent("onremove", function()
-            self:RemoveGuardPositionVisual()
-        end, inst)
-    end
+local SafeCallHUD = GenSafeCall(function(player)
+  return player and player.HUD
+end)
+local SafeCallLingGuardPanel = GenSafeCall(function(player, inst)
+  return SafeCallHUD(player):GetGuardPanel(inst)
 end)
 
-
--- 设置行为模式（由服务端调用）
-function LingGuardReplica:SetBehaviorMode(mode)
-    self._behavior_mode:set(mode)
+local function OnHealthDirty(inst)
+  local leader = inst.replica.follower and inst.replica.follower:GetLeader()
+  if not TheNet:IsDedicated() and ThePlayer == leader then
+    SafeCallLingGuardPanel(ThePlayer, inst):SetHealth(inst.components.healthsyncer:GetPercent())
+  end
 end
 
--- 获取行为模式
-function LingGuardReplica:GetBehaviorMode()
-    return self._behavior_mode:value()
+local function OnNameDirty(inst)
+  local leader = inst.replica.follower and inst.replica.follower:GetLeader()
+  if not TheNet:IsDedicated() and ThePlayer == leader then
+    SafeCallLingGuardPanel(ThePlayer, inst):SetGuardName(inst.replica.named._name:value())
+  end
 end
 
--- 获取行为模式名称（用于UI显示）
-function LingGuardReplica:GetBehaviorModeName()
-    local mode = self._behavior_mode:value()
-    
-    if mode == CONSTANTS.GUARD_BEHAVIOR_MODE.CAUTIOUS then
-        return "慎"
-    elseif mode == CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD then
-        return "守"
-    elseif mode == CONSTANTS.GUARD_BEHAVIOR_MODE.ATTACK then
-        return "攻"
-    else
-        return "未知"
+local LingGuardReplica = Class(function(self, inst)
+  self.inst = inst
+  self.state = NetState(self.inst, {
+    behavior_mode = "tinybyte:classified",
+    work_mode = "tinybyte:classified",
+    guard_pos_x = "float:classified",
+    guard_pos_y = "float:classified",
+    guard_pos_z = "float:classified",
+    level = "tinybyte:classified",
+    form = "tinybyte:classified"
+  })
+  self.state:OnAttached(function()
+    ArkLogger:Debug("LingGuardReplica:OnAttached", self.inst)
+    SafeCallHUD(ThePlayer):OpenGuardPanel(self.inst)
+    SafeCallLingGuardPanel(ThePlayer, self.inst):SetBehaviorMode(self.state.behavior_mode, false)
+    local leader = self.inst.replica.follower and self.inst.replica.follower:GetLeader()
+    if not TheNet:IsDedicated() and ThePlayer == leader then
+      self:SetGuardPositionColor(true)
     end
-end
-
-
--- 设置工模式（由服务端调用）
-function LingGuardReplica:SetWorkMode(mode)
-    self._work_mode:set(mode)
-end
-
--- 获取工模式
-function LingGuardReplica:GetWorkMode()
-    return self._work_mode:value()
-end
-
--- 设置等级（由服务端调用）
-function LingGuardReplica:SetLevel(level)
-    self._level:set(level or 1)
-end
-
--- 获取等级（客户端用于 UI 展示）
-function LingGuardReplica:GetLevel()
-    return self._level:value()
-end
-
--- 设置守卫位置（由服务端调用）
-function LingGuardReplica:SetGuardPosition(guard_pos)
-    print("[LingGuardReplica] SetGuardPosition", guard_pos and guard_pos.x or "nil", guard_pos and guard_pos.z or "nil")
-    if guard_pos then
-        -- 使用 BitField 打包坐标数据
-        local packed_data = _pos_bitfield.pack({
-            enabled = 1,
-            x = math.floor(guard_pos.x),
-            z = math.floor(guard_pos.z)
-        })
-        self._guard_pos_data:set(packed_data)
-    else
-        -- 禁用位置标记
-        local packed_data = _pos_bitfield.pack({
-            enabled = 0,
-            x = 0,
-            z = 0
-        })
-        self._guard_pos_data:set(packed_data)
+  end)
+  self.state:OnDetached(function()
+    SafeCallHUD(ThePlayer):CloseGuardPanel(self.isnt)
+    local leader = self.inst.replica.follower and self.inst.replica.follower:GetLeader()
+    if not TheNet:IsDedicated() and ThePlayer == leader then
+      self:SetGuardPositionColor(true)
     end
-    print("[LingGuardReplica] SetGuardPosition", self._guard_pos_data:value())
+  end)
+  self.state:Watch({"behavior_mode", "guard_pos_x", "guard_pos_y", "guard_pos_z"}, function()
+    SafeCallLingGuardPanel(ThePlayer, self.inst):SetBehaviorMode(self.state.behavior_mode, true)
+
+    local leader = self.inst.replica.follower and self.inst.replica.follower:GetLeader()
+    if not TheNet:IsDedicated() and ThePlayer == leader then
+      if self.state.behavior_mode == CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD then
+        self:UpdateGuardPositionVisual()
+      else
+        self:RemoveGuardPositionVisual()
+      end
+    end
+  end)
+  self.state:Watch("health", function()
+    SafeCallLingGuardPanel(ThePlayer, self.inst):SetHealth(self.state.health)
+  end)
+  self.state:Watch("level", function()
+    SafeCallLingGuardPanel(ThePlayer, self.inst):SetLevel(self.state.level)
+  end)
+  self.state:Watch("form", function()
+    SafeCallLingGuardPanel(ThePlayer, self.inst):SetForm(self.state.form)
+  end)
+
+  self.inst:ListenForEvent("onremove", function()
+    if self._guard_pos_inst and self._guard_pos_inst:IsValid() then
+      self._guard_pos_inst:Remove()
+    end
+  end)
+
+  self.inst:ListenForEvent("clienthealthdirty", OnHealthDirty)  -- 客户端状态
+  self.inst:ListenForEvent("namedirty", OnNameDirty)
+  self._guard_pos_inst = nil
+end)
+
+function LingGuardReplica:OpenPanel(doer)
+  ArkLogger:Debug("LingGuardReplica:OpenPanel", doer, self.inst)
+  if self.inst.components.ling_guard then
+    self.inst.components.ling_guard:OpenPane(doer)
+  else
+    SendModRPCToServer(GetModRPC("ling_summon", "guard_open_panel"), self.inst)
+  end
+end
+
+function LingGuardReplica:ClosePanel(doer)
+  ArkLogger:Debug("LingGuardReplica:ClosePanel", doer, self.inst)
+  if self.inst.components.ling_guard then
+    self.inst.components.ling_guard:ClosePanel(doer)
+  else
+    SendModRPCToServer(GetModRPC("ling_summon", "guard_close_panel"), self.inst)
+  end
 end
 
 -- 获取守卫位置
 function LingGuardReplica:GetGuardPosition()
-    return self._guard_pos
-end
-
--- 处理守卫位置数据变化
-function LingGuardReplica:OnGuardPosDirty()
-    -- 解包坐标数据到 _guard_pos
-    local packed_data = self._guard_pos_data:value()
-    print("[LingGuardReplica] OnGuardPosDirty", packed_data)
-    local unpacked = _pos_bitfield.unpack(packed_data)
-    print("[LingGuardReplica] OnGuardPosDirty", unpacked.enabled, unpacked.x, unpacked.z)
-
-    if unpacked.enabled == 1 then
-        -- 设置位置并启用视觉效果
-        self._guard_pos = Vector3(unpacked.x, 0, unpacked.z)
-        self:UpdateGuardPositionVisual()
-    else
-        -- 清除位置并禁用视觉效果
-        self._guard_pos = nil
-        self:RemoveGuardPositionVisual()
-    end
+  return Vector3(self.state.guard_pos_x, self.state.guard_pos_y, self.state.guard_pos_z)
 end
 
 -- 更新守卫位置视觉效果
 function LingGuardReplica:UpdateGuardPositionVisual()
-    if self._guard_pos then
-        if not self._guard_pos_inst then
-            self._guard_pos_inst = SpawnPrefab("reticuleaoecatapultwakeup")
-            local cfg = LING_GUARD_CONFIG
-            local guardcfg = (cfg.MODE and cfg.MODE.GUARD) or (cfg.GUARD) or {}
-            local range = guardcfg.GUARD_RANGE or 16
-            local scale = range / 16  -- 缩放比例，使范围大小与守卫范围一致（16为动画对应范围）
-            self._guard_pos_inst.Transform:SetScale(scale, scale, scale)  -- 设置缩放比例
-
-            -- 检查面板是否正在显示这个守卫，如果是则设置为红色
-            if ThePlayer and ThePlayer.HUD and ThePlayer.HUD.controls and ThePlayer.HUD.controls.ling_guard_panel then
-                local panel = ThePlayer.HUD.controls.ling_guard_panel
-                if panel:IsVisible() and panel.guard_inst == self.inst then
-                    self:SetGuardPositionColor(true)
-                end
-            end
-        end
-        if self._guard_pos_inst and self._guard_pos_inst:IsValid() then
-            self._guard_pos_inst.Transform:SetPosition(self._guard_pos:Get())
-        end
-    else
-        self:RemoveGuardPositionVisual()
-    end
+  if not self._guard_pos_inst then
+    self._guard_pos_inst = SpawnPrefab("reticuleaoecatapultwakeup")
+    self._guard_pos_inst:AddTag("CLASSIFIED")
+    local cfg = LING_GUARD_CONFIG
+    local guardcfg = (cfg.MODE and cfg.MODE.GUARD) or (cfg.GUARD) or {}
+    local range = guardcfg.GUARD_RANGE or 16
+    local scale = range / 16 -- 缩放比例，使范围大小与守卫范围一致（16为动画对应范围）
+    self._guard_pos_inst.Transform:SetScale(scale, scale, scale) -- 设置缩放比例
+  end
+  self._guard_pos_inst.Transform:SetPosition(self:GetGuardPosition():Get())
 end
 
 -- 移除守卫位置视觉效果
 function LingGuardReplica:RemoveGuardPositionVisual()
-    if self._guard_pos_inst and self._guard_pos_inst:IsValid() then
-        self._guard_pos_inst:Remove()
-        self._guard_pos_inst = nil
-    end
+  if self._guard_pos_inst and self._guard_pos_inst:IsValid() then
+    self._guard_pos_inst:Remove()
+    self._guard_pos_inst = nil
+  end
 end
 
 -- 设置守卫位置标记颜色（绿色用于面板打开时）
 function LingGuardReplica:SetGuardPositionColor(is_green)
-    if self._guard_pos_inst and self._guard_pos_inst:IsValid() then
-        if is_green then
-            -- 设置为绿色（面板打开时）
-            self._guard_pos_inst.AnimState:SetMultColour(1, 0, 0, 1)
-        else
-            -- 恢复原色（白色）
-            self._guard_pos_inst.AnimState:SetMultColour(1, 1, 1, 1)
-        end
+  if self._guard_pos_inst and self._guard_pos_inst:IsValid() then
+    if is_green then
+      -- 设置为绿色（面板打开时）
+      self._guard_pos_inst.AnimState:SetMultColour(1, 0, 0, 1)
+    else
+      -- 恢复原色（白色）
+      self._guard_pos_inst.AnimState:SetMultColour(1, 1, 1, 1)
+    end
+  end
+end
+
+function LingGuardReplica:SetBehaviorMode(mode)
+  if self.inst.components.ling_guard then
+    self.inst.components.ling_guard:SetBehaviorMode(mode)
+  else
+    SendModRPCToServer(GetModRPC("ling_summon", "guard_set_behavior_mode"), self.inst, mode)
+  end
+end
+
+function LingGuardReplica:SetWorkMode(mode)
+  if self.inst.components.ling_guard then
+    self.inst.components.ling_guard:SetWorkMode(mode)
+  else
+    SendModRPCToServer(GetModRPC("ling_summon", "guard_set_work_mode"), self.inst, mode)
+  end
+end
+
+function LingGuardReplica:Fusion()
+  if self.inst.components.ling_guard then
+    self.inst.components.ling_guard:Fusion()
+  else
+    SendModRPCToServer(GetModRPC("ling_summon", "guard_fusion"), self.inst)
+  end
+end
+
+function LingGuardReplica:OpenContainer(doer)
+  if self.inst.components.container then
+    self.inst.components.container:Open(doer)
+  else
+    SendModRPCToServer(GetModRPC("ling_summon", "guard_open_container"), self.inst)
+  end
+end
+
+function LingGuardReplica:CloseContainer(doer)
+  if self.inst.components.container then
+    self.inst.components.container:Close(doer)
+  else
+    SendModRPCToServer(GetModRPC("ling_summon", "guard_close_container"), self.inst)
+  end
+end
+
+function LingGuardReplica:ToggleForm()
+    if self.inst.components.ling_guard then
+        self.inst.components.ling_guard:ToggleForm()
+    else
+        SendModRPCToServer(GetModRPC("ling_summon", "guard_toggle_form"), self.inst)
     end
 end
 
--- 组件移除时清理
+function LingGuardReplica:Recall()
+  if self.inst.components.ling_guard then
+    self.inst.components.ling_guard:Recall()
+  else
+    SendModRPCToServer(GetModRPC("ling_summon", "guard_recall"), self.inst)
+  end
+end
+
 function LingGuardReplica:OnRemoveFromEntity()
-    self:RemoveGuardPositionVisual()
-end
-
--- 设置/获取形态网络值（由服务端调用 SetForm 时同步）
-function LingGuardReplica:SetFormValue(v)
-    self._form:set(v or 0)
-end
-function LingGuardReplica:GetFormValue()
-    return self._form:value()
-end
-
--- 形态/类型查询（服务器环境下优先读组件，避免延时）
-function LingGuardReplica:IsXianjing()
-    if TheWorld.ismastersim and self.inst.components and self.inst.components.ling_guard and self.inst.components.ling_guard.IsXianjing then
-        return self.inst.components.ling_guard:IsXianjing()
-    end
-    return self.inst.prefab == "ling_guard_elite" or self.inst.prefab == "xianjing"
-end
-
-function LingGuardReplica:IsXiaoyao()
-    if TheWorld.ismastersim and self.inst.components and self.inst.components.ling_guard then
-        return self.inst.components.ling_guard.form == CONSTANTS.GUARD_FORM.XIAOYAO
-    end
-    return self._form:value() == 1
-end
-
-function LingGuardReplica:IsQingping()
-    if TheWorld.ismastersim and self.inst.components and self.inst.components.ling_guard then
-        return self.inst.components.ling_guard.form == CONSTANTS.GUARD_FORM.QINGPING
-    end
-    return self._form:value() == 0
-end
-
-function LingGuardReplica:GetForm()
-    if self:IsXiaoyao() then return CONSTANTS.GUARD_FORM.XIAOYAO end
-    return CONSTANTS.GUARD_FORM.QINGPING
+  self.inst:RemoveEventCallback("clienthealthdirty", OnHealthDirty)
+  self.inst:RemoveEventCallback("namedirty", OnNameDirty)
 end
 
 return LingGuardReplica

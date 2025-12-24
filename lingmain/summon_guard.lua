@@ -1,7 +1,10 @@
 local ImageButton = require "widgets/imagebutton"
 local CONSTANTS = require "ark_constants_ling"
-local SLOT_TYPE = CONSTANTS.GUARD_SLOT_TYPE
+local LingGuardPanel = require "widgets/ling_guard_panel"
+local LingCloseContainer = require "widgets/ling_close_container"
+local LingPoetryBadge = require "widgets/ling_poetry"
 
+local FORM = CONSTANTS.GUARD_FORM
 -- 守卫数值与消耗配置已迁移至 scripts/ling_guard_tuning.lua（通过 require("ling_guard_tuning") 使用）
 local LING_TUNING = require("ling_guard_tuning")
 
@@ -38,16 +41,16 @@ local LING_TERRAFORM = AddAction("LING_TERRAFORM", "Terraform", function(act)
 end)
 
 -- 自定义动作：回收守卫（由守卫自身执行，交给状态图处理）
-local LING_RECALL_GUARD = AddAction("LING_RECALL_GUARD", "Recall", function(act)
+local LING_GUARD_RECALL = AddAction("LING_GUARD_RECALL", "Recall", function(act)
     return true
 end)
 
 -- 诗意值ui
 AddClassPostConstruct("widgets/controls", function(self)
+  self.guard_panels = {}
   if not self.owner or self.owner.prefab ~= "ling" then
     return
   end
-  local LingPoetryBadge = require "widgets/ling_poetry"
   -- 将诗意值 UI 直接添加到 topright_root，这样坐标系统更简单
   self.ling_poetry = self.topright_root:AddChild(LingPoetryBadge(self.owner))
 
@@ -70,98 +73,123 @@ AddClassPostConstruct("widgets/controls", function(self)
   end)
 
   -- 监听幽灵模式变化
-  local _SetGhostMode = self.status.SetGhostMode
-  function self.status:SetGhostMode(ghost_mode, ...)
+  local _SetGhostMode = self.SetGhostMode
+  function self:SetGhostMode(ghost_mode, ...)
     _SetGhostMode(self, ghost_mode, ...)
-    print("SetGhostMode", ghost_mode)
-    if self.parent and self.parent.ling_poetry then
-      if ghost_mode then
-        self.parent.ling_poetry:CloseCallPanel()
-        self.ling_guard_panel:RequestClose()
-        self.parent.ling_poetry:Hide()
-      else
-        self.parent.ling_poetry:Show()
-      end
-    end
+    self.ling_poetry:SetGhostMode(ghost_mode)
   end
 
-  local PANEL_SCALE = CONSTANTS.LING_GUARD_PANEL_SCALE
-  local LingGuardPanel = require "widgets/ling_guard_panel"
-  self.containerroot.ling_guard_panel = self.containerroot:AddChild(LingGuardPanel(self.owner))
-  self.ling_guard_panel = self.containerroot.ling_guard_panel
-  self.ling_guard_panel:SetPosition(unpack(CONSTANTS.LING_GUARD_PANEL_POSITION))
-  self.ling_guard_panel:SetScale(PANEL_SCALE, PANEL_SCALE, PANEL_SCALE)
-
-  -- 关闭按钮无法单独调整图层, 需要与面板本身分开,以把容器夹在中间
-  local LingCloseContainer = require "widgets/ling_close_container"
-  self.containerroot.ling_close_container = self.containerroot:AddChild(LingCloseContainer(self.owner))
-  self.ling_close_container = self.containerroot.ling_close_container
-  local pos = Vector3(unpack(CONSTANTS.LING_GUARD_PANEL_POSITION)) + Vector3(unpack(CONSTANTS.LING_GUARD_PANEL_CLOSE_CONTAINER_POSITION)) * PANEL_SCALE
-  print("pos", pos.x, pos.y, pos.z)
-  self.ling_close_container:SetPosition(pos.x, pos.y, pos.z)
-  self.ling_close_container:SetScale(PANEL_SCALE, PANEL_SCALE, PANEL_SCALE)
-  self.ling_close_container:Hide()
 end)
 
 AddClassPostConstruct("screens/playerhud", function(self)
+  -- 调整container与button的顺序
+  local adjustGuardPanelTasks = Symbol("adjustGuardPanelTasks")
+  function self:AdjustGuardPanel(guard)
+    if not self.controls then return end
+    if not self[adjustGuardPanelTasks] then
+      self[adjustGuardPanelTasks] = {}
+    end
+    if self[adjustGuardPanelTasks][guard] then
+      return
+    end
+    self[adjustGuardPanelTasks][guard] = self.owner:DoTaskInTime(0, function()
+      self[adjustGuardPanelTasks][guard] = nil
+      local panelWidget, containerCloseWidget = self:GetGuardPanel(guard)
+      if not guard.replica.container then
+        if panelWidget then
+          panelWidget.container_open:Hide()
+        end
+        if containerCloseWidget then
+          containerCloseWidget:Hide()
+        end
+      else
+        local containerWidget = self.controls.containers[guard]
+        if containerWidget then
+          if containerCloseWidget then
+            containerCloseWidget:Show()
+            containerCloseWidget:MoveToBakc()
+            containerWidget:MoveToBack()
+          end
+          if panelWidget then
+            panelWidget.container_open:Hide()
+            panelWidget:MoveToBack()
+          end
+        else
+          if panelWidget then
+            panelWidget.container_open:Show()
+          end
+          if containerCloseWidget then
+            containerCloseWidget:Hide()
+          end
+        end
+      end
+      -- child节点, 指定类型的容器调整
+      local plantClubWidget, plantContainerWidget = nil, nil
+      for child in pairs(guard.children) do
+        if child.replica.container and child.replica.container.type == "ling_guard_plant_club" then
+          plantClubWidget = self.controls.containers[child]
+        end
+        if child.replica.container and child.replica.container.type == "ling_guard_plant_container" then
+          plantContainerWidget = self.controls.containers[child]
+        end
+      end
+      if plantClubWidget then
+        plantClubWidget:MoveToBack()
+      end
+      if plantContainerWidget then
+        if panelWidget then
+          panelWidget.plant_bg:Hide()
+        end
+        plantContainerWidget:MoveToBack()
+      else
+        if panelWidget then
+          panelWidget.plant_bg:Show()
+        end
+      end
+    end)
+  end
   local _OpenContainer = self.OpenContainer
   function self:OpenContainer(container, side)
     _OpenContainer(self, container, side)
     local containerReplica = container.replica.container
-    print("OpenContainer", containerReplica.type)
     if containerReplica.type == "ling_guard_container" then
-      local owned = ThePlayer.replica.ling_summon_manager and ThePlayer.replica.ling_summon_manager:GetGuardSlotIndex(container)
-      if owned and self.controls.ling_guard_panel then
-        self.controls.ling_guard_panel:MoveToBack()
-        self.controls.ling_guard_panel.container_open:Hide()
-        self.controls.ling_close_container:Open()
-        self.controls.ling_close_container:MoveToFront()
-        for con, _ in pairs(self.controls.containers) do
-          if con.replica and con.replica.container.type == "ling_guard_plant_club" then
-            self.controls.containers[con]:MoveToBack()
-          end
-        end
-        for con, _ in pairs(self.controls.containers) do
-          if con.replica and con.replica.container.type == "ling_guard_plant_container" then
-            self.controls.containers[con]:MoveToBack()
-          end
-        end
-      end
+      self:AdjustGuardPanel(container)
     elseif containerReplica.type == "ling_guard_plant_container" then
-      -- 关闭plant_bg
-      self.controls.ling_guard_panel.plant_bg:Hide()
       local pos = containerReplica.widget.pos
       local openPos = containerReplica.widget.openPos
-      self.controls.containers[container]:MoveTo(pos, openPos, 0.5)
+      local containerWidget = self.controls.containers[container]
+      containerWidget:MoveTo(pos, openPos, 0.5)
       -- 根据等级关闭多余的插槽
       local parent = container.entity:GetParent()
-      local enabledSlots = parent and parent.replica.ling_guard_plant and parent.replica.ling_guard_plant:GetEnabledSlots() or nil
-      if enabledSlots then
-        for idx, inv in pairs(self.controls.containers[container].inv) do
-          local show = false
-          for _, enabledIdx in ipairs(enabledSlots) do
-            if idx == enabledIdx then
-              show = true
-              break
+      if parent then
+        local enabledSlots = parent.replica.ling_guard_plant and parent.replica.ling_guard_plant:GetEnabledSlots() or nil
+        if enabledSlots then
+          for idx, inv in pairs(containerWidget.inv) do
+            local show = false
+            for _, enabledIdx in ipairs(enabledSlots) do
+              if idx == enabledIdx then
+                show = true
+                break
+              end
+            end
+            if not show then
+              inv:Hide()
+              inv:Disable()
             end
           end
-          if not show then
-            inv:Hide()
-            inv:Disable()
-          end
         end
-      end
-      local level = parent and parent.replica.ling_guard_plant and parent.replica.ling_guard_plant:GetLevel() or 1
-      if level == 2 then
-        self.controls.containers[container].bganim:GetAnimState():PlayAnimation("open_1")
-      elseif level == 3 then
-        self.controls.containers[container].bganim:GetAnimState():PlayAnimation("open_2")
+        local level = parent.replica.ling_guard_plant and parent.replica.ling_guard_plant:GetLevel() or 1
+        if level == 2 then
+          containerWidget.bganim:GetAnimState():PlayAnimation("open_1")
+        elseif level == 3 then
+          containerWidget.bganim:GetAnimState():PlayAnimation("open_2")
+        end
+        self:AdjustGuardPanel(parent)
       end
     elseif containerReplica.type == "ling_guard_plant_club" then
-      for con, _ in pairs(self.controls.containers) do
-        if con.replica and con.replica.container.type == "ling_guard_plant_container" then
-          self.controls.containers[con]:MoveToBack()
-        end
+      local parent = container.entity:GetParent()
+      if parent then
+        self:AdjustGuardPanel(parent)
       end
     end
   end
@@ -192,153 +220,145 @@ AddClassPostConstruct("screens/playerhud", function(self)
     end
     _CloseContainer(self, container, side)
   end
+
+  -- 打开守卫面板
+  function self:OpenGuardPanel(inst)
+    if not self.controls then return end
+    if self.controls.guard_panels[inst] then
+      return
+    end
+    local PANEL_SCALE = CONSTANTS.LING_GUARD_PANEL_SCALE
+    -- 面板
+    local panel = self.controls.containerroot:AddChild(LingGuardPanel(self.owner))
+    panel:SetPosition(CONSTANTS.LING_GUARD_PANEL_POSITION)
+    panel:SetScale(CONSTANTS.LING_GUARD_PANEL_SCALE, CONSTANTS.LING_GUARD_PANEL_SCALE, CONSTANTS.LING_GUARD_PANEL_SCALE)
+    -- 关闭按钮
+    -- 关闭按钮无法单独调整图层, 需要与面板本身分开,以把容器夹在中间
+    local container_close = self.controls.containerroot:AddChild(LingCloseContainer(self.owner))
+    local close_pos = CONSTANTS.LING_GUARD_PANEL_POSITION + CONSTANTS.LING_GUARD_PANEL_CLOSE_CONTAINER_POSITION * PANEL_SCALE
+    container_close:SetPosition(close_pos)
+    container_close:SetScale(PANEL_SCALE, PANEL_SCALE, PANEL_SCALE)
+    -- 检查对应容器是否打开, 如果打开展示关闭按钮, 隐藏容器打开按钮
+    self.controls.guard_panels[inst] = { panel = panel, container_close = container_close}
+    panel:Open(inst)
+    self:AdjustGuardPanel(inst)
+  end
+
+  -- 关闭守卫面板
+  function self:CloseGuardPanel(close_inst)
+    if not self.controls then return end
+    for inst, _ in pairs(self.controls.guard_panels) do
+      if close_inst == nil or inst == close_inst then
+        self.controls.guard_panels[inst].panel:Kill()
+        self.controls.guard_panels[inst].close:Kill()
+        self.controls.guard_panels[inst] = nil
+      end
+    end
+  end
+
+  -- 获取守卫面板
+  function self:GetGuardPanel(inst)
+    if not self.controls then return nil, nil end
+    for guard_inst, panel in pairs(self.controls.guard_panels) do
+      if guard_inst == inst then
+        return panel.panel, panel.container_close
+      end
+    end
+    return nil, nil
+  end
+  -- 获取所有打开的
+  function self:GetAllGuardPanels()
+    if not self.controls then return {} end
+    return self.controls.guard_panels
+  end
 end)
 
 AddComponentPostInit("container", function(self)
   local _Open = self.Open
+  -- 拥有者打开容器时, 尝试把面板打开
   function self:Open(doer)
     if not doer.components.ling_summon_manager then
       return _Open(self, doer)
     end
     local owned = doer.components.ling_summon_manager:GetGuardSlotIndex(self.inst)
     if owned then
-      doer.components.ling_summon_manager.openedContainerInst = self.inst
-      doer.components.ling_summon_manager:RequestOpenGuardPanel(self.inst)
-    elseif self.inst:HasTag("ling_summon") then
-      doer.components.ling_summon_manager:RequestCloseGuardPanel()
+      self.inst.components.ling_guard:OpenPanel(doer)
     end
     return _Open(self, doer)
   end
 
-  local _Close = self.Close
-  function self:Close(doer)
-    local keepOpen = doer and doer.components.ling_summon_manager and doer.components.ling_summon_manager.openedContainerInst == self.inst
-    if keepOpen then
-      return
-    end
-    print("container closed with out keep open")
-    return _Close(self, doer)
-  end
+  -- local _Close = self.Close
+  -- function self:Close(doer)
+  --   local keepOpen = doer and doer.components.ling_summon_manager and doer.components.ling_summon_manager.openedContainerInst == self.inst
+  --   if keepOpen then
+  --     return
+  --   end
+  --   return _Close(self, doer)
+  -- end
 end)
 
 -- 添加召唤系统的RPC通信
-AddModRPCHandler("ling_summon", "summon_guard", function(player, slot_index)
-  print("summon_guard", slot_index)
-  if not player or player.prefab ~= "ling" then
-    return
-  end
+AddModRPCHandler("ling_summon", "summon_basic", function(player, slot_index)
   if not player.components.ling_summon_manager then
     return
   end
-  -- 统一：召唤基础守卫
   player.components.ling_summon_manager:SummonBasic(slot_index)
 end)
 
--- 移除了 command_guards RPC 处理器，功能将在组件中重构
-
-
-
-AddModRPCHandler("ling_summon", "request_open_guard_panel", function(player, guard_inst)
-  if player.components.ling_summon_manager then
-    player.components.ling_summon_manager:RequestOpenGuardPanel(guard_inst)
+AddModRPCHandler("ling_summon", "guard_open_panel", function(player, guard_inst)
+  if guard_inst.components.ling_guard then
+    guard_inst.components.ling_guard:OpenPanel(player)
   end
 end)
 
-AddClientModRPCHandler("ling_summon", "open_guard_panel", function(guard_inst)
-  if ThePlayer and ThePlayer.HUD and ThePlayer.HUD.controls and ThePlayer.HUD.controls.ling_guard_panel then
-    print("open_guard_panel", guard_inst and guard_inst.prefab or "nil")
-    ThePlayer.HUD.controls.ling_guard_panel:Open(guard_inst)
+AddModRPCHandler("ling_summon", "guard_close_panel", function(player, guard_inst)
+  if guard_inst.components.ling_guard then
+    guard_inst.components.ling_guard:ClosePanel(player)
   end
 end)
 
-AddModRPCHandler("ling_summon", "request_close_guard_panel", function(player, guard_inst)
-  print("request_close_guard_panel", guard_inst and guard_inst.prefab or "nil")
-  if player.components.ling_summon_manager then
-    player.components.ling_summon_manager:RequestCloseGuardPanel(guard_inst)
+AddModRPCHandler("ling_summon", "guard_open_container", function(player, guard_inst)
+  if guard_inst.components.container then
+    guard_inst.components.container:Open(player)
   end
 end)
 
-AddClientModRPCHandler("ling_summon", "close_guard_panel", function()
-  print("close_guard_panel")
-  if ThePlayer and ThePlayer.HUD and ThePlayer.HUD.controls and ThePlayer.HUD.controls.ling_guard_panel then
-    ThePlayer.HUD.controls.ling_guard_panel:Close()
+AddModRPCHandler("ling_summon", "guard_close_container", function(player)
+  if guard_inst.components.container then
+    guard_inst.components.container:Close(player)
   end
 end)
 
-AddModRPCHandler("ling_summon", "request_open_container", function(player, guard_inst)
-  if player.components.ling_summon_manager then
-    player.components.ling_summon_manager:RequestOpenContainer(guard_inst)
+AddModRPCHandler("ling_summon", "guard_set_behavior_mode", function(player, guard_inst, mode)
+  if guard_inst.components.ling_guard then
+    guard_inst.components.ling_guard:SetBehaviorMode(mode)
   end
 end)
 
-AddModRPCHandler("ling_summon", "request_close_container", function(player)
-  if player.components.ling_summon_manager then
-    player.components.ling_summon_manager:RequestCloseContainer()
+AddModRPCHandler("ling_summon", "guard_set_work_mode", function(player, guard_inst, mode)
+  if guard_inst.components.ling_guard then
+    guard_inst.components.ling_guard:SetWorkMode(mode)
   end
 end)
 
-AddModRPCHandler("ling_summon", "change_guard_behavior", function(player, guard_inst, mode)
-  if not player or player.prefab ~= "ling" then
-    return
+AddModRPCHandler("ling_summon", "guard_change_type", function(player, guard_inst, target)
+  if guard_inst.components.ling_guard then
+    guard_inst.components.ling_guard:ChangeType(target)
   end
-
-  if not guard_inst or not guard_inst:IsValid() then
-    return
-  end
-
-  -- 验证这个守卫是否属于这个玩家
-  if player.components.ling_summon_manager then
-    local is_owned = player.components.ling_summon_manager:IsGuardOwnedByPlayer(guard_inst)
-    if is_owned and guard_inst.components.ling_guard then
-      guard_inst.components.ling_guard:SetBehaviorMode(mode)
-    end
-  end
-end)
-
-AddModRPCHandler("ling_summon", "change_guard_work", function(player, guard_inst, mode)
-  if not player or player.prefab ~= "ling" then
-    return
-  end
-
-  if not guard_inst or not guard_inst:IsValid() then
-    return
-  end
-
-  -- 验证这个守卫是否属于这个玩家
-  if player.components.ling_summon_manager then
-    local is_owned = player.components.ling_summon_manager:IsGuardOwnedByPlayer(guard_inst)
-    if is_owned and guard_inst.components.ling_guard then
-      guard_inst.components.ling_guard:SetWorkMode(mode)
-    end
-  end
-end)
-
-AddModRPCHandler("ling_summon", "change_guard_form", function(player, guard_inst, target)
-  if not player or player.prefab ~= "ling" then return end
-  if not guard_inst or not guard_inst:IsValid() then return end
-  if not guard_inst.components or not guard_inst.components.ling_guard then return end
-  -- 仅检查组件存在，其余校验在 SetForm 内部按自身 level 处理
-  guard_inst.components.ling_guard:SetForm(target)
 end)
 
 -- 客户端点击融合（以当前守卫所在槽位为主位）
-AddModRPCHandler("ling_summon", "request_fusion_guard", function(player, guard_inst)
-  if not player or player.prefab ~= "ling" then return end
-  if not (player.components and player.components.ling_summon_manager) then return end
-  if not (guard_inst and guard_inst:IsValid()) then return end
-  local mgr = player.components.ling_summon_manager
-  local idx = mgr:FindGuardIndex(guard_inst)
-  if idx then
-    mgr:SummonXianjing(idx)
+AddModRPCHandler("ling_summon", "guard_fusion", function(player, guard_inst)
+  if player.components.ling_guard then
+    player.components.ling_guard:Fusion()
   end
 end)
 
 -- 回收守卫：丢出背包物品 -> 播放死亡动画 -> 移除
-AddModRPCHandler("ling_summon", "recall_guard", function(player, guard_inst)
-  if not player or player.prefab ~= "ling" then return end
-  if not (player.components and player.components.ling_summon_manager) then return end
-  if not (guard_inst and guard_inst:IsValid()) then return end
-  player.components.ling_summon_manager:RecallGuard(guard_inst)
+AddModRPCHandler("ling_summon", "guard_recall", function(player, guard_inst)
+  if guard_inst.components.ling_guard then
+    guard_inst.components.ling_guard:Recall()
+  end
 end)
 
 -- 守卫世界管理
@@ -372,6 +392,11 @@ AddStategraphState("wilson", State{
     tags = { "doing", "busy", "canrotate" },
 
     onenter = function(inst, data)
+        -- 没有召唤数据直接退出
+        if not data then
+          inst.sg:GoToState("idle")
+          return
+        end
         inst.components.locomotor:Stop()
         inst.AnimState:PlayAnimation("staff")
 
@@ -413,65 +438,29 @@ AddStategraphState("wilson", State{
 
     timeline =
     {
-        -- 15帧：施法开始，扣除诗意
         TimeEvent(15 * FRAMES, function(inst)
-            local data = inst.sg.statemem.summon_data
-            if data then
-                -- 扣除诗意
-                local poetry_component = inst.components.ling_poetry
-                if poetry_component then
-                    poetry_component:Dirty(-data.cost)
-                end
-
-                -- 播放施法进行音效
-                inst.SoundEmitter:PlaySound("dontstarve/common/staff_star_create")
-            end
+            -- 播放施法进行音效
+            inst.SoundEmitter:PlaySound("dontstarve/common/staff_star_create")
         end),
 
         -- 30帧：确定召唤位置，创建特效
         TimeEvent(30 * FRAMES, function(inst)
             local data = inst.sg.statemem.summon_data
-            if data then
-                -- 确定召唤位置
-                local x, y, z = inst.Transform:GetWorldPosition()
-                local offset = FindWalkableOffset(Vector3(x, y, z), math.random() * 2 * PI, 3, 8)
-                local spawn_x, spawn_z
-                if offset then
-                    spawn_x = x + offset.x
-                    spawn_z = z + offset.z
-                else
-                    spawn_x = x + 2
-                    spawn_z = z
-                end
-
-                -- 保存召唤位置
-                inst.sg.statemem.spawn_x = spawn_x
-                inst.sg.statemem.spawn_y = y
-                inst.sg.statemem.spawn_z = spawn_z
-
-                -- 创建召唤特效（除了弦惊）
-                if data.type ~= SLOT_TYPE.ELITE then
-                    local fx = SpawnPrefab("ling_guard_basic_start_fx")
-                    fx.Transform:SetPosition(spawn_x, y, spawn_z)
-                    inst.sg.statemem.summon_fx = fx
-                end
+            local pos = data.pos
+            -- 创建召唤特效（除了弦惊）
+            if data.form ~= FORM.XIANJING then
+                local fx = SpawnPrefab("ling_guard_basic_start_fx")
+                fx.Transform:SetPosition(pos:Get())
+                inst.sg.statemem.summon_fx = fx
             end
         end),
 
         -- 45帧：施法完成，执行召唤
         TimeEvent(45 * FRAMES, function(inst)
             local data = inst.sg.statemem.summon_data
-            if data and not inst.sg.statemem.summon_completed then
-                inst.sg.statemem.summon_completed = true
-
-                -- 保存召唤位置到局部变量，避免状态图退出后访问失败
-                local spawn_x = inst.sg.statemem.spawn_x
-                local spawn_z = inst.sg.statemem.spawn_z
-
-                -- 在时间线上直接执行生成，不依赖特效回调
-                if inst.components.ling_summon_manager then
-                    inst.components.ling_summon_manager:SpawnGuardAtPosition(data.type, data.level, spawn_x, spawn_z, data.slots)
-                end
+            inst.sg.statemem.summon_completed = true
+            if inst.components.ling_summon_manager then
+                inst.components.ling_summon_manager:SpawnGuardAtPosition(data.form, data.level, data.pos, data.slots)
             end
         end),
     },
@@ -513,17 +502,17 @@ AddStategraphState("wilson", State{
             lantern._body.AnimState:SetLightOverride(0)
         end
 
-        -- 如果召唤被打断，清理特效
-        if inst.sg.statemem.summon_fx and inst.sg.statemem.summon_fx:IsValid() and
-           not inst.sg.statemem.summon_completed then
-            inst.sg.statemem.summon_fx:Remove()
-        end
-
-        -- 如果召唤未完成，回滚槽位状态
         if not inst.sg.statemem.summon_completed then
+            -- 如果召唤被打断，立即中断特效
+            if inst.sg.statemem.summon_fx then
+                inst.sg.statemem.summon_fx:Remove()
+            end
+            -- 如果召唤未完成，回滚槽位状态
             local data = inst.sg.statemem.summon_data
             if data and data.slots and inst.components.ling_summon_manager then
-                inst.components.ling_summon_manager:CancelSummon(data.slots)
+                for i, slot_index in ipairs(data.slots) do
+                    inst.components.ling_summon_manager:EmptySlot(slot_index)
+                end
             end
         end
 
@@ -531,9 +520,6 @@ AddStategraphState("wilson", State{
         inst.sg.statemem.summon_data = nil
         inst.sg.statemem.summon_fx = nil
         inst.sg.statemem.summon_completed = nil
-        inst.sg.statemem.spawn_x = nil
-        inst.sg.statemem.spawn_y = nil
-        inst.sg.statemem.spawn_z = nil
     end,
 })
 
