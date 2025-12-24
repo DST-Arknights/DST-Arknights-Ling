@@ -95,56 +95,42 @@ AddClassPostConstruct("screens/playerhud", function(self)
     self[adjustGuardPanelTasks][guard] = self.owner:DoTaskInTime(0, function()
       self[adjustGuardPanelTasks][guard] = nil
       local panelWidget, containerCloseWidget = self:GetGuardPanel(guard)
+      if not panelWidget then return end
       if not guard.replica.container then
-        if panelWidget then
-          panelWidget.container_open:Hide()
-        end
-        if containerCloseWidget then
-          containerCloseWidget:Hide()
-        end
+        panelWidget.container_open:Hide()
+        containerCloseWidget:Hide()
       else
         local containerWidget = self.controls.containers[guard]
         if containerWidget then
-          if containerCloseWidget then
-            containerCloseWidget:Show()
-            containerCloseWidget:MoveToBakc()
-            containerWidget:MoveToBack()
-          end
-          if panelWidget then
-            panelWidget.container_open:Hide()
-            panelWidget:MoveToBack()
-          end
+          panelWidget.container_open:Hide()
+          containerCloseWidget:Show()
+          containerCloseWidget:MoveToBack()
+          containerWidget:MoveToBack()
+          panelWidget:MoveToBack()
         else
-          if panelWidget then
-            panelWidget.container_open:Show()
-          end
-          if containerCloseWidget then
-            containerCloseWidget:Hide()
-          end
+          panelWidget.container_open:Show()
+          containerCloseWidget:Hide()
         end
       end
-      -- child节点, 指定类型的容器调整
+      -- 调整种植相关容器
       local plantClubWidget, plantContainerWidget = nil, nil
-      for child in pairs(guard.children) do
-        if child.replica.container and child.replica.container.type == "ling_guard_plant_club" then
-          plantClubWidget = self.controls.containers[child]
+      -- 遍历容器
+      for container, widget in pairs(self.controls.containers) do
+        if container.replica.container.type == "ling_guard_plant_club" and container.entity:GetParent() == guard then
+          plantClubWidget = widget
         end
-        if child.replica.container and child.replica.container.type == "ling_guard_plant_container" then
-          plantContainerWidget = self.controls.containers[child]
+        if container.replica.container.type == "ling_guard_plant_container" and container.entity:GetParent() == guard then
+          plantContainerWidget = widget
         end
       end
       if plantClubWidget then
         plantClubWidget:MoveToBack()
       end
       if plantContainerWidget then
-        if panelWidget then
-          panelWidget.plant_bg:Hide()
-        end
+        panelWidget.plant_bg:Hide()
         plantContainerWidget:MoveToBack()
       else
-        if panelWidget then
-          panelWidget.plant_bg:Show()
-        end
+        panelWidget.plant_bg:Show()
       end
     end)
   end
@@ -197,12 +183,11 @@ AddClassPostConstruct("screens/playerhud", function(self)
   function self:CloseContainer(container, side)
     local containerReplica = container.replica.container
     if containerReplica.type == "ling_guard_container" then
-      local owned = ThePlayer.replica.ling_summon_manager and ThePlayer.replica.ling_summon_manager:GetGuardSlotIndex(container)
-      if owned and self.controls.ling_guard_panel then
-        self.controls.ling_guard_panel.container_open:Show()
-        self.controls.ling_close_container:Hide()
-      end
-    elseif containerReplica.type == "ling_guard_plant_container" then
+      _CloseContainer(self, container, side)
+      self:AdjustGuardPanel(container)
+      return
+    end
+    if containerReplica.type == "ling_guard_plant_container" then
       local pos = containerReplica.widget.pos
       local openPos = containerReplica.widget.openPos
       local containerWidget = self.controls.containers[container]
@@ -212,9 +197,8 @@ AddClassPostConstruct("screens/playerhud", function(self)
         inv:Disable()
       end
       containerWidget:MoveTo(openPos, pos, 0.1, function()
-        self.controls.ling_guard_panel.plant_bg:Show()
-        self.controls.ling_guard_panel:RefreshPlanting()
         containerWidget:Close()
+        self:AdjustGuardPanel(container)
       end)
       return
     end
@@ -229,18 +213,17 @@ AddClassPostConstruct("screens/playerhud", function(self)
     end
     local PANEL_SCALE = CONSTANTS.LING_GUARD_PANEL_SCALE
     -- 面板
-    local panel = self.controls.containerroot:AddChild(LingGuardPanel(self.owner))
+    local panel = self.controls.containerroot:AddChild(LingGuardPanel(self.owner, inst))
     panel:SetPosition(CONSTANTS.LING_GUARD_PANEL_POSITION)
     panel:SetScale(CONSTANTS.LING_GUARD_PANEL_SCALE, CONSTANTS.LING_GUARD_PANEL_SCALE, CONSTANTS.LING_GUARD_PANEL_SCALE)
     -- 关闭按钮
     -- 关闭按钮无法单独调整图层, 需要与面板本身分开,以把容器夹在中间
-    local container_close = self.controls.containerroot:AddChild(LingCloseContainer(self.owner))
+    local container_close = self.controls.containerroot:AddChild(LingCloseContainer(self.owner, inst))
     local close_pos = CONSTANTS.LING_GUARD_PANEL_POSITION + CONSTANTS.LING_GUARD_PANEL_CLOSE_CONTAINER_POSITION * PANEL_SCALE
     container_close:SetPosition(close_pos)
     container_close:SetScale(PANEL_SCALE, PANEL_SCALE, PANEL_SCALE)
     -- 检查对应容器是否打开, 如果打开展示关闭按钮, 隐藏容器打开按钮
     self.controls.guard_panels[inst] = { panel = panel, container_close = container_close}
-    panel:Open(inst)
     self:AdjustGuardPanel(inst)
   end
 
@@ -250,7 +233,7 @@ AddClassPostConstruct("screens/playerhud", function(self)
     for inst, _ in pairs(self.controls.guard_panels) do
       if close_inst == nil or inst == close_inst then
         self.controls.guard_panels[inst].panel:Kill()
-        self.controls.guard_panels[inst].close:Kill()
+        self.controls.guard_panels[inst].container_close:Kill()
         self.controls.guard_panels[inst] = nil
       end
     end
@@ -341,9 +324,9 @@ AddModRPCHandler("ling_summon", "guard_set_work_mode", function(player, guard_in
   end
 end)
 
-AddModRPCHandler("ling_summon", "guard_change_type", function(player, guard_inst, target)
+AddModRPCHandler("ling_summon", "guard_set_form", function(player, guard_inst, form)
   if guard_inst.components.ling_guard then
-    guard_inst.components.ling_guard:ChangeType(target)
+    guard_inst.components.ling_guard:SetForm(form)
   end
 end)
 

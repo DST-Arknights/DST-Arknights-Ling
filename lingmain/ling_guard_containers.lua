@@ -81,7 +81,7 @@ containers.params.ling_guard_plant_club = {
     bgimage = nil,
     animbank = "ui_ling_guard_plant_club",
     animbuild = "ui_ling_guard_plant_club",
-    pos = openPos + Vector3(19, -39, 0),
+    pos = openPos + Vector3(22, -39, 0),
     side_align_tip = 20,
   },
   itemtestfn = cubeitemtestfn,

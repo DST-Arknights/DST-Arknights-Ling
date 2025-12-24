@@ -85,22 +85,22 @@ function LingElite:UpdateSkillUnlocks(level)
     -- ark_skill_ling 组件有自己的保存机制，这里只需要设置状态
     if level == 1 then
         skill_component:SetSkillLevel(1, 1)
-        skill_component:UnLock(1)
+        skill_component:Unlock(1)
         skill_component:Lock(2)
         skill_component:Lock(3)
     elseif level == 2 then
         skill_component:SetSkillLevel(1, 2)
-        skill_component:UnLock(1)
+        skill_component:Unlock(1)
         skill_component:SetSkillLevel(2, 1)
-        skill_component:UnLock(2)
+        skill_component:Unlock(2)
         skill_component:Lock(3)
     elseif level == 3 then
         skill_component:SetSkillLevel(1, 3)
-        skill_component:UnLock(1)
+        skill_component:Unlock(1)
         skill_component:SetSkillLevel(2, 2)
-        skill_component:UnLock(2)
+        skill_component:Unlock(2)
         skill_component:SetSkillLevel(3, 1)
-        skill_component:UnLock(3)
+        skill_component:Unlock(3)
     end
 end
 

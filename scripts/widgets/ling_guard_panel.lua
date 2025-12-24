@@ -10,540 +10,359 @@ local GUARD_BEHAVIOR_MODE = CONSTANTS.GUARD_BEHAVIOR_MODE
 local GUARD_WORK_MODE = CONSTANTS.GUARD_WORK_MODE
 
 local BUTTON_FOCUS_SCALE = { 1.1, 1.1, 1.1 }
-
--- 模式按钮动画时间
 local MODE_BUTTON_ANIM_TIME = 0.15
 
--- 布局/高度参数（关系化定义，便于维护关联）
-local BASE_ROW_Y = -50                      -- 模式按钮容器的基准Y（所有模式按钮默认Y）
-local COMMON_HOVER_DROP = -30               -- 普通与守模式 hover 相对基准下移（统一）
-local COMMON_ACTIVE_DROP = -70              -- 普通与守模式 active 相对基准下移（统一）
-local WORK_OPEN_EXTRA_DROP = -50            -- 当工作按钮打开时，守按钮与工作按钮共同额外下移
+-- 布局参数
+local BASE_ROW_Y = -50
+local COMMON_HOVER_DROP = -30
+local COMMON_ACTIVE_DROP = -70
+local WORK_OPEN_EXTRA_DROP = -50
 
--- 模式按钮数据（Y使用统一基准，保证三种模式在未激活时同行对齐）
 local BEHAVIOR_BUTTON_DATA = {
-  {
-    mode = GUARD_BEHAVIOR_MODE.CAUTIOUS,
-    texture = "command_cautious.tex",
-    position = {186, BASE_ROW_Y, 0},
-    name = "cautious",
-    hoverHeight = COMMON_HOVER_DROP,
-    activeHeight = COMMON_ACTIVE_DROP,
-  },
-  {
-    mode = GUARD_BEHAVIOR_MODE.ATTACK,
-    texture = "command_attack.tex",
-    position = {112, BASE_ROW_Y, 0},
-    name = "attack",
-    hoverHeight = COMMON_HOVER_DROP,
-    activeHeight = COMMON_ACTIVE_DROP
-  },
-  {
-    mode = GUARD_BEHAVIOR_MODE.GUARD,
-    texture = "command_guard.tex",
-    position = {36, BASE_ROW_Y, 0},
-    name = "guard",
-    hoverHeight = COMMON_HOVER_DROP,
-    activeHeight = COMMON_ACTIVE_DROP,
-    activeHeightWithWork = COMMON_ACTIVE_DROP + WORK_OPEN_EXTRA_DROP,  -- 仅在工作打开时额外下移
-    hasWorkMode = true  -- 标记此按钮有工模式
-  }
+    [GUARD_BEHAVIOR_MODE.CAUTIOUS] = {
+        texture = "command_cautious.tex",
+        pos = Vector3(186, BASE_ROW_Y, 0),
+        name = "cautious",
+        hover_height = COMMON_HOVER_DROP,
+        active_height = COMMON_ACTIVE_DROP,
+        str = "CAUTIOUS"
+    },
+    [GUARD_BEHAVIOR_MODE.ATTACK] = {
+        texture = "command_attack.tex",
+        pos = Vector3(112, BASE_ROW_Y, 0),
+        name = "attack",
+        hover_height = COMMON_HOVER_DROP,
+        active_height = COMMON_ACTIVE_DROP,
+        str = "ATTACK"
+    },
+    [GUARD_BEHAVIOR_MODE.GUARD] = {
+        texture = "command_guard.tex",
+        pos = Vector3(36, BASE_ROW_Y, 0),
+        name = "guard",
+        hover_height = COMMON_HOVER_DROP,
+        active_height = COMMON_ACTIVE_DROP,
+        active_height_work = COMMON_ACTIVE_DROP + WORK_OPEN_EXTRA_DROP,
+        hasWorkMode = true,
+        str = "GUARD"
+    }
 }
 
--- 工作选择器锚点（X/Y与守按钮对齐）
-local WORK_SELECTOR_ANCHOR_X = 36
-local WORK_SELECTOR_ANCHOR_Y = -125
+local WORK_SELECTOR_ANCHOR = Vector3(36, -125, 0)
+local WORK_SELECTOR_HIDDEN_Y = WORK_SELECTOR_ANCHOR.y + 40
 
-
--- 非守模式下的“隐藏位置”：相对锚点向上抬高一定距离，用于切到守模式时从更高处降落
-local WORK_SELECTOR_HIDDEN_RAISE = 40
-local WORK_SELECTOR_HIDDEN_Y = WORK_SELECTOR_ANCHOR_Y + WORK_SELECTOR_HIDDEN_RAISE
-
-
-local LingGuardPanel = Class(Widget, function(self, owner)
-  Widget._ctor(self, "LingGuardPanel")
-  self.owner = owner
-  -- 融合按钮
-
-  self.fusionButton = self:AddChild(ImageButton("images/ui_ling_guard_panel.xml", "fusion_button.tex"))
-  self.fusionButton:SetPosition(314, 59, 0)
-  self.fusionButton:SetFocusScale(BUTTON_FOCUS_SCALE)
-  self.fusionButton:SetHoverText(STRINGS.UI.LING_GUARD_PANEL.FUSION_BUTTON)
-  self.fusionButton:SetOnClick(function()
-    if not self.guard then return end
-    self.guard.replica.ling_guard:Fusion()
-  end)
-
-  self.plant_bg = self:AddChild(Image("images/ui_ling_guard_panel.xml", "plant_bg.tex"))
-  local bg_pos = CONSTANTS.LING_GUARD_PANEL_PLANT_CONTAINER_CLOSED_POSITION
-  self.plant_bg:SetPosition(bg_pos)
-
-  -- 创建模式按钮
-  self:_CreateModeButtons()
-
-  self.work_selector = self:AddChild(LingGuardWorkMode(self.owner))
-  self.work_selector:SetPosition(Vector3(WORK_SELECTOR_ANCHOR_X, WORK_SELECTOR_ANCHOR_Y, 0))
-  self.work_selector.before_open_callback = function(done)
-    self:BeforeWorkSelectorOpen(done)
-  end
-  self.work_selector.after_close_callback = function()
-    self:AfterWorkSelectorClose()
-  end
-
-  -- 创建面板背景
-  self.panel = self:AddChild(Image("images/ui_ling_guard_panel.xml", "bg.tex"))
-  self.health = self:AddChild(LingGuardHealth(self.owner))
-  -- self.health:SetPosition(252, -160.75, 0)
-  self.health:SetPosition(262, -138, 0)
-
-  self.close = self:AddChild(ImageButton("images/ui_ling_guard_panel.xml", "close.tex"))
-  self.close:SetPosition(-305, -16, 0)
-  self.close:SetFocusScale(BUTTON_FOCUS_SCALE)
-  self.close:SetHoverText(STRINGS.UI.LING_GUARD_PANEL.CLOSE_PANEL)
-
-  self.rename = self:AddChild(Image("images/ui_ling_guard_panel.xml", "rename.tex"))
-  self.rename:SetPosition(154, 35, 0)
-
-
-  -- 名字竖排容器（逐字渲染，可调字间距）
-  self.rename_text_root = self:AddChild(Widget("rename_text_root"))
-  self.rename_text_root:SetPosition(158, 35, 0)
-  self.rename_chars = {}
-  -- 字体与字号：使用 FALLBACK_FONT_FULL 以兼容中英文
-  self.rename_font = UIFONT
-  self.rename_font_size = 70
-  -- 字间距：默认按字号的80% 计算，可通过 SetRenameCharSpacing 调整
-  self.rename_char_spacing = math.floor(self.rename_font_size * 0.6)
-
-
-  self.recall = self:AddChild(ImageButton("images/ui_ling_guard_panel.xml", "recall.tex"))
-  self.recall:SetPosition(178, -90, 0)
-  self.recall:SetFocusScale(BUTTON_FOCUS_SCALE)
-  self.recall:SetHoverText(STRINGS.UI.LING_GUARD_PANEL.RECALL)
-  self.recall:SetOnClick(function()
-    if not self.guard then return end
-    self.guard.replica.Recall()
-  end)
-
-  -- 名称图标即为“形态切换按钮”
-  self.name = self:AddChild(ImageButton("images/ui_ling_guard_panel.xml", "name_qingping.tex"))
-  self.name:SetPosition(222, 48, 0)
-  self.name:SetFocusScale(BUTTON_FOCUS_SCALE)
-  self.name:SetOnClick(function()
-    if not self.guard then return end
-    self.guard.replica.ling_guard:ChangeType()
-  end)
-
-  self.container_open = self:AddChild(ImageButton("images/ui_ling_guard_panel.xml", "container_open.tex"))
-  self.container_open:SetPosition(CONSTANTS.LING_GUARD_PANEL_OPEN_CONTAINER_POSITION)
-  self.container_open:SetFocusScale(BUTTON_FOCUS_SCALE)
-  self.container_open:SetHoverText(STRINGS.UI.LING_GUARD_PANEL.OPEN_CONTAINER)
-
-  self.level = 1
-  self.container_open:SetOnClick(function()
-    if not self.guard then return end
-    self.guard.replica.ling_guard:OpenContainer(ThePlayer)
-    self.container_open:Hide()
-  end)
-
-  self.close:SetOnClick(function()
-    if not self.guard then return end
-    self.guard.replica.ling_guard:ClosePanel(ThePlayer)
-  end)
-  self:Hide()
+local LingGuardPanel = Class(Widget, function(self, owner, guard)
+    Widget._ctor(self, "LingGuardPanel")
+    self.owner = owner
+    self.guard = guard
+    
+    -- 模式按钮初始化
+    self:_CreateModeButtons()
+    
+    self.plant_bg = self:AddChild(Image("images/ui_ling_guard_panel.xml", "plant_bg.tex"))
+    self.plant_bg:SetPosition(CONSTANTS.LING_GUARD_PANEL_PLANT_CONTAINER_CLOSED_POSITION)
+    -- 工作模式初始化
+    self:_InitWorkSelector()
+    -- 基础组件初始化
+    self:_InitBaseUI()
 end)
 
--- 创建模式按钮
+function LingGuardPanel:_InitBaseUI()
+    self.fusionButton = self:AddChild(ImageButton("images/ui_ling_guard_panel.xml", "fusion_button.tex"))
+    self.fusionButton:SetPosition(314, 59, 0)
+    self.fusionButton:SetFocusScale(BUTTON_FOCUS_SCALE)
+    self.fusionButton:SetOnClick(function()
+        if self.guard then self.guard.replica.ling_guard:Fusion() end
+    end)
+
+    self.panel = self:AddChild(Image("images/ui_ling_guard_panel.xml", "bg.tex"))
+    self.health = self:AddChild(LingGuardHealth(self.owner))
+    self.health:SetPosition(262, -138, 0)
+
+    self.close = self:AddChild(ImageButton("images/ui_ling_guard_panel.xml", "close.tex"))
+    self.close:SetPosition(-305, -16, 0)
+    self.close:SetOnClick(function()
+        if self.guard then self.guard.replica.ling_guard:ClosePanel(ThePlayer) end
+    end)
+
+    -- 名字渲染容器
+    self.rename_text_root = self:AddChild(Widget("rename_text_root"))
+    self.rename_text_root:SetPosition(158, 35, 0)
+    self.rename_chars = {}
+    self.rename_font = UIFONT
+    self.rename_font_size = 70
+    self.rename_char_spacing = math.floor(self.rename_font_size * 0.6)
+
+    self.recall = self:AddChild(ImageButton("images/ui_ling_guard_panel.xml", "recall.tex"))
+    self.recall:SetPosition(178, -90, 0)
+    self.recall:SetOnClick(function()
+        if self.guard then self.guard.replica.ling_guard:Recall() end
+    end)
+
+    self.name = self:AddChild(ImageButton("images/ui_ling_guard_panel.xml", "name_qingping.tex"))
+    self.name:SetPosition(222, 48, 0)
+    self.name:SetOnClick(function()
+        local target = (self.form == CONSTANTS.GUARD_FORM.XIAOYAO) and CONSTANTS.GUARD_FORM.QINGPING or CONSTANTS.GUARD_FORM.XIAOYAO
+        if self.guard then self.guard.replica.ling_guard:SetForm(target) end
+    end)
+
+    self.container_open = self:AddChild(ImageButton("images/ui_ling_guard_panel.xml", "container_open.tex"))
+    self.container_open:SetPosition(CONSTANTS.LING_GUARD_PANEL_OPEN_CONTAINER_POSITION)
+    self.container_open:SetOnClick(function()
+        if self.guard then 
+            self.guard.replica.ling_guard:OpenContainer(ThePlayer)
+            self.container_open:Hide()
+        end
+    end)
+end
+
 function LingGuardPanel:_CreateModeButtons()
-  -- 模式按钮数据
-  self.mode_buttons = {}
-  self.mode_containers = {}  -- 存储按钮容器
-  self.current_active_mode = nil
-  self.work_mode_active = false  -- 工模式是否激活
+    self.mode_buttons = {}
+    self.current_active_mode = nil
 
-  for _, data in ipairs(BEHAVIOR_BUTTON_DATA) do
-    -- 为每个按钮创建一个容器Widget
-    local container = self:AddChild(Widget("mode_container_" .. data.name))
-    container:SetPosition(unpack(data.position))
+    for mode, data in pairs(BEHAVIOR_BUTTON_DATA) do
+        local container = self:AddChild(Widget("mode_container_" .. data.name))
+        container:SetPosition(data.pos)
 
-    -- 在容器中创建按钮
-    local button = container:AddChild(ImageButton("images/ui_ling_guard_panel.xml", data.texture))
-    button:SetPosition(0, 0, 0)  -- 相对于容器的位置
-    button.scale_on_focus = false -- 禁用默认的缩放效果
+        local button = container:AddChild(ImageButton("images/ui_ling_guard_panel.xml", data.texture))
+        button.scale_on_focus = false
+        button.mode = mode
+        button.data = data
+        button.container = container
+        
+        button:SetOnClick(function()
+            if self.guard then self.guard.replica.ling_guard:SetBehaviorMode(mode) end
+        end)
 
-    -- 存储按钮和容器信息
-    button.mode = data.mode
-    button.container = container
-    button.base_position = {unpack(data.position)}
-    button.is_active = false
-    button.is_hovering = false
-    button.data = data  -- 存储完整的数据引用
+        -- 提取 Hover Text 逻辑
+        local mode_str = STRINGS.UI.LING_COMMAND[data.str]
+        button:SetHoverText(STRINGS.UI.LING_GUARD_PANEL.MODE_PREFIX:format(mode_str), { offset_x = 0, offset_y = -300 })
 
-    -- 设置点击事件
-    button:SetOnClick(function()
-      if not self.guard then return end
-      self.guard.replica.ling_guard:SetBehaviorMode(data.mode)
-    end)
+        button:SetOnGainFocus(function()
+            if not button.is_active then
+                button.is_hovering = true
+                self:_AnimateButtonContainer(button, data.hover_height)
+            end
+        end)
 
-    -- 设置初始 hovertext
-    self:UpdateModeButtonHoverText(button)
+        button:SetOnLoseFocus(function()
+            if not button.is_active then
+                button.is_hovering = false
+                self:_AnimateButtonContainer(button, 0)
+            end
+        end)
 
-    -- 自定义hover事件
-    button:SetOnGainFocus(function()
-      if not button.is_active then
-        button.is_hovering = true
-        local target_height = self:_GetButtonTargetHeight(button, "hover")
-        self:_AnimateButtonContainer(button, target_height)
-      end
-    end)
-
-    button:SetOnLoseFocus(function()
-      if not button.is_active then
-        button.is_hovering = false
-        local target_height = self:_GetButtonTargetHeight(button, "normal")
-        self:_AnimateButtonContainer(button, target_height)
-      end
-    end)
-
-    self.mode_buttons[data.mode] = button
-    self.mode_containers[data.mode] = container
-  end
-end
-
--- 模式按钮容器动画
-function LingGuardPanel:_AnimateButtonContainer(button, target_height, use_animation, callback)
-  if not button or not button.base_position or not button.container then
-    return
-  end
-
-  -- 取消之前的移动动画
-  button.container:CancelMoveTo()
-
-  local target_y = button.base_position[2] + target_height
-  local current_pos = button.container:GetPosition()
-  local target_pos = Vector3(button.base_position[1], target_y, button.base_position[3])
-
-  if use_animation == false then
-    -- 直接设置位置，不使用动画
-    button.container:SetPosition(target_pos)
-    if callback then
-      callback()
+        self.mode_buttons[mode] = button
     end
-  else
-    -- 使用动画
-    button.container:MoveTo(Vector3(current_pos.x, current_pos.y, current_pos.z), target_pos, MODE_BUTTON_ANIM_TIME, callback)
-  end
 end
 
--- 工作选择器纵向位置更新：
--- 根据是否处于守模式、以及工作是否打开，决定 Y 位置；X 锁定在锚点
-function LingGuardPanel:_UpdateWorkSelectorY(use_animation, callback, open_override)
-  if not self.work_selector then
-    if callback then callback() end
-    return
-  end
-  -- 取消之前的移动动画（移动整个工作选择器根节点）
-  self.work_selector:CancelMoveTo()
-
-  local current_pos = self.work_selector:GetPosition()
-  local is_guard = (self.current_active_mode == GUARD_BEHAVIOR_MODE.GUARD)
-  local is_open = (open_override ~= nil) and open_override or (self.work_selector.is_open == true)
-  local extra = (is_guard and is_open) and WORK_OPEN_EXTRA_DROP or 0
-
-  -- 守模式：对齐到“关闭/打开”的中间位；非守模式：放在“隐藏位”
-  local target_y = is_guard and (WORK_SELECTOR_ANCHOR_Y + COMMON_ACTIVE_DROP + extra) or WORK_SELECTOR_HIDDEN_Y
-  local target_pos = Vector3(WORK_SELECTOR_ANCHOR_X, target_y, 0)
-
-  if use_animation == false then
-    self.work_selector:SetPosition(target_pos)
-    if callback then callback() end
-  else
-    self.work_selector:MoveTo(current_pos, target_pos, MODE_BUTTON_ANIM_TIME, callback)
-  end
+function LingGuardPanel:_InitWorkSelector()
+    self.work_selector = self:AddChild(LingGuardWorkMode(self.owner, self.guard))
+    self.work_selector:SetPosition(WORK_SELECTOR_ANCHOR)
+    self.work_selector.before_open_callback = function(done)
+        self:BeforeWorkSelectorOpen(done)
+    end
+    self.work_selector.after_close_callback = function()
+        self:AfterWorkSelectorClose()
+    end
 end
 
--- 计算按钮的目标高度
+-- 通用高度计算
 function LingGuardPanel:_GetButtonTargetHeight(button, state)
-  local data = button.data
-  if not data then return 0 end
-
-  if state == "active" then
-    -- 守模式在工作打开时有额外下降
-    local is_open = (self.work_selector and self.work_selector.is_open)
-    if data.hasWorkMode and is_open then
-      return data.activeHeightWithWork or data.activeHeight
-    else
-      return data.activeHeight
+    local data = button.data
+    if state == "active" then
+        local is_open = self.work_selector and self.work_selector.is_open
+        return (data.hasWorkMode and is_open) and data.active_height_work or data.active_height
+    elseif state == "hover" then
+        return data.hover_height
     end
-  elseif state == "hover" then
-    return data.hoverHeight
-  else
     return 0
-  end
 end
-function LingGuardPanel:BeforeWorkSelectorOpen(done)
-    local guard_button = self.mode_buttons[GUARD_BEHAVIOR_MODE.GUARD]
-    if guard_button then
-        local base_active = (guard_button.data and guard_button.data.activeHeight) or 0
-        local target_height = base_active + WORK_OPEN_EXTRA_DROP
-        self:_AnimateButtonContainer(guard_button, target_height, true)
+
+function LingGuardPanel:_AnimateButtonContainer(button, target_height, use_animation, callback)
+    if not button then return end
+    button.container:CancelMoveTo()
+    
+    local dest_pos = Vector3(button.data.pos.x, button.data.pos.y + target_height, 0)
+    if use_animation == false then
+        button.container:SetPosition(dest_pos)
+        if callback then callback() end
+    else
+        local start_pos = button.container:GetPosition()
+        button.container:MoveTo(start_pos, dest_pos, MODE_BUTTON_ANIM_TIME, callback)
     end
-    -- 先把工作选择器也一起下移到“打开时”的位置，再执行打开动画
+end
+
+function LingGuardPanel:_UpdateWorkSelectorY(use_animation, callback, open_override)
+    if not self.work_selector then return end
+    self.work_selector:CancelMoveTo()
+
+    local is_guard = (self.current_active_mode == GUARD_BEHAVIOR_MODE.GUARD)
+    local is_open = (open_override ~= nil) and open_override or self.work_selector.is_open
+    
+    local target_y = is_guard and (WORK_SELECTOR_ANCHOR.y + COMMON_ACTIVE_DROP) or WORK_SELECTOR_HIDDEN_Y
+    if is_guard and is_open then target_y = target_y + WORK_OPEN_EXTRA_DROP end
+
+    local dest_pos = Vector3(WORK_SELECTOR_ANCHOR.x, target_y, 0)
+    if use_animation == false then
+        self.work_selector:SetPosition(dest_pos)
+        if callback then callback() end
+    else
+        self.work_selector:MoveTo(self.work_selector:GetPosition(), dest_pos, MODE_BUTTON_ANIM_TIME, callback)
+    end
+end
+
+function LingGuardPanel:BeforeWorkSelectorOpen(done)
+    local btn = self.mode_buttons[GUARD_BEHAVIOR_MODE.GUARD]
+    if btn then
+        self:_AnimateButtonContainer(btn, btn.data.active_height_work, true)
+    end
     self:_UpdateWorkSelectorY(true, done, true)
 end
 
 function LingGuardPanel:AfterWorkSelectorClose()
-    local guard_button = self.mode_buttons[GUARD_BEHAVIOR_MODE.GUARD]
-    if guard_button then
-        local base_active = (guard_button.data and guard_button.data.activeHeight) or 0
-        self:_AnimateButtonContainer(guard_button, base_active, true)
+    local btn = self.mode_buttons[GUARD_BEHAVIOR_MODE.GUARD]
+    if btn then
+        self:_AnimateButtonContainer(btn, btn.data.active_height, true)
     end
-    -- 关闭后回到“中间位”
     self:_UpdateWorkSelectorY(true, nil, false)
 end
 
--- 激活指定模式按钮
 function LingGuardPanel:SetBehaviorMode(mode, use_animation)
-  -- 检查是否需要先关闭工作模式
-  local need_close_work_mode = false
-  local old_is_guard_mode = false
-
-  if self.current_active_mode and self.mode_buttons[self.current_active_mode] then
-    old_is_guard_mode = (self.current_active_mode == GUARD_BEHAVIOR_MODE.GUARD)
-    -- 如果之前是守模式且工作模式激活，且现在要切换到非守模式，需要先关闭工作模式
-    if old_is_guard_mode and (self.work_selector and self.work_selector.is_open) and mode ~= GUARD_BEHAVIOR_MODE.GUARD then
-      need_close_work_mode = true
-    end
-  end
-
-  if need_close_work_mode then
-    -- 先关闭工作模式，等待动画完成后再切换（位置/守按钮回弹交由 AfterWorkSelectorClose 统一处理）
-    self.work_selector:Close(true, function()
-      self:DoActivateModeButton(mode, use_animation)
-    end)
-  else
-    -- 直接执行模式切换
-    self:DoActivateModeButton(mode, use_animation)
-  end
-end
-
--- 实际执行模式按钮激活的方法
-function LingGuardPanel:DoActivateModeButton(mode, use_animation)
-  local old_mode = self.current_active_mode
-
-  -- 取消之前激活的按钮
-  if self.current_active_mode and self.mode_buttons[self.current_active_mode] then
-    local old_button = self.mode_buttons[self.current_active_mode]
-    old_button.is_active = false
-
-    local target_height = old_button.is_hovering and self:_GetButtonTargetHeight(old_button, "hover") or 0
-    self:_AnimateButtonContainer(old_button, target_height, use_animation)
-  end
-
-  -- 激活新按钮
-  if self.mode_buttons[mode] then
-    local button = self.mode_buttons[mode]
-    button.is_active = true
-    button.is_hovering = false -- 激活状态不响应hover
-    local target_height = self:_GetButtonTargetHeight(button, "active")
-
-    -- 先更新当前模式，确保后续位置计算读取到守模式
-    self.current_active_mode = mode
-
-    if mode == GUARD_BEHAVIOR_MODE.GUARD then
-      self:_AnimateButtonContainer(button, target_height, use_animation, function()
-        if not self.work_selector then return end
-        -- 弦惊不展示工作选择器
-        if self.guard_inst and self.guard_inst.prefab == "ling_guard_elite" then
-          self.work_selector:Hide()
-          return
-        end
-        self.work_selector:Show()
-        if use_animation then
-          -- 动画方式下放（位置由 is_open 决定是否额外下降）
-          self:_UpdateWorkSelectorY(true, nil, nil)
-        else
-          -- 无动画场景（比如面板已在守模式下直接打开），立刻对齐到目标位置
-          self:_UpdateWorkSelectorY(false, nil, nil)
-        end
-      end)
+    -- 如果从守模式切走且工作台开着，先关工作台
+    if self.current_active_mode == GUARD_BEHAVIOR_MODE.GUARD and mode ~= GUARD_BEHAVIOR_MODE.GUARD 
+       and self.work_selector and self.work_selector.is_open then
+        self.work_selector:Close(true, function()
+            self:DoActivateModeButton(mode, use_animation)
+        end)
     else
-      self:_AnimateButtonContainer(button, target_height, use_animation)
-      -- 非守模式：工作按钮应处于隐藏态，并停在“隐藏位置”。
-      -- 为避免与“从守模式切出”的动画收尾重复，这里仅在“非从守模式切出”的情况下立即隐藏并定位。
-      if self.work_selector and old_mode ~= GUARD_BEHAVIOR_MODE.GUARD then
-        self.work_selector:Hide()
-        self:_UpdateWorkSelectorY(false, nil, false)
-      end
+        self:DoActivateModeButton(mode, use_animation)
     end
-  end
-
-  -- 工作选择器显示/隐藏：仅在“从守模式切换到其他模式且工作未打开”时，收起并隐藏
-  if old_mode == GUARD_BEHAVIOR_MODE.GUARD and mode ~= GUARD_BEHAVIOR_MODE.GUARD and not (self.work_selector and self.work_selector.is_open) then
-    self:_UpdateWorkSelectorY(use_animation, function()
-      if self.work_selector then self.work_selector:Hide() end
-    end, false)
-  end
 end
 
-function LingGuardPanel:_ClearRenameChars()
-  if self.rename_chars then
-    for _, w in ipairs(self.rename_chars) do
-      if w and w.Kill then w:Kill() end
+function LingGuardPanel:DoActivateModeButton(mode, use_animation)
+    local old_mode = self.current_active_mode
+    
+    -- 取消旧按钮激活
+    if old_mode and self.mode_buttons[old_mode] then
+        local old_btn = self.mode_buttons[old_mode]
+        old_btn.is_active = false
+        local h = old_btn.is_hovering and old_btn.data.hover_height or 0
+        self:_AnimateButtonContainer(old_btn, h, use_animation)
     end
-  end
-  self.rename_chars = {}
-end
 
+    -- 激活新按钮
+    self.current_active_mode = mode
+    local btn = self.mode_buttons[mode]
+    if btn then
+        btn.is_active = true
+        btn.is_hovering = false
+        local h = self:_GetButtonTargetHeight(btn, "active")
+        
+        self:_AnimateButtonContainer(btn, h, use_animation, function()
+            if mode == GUARD_BEHAVIOR_MODE.GUARD then
+                -- 弦惊(elite)不显示工作模式
+                local is_elite = self.guard and self.guard.prefab == "ling_guard_elite"
+                if is_elite then 
+                    self.work_selector:Hide() 
+                else
+                    self.work_selector:Show()
+                    self:_UpdateWorkSelectorY(use_animation)
+                end
+            end
+        end)
+    end
 
-function LingGuardPanel:_OnGuardBehaviorModeChanged()
-  if not self.guard_inst or not self.guard_inst:IsValid() then
-    return
-  end
-  if not self.guard_inst.replica or not self.guard_inst.replica.ling_guard then
-    return
-  end
-  local mode = self.guard_inst.replica.ling_guard:GetBehaviorMode()
-  -- 行为模式变化：用动画反馈
-  self:ActivateModeButton(mode, true)
+    -- 处理工作台隐藏逻辑
+    if old_mode == GUARD_BEHAVIOR_MODE.GUARD and mode ~= GUARD_BEHAVIOR_MODE.GUARD then
+        self:_UpdateWorkSelectorY(use_animation, function() self.work_selector:Hide() end)
+    end
 end
 
 function LingGuardPanel:SetForm(form)
-  self.form = form
-  if form == CONSTANTS.GUARD_FORM.XIANJING then
-    if self.container_open then self.container_open:Hide() end
-    if self.work_selector then self.work_selector:Hide() end
-  else
-    if self.container_open then self.container_open:Show() end
-    if self.work_selector then self.work_selector:Show() end
-    local is_x = form == CONSTANTS.GUARD_FORM.XIAOYAO
-    if is_x then
-      self.name:SetTextures("images/ui_ling_guard_panel.xml", "name_xiaoyao.tex", "name_xiaoyao.tex")
-      self.name:SetHoverText(STRINGS.UI.LING_GUARD_PANEL.SWITCH_TO_QINGPING, { offset_x = 0, offset_y = 80 })
-    else
-      self.name:SetTextures("images/ui_ling_guard_panel.xml", "name_qingping.tex", "name_qingping.tex")
-    end
-  end
-  self:RefreshName()
-  self:RefreshFusionButton()
-end
+    self.form = form
+    -- 集中管理显示逻辑
+    local is_xianjing = form == CONSTANTS.GUARD_FORM.XIANJING
+    local is_xiaoyao = form == CONSTANTS.GUARD_FORM.XIAOYAO
 
-function LingGuardPanel:SetLevel(level)
-  self.level = level
-  self:RefreshName()
-  self:RefreshFusionButton()
+    if self.container_open then 
+        if is_xianjing then self.container_open:Hide() else self.container_open:Show() end
+    end
+    
+    if self.work_selector and is_xianjing then self.work_selector:Hide() end
+
+    self:RefreshName()
+    self:RefreshFusionButton()
 end
 
 function LingGuardPanel:RefreshName()
-  if self.form == CONSTANTS.GUARD_FORM.XIANJING then
-    self.name:SetTextures("images/ui_ling_guard_panel.xml", "name_xianjing.tex", "name_xianjing.tex")
-    self.name:ClearHoverText()
-  else
-    local is_x = self.form == CONSTANTS.GUARD_FORM.XIAOYAO
-    if is_x then
-      self.name:SetTextures("images/ui_ling_guard_panel.xml", "name_xiaoyao.tex", "name_xiaoyao.tex")
-      self.name:SetHoverText(STRINGS.UI.LING_GUARD_PANEL.SWITCH_TO_QINGPING, { offset_x = 0, offset_y = 80 })
+    local form = self.form
+    if form == CONSTANTS.GUARD_FORM.XIANJING then
+        self.name:SetTextures("images/ui_ling_guard_panel.xml", "name_xianjing.tex")
+        self.name:ClearHoverText()
     else
-      self.name:SetTextures("images/ui_ling_guard_panel.xml", "name_qingping.tex", "name_qingping.tex")
+        local is_x = form == CONSTANTS.GUARD_FORM.XIAOYAO
+        local tex = is_x and "name_xiaoyao.tex" or "name_qingping.tex"
+        self.name:SetTextures("images/ui_ling_guard_panel.xml", tex)
+        
+        local hover = is_x and STRINGS.UI.LING_GUARD_PANEL.SWITCH_TO_QINGPING or STRINGS.UI.LING_GUARD_PANEL.SWITCH_TO_XIAOYAO
+        if self.level < 2 then hover = hover .. STRINGS.UI.LING_GUARD_PANEL.LOCKED_SUFFIX end
+        self.name:SetHoverText(hover, { offset_x = 0, offset_y = 80 })
     end
-    local hover = is_x and STRINGS.UI.LING_GUARD_PANEL.SWITCH_TO_QINGPING or STRINGS.UI.LING_GUARD_PANEL.SWITCH_TO_XIAOYAO
-    if self.level < 2 then hover = hover .. STRINGS.UI.LING_GUARD_PANEL.LOCKED_SUFFIX end
-    self.name:SetHoverText(hover, { offset_x = 0, offset_y = 80 })
-  end
 end
 
 function LingGuardPanel:RefreshFusionButton()
-  if self.form == CONSTANTS.GUARD_FORM.XIANJING then
-    self.fusionButton:Hide()
-  else
-    self.fusionButton:Show()
-    if self.level < 2 then
-      self.fusionButton:SetHoverText(STRINGS.UI.LING_GUARD_PANEL.FUSION_BUTTON)
-      self.fusionButton.image:SetTint(1, 1, 1, 1)
-      self.fusionButton:SetClickable(true)
+    if self.form == CONSTANTS.GUARD_FORM.XIANJING then
+        self.fusionButton:Hide()
     else
-      local prefix = STRINGS.UI.LING_GUARD_PANEL_CALL.SUMMARY
-      local name = STRINGS.UI.LING_SUMMON.XIANJING
-      local suffix = STRINGS.UI.LING_GUARD_PANEL.LOCKED_SUFFIX
-      local hover = string.format("%s:%s%s", prefix, name, suffix)
-      self.fusionButton:SetHoverText(hover)
-      self.fusionButton.image:SetTint(0.5, 0.5, 0.5, 0.7)
-      self.fusionButton:SetClickable(false)
+        self.fusionButton:Show()
+        if self.level >= 2 then -- 假设等级2解锁
+            self.fusionButton:SetHoverText(STRINGS.UI.LING_GUARD_PANEL.FUSION_BUTTON)
+            self.fusionButton.image:SetTint(1, 1, 1, 1)
+            self.fusionButton:SetClickable(true)
+        else
+            local prefix = STRINGS.UI.LING_GUARD_PANEL_CALL.SUMMARY
+            local name = STRINGS.UI.LING_SUMMON.XIANJING
+            local suffix = STRINGS.UI.LING_GUARD_PANEL.LOCKED_SUFFIX
+            self.fusionButton:SetHoverText(string.format("%s:%s%s", prefix, name, suffix))
+            self.fusionButton.image:SetTint(0.5, 0.5, 0.5, 0.7)
+            self.fusionButton:SetClickable(false)
+        end
     end
-  end
+end
+
+function LingGuardPanel:_ClearRenameChars()
+    if self.rename_chars then
+        for _, w in ipairs(self.rename_chars) do w:Kill() end
+    end
+    self.rename_chars = {}
 end
 
 function LingGuardPanel:SetGuardName(name)
-  -- clear
-  if self.rename_chars then
-    for _, w in ipairs(self.rename_chars) do
-      if w and w.Kill then w:Kill() end
+    self:_ClearRenameChars()
+    if not name or name == "" then return end
+
+    local chars = {}
+    for uchar in string.gmatch(name, "[%z\1-\127\194-\244][\128-\191]*") do
+        table.insert(chars, uchar)
     end
-  end
-  self.rename_chars = {}
-  
-  if name == "" then return end
-  local chars = {}
-  for uchar in string.gmatch(name, "[%z\1-\127\194-\244][\128-\191]*") do
-    table.insert(chars, uchar)
-  end
-  local n = #chars
-  if n == 0 then return end
-  local spacing = self.rename_char_spacing
-  local y0 = (n - 1) * spacing * 0.5
-  for i, ch in ipairs(chars) do
-    local text = self.rename_text_root:AddChild(Text(self.rename_font or UIFONT, self.rename_font_size or 60, ch))
-    text:SetColour(1,1,1,1)
-    text:SetPosition(0, y0 - (i-1) * spacing, 0)
-    table.insert(self.rename_chars, text)
-  end
+
+    local n = #chars
+    if n == 0 then return end
+    
+    local spacing = self.rename_char_spacing
+    local y0 = (n - 1) * spacing * 0.5
+    for i, ch in ipairs(chars) do
+        local text = self.rename_text_root:AddChild(Text(self.rename_font, self.rename_font_size, ch))
+        text:SetPosition(0, y0 - (i - 1) * spacing, 0)
+        table.insert(self.rename_chars, text)
+    end
 end
 
 function LingGuardPanel:SetHealth(health)
-  self.health:SetPercent(health, false)
-  local hover_fmt = STRINGS.UI.LING_GUARD_PANEL.HEALTH_PERCENT
-  local percent_text = string.format(hover_fmt, math.floor(health * 100 + 0.5))
-  self.health:SetHoverText(percent_text, { offset_x = 0, offset_y = -80 })
-end
-
-function LingGuardPanel:Open(guard)
-  self.guard = guard
-  self:Show()
-end
-
-function LingGuardPanel:Close()
-  if not self.guard_inst then
-    self:Hide()
-    return
-  end
-  self:DetachGuard()
-  self:Hide()
-end
-
--- 更新模式按钮的 hovertext
-function LingGuardPanel:UpdateModeButtonHoverText(button)
-  if not button or not button.mode then
-    return
-  end
-
-  local mode_name = ""
-  if button.mode == GUARD_BEHAVIOR_MODE.CAUTIOUS then
-    mode_name = STRINGS.UI.LING_COMMAND.CAUTIOUS
-  elseif button.mode == GUARD_BEHAVIOR_MODE.ATTACK then
-    mode_name = STRINGS.UI.LING_COMMAND.ATTACK
-  elseif button.mode == GUARD_BEHAVIOR_MODE.GUARD then
-    mode_name = STRINGS.UI.LING_COMMAND.GUARD
-  end
-
-  local hover_text = STRINGS.UI.LING_GUARD_PANEL.MODE_PREFIX:format(mode_name)
-  button:SetHoverText(hover_text, { offset_x = 0, offset_y = -300 })
-end
-
--- 更新所有模式按钮的 hovertext
-function LingGuardPanel:UpdateAllModeButtonHoverTexts()
-  for mode, button in pairs(self.mode_buttons) do
-    self:UpdateModeButtonHoverText(button)
-  end
+    self.health:SetPercent(health, false)
+    local hover_fmt = STRINGS.UI.LING_GUARD_PANEL.HEALTH_PERCENT
+    local percent_text = string.format(hover_fmt, math.floor(health * 100 + 0.5))
+    self.health:SetHoverText(percent_text, { offset_x = 0, offset_y = -80 })
 end
 
 return LingGuardPanel

@@ -197,11 +197,6 @@ function LingGuardBehavior:GetForm()
     return self.form
 end
 
-function LingGuardBehavior:ToggleForm()
-    local target = (self.form == FORM.XIAOYAO) and FORM.QINGPING or FORM.XIAOYAO
-    return self:SetForm(target)
-end
-
 -- 设置插槽信息
 function LingGuardBehavior:SetSlots(slots)
     self.saved_slots = slots

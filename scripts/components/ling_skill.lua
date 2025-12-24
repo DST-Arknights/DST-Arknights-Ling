@@ -9,6 +9,8 @@ local LingSkill = Class(function(self, inst)
     inst.components.ark_skill:RegisterSkill(skill)
   end
   self:RegisterSkill()
+  -- 解锁第一个技能
+  inst.components.ark_skill:GetSkill(skillConfig[1].id):Unlock()
 end)
 
 local function RegisterSkill1(self)

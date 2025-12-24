@@ -16,10 +16,11 @@ local WORK_NAME_MAP = {
 }
 
 
-local LingGuardWorkMode = Class(Widget, function(self, owner)
+local LingGuardWorkMode = Class(Widget, function(self, owner, guard)
   Widget._ctor(self, "LingGuardWorkMode")
   self.owner = owner
-  self.current_active_mode = GUARD_WORK_MODE.NONE
+  self.guard = guard
+  self.current_active_mode = self.guard.replica.ling_guard.state.work_mode
   self.BUTTON_WIDTH = 64
   self.TOTAL_POSITIONS = 7  -- 总共7个位置
   self.WORK_BUTTON_COUNT = 6  -- 6个工作按钮
@@ -119,13 +120,6 @@ function LingGuardWorkMode:CreateWorkButtons()
   self.bg:Hide()
 end
 
-function LingGuardWorkMode:SetWorkMode(mode, use_animation, force)
-  self:ActiveWorkMode(mode, use_animation, force)
-  if not self.is_open then
-    self:_SyncScissorWithState()
-  end
-end
-
 -- 创建工作选择器按钮
 function LingGuardWorkMode:CreateWorkSwitch()
   self.work_switch = self:AddChild(ImageButton("images/ui_ling_guard_panel.xml", "work_selector.tex"))
@@ -143,17 +137,11 @@ function LingGuardWorkMode:OnWorkButtonClick()
   if not self.is_open then
     if self.before_open_callback then
       self.before_open_callback(function()
-        if self._guard_inst and self._guard_inst.replica and self._guard_inst.replica.ling_guard then
-          self.current_active_mode = self._guard_inst.replica.ling_guard:GetWorkMode()
           self:UpdateWorkSwitchHoverText()
-        end
         self:Open()
       end)
     else
-      if self._guard_inst and self._guard_inst.replica and self._guard_inst.replica.ling_guard then
-        self.current_active_mode = self._guard_inst.replica.ling_guard:GetWorkMode()
-        self:UpdateWorkSwitchHoverText()
-      end
+      self:UpdateWorkSwitchHoverText()
       self:Open()
     end
   else
@@ -248,15 +236,15 @@ function LingGuardWorkMode:ActiveWorkMode(mode, use_animation, force)
 
   self.current_active_mode = mode
   self:UpdateWorkSwitchHoverText()
+  if not self.is_open then
+    self:_SyncScissorWithState()
+  end
 end
 
 function LingGuardWorkMode:OnWorkModeButtonClick(mode)
     -- 先更新自身UI
     self:ActiveWorkMode(mode, true)
-    -- 发送RPC到服务端
-    if self._guard_inst and self._guard_inst:IsValid() then
-        SendModRPCToServer(GetModRPC("ling_summon", "change_guard_work"), self._guard_inst, mode)
-    end
+    self.guard.replica.ling_guard:SetWorkMode(mode)
 end
 
 -- 打开动画：从中心向两边展开
@@ -326,9 +314,7 @@ function LingGuardWorkMode:Close(use_animation, callback)
       self:_SyncScissorWithState()
       if callback then callback() end
     end
-    if self._guard_inst and self._guard_inst:IsValid() then
-      SendModRPCToServer(GetModRPC("ling_summon", "change_guard_work"), self._guard_inst, GUARD_WORK_MODE.NONE)
-    end
+    self.guard.replica.ling_guard:SetWorkMode(GUARD_WORK_MODE.NONE)
 end
 
 -- 更新工作按钮的 hovertext（映射表实现，避免分支）

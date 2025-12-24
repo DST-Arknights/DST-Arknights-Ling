@@ -61,6 +61,12 @@ local LingGuardReplica = Class(function(self, inst)
       end
     end
   end)
+  self.state:Watch("work_mode", function()
+    local workUI = SafeCallLingGuardPanel(ThePlayer, self.inst).work_selector
+    if workUI then
+      workUI:ActiveWorkMode(self.state.work_mode, true, true)
+    end
+  end)
   self.state:Watch("health", function()
     SafeCallLingGuardPanel(ThePlayer, self.inst):SetHealth(self.state.health)
   end)
@@ -85,7 +91,7 @@ end)
 function LingGuardReplica:OpenPanel(doer)
   ArkLogger:Debug("LingGuardReplica:OpenPanel", doer, self.inst)
   if self.inst.components.ling_guard then
-    self.inst.components.ling_guard:OpenPane(doer)
+    self.inst.components.ling_guard:OpenPanel(doer)
   else
     SendModRPCToServer(GetModRPC("ling_summon", "guard_open_panel"), self.inst)
   end
@@ -180,11 +186,11 @@ function LingGuardReplica:CloseContainer(doer)
   end
 end
 
-function LingGuardReplica:ToggleForm()
+function LingGuardReplica:SetForm(form)
     if self.inst.components.ling_guard then
-        self.inst.components.ling_guard:ToggleForm()
+        self.inst.components.ling_guard:SetForm(form)
     else
-        SendModRPCToServer(GetModRPC("ling_summon", "guard_toggle_form"), self.inst)
+        SendModRPCToServer(GetModRPC("ling_summon", "guard_set_form"), self.inst, form)
     end
 end
 
