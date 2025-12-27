@@ -36,9 +36,9 @@ local function OnRemove(inst)
     if comp and comp.panel_opener then
         comp:ClosePanel(comp.panel_opener)
     end
-    comp:ThrowContainerItems(self.inst.plant_container)
-    comp:ThrowContainerItems(self.inst.plant_club)
-    comp:ThrowContainerItems(self.inst)
+    comp:ThrowContainerItems(inst.plant_container)
+    comp:ThrowContainerItems(inst.plant_club)
+    comp:ThrowContainerItems(inst)
 end
 
 local LingGuardBehavior = Class(function(self, inst)
@@ -88,6 +88,10 @@ function LingGuardBehavior:ClosePlantContainer(doer)
 end
 
 function LingGuardBehavior:OpenPanel(doer)
+    if self.panel_opener == doer then
+        ArkLogger:Warn("LingGuardBehavior:OpenPanel", "already opened by", doer, self.inst)
+        return
+    end
     ArkLogger:Debug("LingGuardBehavior:OpenPanel", doer, self.inst)
     -- 关闭之前打开的面板
     if doer.components.leader then
@@ -96,14 +100,20 @@ function LingGuardBehavior:OpenPanel(doer)
                 follower.components.ling_guard:ClosePanel(doer)
             end
         end
+        -- 关闭其他正在打开的人
+        if self.panel_opener then
+            self:ClosePanel(self.panel_opener)
+        end
     end
     self.panel_opener = doer
     self.inst.replica.ling_guard.state:Attach(doer)
+    self.inst:DoTaskInTime(4, function()
+        self.inst.replica.ling_guard.state.guard_pos_x = self.inst.replica.ling_guard.state.guard_pos_x + 1
+    end)
     self:OpenPlantContainer(doer)
 end
 
 function LingGuardBehavior:ClosePanel(doer)
-    ArkLogger:Debug("LingGuardBehavior:ClosePanel", doer, self.inst)
     self.inst.replica.ling_guard.state:Attach(self.inst)
     self.panel_opener = nil
     self:ClosePlantContainer(doer)
@@ -195,6 +205,11 @@ end
 
 function LingGuardBehavior:GetForm()
     return self.form
+end
+
+function LingGuardBehavior:Recall()
+  local act = BufferedAction(self.inst, self.inst, ACTIONS.LING_GUARD_RECALL)
+  self.inst.components.locomotor:PushAction(act, false)
 end
 
 -- 设置插槽信息

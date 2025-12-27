@@ -54,10 +54,19 @@ local LingGuardPanel = Class(Widget, function(self, owner, guard)
     Widget._ctor(self, "LingGuardPanel")
     self.owner = owner
     self.guard = guard
-    
+    self.level = 1
+    self.form = CONSTANTS.GUARD_FORM.NONE
+
+    -- 同步状态管理
+    self._pending_sync = {
+        behavior_mode = nil,
+        work_mode = nil,
+        sync_task = nil
+    }
+
     -- 模式按钮初始化
     self:_CreateModeButtons()
-    
+
     self.plant_bg = self:AddChild(Image("images/ui_ling_guard_panel.xml", "plant_bg.tex"))
     self.plant_bg:SetPosition(CONSTANTS.LING_GUARD_PANEL_PLANT_CONTAINER_CLOSED_POSITION)
     -- 工作模式初始化
@@ -227,9 +236,47 @@ function LingGuardPanel:AfterWorkSelectorClose()
     self:_UpdateWorkSelectorY(true, nil, false)
 end
 
+-- 延迟同步，避免 behavior_mode 和 work_mode 的 Watch 顺序冲突
+function LingGuardPanel:_ScheduleSync()
+    if self._pending_sync.sync_task then
+        self._pending_sync.sync_task:Cancel()
+    end
+
+    self._pending_sync.sync_task = self.inst:DoTaskInTime(0, function()
+        self._pending_sync.sync_task = nil
+        self:_ApplyPendingSync()
+    end)
+end
+
+-- 应用待处理的同步
+function LingGuardPanel:_ApplyPendingSync()
+    local behavior_mode = self._pending_sync.behavior_mode
+    local work_mode = self._pending_sync.work_mode
+
+    -- 清空待处理状态
+    self._pending_sync.behavior_mode = nil
+    self._pending_sync.work_mode = nil
+
+    -- 先处理 behavior_mode
+    if behavior_mode then
+        self:_DoSetBehaviorMode(behavior_mode, true)
+    end
+
+    -- 再处理 work_mode（此时 behavior_mode 已经设置好了）
+    if work_mode then
+        self:_DoSyncWorkMode(work_mode)
+    end
+end
+
 function LingGuardPanel:SetBehaviorMode(mode, use_animation)
+    -- 记录待同步的 behavior_mode
+    self._pending_sync.behavior_mode = mode
+    self:_ScheduleSync()
+end
+
+function LingGuardPanel:_DoSetBehaviorMode(mode, use_animation)
     -- 如果从守模式切走且工作台开着，先关工作台
-    if self.current_active_mode == GUARD_BEHAVIOR_MODE.GUARD and mode ~= GUARD_BEHAVIOR_MODE.GUARD 
+    if self.current_active_mode == GUARD_BEHAVIOR_MODE.GUARD and mode ~= GUARD_BEHAVIOR_MODE.GUARD
        and self.work_selector and self.work_selector.is_open then
         self.work_selector:Close(true, function()
             self:DoActivateModeButton(mode, use_animation)
@@ -276,6 +323,68 @@ function LingGuardPanel:DoActivateModeButton(mode, use_animation)
     if old_mode == GUARD_BEHAVIOR_MODE.GUARD and mode ~= GUARD_BEHAVIOR_MODE.GUARD then
         self:_UpdateWorkSelectorY(use_animation, function() self.work_selector:Hide() end)
     end
+end
+
+function LingGuardPanel:SyncWorkMode(mode)
+    -- 记录待同步的 work_mode
+    self._pending_sync.work_mode = mode
+    self:_ScheduleSync()
+end
+
+function LingGuardPanel:_DoSyncWorkMode(mode)
+    -- 当有工作模式同步时，panel 需要处理：
+    -- 1. 如果 workui 没打开，先打开 workui（跟点击打开按钮动画一样）
+    -- 2. 然后再执行 workui 的展开动画和模式激活
+    if not self.work_selector then return end
+
+    local GUARD_WORK_MODE = CONSTANTS.GUARD_WORK_MODE
+
+    -- 如果是 NONE 模式，直接关闭
+    if mode == GUARD_WORK_MODE.NONE then
+        if self.work_selector.is_open then
+            self.work_selector:Close(true)
+        end
+        return
+    end
+
+    -- 只有在 GUARD 模式下才处理工作模式
+    if self.current_active_mode ~= GUARD_BEHAVIOR_MODE.GUARD then
+        return
+    end
+
+    -- 如果 workui 没打开，需要先打开
+    if not self.work_selector.is_open then
+        -- 先触发 before_open_callback 来处理 panel 的按钮动画
+        if self.work_selector.before_open_callback then
+            self.work_selector.before_open_callback(function()
+                -- panel 动画完成后，打开 workui
+                self.work_selector:UpdateWorkSwitchHoverText()
+                self.work_selector:Open(true, function()
+                    -- workui 打开动画完成后，再激活工作模式
+                    if self.work_selector and self.work_selector.is_open then
+                        self.work_selector:ActiveWorkMode(mode, true, true)
+                    end
+                end)
+            end)
+        else
+            -- 如果没有 before_open_callback，直接打开
+            self.work_selector:UpdateWorkSwitchHoverText()
+            self.work_selector:Open(true, function()
+                if self.work_selector and self.work_selector.is_open then
+                    self.work_selector:ActiveWorkMode(mode, true, true)
+                end
+            end)
+        end
+    else
+        -- 如果已经打开，直接激活工作模式
+        self.work_selector:ActiveWorkMode(mode, true, true)
+    end
+end
+
+function LingGuardPanel:SetLevel(level)
+    self.level = level
+    self:RefreshName()
+    self:RefreshFusionButton()
 end
 
 function LingGuardPanel:SetForm(form)
@@ -363,6 +472,14 @@ function LingGuardPanel:SetHealth(health)
     local hover_fmt = STRINGS.UI.LING_GUARD_PANEL.HEALTH_PERCENT
     local percent_text = string.format(hover_fmt, math.floor(health * 100 + 0.5))
     self.health:SetHoverText(percent_text, { offset_x = 0, offset_y = -80 })
+end
+
+function LingGuardPanel:OnRemoveFromEntity()
+    -- 清理待处理的同步任务
+    if self._pending_sync and self._pending_sync.sync_task then
+        self._pending_sync.sync_task:Cancel()
+        self._pending_sync.sync_task = nil
+    end
 end
 
 return LingGuardPanel

@@ -286,19 +286,6 @@ function LingSummonManager:OnFollowerAdded(follower)
   end
 end
 
--- 回收守卫：通过 Action 驱动状态机执行
-function LingSummonManager:Recall(guard_inst)
-  if not guard_inst or not guard_inst:IsValid() then
-    return false
-  end
-  if not self:IsGuardOwnedByPlayer(guard_inst) then
-    return false
-  end
-  local act = BufferedAction(guard_inst, guard_inst, ACTIONS.LING_GUARD_RECALL)
-  guard_inst:PushBufferedAction(act)
-  return true
-end
-
 -- 召唤相关方法
 function LingSummonManager:SummonBasic(slot_index, pos)
   if self.inst.sg:HasStateTag("busy") then

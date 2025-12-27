@@ -47,6 +47,7 @@ local function master_post_init(inst)
   inst.MiniMapEntity:SetIcon("ling.tex")
 
   -- 添加组件
+  inst:AddComponent("ark_currency")
   inst:AddComponent("ark_elite")
   inst:AddComponent("ling_poetry")
   inst:AddComponent("sleeper")

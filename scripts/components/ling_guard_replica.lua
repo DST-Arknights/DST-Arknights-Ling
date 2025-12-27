@@ -34,9 +34,7 @@ local LingGuardReplica = Class(function(self, inst)
     form = "tinybyte:classified"
   })
   self.state:OnAttached(function()
-    ArkLogger:Debug("LingGuardReplica:OnAttached", self.inst)
     SafeCallHUD(ThePlayer):OpenGuardPanel(self.inst)
-    SafeCallLingGuardPanel(ThePlayer, self.inst):SetBehaviorMode(self.state.behavior_mode, false)
     local leader = self.inst.replica.follower and self.inst.replica.follower:GetLeader()
     if not TheNet:IsDedicated() and ThePlayer == leader then
       self:SetGuardPositionColor(true)
@@ -51,7 +49,6 @@ local LingGuardReplica = Class(function(self, inst)
   end)
   self.state:Watch({"behavior_mode", "guard_pos_x", "guard_pos_y", "guard_pos_z"}, function()
     SafeCallLingGuardPanel(ThePlayer, self.inst):SetBehaviorMode(self.state.behavior_mode, true)
-
     local leader = self.inst.replica.follower and self.inst.replica.follower:GetLeader()
     if not TheNet:IsDedicated() and ThePlayer == leader then
       if self.state.behavior_mode == CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD then
@@ -62,10 +59,7 @@ local LingGuardReplica = Class(function(self, inst)
     end
   end)
   self.state:Watch("work_mode", function()
-    local workUI = SafeCallLingGuardPanel(ThePlayer, self.inst).work_selector
-    if workUI then
-      workUI:ActiveWorkMode(self.state.work_mode, true, true)
-    end
+    local panel = SafeCallLingGuardPanel(ThePlayer, self.inst):SyncWorkMode(self.state.work_mode)
   end)
   self.state:Watch("health", function()
     SafeCallLingGuardPanel(ThePlayer, self.inst):SetHealth(self.state.health)

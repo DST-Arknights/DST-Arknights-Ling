@@ -270,14 +270,15 @@ AddComponentPostInit("container", function(self)
     return _Open(self, doer)
   end
 
-  -- local _Close = self.Close
-  -- function self:Close(doer)
-  --   local keepOpen = doer and doer.components.ling_summon_manager and doer.components.ling_summon_manager.openedContainerInst == self.inst
-  --   if keepOpen then
-  --     return
-  --   end
-  --   return _Close(self, doer)
-  -- end
+  local _Close = self.Close
+  function self:Close(doer)
+    -- 如果已经打开了面板, 保持打开
+    local keepOpen = self.inst.components.ling_guard and self.inst.components.ling_guard:IsPanelOpenedBy(doer) or false
+    if keepOpen then
+      return
+    end
+    return _Close(self, doer)
+  end
 end)
 
 -- 添加召唤系统的RPC通信
@@ -306,7 +307,7 @@ AddModRPCHandler("ling_summon", "guard_open_container", function(player, guard_i
   end
 end)
 
-AddModRPCHandler("ling_summon", "guard_close_container", function(player)
+AddModRPCHandler("ling_summon", "guard_close_container", function(player, guard_inst)
   if guard_inst.components.container then
     guard_inst.components.container:Close(player)
   end
