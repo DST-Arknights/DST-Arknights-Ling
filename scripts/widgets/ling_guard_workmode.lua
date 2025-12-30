@@ -30,6 +30,7 @@ local LingGuardWorkMode = Class(Widget, function(self, owner, guard)
   self:CreateWorkButtons()
   self:CreateWorkSwitch()
   self.is_open = false
+  self:UpdateWorkSwitchHoverText()
 
   -- 如果在创建时就传入了守卫实例，立即绑定
 end)
@@ -326,9 +327,10 @@ function LingGuardWorkMode:UpdateWorkButtonHoverText(button, mode)
 end
 
 function LingGuardWorkMode:UpdateWorkSwitchHoverText()
-  local hover_text = self.current_active_mode == GUARD_WORK_MODE.NONE and
-    STRINGS.UI.LING_GUARD_WORKMODE.SELECT_WORK or
-    STRINGS.UI.LING_GUARD_WORKMODE.STOP_WORK
+  local hover_text = self.is_open and
+  STRINGS.UI.LING_GUARD_PANEL.STOP_WORK or
+    STRINGS.UI.LING_GUARD_PANEL.SELECT_WORK
+  ArkLogger:Debug("LingGuardWorkMode:UpdateWorkSwitchHoverText", hover_text)
   self.work_switch:SetHoverText(hover_text, { offset_x = 0, offset_y = -80 })
 end
 

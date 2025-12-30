@@ -162,7 +162,7 @@ local states =
                     inst.SoundEmitter:PlaySound("dontstarve/wilson/use_pick_rock")
                 end
             end),
-            TimeEvent(18*FRAMES, function(inst)
+            TimeEvent(30*FRAMES, function(inst)
                 inst:PerformBufferedAction()
             end),
         },

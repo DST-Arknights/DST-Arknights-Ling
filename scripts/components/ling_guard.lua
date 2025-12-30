@@ -62,7 +62,7 @@ end, nil, {
     form = onform,
 })
 
-function LingGuardBehavior:OpenPlantContainer(doer)
+function LingGuardBehavior:CheckOpenPlantContainer(doer)
     if self.work_mode == CONSTANTS.GUARD_WORK_MODE.PLANT then
         if self.inst.plant_container then
             self.inst.plant_container.components.container:Open(doer)
@@ -85,6 +85,16 @@ function LingGuardBehavior:ClosePlantContainer(doer)
     if self.inst.plant_club and self.inst.plant_club.components.container:IsOpenedBy(doer) then
         self.inst.plant_club.components.container:Close(doer)
     end
+end
+
+function LingGuardBehavior:OpenContainer(doer)
+    self.inst.components.container:SkipAutoClose(doer)
+    self.inst.components.container:Open(doer)
+end
+
+function LingGuardBehavior:CloseContainer(doer)
+    self.inst.components.container:StopSkipAutoClose(doer)
+    self.inst.components.container:Close(doer)
 end
 
 function LingGuardBehavior:OpenPanel(doer)
@@ -110,12 +120,14 @@ function LingGuardBehavior:OpenPanel(doer)
     self.inst:DoTaskInTime(4, function()
         self.inst.replica.ling_guard.state.guard_pos_x = self.inst.replica.ling_guard.state.guard_pos_x + 1
     end)
-    self:OpenPlantContainer(doer)
+    self.inst.components.container:SkipAutoClose(doer)
+    self:CheckOpenPlantContainer(doer)
 end
 
 function LingGuardBehavior:ClosePanel(doer)
     self.inst.replica.ling_guard.state:Attach(self.inst)
     self.panel_opener = nil
+    self.inst.components.container:StopSkipAutoClose(doer)
     self:ClosePlantContainer(doer)
 end
 
@@ -149,7 +161,7 @@ function LingGuardBehavior:SetWorkMode(mode)
     -- 进入种植模式要处理种植容器的显示
     if old_mode ~= CONSTANTS.GUARD_WORK_MODE.PLANT and mode == CONSTANTS.GUARD_WORK_MODE.PLANT then
         if self.panel_opener then
-            self:OpenPlantContainer(self.panel_opener)
+            self:CheckOpenPlantContainer(self.panel_opener)
         end
     end
     -- 退出种植模式要处理种植容器的隐藏

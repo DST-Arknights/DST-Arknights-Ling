@@ -101,7 +101,7 @@ AddClassPostConstruct("screens/playerhud", function(self)
         containerCloseWidget:Hide()
       else
         local containerWidget = self.controls.containers[guard]
-        if containerWidget then
+        if containerWidget and containerWidget.isopen then
           panelWidget.container_open:Hide()
           containerCloseWidget:Show()
           containerCloseWidget:MoveToBack()
@@ -116,16 +116,19 @@ AddClassPostConstruct("screens/playerhud", function(self)
       local plantClubWidget, plantContainerWidget = nil, nil
       -- 遍历容器
       for container, widget in pairs(self.controls.containers) do
-        if container.replica.container.type == "ling_guard_plant_club" and container.entity:GetParent() == guard then
-          plantClubWidget = widget
-        end
-        if container.replica.container.type == "ling_guard_plant_container" and container.entity:GetParent() == guard then
-          plantContainerWidget = widget
+        if widget.isopen then
+          if container.replica.container.type == "ling_guard_plant_club" and container.entity:GetParent() == guard then
+            plantClubWidget = widget
+          end
+          if container.replica.container.type == "ling_guard_plant_container" and container.entity:GetParent() == guard then
+            plantContainerWidget = widget
+          end
         end
       end
       if plantClubWidget then
         plantClubWidget:MoveToBack()
       end
+      ArkLogger:Debug("AdjustGuardPanel", "plantContainerWidget", plantContainerWidget, plantContainerWidget and plantContainerWidget.isopen)
       if plantContainerWidget then
         panelWidget.plant_bg:Hide()
         plantContainerWidget:MoveToBack()
@@ -144,7 +147,7 @@ AddClassPostConstruct("screens/playerhud", function(self)
       local pos = containerReplica.widget.pos
       local openPos = containerReplica.widget.openPos
       local containerWidget = self.controls.containers[container]
-      containerWidget:MoveTo(pos, openPos, 0.5)
+      containerWidget:MoveTo(pos, openPos, 0.3)
       -- 根据等级关闭多余的插槽
       local parent = container.entity:GetParent()
       if parent then
@@ -185,24 +188,30 @@ AddClassPostConstruct("screens/playerhud", function(self)
     if containerReplica.type == "ling_guard_container" then
       _CloseContainer(self, container, side)
       self:AdjustGuardPanel(container)
-      return
-    end
-    if containerReplica.type == "ling_guard_plant_container" then
+    elseif containerReplica.type == "ling_guard_plant_container" then
       local pos = containerReplica.widget.pos
       local openPos = containerReplica.widget.openPos
       local containerWidget = self.controls.containers[container]
-      self.controls.containers[container] = nil
+      -- self.controls.containers[container] = nil
       -- 期间禁用所有的插槽交互
       for idx, inv in pairs(containerWidget.inv) do
         inv:Disable()
       end
-      containerWidget:MoveTo(openPos, pos, 0.1, function()
-        containerWidget:Close()
-        self:AdjustGuardPanel(container)
-      end)
-      return
+      containerWidget:MoveTo(openPos, pos, 0.3)
+      _CloseContainer(self, container, side)
+      local parent = container.entity:GetParent()
+      if parent then
+        self:AdjustGuardPanel(parent)
+      end
+    elseif containerReplica.type == "ling_guard_plant_club" then
+      _CloseContainer(self, container, side)
+      local parent = container.entity:GetParent()
+      if parent then
+        self:AdjustGuardPanel(parent)
+      end
+    else
+      _CloseContainer(self, container, side)
     end
-    _CloseContainer(self, container, side)
   end
 
   -- 打开守卫面板
@@ -257,23 +266,52 @@ AddClassPostConstruct("screens/playerhud", function(self)
 end)
 
 AddComponentPostInit("container", function(self)
+  self.skip_auto_closer = {}
+  -- 重新计算是否需要更新
+  local function SetUpdatingComponent(self)
+    if self.skipautoclose then
+      return
+    end
+    -- openlist 里都是skip_auto_closer的, 不需要再StartUpdatingComponent
+    local need_update = false
+    for k, v in pairs(self.openlist) do
+      if not self.skip_auto_closer[k] then
+        need_update = true
+        break
+      end
+    end
+    if need_update then
+      self.inst:StartUpdatingComponent(self)
+    else
+      self.inst:StopUpdatingComponent(self)
+    end
+  end
   local _Open = self.Open
   -- 拥有者打开容器时, 尝试把面板打开
   function self:Open(doer)
-    if not doer.components.ling_summon_manager then
-      return _Open(self, doer)
-    end
-    local owned = doer.components.ling_summon_manager:GetGuardSlotIndex(self.inst)
-    if owned then
+    local ownedGuard = doer.components.ling_summon_manager and doer.components.ling_summon_manager:GetGuardSlotIndex(self.inst) or nil
+    if ownedGuard then
       self.inst.components.ling_guard:OpenPanel(doer)
     end
-    return _Open(self, doer)
+    _Open(self, doer)
+    SetUpdatingComponent(self)
+  end
+  
+
+  function self:SkipAutoClose(doer)
+    self.skip_auto_closer[doer] = true
+    SetUpdatingComponent(self)
+  end
+
+  function self:StopSkipAutoClose(doer)
+    self.skip_auto_closer[doer] = nil
+    SetUpdatingComponent(self)
   end
 
   local _Close = self.Close
   function self:Close(doer)
-    -- 如果已经打开了面板, 保持打开
-    local keepOpen = self.inst.components.ling_guard and self.inst.components.ling_guard:IsPanelOpenedBy(doer) or false
+    -- 如果保持打开, 则不关闭
+    local keepOpen = self.skip_auto_closer[doer]
     if keepOpen then
       return
     end
@@ -302,14 +340,14 @@ AddModRPCHandler("ling_summon", "guard_close_panel", function(player, guard_inst
 end)
 
 AddModRPCHandler("ling_summon", "guard_open_container", function(player, guard_inst)
-  if guard_inst.components.container then
-    guard_inst.components.container:Open(player)
+  if guard_inst.components.ling_guard then
+    guard_inst.components.ling_guard:OpenContainer(player)
   end
 end)
 
 AddModRPCHandler("ling_summon", "guard_close_container", function(player, guard_inst)
-  if guard_inst.components.container then
-    guard_inst.components.container:Close(player)
+  if guard_inst.components.ling_guard then
+    guard_inst.components.ling_guard:CloseContainer(player)
   end
 end)
 

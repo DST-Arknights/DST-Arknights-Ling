@@ -543,7 +543,7 @@ local function TryPickupAnyInGuardRange(inst)
     if nearest ~= nil then
         -- 先行预定，防止其他守卫在本tick竞争
         _ReserveItemFor(nearest, inst, 0.6)
-        inst._ling_pick_cooldown_end = GetTime() + 0.20
+        inst._ling_pick_cooldown_end = GetTime() + 0.30
         return BufferedAction(inst, nearest, ACTIONS.PICKUP)
     end
     return nil

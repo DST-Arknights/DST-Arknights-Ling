@@ -24,27 +24,20 @@ end
 
 local LingGuardReplica = Class(function(self, inst)
   self.inst = inst
-  self.state = NetState(self.inst, {
-    behavior_mode = "tinybyte:classified",
-    work_mode = "tinybyte:classified",
-    guard_pos_x = "float:classified",
-    guard_pos_y = "float:classified",
-    guard_pos_z = "float:classified",
-    level = "tinybyte:classified",
-    form = "tinybyte:classified"
-  })
+  self.state = NetState(self.inst, "ling_guard")
   self.state:OnAttached(function()
     SafeCallHUD(ThePlayer):OpenGuardPanel(self.inst)
     local leader = self.inst.replica.follower and self.inst.replica.follower:GetLeader()
     if not TheNet:IsDedicated() and ThePlayer == leader then
       self:SetGuardPositionColor(true)
     end
+    OnNameDirty(inst)
   end)
   self.state:OnDetached(function()
     SafeCallHUD(ThePlayer):CloseGuardPanel(self.isnt)
     local leader = self.inst.replica.follower and self.inst.replica.follower:GetLeader()
     if not TheNet:IsDedicated() and ThePlayer == leader then
-      self:SetGuardPositionColor(true)
+      self:SetGuardPositionColor(false)
     end
   end)
   self.state:Watch({"behavior_mode", "guard_pos_x", "guard_pos_y", "guard_pos_z"}, function()
@@ -53,6 +46,10 @@ local LingGuardReplica = Class(function(self, inst)
     if not TheNet:IsDedicated() and ThePlayer == leader then
       if self.state.behavior_mode == CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD then
         self:UpdateGuardPositionVisual()
+        -- 如果面板打开了, 设置为绿色
+        if SafeCallHUD(ThePlayer):GetGuardPanel(inst) then
+          self:SetGuardPositionColor(true)
+        end
       else
         self:RemoveGuardPositionVisual()
       end
@@ -132,7 +129,7 @@ function LingGuardReplica:SetGuardPositionColor(is_green)
   if self._guard_pos_inst and self._guard_pos_inst:IsValid() then
     if is_green then
       -- 设置为绿色（面板打开时）
-      self._guard_pos_inst.AnimState:SetMultColour(1, 0, 0, 1)
+      self._guard_pos_inst.AnimState:SetMultColour(0, 1, 0, 1)
     else
       -- 恢复原色（白色）
       self._guard_pos_inst.AnimState:SetMultColour(1, 1, 1, 1)
@@ -165,16 +162,16 @@ function LingGuardReplica:Fusion()
 end
 
 function LingGuardReplica:OpenContainer(doer)
-  if self.inst.components.container then
-    self.inst.components.container:Open(doer)
+  if self.inst.components.ling_guard then
+    self.inst.components.ling_guard:OpenContainer(doer)
   else
     SendModRPCToServer(GetModRPC("ling_summon", "guard_open_container"), self.inst)
   end
 end
 
 function LingGuardReplica:CloseContainer(doer)
-  if self.inst.components.container then
-    self.inst.components.container:Close(doer)
+  if self.inst.components.ling_guard then
+    self.inst.components.ling_guard:CloseContainer(doer)
   else
     SendModRPCToServer(GetModRPC("ling_summon", "guard_close_container"), self.inst)
   end

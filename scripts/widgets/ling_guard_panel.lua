@@ -92,6 +92,7 @@ function LingGuardPanel:_InitBaseUI()
     self.close:SetOnClick(function()
         if self.guard then self.guard.replica.ling_guard:ClosePanel(ThePlayer) end
     end)
+    self.close:SetHoverText(STRINGS.UI.LING_GUARD_PANEL.CLOSE_PANEL)
 
     -- 名字渲染容器
     self.rename_text_root = self:AddChild(Widget("rename_text_root"))
@@ -106,6 +107,7 @@ function LingGuardPanel:_InitBaseUI()
     self.recall:SetOnClick(function()
         if self.guard then self.guard.replica.ling_guard:Recall() end
     end)
+    self.recall:SetHoverText(STRINGS.UI.LING_GUARD_PANEL.RECALL, { offset_x = 0, offset_y = -40 })
 
     self.name = self:AddChild(ImageButton("images/ui_ling_guard_panel.xml", "name_qingping.tex"))
     self.name:SetPosition(222, 48, 0)
@@ -122,6 +124,7 @@ function LingGuardPanel:_InitBaseUI()
             self.container_open:Hide()
         end
     end)
+    self.container_open:SetHoverText(STRINGS.UI.LING_GUARD_PANEL.OPEN_CONTAINER, { offset_x = 0, offset_y = -60 })
 end
 
 function LingGuardPanel:_CreateModeButtons()
@@ -434,7 +437,7 @@ function LingGuardPanel:RefreshFusionButton()
             local suffix = STRINGS.UI.LING_GUARD_PANEL.LOCKED_SUFFIX
             self.fusionButton:SetHoverText(string.format("%s:%s%s", prefix, name, suffix))
             self.fusionButton.image:SetTint(0.5, 0.5, 0.5, 0.7)
-            self.fusionButton:SetClickable(false)
+            -- self.fusionButton:SetClickable(false)
         end
     end
 end

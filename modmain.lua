@@ -59,9 +59,6 @@ ArkLogger:DeclareLogger('TRACE', 'ling')
 TUNING.LING = {}
 
 
--- 调试开关
-TUNING.LING_DEBUG = true  -- 设置为true启用守卫调试日志
-
 modimport("lingmain/widget_extension")
 modimport("lingmain/ling_elite")
 modimport("lingmain/summon_guard")
@@ -71,3 +68,33 @@ modimport("lingmain/ling_poetry")
 modimport("lingmain/ling_desk")
 modimport("lingmain/poem")
 modimport("lingmain/ling_cloud_pavilion")
+
+
+DefineNetState('ling_guard', {
+  behavior_mode = "tinybyte:classified",
+  work_mode = "tinybyte:classified",
+  guard_pos_x = "float:classified",
+  guard_pos_y = "float:classified",
+  guard_pos_z = "float:classified",
+  level = "tinybyte:classified",
+  form = "tinybyte:classified"
+})
+
+DefineNetState('ling_poetry', {
+  current_poetry = "float:classified",
+  max_poetry = "byte:classified",
+})
+
+DefineNetState('ling_summon_manager', (function()
+    local state = {
+        max_slots = "tinybyte:classified"
+    }
+    for i = 1, TUNING.LING.MAX_GUARDS do
+        state["inst_" .. i] = "entity:classified"
+        state["form_" .. i] = "tinybyte:classified"
+        state["level_" .. i] = "tinybyte:classified"
+        state["status_" .. i] = "tinybyte:classified"
+        state["word_" .. i] = "tinybyte:classified"
+    end
+    return state
+end)())

@@ -77,8 +77,8 @@ end
 
 function LingGuardPanelCall:_GetGuardName()
     local inst = self.slot_data.inst
-    if inst and inst:IsValid() and inst.replica.ling_guard then
-        return inst.replica.ling_guard.state.name
+    if inst and inst.replica and inst.replica.named then
+        return inst.replica.named._name:value()
     end
     return self:_GetTypeName()
 end

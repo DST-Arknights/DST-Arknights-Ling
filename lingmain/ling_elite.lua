@@ -33,6 +33,11 @@ TUNING.LING.ELITE = {{
   SLEEP_RESISTANCE = 10,
 }}
 
+TUNING.LING.MAX_GUARDS = 1
+for k, v in pairs(TUNING.LING.ELITE) do
+  TUNING.LING.MAX_GUARDS = math.max(TUNING.LING.MAX_GUARDS, v.MAX_GUARDS)
+end
+
 -- 精英化配方
 AddCharacterRecipe("ling_elite_2", {
   Ingredient("goldnugget", 30),
