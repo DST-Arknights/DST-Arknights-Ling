@@ -1,11 +1,6 @@
-local utils = require "ark_utils_ling"
 local CONSTANTS = require "ark_constants_ling"
 
-local MAX_GUARDS = 0;
--- 遍历 TUNING.LING.ELITE
-for k, v in pairs(TUNING.LING.ELITE) do
-  MAX_GUARDS = math.max(MAX_GUARDS, v.MAX_GUARDS)
-end
+local MAX_GUARDS = TUNING.LING.MAX_GUARDS
 
 local SafeCallLingPoetryUI = GenSafeCall(function(inst)
   return inst and inst.HUD and inst.HUD.controls and inst.HUD.controls.ling_poetry
@@ -13,25 +8,17 @@ end)
 
 local LingSummonManagerReplica = Class(function(self, inst)
   self.inst = inst
-  local stateDefine = {
-    max_slots = "tinybyte:classified",
-  }
   local watchGroup = {}
   for i = 1, MAX_GUARDS do
-    stateDefine["inst_" .. i] = "entity:classified"
-    stateDefine["form_" .. i] = "tinybyte:classified"
-    stateDefine["level_" .. i] = "tinybyte:classified"
-    stateDefine["status_" .. i] = "tinybyte:classified"
-    stateDefine["word_" .. i] = "tinybyte:classified"
     watchGroup[i] = {
       "inst_" .. i,
       "form_" .. i,
       "level_" .. i,
       "status_" .. i,
-      "word_" .. i,
+      "world" .. i,
     }
   end
-  self.state = NetState(self.inst, stateDefine)
+  self.state = NetState(self.inst, "ling_summon_manager")
   self.state:Attach(self.inst)
   for i, v in pairs(watchGroup) do
     self.state:Watch(v, function()
@@ -60,7 +47,8 @@ function LingSummonManagerReplica:GetSlotData(slot_index)
       form = self.state["form_" .. slot_index],
       level = self.state["level_" .. slot_index],
       status = self.state["status_" .. slot_index],
-      world = self.state["word_" .. slot_index],
+      world = self.state["world" .. slot_index],
+      world_id = self.state["world_id" .. slot_index],
       index = slot_index
     }
   end
@@ -82,7 +70,10 @@ function LingSummonManagerReplica:SetSlotData(slot_index, data)
       self.state["status_" .. slot_index] = data.status
     end
     if data.world ~= nil then
-      self.state["word_" .. slot_index] = data.world
+      self.state["world" .. slot_index] = data.world
+    end
+    if data.world_id ~= nil then
+      self.state["world_id" .. slot_index] = data.world_id
     end
   end
 end

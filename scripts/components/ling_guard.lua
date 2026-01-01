@@ -315,9 +315,24 @@ function LingGuardBehavior:OnLoad(data)
     end
 end
 
+-- 检查守卫是否可以跟随迁移
+-- 守模式不允许迁移，其他模式允许
+function LingGuardBehavior:CanMigrate()
+    return self.behavior_mode ~= CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD
+end
+
 function LingGuardBehavior:OnRemoveFromEntity()
     OnRemove(self.inst)
     self.inst:RemoveEventCallback("onremove", OnRemove)
+end
+
+function LingGuardBehavior:PrepareForMigration()
+    ArkLogger:Debug("LingGuardBehavior:PrepareForMigration", self.inst)
+    if self.inst.components.locomotor then
+        self.inst.components.locomotor:Stop()
+    end
+    self.inst.persists = false
+    self.inst.ready_for_migration = true
 end
 
 return LingGuardBehavior

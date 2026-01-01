@@ -80,6 +80,13 @@ local function master_post_init(inst)
   inst.components.grogginess:SetResistance(10) -- 设置催眠抗性为10
   inst:ListenForEvent("attacked", OnAttacked)
   inst:ListenForEvent("newcombattarget", OnNewTarget)
+
+  inst.OnDespawn = function(inst, migrationdata)
+    if migrationdata ~= nil then
+      -- 准备迁移
+      inst.components.ling_summon_manager:PrepareForMigration()
+    end
+  end
 end
 
 return MakePlayerCharacter("ling", prefabs, assets, common_post_init, master_post_init, start_inv)

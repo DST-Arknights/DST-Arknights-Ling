@@ -36,12 +36,13 @@ function LingGuardPanelCall:_RefreshUI()
     -- 刷新按钮状态
     local status = self.slot_data.status
     local world = self.slot_data.world
+    ArkLogger:Debug("LingGuardPanelCall:_RefreshUI", world)
     if world == GUARD_LOCATION.OTHER_WORLD then
-        self.button.image:SetTint(0.3, 0.3, 0.3, 0.5)
-        self.button:SetClickable(false)
+        self.button.image:SetTint(0.7, 0.7, 0.7, 0.7)
+        self.button:SetClickable(true)
     else
         if status == GUARD_SLOT_STATUS.SUMMONING then
-            self.button.image:SetTint(0.5, 0.5, 0.5, 0.7)
+            self.button.image:SetTint(0.8, 0.8, 0.8, 0.8)
             self.button:SetClickable(false)
         else
             self.button.image:SetTint(1, 1, 1, 1)
@@ -66,7 +67,7 @@ function LingGuardPanelCall:_GetTexture()
 end
 
 function LingGuardPanelCall:_GetHoverText()
-    if self.slot_data.word == GUARD_LOCATION.OTHER_WORLD then
+    if self.slot_data.world == GUARD_LOCATION.OTHER_WORLD then
         return STRINGS.UI.LING_SUMMON.OTHER_WORLD
     end
     if self.slot_data.status == GUARD_SLOT_STATUS.SUMMONING then

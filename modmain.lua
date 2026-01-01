@@ -94,7 +94,7 @@ DefineNetState('ling_summon_manager', (function()
         state["form_" .. i] = "tinybyte:classified"
         state["level_" .. i] = "tinybyte:classified"
         state["status_" .. i] = "tinybyte:classified"
-        state["word_" .. i] = "tinybyte:classified"
+        state["world" .. i] = "tinybyte:classified"
     end
     return state
 end)())

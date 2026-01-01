@@ -319,6 +319,27 @@ AddComponentPostInit("container", function(self)
   end
 end)
 
+AddComponentPostInit("follower", function(self)
+  local _cached_player_join_fn = self.cached_player_join_fn
+  self.cached_player_join_fn = function(world, player) 
+    if not self.inst.components.ling_guard then
+      return _cached_player_join_fn(world, player)
+    end
+    if self.cached_player_leader_userid ~= player.userid then
+        return
+    end
+    ArkLogger:Debug("ling_guard:cached_player_join_fn: 检测到玩家加入, 守卫跟随", self.inst, player)
+    local current_time = GetTime()
+    local cached_player_leader_timeleft = self.cached_player_leader_timeleft
+    self:SetLeader(player)
+
+    self.targettime = nil
+    if cached_player_leader_timeleft then
+        self:AddLoyaltyTime(cached_player_leader_timeleft - current_time)
+    end
+  end
+end)
+
 -- 添加召唤系统的RPC通信
 AddModRPCHandler("ling_summon", "summon_basic", function(player, slot_index)
   if not player.components.ling_summon_manager then
@@ -329,6 +350,7 @@ end)
 
 AddModRPCHandler("ling_summon", "guard_open_panel", function(player, guard_inst)
   if guard_inst.components.ling_guard then
+    ArkLogger:Debug("ling_guard:guard_open_panel", player, guard_inst)
     guard_inst.components.ling_guard:OpenPanel(player)
   end
 end)

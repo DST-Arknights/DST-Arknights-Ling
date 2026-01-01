@@ -47,6 +47,7 @@ local LingSummonManager = Class(function(self, inst)
   self.inst = inst
   self.max_slots = 0
   self.callerOpened = false
+  self.ready_for_migration = false
   self:SetMaxSlots(3)
 end, nil, {
   max_slots = onmax_slots,
@@ -207,6 +208,8 @@ function LingSummonManager:InsertGuardToSlot(guard, slots)
     form = guard.components.ling_guard.form,
     level = guard.components.ling_guard.level,
     status = GUARD_SLOT_STATUS.OCCUPIED,
+    world = GUARD_LOCATION.CURRENT_WORLD,
+    world_id = TheShard:GetShardId(),
   })
   -- 设置额外插槽为禁用状态（如果有）
   for i = 2, #slots do
@@ -261,12 +264,30 @@ function LingSummonManager:GetSlotCount()
 end
 
 function LingSummonManager:OnFollowerLost(follower)
+  ArkLogger:Debug("LingSummonManager:OnFollowerLost: 检测到follower丢失", follower)
+    if not follower then
+        return
+    end
     -- 取消关联时，关闭召唤兽的技能
-    if follower and follower.components.ling_guard_skill then
+    if follower.components.ling_guard_skill then
       follower.components.ling_guard_skill:DeactivateAllSkills()
     end
-
-    self:RemoveGuardFromSlot(follower)
+    if not self.ready_for_migration then
+      self:RemoveGuardFromSlot(follower)
+    end
+end
+-- 更新守卫的迁移状态（当behavior_mode变化时调用）
+function LingSummonManager:PrepareForMigration()
+    self.ready_for_migration = true
+    -- 遍历所有守卫，设置迁移状态
+    local slots = self:GetAllSlots()
+    for i, slot_data in ipairs(slots) do
+      ArkLogger:Debug("LingSummonManager:PrepareForMigration: 检查守卫 跟随迁移", slot_data.inst and slot_data.inst.components.ling_guard:CanMigrate())
+        if slot_data.inst and slot_data.inst:IsValid() and slot_data.inst.components.ling_guard and slot_data.inst.components.ling_guard:CanMigrate() then
+          slot_data.inst.components.ling_guard:PrepareForMigration()
+          slot_data.inst:PushEvent("despawn")
+        end
+    end
 end
 
 function LingSummonManager:OnFollowerAdded(follower)
@@ -425,14 +446,57 @@ end
 
 -- 保存和加载方法
 function LingSummonManager:OnSave()
-    return {
-        max_slots = self.max_slots
-    }
+  ArkLogger:Debug("LingSummonManager:OnSave")
+  local data = {
+    max_slots = self.max_slots,
+    migrationguards = {},
+    slots = {},
+  }
+  -- 保存所有待迁移的守卫
+  local slots_data = self:GetAllSlots()
+  for _, slot_data in ipairs(slots_data) do
+    table.insert(data.slots, {
+      form = slot_data.form,
+      level = slot_data.level,
+      status = slot_data.status,
+      world_id = slot_data.world_id,
+    })
+    local ready_for_migration = slot_data.inst and slot_data.inst:IsValid() and slot_data.inst.ready_for_migration
+    if ready_for_migration then
+      local save_record = slot_data.inst:GetSaveRecord()
+      table.insert(data.migrationguards, save_record)
+    end
+  end
+  return data
 end
 
 function LingSummonManager:OnLoad(data)
+    ArkLogger:Debug("LingSummonManager:OnLoad", self.inst.migrationpets, data and data.migrationguards)
     if data and data.max_slots then
         self:SetMaxSlots(data.max_slots)
+    end
+    if data and data.slots then
+        for i, slot_data in ipairs(data.slots) do
+          ArkLogger:Debug("LingSummonManager:OnLoad:", i, slot_data.status)
+            self:SetSlotData(i, {
+                inst = nil,
+                form = slot_data.form,
+                level = slot_data.level,
+                status = slot_data.status,
+                world_id = slot_data.world_id,
+                world = slot_data.status == GUARD_SLOT_STATUS.OCCUPIED and GUARD_LOCATION.OTHER_WORLD or GUARD_LOCATION.NONE,
+            })
+        end
+    end
+    if data and data.migrationguards and self.inst.migrationpets then
+      ArkLogger:Debug("LingSummonManager:OnLoad: 读取待迁移守卫", #data.migrationguards)
+        for _, guard_data in ipairs(data.migrationguards) do
+          ArkLogger:Debug("LingSummonManager:OnLoad: 读取待迁移守卫", guard_data)
+            local guard = SpawnSaveRecord(guard_data)
+            if guard then
+                table.insert(self.inst.migrationpets, guard)
+            end
+        end
     end
 end
 

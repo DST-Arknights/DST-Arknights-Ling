@@ -4,10 +4,7 @@ end)
 
 local SilenceFatigueReplica = Class(function(self, inst)
   self.inst = inst
-  self.state = NetState(self.inst, {
-    current_poetry = "float:classified",
-    max_poetry = "byte:classified",
-  })
+  self.state = NetState(self.inst, "ling_poetry")
   self.state:Attach(self.inst)
   self.state:Watch("current_poetry", function()
     ArkLogger:Debug("current_poetry", self.state.current_poetry)

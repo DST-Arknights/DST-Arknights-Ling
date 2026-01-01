@@ -333,7 +333,7 @@ msgstr "%s 正在召唤"
 #. STRINGS.UI.LING_SUMMON.OTHER_WORLD
 msgctxt "STRINGS.UI.LING_SUMMON.OTHER_WORLD"
 msgid "It is not in this world"
-msgstr "它不在这个世界"
+msgstr "它在守卫另一个世界"
 
 #. STRINGS.UI.LING_GUARD_PANEL.FUSION_BUTTON
 msgctxt "STRINGS.UI.LING_GUARD_PANEL.FUSION_BUTTON"
@@ -343,7 +343,7 @@ msgstr "融合弦惊"
 #. STRINGS.UI.LING_GUARD_PANEL.CLOSE_PANEL
 msgctxt "STRINGS.UI.LING_GUARD_PANEL.CLOSE_PANEL"
 msgid "Close Panel"
-msgstr "关闭面板"
+msgstr "关闭"
 
 #. STRINGS.UI.LING_GUARD_PANEL.RECALL
 msgctxt "STRINGS.UI.LING_GUARD_PANEL.RECALL"

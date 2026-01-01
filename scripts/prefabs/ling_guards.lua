@@ -9,6 +9,24 @@ local assets = {
     Asset("ANIM", "anim/loong_1.zip"),
 }
 
+-- 创建持续点亮视野的图标
+local function CreateFogRevealerIcon(inst)
+    if inst._fog_icon == nil then
+        inst._fog_icon = SpawnPrefab("globalmapicon")
+        inst._fog_icon.MiniMapEntity:SetIsFogRevealer(true)
+        inst._fog_icon:AddTag("fogrevealer")
+        inst._fog_icon:TrackEntity(inst)
+    end
+end
+
+-- 移除视野图标
+local function RemoveFogRevealerIcon(inst)
+    if inst._fog_icon ~= nil then
+        inst._fog_icon:Remove()
+        inst._fog_icon = nil
+    end
+end
+
 ---------------------------------------------------------------------
 -- 目标：提供两个干净的预制体：
 --   1) ling_guard_basic：普通守卫（可切换 清平/逍遥 形态；默认 清平）
@@ -20,6 +38,7 @@ local assets = {
 ---------------------------------------------------------------------
 -- 公共存取/移除：容器与附属实体
 local function OnSave_Common(inst, data)
+    ArkLogger:Debug("ling_guard:OnSave", inst)
     if inst.plant_container then data.plant_container = inst.plant_container:GetSaveRecord() end
     if inst.plant_club then data.plant_club = inst.plant_club:GetSaveRecord() end
 end
@@ -57,6 +76,7 @@ local function OnRemoveEntity_Common(inst)
         inst._ling_fixed_weapon:Remove()
         inst._ling_fixed_weapon = nil
     end
+    RemoveFogRevealerIcon(inst)
 end
 
 
@@ -201,6 +221,12 @@ local function SetupSleepHeal(inst)
     end)
 end
 
+local function onDespawn(inst)
+    ArkLogger:Debug("ling_guard:onDespawn", inst)
+    local fx = SpawnPrefab("spawn_fx_medium")
+    fx.Transform:SetPosition(inst.Transform:GetWorldPosition())
+    inst.components.colourtweener:StartTween({ 0, 0, 0, 1 }, 13 * FRAMES, inst.Remove)
+end
 ----------------------------
 -- 普通守卫（ling_guard_basic）
 ----------------------------
@@ -212,9 +238,12 @@ local function ling_guard_basic_fn()
     inst.entity:AddSoundEmitter()
     inst.entity:AddDynamicShadow()
     inst.entity:AddLight()
+    inst.entity:AddMiniMapEntity()
     inst.entity:AddNetwork()
 
     inst.entity:SetCanSleep(false)
+
+    inst.MiniMapEntity:SetIcon("ling.tex")
 
     inst.AnimState:SetBank("loong_0")
     inst.AnimState:SetBuild("loong_0")
@@ -285,6 +314,8 @@ local function ling_guard_basic_fn()
     inst:AddComponent("ling_guard_plant")
     inst:AddComponent("ling_guard_skill")
 
+    inst:AddComponent("colourtweener")
+
     -- 光照
     inst.Light:SetRadius(0.5)
     inst.Light:SetIntensity(0.5)
@@ -305,7 +336,8 @@ local function ling_guard_basic_fn()
     inst.OnSave = OnSave_Common
     inst.OnPreLoad = OnPreLoad_Common
     inst.OnRemoveEntity = OnRemoveEntity_Common
-
+    inst:ListenForEvent("despawn", onDespawn)
+    inst:DoTaskInTime(0, CreateFogRevealerIcon)
     return inst
 end
 
@@ -320,9 +352,11 @@ local function ling_guard_elite_fn()
     inst.entity:AddSoundEmitter()
     inst.entity:AddDynamicShadow()
     inst.entity:AddLight()
+    inst.entity:AddMiniMapEntity()
     inst.entity:AddNetwork()
 
     inst.entity:SetCanSleep(false)
+    inst.MiniMapEntity:SetIcon("ling.tex")
 
     inst.AnimState:SetBank("loong_1")
     inst.AnimState:SetBuild("loong_1")
@@ -376,6 +410,8 @@ local function ling_guard_elite_fn()
     inst:AddComponent("ling_guard_plant")
     inst:AddComponent("ling_guard_skill")
 
+    inst:AddComponent("colourtweener")
+
     inst.Light:SetRadius(1.5)
     inst.Light:SetIntensity(0.5)
     inst.Light:SetFalloff(1)
@@ -394,7 +430,8 @@ local function ling_guard_elite_fn()
     inst.OnSave = OnSave_Common
     inst.OnPreLoad = OnPreLoad_Common
     inst.OnRemoveEntity = OnRemoveEntity_Common
-
+    inst:ListenForEvent("despawn", onDespawn)
+    inst:DoTaskInTime(0, CreateFogRevealerIcon)
     return inst
 end
 
