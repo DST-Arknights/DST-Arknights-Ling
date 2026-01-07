@@ -188,6 +188,7 @@ function LingGuardBehavior:SetBehaviorMode(mode)
             self.guard_pos = pos
         end
     else
+        self.guard_pos = nil
         self.inst.components.follower:StartLeashing()
     end
 end

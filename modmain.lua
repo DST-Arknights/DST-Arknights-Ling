@@ -98,3 +98,5 @@ DefineNetState('ling_summon_manager', (function()
     end
     return state
 end)())
+local skillConfig = require("ling_skill_config")
+AddSkillLevelUpRecipes('ling', skillConfig)

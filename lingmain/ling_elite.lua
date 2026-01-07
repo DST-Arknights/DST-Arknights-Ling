@@ -38,74 +38,22 @@ for k, v in pairs(TUNING.LING.ELITE) do
   TUNING.LING.MAX_GUARDS = math.max(TUNING.LING.MAX_GUARDS, v.MAX_GUARDS)
 end
 
--- 精英化配方
-AddCharacterRecipe("ling_elite_2", {
-  Ingredient("goldnugget", 30),
-  Ingredient("papyrus", 5),
-  Ingredient("tentaclespots", 10),
-  Ingredient("honey", 3),
-}, TECH.MAGIC_TWO, {
-  nounlock = true,
+AddEliteLevelUpRecipes("ling", {{
+  ingredients = {
+    Ingredient("goldnugget", 30),
+    Ingredient("papyrus", 5),
+    Ingredient("tentaclespots", 10),
+    Ingredient("honey", 3),
+  },
   atlas = "images/inventoryimages/ling_elite.xml",
   image = "elite1.tex",
-  actionstr = "LING_ELITE_2",
-  builder_tag = "ling_elite_1",
-  manufactured = true,
-})
-
--- 精英化配方
-AddCharacterRecipe("ling_elite_3", {
-  Ingredient("goldnugget", 180),
-  Ingredient("papyrus", 8),
-  Ingredient("purebrilliance", 5),
-  Ingredient("wagpunk_bits", 4),
-}, TECH.MAGIC_THREE, {
-  nounlock = true,
+}, {
+  ingredients = {
+    Ingredient("goldnugget", 180),
+    Ingredient("papyrus", 8),
+    Ingredient("purebrilliance", 5),
+    Ingredient("wagpunk_bits", 4),
+  },
   atlas = "images/inventoryimages/ling_elite.xml",
   image = "elite2.tex",
-  actionstr = "LING_ELITE_3",
-  builder_tag = "ling_elite_2",
-  manufactured = true,
-})
-
-AddPrefabPostInit("researchlab4", function(self)
-  if not TheWorld.ismastersim then
-      return
-  end
-  local _onactivate = self.components.prototyper.onactivate
-  self.components.prototyper.onactivate = function(inst, doer, recipe)
-    if recipe.name == "ling_elite_2" then
-      if doer.components.ark_elite then
-        doer.components.ark_elite:EliteUp()
-      else
-        if doer.components.talker then
-          doer.components.talker:Say(GetActionFailString(doer, 'BUILD', nil))
-        end
-      end
-    end
-    return _onactivate(inst, doer, recipe)
-  end
-end)
-
-AddPrefabPostInit("researchlab3", function(self)
-  if not TheWorld.ismastersim then
-      return
-  end
-  local _onactivate = self.components.prototyper.onactivate
-  self.components.prototyper.onactivate = function(inst, doer, recipe)
-    if recipe.name == "ling_elite_3" or recipe.name == "ling_elite_2" then
-      if doer.components.ark_elite then
-        if recipe.name == "ling_elite_2" then
-        doer.components.ark_elite:EliteUp()
-        else
-        doer.components.ark_elite:EliteUp()
-        end
-      else
-        if doer.components.talker then
-          doer.components.talker:Say(GetActionFailString(doer, 'BUILD', nil))
-        end
-      end
-    end
-    return _onactivate(inst, doer, recipe)
-  end
-end)
+}})

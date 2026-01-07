@@ -38,6 +38,52 @@ local function OnNewTarget(inst, data)
   end, 10)
 end
 
+local function OnApplyElite(inst, elite, level)
+  ArkLogger:Debug("OnApplyElite", elite, level)
+  if inst.components.ling_poetry and elite then
+    inst.components.ling_poetry:SetElite(elite)
+  end
+  if inst.components.ark_skill then
+    if elite == 2 then
+      inst.components.ark_skill:GetSkill("skill2"):Unlock()
+    elseif elite == 3 then
+      inst.components.ark_skill:GetSkill("skill3"):Unlock()
+    end
+  end
+  local data = TUNING.LING.ELITE[elite]
+  if not data then
+      return
+  end
+  -- 更新基础属性
+  inst.components.health:SetMaxHealth(data.MAX_HEALTH)
+  inst.components.hunger:SetMax(data.MAX_HUNGER)
+  inst.components.sanity:SetMax(data.MAX_SANITY)
+  -- 应用移动速度
+  inst.components.locomotor:SetExternalSpeedMultiplier(inst, "ling_elite_speed", data.SPEED_MULTIPLIER)
+  inst.components.combat.externaldamagemultipliers:SetModifier(inst, data.DAMAGE_MULTIPLIER, "ling_elite_damage")
+  -- 应用睡眠抗性
+  if inst.components.sleeper then
+    inst.components.sleeper:SetResistance(data.SLEEP_RESISTANCE)
+  end
+  -- 应用召唤管理器槽位
+  if inst.components.ling_summon_manager then
+    ArkLogger:Debug("SetMaxSlots", data.MAX_GUARDS)
+    inst.components.ling_summon_manager:SetMaxSlots(data.MAX_GUARDS)
+  end
+  -- 解锁书桌
+  if elite == 2 and inst.components.builder then
+    inst.components.builder:UnlockRecipe("ling_desk")
+  end
+  -- 所有召唤兽同步等级
+  if inst.components.ling_summon_manager then
+    inst.components.ling_summon_manager:OptionalAllGuard(function(guard)
+      if guard.components.ling_guard then
+        guard.components.ling_guard:SetLevel(elite)
+      end
+    end)
+  end
+end
+
 local function common_post_init(inst)
   inst:AddTag("ling")
   inst:AddTag("reader")
@@ -49,6 +95,8 @@ local function master_post_init(inst)
   -- 添加组件
   inst:AddComponent("ark_currency")
   inst:AddComponent("ark_elite")
+  inst.components.ark_elite:SetRarity(6)
+  inst.components.ark_elite:OnApplyElite(OnApplyElite)
   inst:AddComponent("ling_poetry")
   inst:AddComponent("sleeper")
   inst:AddComponent("planarentity")

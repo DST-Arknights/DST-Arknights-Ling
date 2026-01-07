@@ -48,7 +48,7 @@ local function FindNearestPlayer(inst)
 end
 
 local function GetFollowPos(inst)
-    local leader = FindNearestPlayer(inst)
+    local leader = GetLeader(inst)
     if leader then
         return leader:GetPosition()
     elseif inst.components.knownlocations then
@@ -62,7 +62,7 @@ local function GetGuardPos(inst)
     if inst.components.ling_guard and inst.components.ling_guard.guard_pos then
         return inst.components.ling_guard.guard_pos
     end
-    local leader = FindNearestPlayer(inst)
+    local leader = GetLeader(inst)
     return leader and leader:GetPosition() or inst:GetPosition()
 end
 
@@ -568,7 +568,15 @@ function LingGuardBrain:OnStart()
             local c = self.inst.components and self.inst.components.combat or nil
             return c ~= nil and c.target ~= nil and c:InCooldown()
         end, "KiteHostileEnemies",
-            RunAway(self.inst, { fn = function(guy) return self.inst.components and self.inst.components.combat and self.inst.components.combat:TargetIs(guy) end, tags = {"_combat"}, notags = {"INLIMBO"} }, guardConfig.KITE.DETECTION_RANGE or guardConfig.KITE.RUN_DISTANCE, guardConfig.KITE.STOP_DISTANCE, nil, nil, nil, nil, GetKiteSafePoint)),
+            RunAway(self.inst, {
+                fn = function(guy)
+                    return Targeting.IsThreatToGuard(self.inst, guy)
+                end,
+                tags = {"_combat"},
+                notags = {"INLIMBO"}
+            },
+            guardConfig.KITE.DETECTION_RANGE or guardConfig.KITE.RUN_DISTANCE,
+            guardConfig.KITE.STOP_DISTANCE, nil, nil, nil, nil, GetKiteSafePoint)),
 
         -- 先拾取后工作：PickupGuardRange 提前于 GuardWork
         WhileNode(function()
@@ -594,7 +602,7 @@ function LingGuardBrain:OnStart()
             local mode = self.inst.components.ling_guard and self.inst.components.ling_guard:GetBehaviorMode() or CONSTANTS.GUARD_BEHAVIOR_MODE.CAUTIOUS
             return mode ~= CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD
         end, "FollowLeader",
-            Follow(self.inst, FindNearestPlayer,
+            Follow(self.inst, GetLeader,
                 guardConfig.FOLLOW.MIN or 0,
                 guardConfig.FOLLOW.TARGET or 5,
                 guardConfig.FOLLOW.MAX or 10)),

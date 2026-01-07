@@ -125,6 +125,10 @@ function LingGuardPanel:_InitBaseUI()
         end
     end)
     self.container_open:SetHoverText(STRINGS.UI.LING_GUARD_PANEL.OPEN_CONTAINER, { offset_x = 0, offset_y = -60 })
+    -- 设置health
+    if self.guard and self.guard.components.healthsyncer then
+        self.health:SetPercent(self.guard.components.healthsyncer:GetPercent(), false)
+    end
 end
 
 function LingGuardPanel:_CreateModeButtons()

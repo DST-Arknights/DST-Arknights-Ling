@@ -89,24 +89,14 @@ function LingSummonManager:EmptySlot(idx)
 end
 
 function LingSummonManager:SetMaxSlots(max_slots)
+  if max_slots <= self.max_slots then
+    return
+  end
   local old_max = self.max_slots
   self.max_slots = max_slots
-
-  -- 如果减少了槽位数量，将超出的槽位设为禁用状态
-  if max_slots < old_max then
-    for i = max_slots + 1, old_max do
-      if i <= MAX_GUARDS then
-        self:DisableSlot(i)
-      end
-    end
-  end
-
-  -- 如果增加了槽位数量，将新增的槽位设为空状态
-  if max_slots > old_max then
-    for i = old_max + 1, max_slots do
-      if i <= MAX_GUARDS then
-        self:EmptySlot(i)
-      end
+  for i = old_max + 1, max_slots do
+    if i <= MAX_GUARDS then
+      self:EmptySlot(i)
     end
   end
 end
@@ -309,6 +299,7 @@ end
 
 -- 召唤相关方法
 function LingSummonManager:SummonBasic(slot_index, pos)
+  ArkLogger:Debug("LingSummonManager:SummonBasic", slot_index, pos)
   if self.inst.sg:HasStateTag("busy") then
     return false
   end
