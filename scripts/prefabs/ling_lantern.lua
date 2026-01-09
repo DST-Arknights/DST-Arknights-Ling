@@ -6,15 +6,17 @@ local assets = {
 
 -- ========== 常量配置 ==========
 local LING_LANTERN_CONFIG = {
-    -- 燃料相关
-    FUEL_MAX = 480,                    -- 8分钟 = 480秒
-    FUEL_REFILL_AMOUNT = 0.1,         -- 每个噩梦燃料补充10%
-    FUEL_BONUS_MULT = 0.25,           -- 燃料加成倍数
+    -- 燃料相关（稍微延长持续时间，降低加成）
+    FUEL_MAX = TUNING.TOTAL_DAY_TIME * 8,                    -- 8天
+    FUEL_BONUS_MULT = 0.5,           -- 燃料加成倍数（略微降低以平衡）
 
     -- 光照相关
-    LIGHT_RADIUS_MAX = 3,
-    LIGHT_FALLOFF = 1,
-    LIGHT_INTENSITY_MAX = 0.5,
+    -- 光照相关（提高最大可视范围与亮度，使用平滑曲线计算）
+    LIGHT_RADIUS_MIN = 2,
+    LIGHT_RADIUS_MAX = 10,
+    LIGHT_FALLOFF = 0.8,
+    LIGHT_INTENSITY_MIN = 0.75,
+    LIGHT_INTENSITY_MAX = 0.75,
     LIGHT_COLOR = {255/255, 211/255, 151/255},
 
     -- 攻击相关
@@ -30,9 +32,9 @@ local LING_LANTERN_CONFIG = {
 
 -- ========== 状态管理 ==========
 local LANTERN_STATE = {
-    EQUIPPED = "equipped",
-    INVENTORY = "inventory",
-    GROUND = "ground"
+    EQUIPPED = 1,
+    INVENTORY = 2,
+    GROUND = 3
 }
 
 -- 获取灯笼当前状态
@@ -51,13 +53,6 @@ local function GetFuelPercent(inst)
     return inst.components.fueled:GetPercent() or 0
 end
 
--- 检查是否应该有光照
-local function ShouldHaveLight(inst)
-    local fuel_percent = GetFuelPercent(inst)
-    local machine_on = inst.components.machine:IsOn()
-    return fuel_percent > 0 and machine_on
-end
-
 -- ========== 清理函数 ==========
 local function OnRemoveSmoke(smoke)
     if smoke._lantern then
@@ -71,70 +66,81 @@ local function OnRemoveBody(body)
     end
 end
 
--- ========== 光照系统 ==========
--- 统一的光照更新函数 - 修复了燃料为0时的亮度bug
-local function UpdateLightSystem(inst)
-    local state = GetLanternState(inst)
-    local fuel_percent = GetFuelPercent(inst)
-    local should_have_light = ShouldHaveLight(inst)
-
-    -- 计算光照属性
-    local radius = should_have_light and (LING_LANTERN_CONFIG.LIGHT_RADIUS_MAX * fuel_percent) or 0
-    local intensity = should_have_light and (LING_LANTERN_CONFIG.LIGHT_INTENSITY_MAX * fuel_percent) or 0
-
-    if state == LANTERN_STATE.EQUIPPED and inst._body then
-        -- 装备状态：使用灯体光照
-        inst._body.Light:SetRadius(radius)
-        inst._body.Light:SetIntensity(intensity)
-        inst._body.Light:Enable(should_have_light)
-        -- 关闭本体光照
-        inst.Light:Enable(false)
+local function GetLight(inst)
+    if inst._body then
+        return inst._body.Light
     else
-        -- 地面或库存状态：使用本体光照
-        inst.Light:SetRadius(radius)
-        inst.Light:SetIntensity(intensity)
-        inst.Light:Enable(should_have_light)
-        -- 关闭灯体光照（如果存在）
-        if inst._body then
-            inst._body.Light:Enable(false)
-        end
+        return inst.Light
     end
+end
+
+local function EvalRadius(t)
+    if t <= 0 then return LING_LANTERN_CONFIG.LIGHT_RADIUS_MIN end
+    -- 从最小值到最大值的平滑过渡
+    local scaled = 0.35 + 0.65 * (t ^ 0.7)
+    return LING_LANTERN_CONFIG.LIGHT_RADIUS_MIN + (LING_LANTERN_CONFIG.LIGHT_RADIUS_MAX - LING_LANTERN_CONFIG.LIGHT_RADIUS_MIN) * scaled
+end
+
+local function EvalIntensity(t)
+    if t <= 0 then return LING_LANTERN_CONFIG.LIGHT_INTENSITY_MIN end
+    -- 从最小值到最大值的平滑过渡
+    local scaled = t ^ 0.9
+    return LING_LANTERN_CONFIG.LIGHT_INTENSITY_MIN + (LING_LANTERN_CONFIG.LIGHT_INTENSITY_MAX - LING_LANTERN_CONFIG.LIGHT_INTENSITY_MIN) * scaled
+end
+
+-- 统一的光照更新函数
+local function UpdateLightSystem(inst)
+    
+    local fuel_percent = GetFuelPercent(inst)
+
+    local radius = EvalRadius(fuel_percent)
+    local intensity = EvalIntensity(fuel_percent)
+
+    -- 颜色随燃料略微变暗（低燃料时偏冷/暗）
+    local c1, c2, c3 = unpack(LING_LANTERN_CONFIG.LIGHT_COLOR)
+    local color_scale = 0.6 + 0.4 * fuel_percent
+    local r, g, b = c1 * color_scale, c2 * color_scale, c3 * color_scale
+    local light = GetLight(inst)
+    light:SetRadius(radius)
+    light:SetIntensity(intensity)
+    light:SetFalloff(LING_LANTERN_CONFIG.LIGHT_FALLOFF)
+    light:SetColour(r, g, b)
 end
 
 -- ========== 烟雾效果管理 ==========
 local function CreateSmoke(inst)
-    if inst._smoke then
-        return -- 已存在，无需重复创建
+    if inst._create_smoke_task then
+        inst._create_smoke_task:Cancel()
+        inst._create_smoke_task = nil
     end
+    inst._create_smoke_task = inst:DoTaskInTime(0, function()
+        inst._create_smoke_task = nil
+        if inst._smoke then
+            return -- 已存在，无需重复创建
+        end
 
-    inst._smoke = SpawnPrefab("ling_lantern_smoke")
-    if inst._smoke then
+        inst._smoke = SpawnPrefab("ling_lantern_smoke")
         inst._smoke.entity:AddFollower()
         inst._smoke._lantern = inst
         inst:ListenForEvent("onremove", OnRemoveSmoke, inst._smoke)
-    end
-end
-
-local function UpdateSmokePosition(inst)
-    if not inst._smoke then
-        return
-    end
-
-    local state = GetLanternState(inst)
-    local offset = LING_LANTERN_CONFIG.SMOKE_OFFSET
-
-    if state == LANTERN_STATE.EQUIPPED and inst._body then
-        -- 装备状态：跟随灯体
-        inst._smoke.Follower:FollowSymbol(inst._body.GUID, "lantern_swing",
-                                            offset[1], offset[2], offset[3])
-    elseif state == LANTERN_STATE.GROUND then
-        -- 地面状态：跟随灯笼本体
-        inst._smoke.Follower:FollowSymbol(inst.GUID, "lantern_swing",
-                                            offset[1], offset[2], offset[3])
-    end
+        -- 设置烟雾跟随位置
+        local offset = LING_LANTERN_CONFIG.SMOKE_OFFSET
+        local state = GetLanternState(inst)
+        if state == LANTERN_STATE.EQUIPPED and inst._body then
+            inst._smoke.Follower:FollowSymbol(inst._body.GUID, "lantern_swing",
+                                                offset[1], offset[2], offset[3])
+        elseif state == LANTERN_STATE.GROUND then
+            inst._smoke.Follower:FollowSymbol(inst.GUID, "lantern_swing",
+                                                offset[1], offset[2], offset[3])
+        end
+    end)
 end
 
 local function RemoveSmoke(inst)
+    if inst._create_smoke_task then
+        inst._create_smoke_task:Cancel()
+        inst._create_smoke_task = nil
+    end
     if inst and inst._smoke then
         inst._smoke:Remove()
         inst._smoke = nil
@@ -143,33 +149,42 @@ end
 
 -- ========== 开关控制 ==========
 
+local autoCloseSymbol = Symbol("AutoClose")
+
+local function TurnOff(inst)
+    inst[autoCloseSymbol] = true
+    inst.components.machine:TurnOff()
+    inst[autoCloseSymbol] = nil
+end
+
 local function MachineTurnOffCallback(inst)
+    if not inst[autoCloseSymbol] and GetLanternState(inst) == LANTERN_STATE.GROUND and TheWorld.state.isnight then
+        inst._auto_turnon_at_night = false
+    end
     -- 移除烟雾效果
     RemoveSmoke(inst)
     inst.components.fueled:StopConsuming()
-    -- 更新光照系统（会关闭所有光照）
-    UpdateLightSystem(inst)
-end
-
-local function TurnOff(inst)
-    inst.components.machine:TurnOff()
-end
-
-local function MachineTurnOnCallback(inst)
-    if not inst.components.fueled or inst.components.fueled:IsEmpty() then
-        TurnOff(inst)
-        return
-    end
-    CreateSmoke(inst)
-    inst:DoTaskInTime(0, UpdateSmokePosition)
-    -- 开始消耗燃料
-    inst.components.fueled:StartConsuming()
-    -- 更新光照系统
-    UpdateLightSystem(inst)
+    local light = GetLight(inst)
+    light:Enable(false)
 end
 
 local function TurnOn(inst)
     inst.components.machine:TurnOn()
+end
+
+local function MachineTurnOnCallback(inst)
+    inst._auto_turnon_at_night = true
+    -- 检查是否是在地面打开的
+    if GetLanternState(inst) == LANTERN_STATE.GROUND then
+        inst._auto_turnon_at_night = true
+    end
+    CreateSmoke(inst)
+    -- 开始消耗燃料
+    inst.components.fueled:StartConsuming()
+    local light = GetLight(inst)
+    light:Enable(true)
+    -- 更新光照系统
+    UpdateLightSystem(inst)
 end
 
 -- ========== 灯体管理 ==========
@@ -179,10 +194,6 @@ local function CreateLanternBody(inst, owner)
     end
 
     inst._body = SpawnPrefab("ling_lanternbody")
-    if not inst._body then
-        return false
-    end
-
     inst._body._lantern = inst
     inst:ListenForEvent("onremove", OnRemoveBody, inst._body)
 
@@ -191,8 +202,6 @@ local function CreateLanternBody(inst, owner)
     inst._body.entity:AddFollower()
     local offset = LING_LANTERN_CONFIG.BODY_OFFSET
     inst._body.Follower:FollowSymbol(owner.GUID, "swap_object", offset[1], offset[2], offset[3])
-
-    return true
 end
 
 local function RemoveLanternBody(inst)
@@ -218,17 +227,30 @@ local function UpdateOwnerAnimation(inst, owner, equipping)
     end
 end
 
--- ========== 伤害计算系统 ==========
--- 计算武器基础伤害：（22+持有者当前诗意最大上限）*目前的燃料百分比
-local function CalculateWeaponDamage(inst)
+-- ========== 其他回调 ==========
+local function OnAttack(inst, attacker, target)
+    -- 攻击回调函数，可以在这里添加特殊攻击效果
+end
+
+local function AddWeaponComponent(inst)
+    inst:AddComponent("weapon")
+    inst.components.weapon:SetDamage(LING_LANTERN_CONFIG.ATTACK_DAMAGE)
+    inst.components.weapon:SetRange(LING_LANTERN_CONFIG.ATTACK_RANGE)
+    inst.components.weapon:SetOnAttack(OnAttack)
+end
+
+-- 更新武器可用状态
+local function UpdateWeaponDamage(inst)
     local fuel_percent = GetFuelPercent(inst)
-
-    -- 燃料为0时伤害为0
     if fuel_percent <= 0 then
-        return 0
+        if inst.components.weapon then
+            inst:RemoveComponent("weapon")
+        end
+        return
     end
-
-    -- 获取持有者的诗意最大上限
+    if not inst.components.weapon then
+        AddWeaponComponent(inst)
+    end
     local poetry_max = 0
     if inst.components.equippable and inst.components.equippable:IsEquipped() then
         local owner = inst.components.inventoryitem.owner
@@ -236,21 +258,8 @@ local function CalculateWeaponDamage(inst)
             poetry_max = owner.components.ling_poetry:GetMax()
         end
     end
-
-    -- 计算伤害：（22+诗意最大上限）*燃料百分比
-    local base_damage = LING_LANTERN_CONFIG.ATTACK_DAMAGE + poetry_max
-    local final_damage = base_damage * fuel_percent
-
-    return final_damage
-end
-
--- 更新武器可用状态
-local function UpdateWeaponEnabled(inst)
-    local damage = CalculateWeaponDamage(inst)
+    local damage = LING_LANTERN_CONFIG.ATTACK_DAMAGE + fuel_percent * poetry_max
     inst.components.weapon:SetDamage(damage)
-    if damage <= 0 then
-        inst.components.combat.canattack = false
-    end
 end
 
 
@@ -263,34 +272,38 @@ end
 
 local function OnDropped(inst)
     RemoveLanternBody(inst)
-    UpdateWeaponEnabled(inst)
-    TurnOn(inst)
+    UpdateWeaponDamage(inst)
+    TurnOff(inst)
+    if not inst.turn_on_task then
+        inst.turn_on_task = inst:DoTaskInTime(0, function()
+            inst.turn_on_task = nil
+            if not inst:IsLightGreaterThan(0.5) then
+                TurnOn(inst)
+            end
+        end)
+    end
 end
 
 local function OnEquip(inst, owner)
     UpdateOwnerAnimation(inst, owner, true)
 
     -- 创建灯体
-    if CreateLanternBody(inst, owner) then
-        -- 监听状态变化以更新动画
-        inst._body:ListenForEvent("newstate", function(owner, data)
-            UpdateOwnerAnimation(inst, owner, true)
-            if inst._body then
-                inst._body:Show()
-            end
-            UpdateSmokePosition(inst)
-        end, owner)
-
-        -- 显示灯体
-        if inst._body then
-            inst._body:Show()
-        end
-    end
-
-    -- 更新武器状态（装备时重新计算，因为现在有持有者的诗意信息）
-    UpdateWeaponEnabled(inst)
-    -- 装备时尝试开启
-    print("ling_lantern: OnEquip")
+    CreateLanternBody(inst, owner)
+    -- 监听状态变化以更新动画
+    -- inst._body:ListenForEvent("newstate", function(owner, data)
+    --     if inst._smoke then
+    --         if inst._body then
+    --             ArkLogger:Debug("ling_lantern:OnEquip - newstate - follow body")
+    --             inst._smoke.Follower:FollowSymbol(inst._body.GUID, "lantern_swing",
+    --                                                 LING_LANTERN_CONFIG.SMOKE_OFFSET[1], LING_LANTERN_CONFIG.SMOKE_OFFSET[2], LING_LANTERN_CONFIG.SMOKE_OFFSET[3])
+    --         else
+    --             ArkLogger:Debug("ling_lantern:OnEquip - newstate - follow owner")
+    --             inst._smoke.Follower:FollowSymbol(owner.GUID, "swap_object", LING_LANTERN_CONFIG.SMOKE_OFFSET[1], LING_LANTERN_CONFIG.SMOKE_OFFSET[2], LING_LANTERN_CONFIG.SMOKE_OFFSET[3])
+    --         end
+    --     end
+    -- end, owner)
+    -- 更新武器状态
+    UpdateWeaponDamage(inst)
     TurnOn(inst)
 end
 
@@ -298,19 +311,17 @@ local function OnUnequip(inst, owner)
     UpdateOwnerAnimation(inst, owner, false)
 
     -- 更新武器状态（卸下时重新计算，诗意信息不再可用）
-    UpdateWeaponEnabled(inst)
-    -- 卸下武器一定恢复可攻击状态
-    inst.components.combat.canattack = true
     RemoveLanternBody(inst)
-    TurnOff(inst)
+    UpdateWeaponDamage(inst)
 end
 
 local function OnEquipToModel(inst, owner, from_ground)
     -- 装备到模型时关闭
-    TurnOff(inst)
+    -- TurnOff(inst)
 end
 
 local function OnFuelEmpty(inst)
+    inst:RemoveTag("fueldepleted")
     -- 通知装备者火把燃尽
     if inst.components.equippable and inst.components.equippable:IsEquipped() then
         local owner = inst.components.inventoryitem.owner
@@ -320,26 +331,19 @@ local function OnFuelEmpty(inst)
     end
 
     -- 更新武器状态
-    UpdateWeaponEnabled(inst)
-
-    TurnOff(inst)
+    UpdateWeaponDamage(inst)
 end
 
 local function OnFuelUpdate(inst)
     UpdateLightSystem(inst)
-    UpdateWeaponEnabled(inst)
+    UpdateWeaponDamage(inst)
 end
 
 local function OnRefueled(inst, fuel_value)
-    UpdateLightSystem(inst)
-    UpdateWeaponEnabled(inst)
-    -- 无论在什么状态，只要有燃料就尝试开启
-    TurnOn(inst)
-end
-
--- ========== 其他回调 ==========
-local function OnAttack(inst, attacker, target)
-    -- 攻击回调函数，可以在这里添加特殊攻击效果
+    -- 如果已经打开, 开始燃烧
+    if inst.components.machine:IsOn() then
+        inst.components.fueled:StartConsuming()
+    end
 end
 
 local function GetStatus(inst)
@@ -350,6 +354,31 @@ local function GetStatus(inst)
         return "LOWFUEL"
     end
     return "NORMAL"
+end
+
+local function OnPhaseChanged(inst, phase)
+    local status = GetLanternState(inst)
+    if not status == LANTERN_STATE.GROUND then
+        return
+    end
+    if phase == "night" and inst._auto_turnon_at_night then
+        TurnOn(inst)
+    end
+    if phase == 'day' then
+        TurnOff(inst)
+    end
+end
+
+local function OnLoad(inst, data)
+    if data and data.ground_turnon then
+        inst._auto_turnon_at_night = true
+    end
+end
+
+local function OnSave(inst)
+    return {
+        ground_turnon = inst._auto_turnon_at_night,
+    }
 end
 
 -- ========== 主预制体构造函数 ==========
@@ -409,9 +438,9 @@ local function CreateLingLantern()
 
     -- 燃料组件
     inst:AddComponent("fueled")
+    inst:DoTaskInTime(1, function() inst:RemoveTag("fueldepleted") end)
     inst.components.fueled:InitializeFuelLevel(LING_LANTERN_CONFIG.FUEL_MAX)
     inst.components.fueled.fueltype = FUELTYPE.NIGHTMARE
-    inst.components.fueled.secondaryfueltype = "NIGHTMARE"
     inst.components.fueled.accepting = true
     inst.components.fueled.bonusmult = LING_LANTERN_CONFIG.FUEL_BONUS_MULT
     inst.components.fueled:SetDepletedFn(OnFuelEmpty)
@@ -422,13 +451,7 @@ local function CreateLingLantern()
     inst.components.fueled:SetSectionCallback(function () OnFuelUpdate(inst) end)
 
     -- 武器组件
-    inst:AddComponent("weapon")
-    inst.components.weapon:SetDamage(LING_LANTERN_CONFIG.ATTACK_DAMAGE) -- 初始伤害，会在装备时重新计算
-    inst.components.weapon:SetRange(LING_LANTERN_CONFIG.ATTACK_RANGE)
-    inst.components.weapon:SetOnAttack(OnAttack)
-
-    -- 战斗组件（需要用于武器攻击）
-    inst:AddComponent("combat")
+    AddWeaponComponent(inst)
 
     -- 机器组件（右键开关）
     inst:AddComponent("machine")
@@ -443,18 +466,14 @@ local function CreateLingLantern()
     inst.components.equippable:SetOnUnequip(OnUnequip)
     inst.components.equippable:SetOnEquipToModel(OnEquipToModel)
 
+    inst:WatchWorldState("phase", OnPhaseChanged)
+
     -- 事件处理
     inst.OnRemoveEntity = OnRemove
 
     -- 保存加载处理
-    inst.OnLoad = function(inst, data)
-        -- 延迟更新确保所有组件都已加载
-        inst:DoTaskInTime(0, function()
-            UpdateWeaponEnabled(inst)
-            -- TurnOn(inst) -- 尝试开启（如果有燃料）
-        end)
-    end
-
+    inst.OnLoad = OnLoad
+    inst.OnSave = OnSave
     -- 初始化状态
     inst._smoke = nil
     inst._body = nil
@@ -481,8 +500,7 @@ local function CreateLanternBody()
     inst.AnimState:PlayAnimation("idle_body_loop", true)
     inst.AnimState:SetFinalOffset(1)
 
-    -- 光照设置（修复bug：初始关闭，由UpdateLightSystem控制）
-    inst.Light:Enable(false)
+    inst.Light:Enable(true)
     inst.Light:SetRadius(0)
     inst.Light:SetFalloff(LING_LANTERN_CONFIG.LIGHT_FALLOFF)
     inst.Light:SetIntensity(0)
@@ -508,4 +526,4 @@ end
 
 -- ========== 导出预制体 ==========
 return Prefab("ling_lantern", CreateLingLantern, assets),
-       Prefab("ling_lanternbody", CreateLanternBody)
+       Prefab("ling_lanternbody", CreateLanternBody, assets)

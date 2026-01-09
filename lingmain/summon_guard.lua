@@ -393,8 +393,8 @@ end)
 
 -- 客户端点击融合（以当前守卫所在槽位为主位）
 AddModRPCHandler("ling_summon", "guard_fusion", function(player, guard_inst)
-  if player.components.ling_guard then
-    player.components.ling_guard:Fusion()
+  if player.components.ling_summon_manager then
+    player.components.ling_summon_manager:Fusion(guard_inst)
   end
 end)
 

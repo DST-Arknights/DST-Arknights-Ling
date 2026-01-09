@@ -339,21 +339,25 @@ end
 
 -- 融合
 
-function LingSummonManager:Fusion(slot_index)
+function LingSummonManager:Fusion(guard_inst)
   if self.inst.sg:HasStateTag("busy") then
     return false
   end
   -- 精英化检查
-  local elite_level = self.inst.components.ark_elite.elite
+  local elite_level = self.inst.components.ark_elite and self.inst.components.ark_elite.elite or 0
   if elite_level < 1 then
     return false
   end
-  -- 槽位检查
-  local slotData = self:GetSlotData(slot_index)
-  local current = slotData.inst
-  if not current or not current:IsValid() then
+  -- 插槽索引检查（从 guard_inst 获取）
+  if not guard_inst or not guard_inst:IsValid() then
     return false
   end
+  local slot_index = self:GetGuardSlotIndex(guard_inst)
+  if not slot_index then
+    return false
+  end
+  local slotData = self:GetSlotData(slot_index)
+  local current = guard_inst
   -- 可融合检查
   local fusion_candidates = {}
   local all = self:GetAllSlots()

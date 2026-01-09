@@ -112,6 +112,7 @@ function LingGuardPanel:_InitBaseUI()
     self.name = self:AddChild(ImageButton("images/ui_ling_guard_panel.xml", "name_qingping.tex"))
     self.name:SetPosition(222, 48, 0)
     self.name:SetOnClick(function()
+        if self.form == CONSTANTS.GUARD_FORM.XIANJING then return end
         local target = (self.form == CONSTANTS.GUARD_FORM.XIAOYAO) and CONSTANTS.GUARD_FORM.QINGPING or CONSTANTS.GUARD_FORM.XIAOYAO
         if self.guard then self.guard.replica.ling_guard:SetForm(target) end
     end)

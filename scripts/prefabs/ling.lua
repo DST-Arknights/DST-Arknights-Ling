@@ -84,6 +84,17 @@ local function OnApplyElite(inst, elite, level)
   end
 end
 
+local function OnReroll(inst)
+  -- 移除所有的召唤物
+  if inst.components.ling_summon_manager then
+    inst.components.ling_summon_manager:OptionalAllGuard(function(guard)
+      if guard.components.ling_guard then
+        guard.components.ling_guard:Recall()
+      end
+    end)
+  end
+end 
+
 local function common_post_init(inst)
   inst:AddTag("ling")
   inst:AddTag("reader")
@@ -135,6 +146,7 @@ local function master_post_init(inst)
       inst.components.ling_summon_manager:PrepareForMigration()
     end
   end
+  inst:ListenForEvent("ms_playerreroll", OnReroll)
 end
 
 return MakePlayerCharacter("ling", prefabs, assets, common_post_init, master_post_init, start_inv)

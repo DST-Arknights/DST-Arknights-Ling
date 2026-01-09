@@ -88,11 +88,17 @@ function LingGuardBehavior:ClosePlantContainer(doer)
 end
 
 function LingGuardBehavior:OpenContainer(doer)
+    if not self.inst.components.container then
+        return
+    end
     self.inst.components.container:SkipAutoClose(doer)
     self.inst.components.container:Open(doer)
 end
 
 function LingGuardBehavior:CloseContainer(doer)
+    if not self.inst.components.container then
+        return
+    end
     self.inst.components.container:StopSkipAutoClose(doer)
     self.inst.components.container:Close(doer)
 end
@@ -120,14 +126,18 @@ function LingGuardBehavior:OpenPanel(doer)
     self.inst:DoTaskInTime(4, function()
         self.inst.replica.ling_guard.state.guard_pos_x = self.inst.replica.ling_guard.state.guard_pos_x + 1
     end)
-    self.inst.components.container:SkipAutoClose(doer)
+    if self.inst.components.container then
+        self.inst.components.container:SkipAutoClose(doer)
+    end
     self:CheckOpenPlantContainer(doer)
 end
 
 function LingGuardBehavior:ClosePanel(doer)
     self.inst.replica.ling_guard.state:Attach(self.inst)
     self.panel_opener = nil
-    self.inst.components.container:StopSkipAutoClose(doer)
+    if self.inst.components.container then
+        self.inst.components.container:StopSkipAutoClose(doer)
+    end
     self:ClosePlantContainer(doer)
 end
 
