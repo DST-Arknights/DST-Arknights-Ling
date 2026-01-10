@@ -8,13 +8,6 @@ local SafeCallLingGuardPanel = GenSafeCall(function(player, inst)
   return SafeCallHUD(player):GetGuardPanel(inst)
 end)
 
-local function OnHealthDirty(inst)
-  local leader = inst.replica.follower and inst.replica.follower:GetLeader()
-  if not TheNet:IsDedicated() and ThePlayer == leader then
-    SafeCallLingGuardPanel(ThePlayer, inst):SetHealth(inst.components.healthsyncer:GetPercent())
-  end
-end
-
 local function OnNameDirty(inst)
   local leader = inst.replica.follower and inst.replica.follower:GetLeader()
   if not TheNet:IsDedicated() and ThePlayer == leader then
@@ -59,9 +52,18 @@ local LingGuardReplica = Class(function(self, inst)
   self.state:Watch("work_mode", function()
     local panel = SafeCallLingGuardPanel(ThePlayer, self.inst):SyncWorkMode(self.state.work_mode)
   end)
-  -- self.state:Watch("health", function()
-  --   SafeCallLingGuardPanel(ThePlayer, self.inst):SetHealth(self.state.health)
-  -- end)
+  self.state:Watch({"current_health"}, function()
+    local panel = SafeCallLingGuardPanel(ThePlayer, self.inst)
+    if panel then
+      panel.health:SetCurrent(self.state.current_health, true)
+    end
+  end)
+  self.state:Watch({"max_health"}, function()
+    local panel = SafeCallLingGuardPanel(ThePlayer, self.inst)
+    if panel then
+      panel.health:SetMax(self.state.max_health, true)
+    end
+  end)
   self.state:Watch("level", function()
     SafeCallLingGuardPanel(ThePlayer, self.inst):SetLevel(self.state.level)
   end)
@@ -75,7 +77,6 @@ local LingGuardReplica = Class(function(self, inst)
     end
   end)
 
-  self.inst:ListenForEvent("clienthealthdirty", OnHealthDirty)  -- 客户端状态
   self.inst:ListenForEvent("namedirty", OnNameDirty)
   self._guard_pos_inst = nil
 end)
@@ -195,7 +196,6 @@ function LingGuardReplica:Recall()
 end
 
 function LingGuardReplica:OnRemoveFromEntity()
-  self.inst:RemoveEventCallback("clienthealthdirty", OnHealthDirty)
   self.inst:RemoveEventCallback("namedirty", OnNameDirty)
 end
 

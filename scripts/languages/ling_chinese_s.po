@@ -427,10 +427,10 @@ msgid " (Locked)"
 msgstr "(未解锁)"
 
 
-#. STRINGS.UI.LING_GUARD_PANEL.HEALTH_PERCENT
-msgctxt "STRINGS.UI.LING_GUARD_PANEL.HEALTH_PERCENT"
-msgid "Health: %d%%"
-msgstr "生命值: %d%%"
+#. STRINGS.UI.LING_GUARD_PANEL.HEALTH
+msgctxt "STRINGS.UI.LING_GUARD_PANEL.HEALTH"
+msgid "Health: %d/%d (%d%%)"
+msgstr "生命值: %d/%d (%d%%)"
 
 #. 云山亭进入房间
 msgctxt "STRINGS.ACTIONS.ENTER_CLOUD_PAVILION"

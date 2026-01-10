@@ -73,7 +73,6 @@ local function fn()
     end
 
     inst.persists = false
-    inst:DoTaskInTime(1, inst.Remove)
     return inst
 end
 

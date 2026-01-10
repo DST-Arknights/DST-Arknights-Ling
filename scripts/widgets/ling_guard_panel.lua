@@ -127,8 +127,9 @@ function LingGuardPanel:_InitBaseUI()
     end)
     self.container_open:SetHoverText(STRINGS.UI.LING_GUARD_PANEL.OPEN_CONTAINER, { offset_x = 0, offset_y = -60 })
     -- 设置health
-    if self.guard and self.guard.components.healthsyncer then
-        self.health:SetPercent(self.guard.components.healthsyncer:GetPercent(), false)
+    if self.guard and self.guard.replica.ling_guard then
+        self.health:SetCurrent(self.guard.replica.ling_guard.state.current_health, false)
+        self.health:SetMax(self.guard.replica.ling_guard.state.max_health, false)
     end
 end
 
@@ -475,12 +476,6 @@ function LingGuardPanel:SetGuardName(name)
     end
 end
 
-function LingGuardPanel:SetHealth(health)
-    self.health:SetPercent(health, false)
-    local hover_fmt = STRINGS.UI.LING_GUARD_PANEL.HEALTH_PERCENT
-    local percent_text = string.format(hover_fmt, math.floor(health * 100 + 0.5))
-    self.health:SetHoverText(percent_text, { offset_x = 0, offset_y = -80 })
-end
 
 function LingGuardPanel:OnRemoveFromEntity()
     -- 清理待处理的同步任务

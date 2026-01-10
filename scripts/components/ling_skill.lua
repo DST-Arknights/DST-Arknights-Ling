@@ -80,9 +80,11 @@ local skillConfig = {{
     config = {
       damageMultiplier = 1.4,
       damageAbsorption = 0.6,
+      poetryCost = 50 -- 消耗诗意值
     }
   }}
 }}
+local SKILL_STATUS = ARK_CONSTANTS.SKILL_STATUS
 
 local LingSkill = Class(function(self, inst)
   self.inst = inst
@@ -109,18 +111,27 @@ local function RegisterSkill1(self)
     end
     return allow
   end)
+  skill1:SetOnEffectsSync(function(inst, payload)
+    local to = payload.to
+    if to.status == SKILL_STATUS.BUFFING then
+      -- 伤害增加
+      local damageMultiplier = skill1:GetLevelConfig().damageMultiplier
+      inst.components.combat.externaldamagemultipliers:SetModifier(inst, damageMultiplier, damageMultiplierSource)
+      -- 攻速增加
+      inst.components.combat.attackspeedmodifiers:SetModifier(inst, skill1:GetLevelConfig().attackSpeed,
+        damageMultiplierSource)
+      inst.components.ling_summon_manager:OptionalAllGuard(function(guard)
+        if guard.components.ling_guard_skill then
+          guard.components.ling_guard_skill:ActivateSkill1(to.level)
+        end
+      end)
+    end
+  end)
   skill1:SetOnActive(function()
-    -- 伤害增加
-    local damageMultiplier = skill1:GetLevelConfig().damageMultiplier
-    inst.components.combat.externaldamagemultipliers:SetModifier(inst, damageMultiplier, damageMultiplierSource)
-    -- 攻速增加
-    inst.components.combat.attackspeedmodifiers:SetModifier(inst, skill1:GetLevelConfig().attackSpeed,
-      damageMultiplierSource)
-    inst.components.ling_summon_manager:OptionalAllGuard(function(guard)
-      if guard.components.ling_guard_skill then
-        guard.components.ling_guard_skill:ActivateSkill(1)
-      end
-    end)
+    -- 播放点音效什么的
+    -- 扣除诗意
+    local cost = skill1:GetLevelConfig().poetryCost
+    inst.components.ling_poetry:Dirty(-cost)
   end)
   skill1:SetOnDeactivate(function()
     -- 伤害恢复
@@ -128,7 +139,7 @@ local function RegisterSkill1(self)
     inst.components.combat.attackspeedmodifiers:RemoveModifier(inst, damageMultiplierSource)
     inst.components.ling_summon_manager:OptionalAllGuard(function(guard)
       if guard.components.ling_guard_skill then
-        guard.components.ling_guard_skill:DeactivateSkill(1)
+        guard.components.ling_guard_skill:DeactivateSkill1()
       end
     end)
   end)
@@ -193,8 +204,6 @@ local function RegisterSkill2(self)
     end
     local weapon = inst.components.combat:GetWeapon()
     if weapon and weapon.prefab == "ling_lantern" then
-      -- 尝试触发2技能,
-      ArkLogger:Debug("ling_skill", "ling_skill2: TryActivate")
       inst.components.ark_skill:GetSkill("skill2"):TryActivate()
     end
   end
@@ -209,7 +218,7 @@ local function RegisterSkill2(self)
       local x, y, z = targ.Transform:GetWorldPosition()
       local AOEarc = skill2:GetLevelConfig().AOEarc
       -- 排查所有友好目标
-      local fx = SpawnPrefab("ling_guard_skill_halo_fx")
+      local fx = SpawnPrefab("ling_aoe_attack_fx")
       fx.Transform:SetPosition(x, 1, z)
       local shackleTime = skill2:GetLevelConfig().shackleTime
       local targets = TheSim:FindEntities(x, y, z, AOEarc, {"_combat"}, AREAATTACK_EXCLUDETAGS)
@@ -237,20 +246,41 @@ local function RegisterSkill3(self)
   local inst = self.inst
   local damageMultiplierSource = "ling_skill3"
   local skill3 = inst.components.ark_skill:GetSkill("skill3")
-  skill3:SetOnActive(function()
-    -- 伤害增加
-    local damageMultiplier = skill3:GetLevelConfig().damageMultiplier
-    inst.components.combat.externaldamagemultipliers:SetModifier(inst, damageMultiplier, damageMultiplierSource)
-    -- 护甲增加
-    local damageTakenMultiplier = skill3:GetLevelConfig().damageTakenMultiplier
-    inst.components.combat.externaldamagetakenmultipliers:SetModifier(inst, damageTakenMultiplier,
-      damageMultiplierSource)
-    -- 通知所有守卫激活技能3（守卫组件自行决定是否启用）
-    inst.components.ling_summon_manager:OptionalAllGuard(function(guard)
-      if guard.components.ling_guard_skill then
-        guard.components.ling_guard_skill:ActivateSkill(3)
+  skill3:SetActivateTest(function(target, targetPos, force)
+    local poetry = inst.components.ling_poetry and inst.components.ling_poetry:GetCurrent()
+    local cost = skill3:GetLevelConfig().poetryCost
+    local allow = poetry >= cost
+    if not allow then
+      if inst.components.talker then
+        ArkLogger:Debug("ling_skill", "ling_skill3: Not enough poetry")
+        -- TODO: 说话提示诗意不足
+        -- inst.components.talker:Say(STRINGS.UI.ARK_SKILL.LING.SKILL1_NOT_ENOUGH_POETRY)
       end
-    end)
+    end
+    return allow
+  end)
+  skill3:SetOnEffectsSync(function(inst, payload)
+    local to = payload.to
+    if to.status == SKILL_STATUS.BUFFING then
+      -- 伤害增加
+      local damageMultiplier = skill3:GetLevelConfig().damageMultiplier
+      inst.components.combat.externaldamagemultipliers:SetModifier(inst, damageMultiplier, damageMultiplierSource)
+      -- 护甲增加
+      local damageTakenMultiplier = skill3:GetLevelConfig().damageTakenMultiplier
+      inst.components.combat.externaldamagetakenmultipliers:SetModifier(inst, damageTakenMultiplier,
+        damageMultiplierSource)
+        inst.components.ling_summon_manager:OptionalAllGuard(function(guard)
+          if guard.components.ling_guard_skill then
+            guard.components.ling_guard_skill:ActivateSkill3(to.level)
+          end
+        end)
+    end
+  end)
+  skill3:SetOnActive(function()
+    -- 播放点音效什么的
+    -- 扣除诗意
+    local cost = skill3:GetLevelConfig().poetryCost
+    inst.components.ling_poetry:Dirty(-cost)
   end)
   skill3:SetOnDeactivate(function()
     -- 伤害恢复
@@ -260,7 +290,7 @@ local function RegisterSkill3(self)
     -- 通知所有守卫取消技能3
     inst.components.ling_summon_manager:OptionalAllGuard(function(guard)
       if guard.components.ling_guard_skill then
-        guard.components.ling_guard_skill:DeactivateSkill(3)
+        guard.components.ling_guard_skill:DeactivateSkill3()
       end
     end)
   end)

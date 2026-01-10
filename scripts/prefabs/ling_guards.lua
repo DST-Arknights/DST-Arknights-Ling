@@ -227,6 +227,33 @@ local function onDespawn(inst)
     fx.Transform:SetPosition(inst.Transform:GetWorldPosition())
     inst.components.colourtweener:StartTween({ 0, 0, 0, 1 }, 13 * FRAMES, inst.Remove)
 end
+
+local function HookHealth(inst)
+    local _SetCurrent = inst.replica.health.SetCurrent
+    inst.replica.health.SetCurrent = function(self, value)
+        _SetCurrent(self, value)
+        if inst.replica.ling_guard then
+            inst.replica.ling_guard.state.current_health = math.floor(value)
+        end
+    end
+    inst:DoTaskInTime(0, function()
+        if inst.replica.ling_guard then
+            inst.replica.ling_guard.state.current_health = math.floor(inst.components.health.currenthealth)
+        end
+    end)
+    local _SetMax = inst.replica.health.SetMax
+    inst.replica.health.SetMax = function(self, value)
+        _SetMax(self, value)
+        if inst.replica.ling_guard then
+            inst.replica.ling_guard.state.max_health = math.floor(value)
+        end
+    end
+    inst:DoTaskInTime(0, function()
+        if inst.replica.ling_guard then
+            inst.replica.ling_guard.state.max_health = math.floor(inst.components.health.maxhealth)
+        end
+    end)
+end
 ----------------------------
 -- 普通守卫（ling_guard_basic）
 ----------------------------
@@ -260,8 +287,6 @@ local function ling_guard_basic_fn()
 
     inst.entity:SetPristine()
 
-    inst:AddComponent("healthsyncer")
-
     if not TheWorld.ismastersim then
         return inst
     end
@@ -273,7 +298,7 @@ local function ling_guard_basic_fn()
 
     inst:AddComponent("health")
     inst.components.health.save_maxhealth = true
-
+    HookHealth(inst)
 
     inst:AddComponent("combat")
     inst.components.combat:SetRange(0.1)
@@ -373,19 +398,17 @@ local function ling_guard_elite_fn()
 
     inst.entity:SetPristine()
 
-    inst:AddComponent("healthsyncer")
-
     if not TheWorld.ismastersim then
         return inst
     end
 
     inst:AddComponent("named")
-    -- TODO: 设置正确的名称
     inst.components.named.possiblenames = STRINGS.PIGNAMES
     inst.components.named:PickNewName()
 
     inst:AddComponent("health")
     inst.components.health.save_maxhealth = true
+    HookHealth(inst)
 
     inst:AddComponent("combat")
     inst.components.combat:SetRange(3)

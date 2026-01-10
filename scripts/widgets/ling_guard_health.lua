@@ -5,6 +5,8 @@ local Text = require "widgets/text"
 local LingGuardHealth = Class(Widget, function(self, owner)
   Widget._ctor(self, "LingGuardHealth")
   self.owner = owner
+  self.current_health = 0
+  self.max_health = 1
   self.percent = 0
 
   -- 动画参数
@@ -59,11 +61,25 @@ function LingGuardHealth:AnimateIcon(icon_index, target_alpha, duration)
   icon:TintTo({1, 1, 1, target_alpha}, duration)
 end
 
-function LingGuardHealth:SetPercent(percent, use_animation)
-  self.percent = percent
+-- 设置当前血量
+function LingGuardHealth:SetCurrent(current, use_animation)
+  self.current_health = current
+  self:_UpdatePercent(use_animation)
+end
+
+-- 设置最大血量
+function LingGuardHealth:SetMax(max, use_animation)
+  self.max_health = max
+  self:_UpdatePercent(use_animation)
+end
+
+-- 更新 percent 并刷新 UI
+function LingGuardHealth:_UpdatePercent(use_animation)
+  local new_percent = self.max_health > 0 and (self.current_health / self.max_health) or 0
+  self.percent = new_percent
 
   -- 计算目标显示的图标数量
-  self.target_visible_count = self:CalculateVisibleIcons(percent)
+  self.target_visible_count = self:CalculateVisibleIcons(self.percent)
 
   -- 如果不使用动画，直接设置
   if not use_animation then
@@ -72,22 +88,31 @@ function LingGuardHealth:SetPercent(percent, use_animation)
       self.health_icons[i]:SetTint(1, 1, 1, target_alpha)
     end
     self.current_visible_count = self.target_visible_count
-    return
-  end
+  else
+    -- 使用动画过渡
+    for i = 1, #self.health_icons do
+      local should_be_visible = i <= self.target_visible_count
+      local is_currently_visible = i <= self.current_visible_count
 
-  -- 使用动画过渡
-  for i = 1, #self.health_icons do
-    local should_be_visible = i <= self.target_visible_count
-    local is_currently_visible = i <= self.current_visible_count
-
-    -- 只对需要改变状态的图标执行动画
-    if should_be_visible ~= is_currently_visible then
-      local target_alpha = should_be_visible and 1 or 0
-      self:AnimateIcon(i, target_alpha, self.animation_duration)
+      -- 只对需要改变状态的图标执行动画
+      if should_be_visible ~= is_currently_visible then
+        local target_alpha = should_be_visible and 1 or 0
+        self:AnimateIcon(i, target_alpha, self.animation_duration)
+      end
     end
+
+    self.current_visible_count = self.target_visible_count
   end
 
-  self.current_visible_count = self.target_visible_count
+  -- 更新 hover 文本
+  self:_UpdateHoverText()
+end
+
+-- 更新 hover 文本
+function LingGuardHealth:_UpdateHoverText()
+  local hover_fmt = STRINGS.UI.LING_GUARD_PANEL.HEALTH
+  local text = string.format(hover_fmt, self.current_health, self.max_health, self.percent * 100)
+  self:SetHoverText(text, { offset_x = 0, offset_y = -80 })
 end
 
 

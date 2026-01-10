@@ -77,7 +77,9 @@ DefineNetState('ling_guard', {
   guard_pos_y = "float:classified",
   guard_pos_z = "float:classified",
   level = "tinybyte:classified",
-  form = "tinybyte:classified"
+  form = "tinybyte:classified",
+  current_health = "ushortint:classified",
+  max_health = "ushortint:classified",
 })
 
 DefineNetState('ling_poetry', {
