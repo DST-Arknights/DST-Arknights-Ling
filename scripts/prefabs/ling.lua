@@ -44,6 +44,10 @@ local function OnApplyElite(inst, elite, level)
     inst.components.ling_poetry:SetElite(elite)
   end
   if inst.components.ark_skill then
+    if elite == 1 then
+      inst.components.ark_skill:GetSkill("skill1"):Unlock()
+      inst.components.ark_skill:GetSkill("skill1"):SetLevel(1)
+    end
     if elite == 2 then
       inst.components.ark_skill:GetSkill("skill1"):SetLevel(2)
       inst.components.ark_skill:GetSkill("skill2"):Unlock()
@@ -110,9 +114,6 @@ local function master_post_init(inst)
 
   -- 添加组件
   inst:AddComponent("ark_currency")
-  inst:AddComponent("ark_elite")
-  inst.components.ark_elite:SetRarity(6)
-  inst.components.ark_elite:OnApplyElite(OnApplyElite)
   inst:AddComponent("ling_poetry")
   inst:AddComponent("sleeper")
   inst:AddComponent("planarentity")
@@ -121,6 +122,9 @@ local function master_post_init(inst)
   inst:AddComponent("fader")
   inst:AddComponent("ling_cloud_pavilion_transfer")
   inst:AddComponent("ling_skill")
+  inst:AddComponent("ark_elite")
+  inst.components.ark_elite:SetRarity(6)
+  inst.components.ark_elite:OnApplyElite(OnApplyElite)
   inst.components.sanity.dapperness = TUNING.DAPPERNESS_MED
 
   -- 设置leader组件的回调函数
