@@ -9,18 +9,16 @@ local SKILL3_DAMAGE_SOURCE = "ling_skill_3"
 
 -- 召唤兽技能配置（独立于令的技能配置）
 local GUARD_SKILL_CONFIG = {
-    [1] = {
+    {
         -- 技能1：攻击速度和伤害提升
         enabled = true,  -- 是否启用此技能
         damageMultiplier = 1.5,  -- 伤害倍率
         attackSpeed = 1.5,  -- 攻击速度
         trueDamage = true,  -- 真伤
-    },
-    [2] = {
+    },{
         -- 技能2：不影响召唤兽
         enabled = false,
-    },
-    [3] = {
+    },{
         -- 技能3：伤害和防御提升 + 伤害光环
         enabled = true,  -- 是否启用此技能
         damageMultiplier = 1.4,  -- 伤害倍率

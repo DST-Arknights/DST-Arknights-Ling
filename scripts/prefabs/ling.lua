@@ -45,9 +45,14 @@ local function OnApplyElite(inst, elite, level)
   end
   if inst.components.ark_skill then
     if elite == 2 then
+      inst.components.ark_skill:GetSkill("skill1"):SetLevel(2)
       inst.components.ark_skill:GetSkill("skill2"):Unlock()
+      inst.components.ark_skill:GetSkill("skill2"):SetLevel(1)
     elseif elite == 3 then
+      inst.components.ark_skill:GetSkill("skill1"):SetLevel(3)
+      inst.components.ark_skill:GetSkill("skill2"):SetLevel(2)
       inst.components.ark_skill:GetSkill("skill3"):Unlock()
+      inst.components.ark_skill:GetSkill("skill3"):SetLevel(1)
     end
   end
   local data = TUNING.LING.ELITE[elite]
