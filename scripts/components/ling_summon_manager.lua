@@ -352,7 +352,7 @@ function LingSummonManager:Fusion(guard_inst)
   end
   -- 精英化检查
   local elite_level = self.inst.components.ark_elite and self.inst.components.ark_elite.elite or 0
-  if elite_level < 1 then
+  if elite_level < 3 then
     return false
   end
   -- 插槽索引检查（从 guard_inst 获取）
