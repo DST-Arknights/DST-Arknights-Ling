@@ -129,7 +129,6 @@ local function master_post_init(inst)
   inst:AddComponent("ark_elite")
   inst.components.ark_elite:SetRarity(6)
   inst.components.ark_elite:OnApplyElite(OnApplyElite)
-  inst.components.ark_elite:SetElite(1)
   inst.components.sanity.dapperness = 0.33
 
   -- 设置leader组件的回调函数
