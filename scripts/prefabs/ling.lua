@@ -49,6 +49,10 @@ local function OnApplyElite(inst, elite, level)
       inst.components.ark_skill:GetSkill("skill1"):SetLevel(1)
     end
     if elite == 2 then
+      if inst.components.builder then
+        inst.components.builder:AddRecipe("ling_desk")
+        -- inst.components.builder:AddRecipe("ling_jars")
+      end
       inst.components.ark_skill:GetSkill("skill1"):SetLevel(2)
       inst.components.ark_skill:GetSkill("skill2"):Unlock()
       inst.components.ark_skill:GetSkill("skill2"):SetLevel(1)
@@ -125,7 +129,8 @@ local function master_post_init(inst)
   inst:AddComponent("ark_elite")
   inst.components.ark_elite:SetRarity(6)
   inst.components.ark_elite:OnApplyElite(OnApplyElite)
-  inst.components.sanity.dapperness = TUNING.DAPPERNESS_MED
+  inst.components.ark_elite:SetElite(1)
+  inst.components.sanity.dapperness = 0.33
 
   -- 设置leader组件的回调函数
   inst.components.leader.onfolloweradded = function(leader, follower)

@@ -58,7 +58,11 @@ function LingGuardHealth:AnimateIcon(icon_index, target_alpha, duration)
   icon:CancelTintTo()
 
   -- 使用内置的 TintTo 方法
-  icon:TintTo({1, 1, 1, target_alpha}, duration)
+  local source_alpha = 0
+  if target_alpha == 0 then
+    source_alpha = 1
+  end
+  icon:TintTo({r = 1, g = 1, b = 1, a = source_alpha}, {r = 1, g = 1, b = 1, a = target_alpha}, duration)
 end
 
 -- 设置当前血量

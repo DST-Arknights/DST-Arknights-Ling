@@ -186,7 +186,7 @@ local function SetupSleepHeal(inst)
     end
 
     inst.components.sleeper.sleeptestfn = function(inst)
-        if inst.components.health and inst.components.health.currenthealth < 50 then
+        if inst.components.health and inst.components.health:GetPercent() < 0.5 then
             return StandardSleepChecks(inst) and TheWorld.state.isnight
         end
         return false
@@ -195,30 +195,13 @@ local function SetupSleepHeal(inst)
     inst.components.sleeper.waketestfn = function(inst)
         if StandardWakeChecks(inst) then return true end
         if inst.components.health then
-            local health_recovered = inst.components.health.currenthealth >= inst.components.health.maxhealth * 0.8
+            local health_recovered = inst.components.health:GetPercent() >= 0.8
             local is_day = not TheWorld.state.isnight
             return health_recovered or is_day
         end
         return not TheWorld.state.isnight
     end
 
-    inst:ListenForEvent("gotosleep", function(inst)
-        if inst.sleep_heal_task then inst.sleep_heal_task:Cancel() end
-        inst.sleep_heal_task = inst:DoPeriodicTask(1, function()
-            if inst.components.health and not inst.components.health:IsDead()
-               and inst.components.sleeper and inst.components.sleeper:IsAsleep() then
-                local max_health = inst.components.health.maxhealth
-                local current_health = inst.components.health.currenthealth
-                if current_health < max_health then
-                    inst.components.health:DoDelta(max_health * 0.02)
-                end
-            end
-        end)
-    end)
-
-    inst:ListenForEvent("onwakeup", function(inst)
-        if inst.sleep_heal_task then inst.sleep_heal_task:Cancel(); inst.sleep_heal_task = nil end
-    end)
 end
 
 local function onDespawn(inst)
@@ -305,10 +288,6 @@ local function ling_guard_basic_fn()
     inst.components.combat:SetRetargetFunction(1, NormalRetargetFn)
     inst.components.combat:SetKeepTargetFunction(KeepTargetFn)
     inst.components.combat:SetAttackPeriod(1)
-    -- 守卫行为管理
-    inst:AddComponent("ling_guard")
-    inst.components.ling_guard:SetLevel(1)
-    inst.components.ling_guard:SetForm(FORM.QINGPING)
 
     inst:AddComponent("locomotor")
 
@@ -336,6 +315,10 @@ local function ling_guard_basic_fn()
     SetupSleepHeal(inst)
 
     inst:AddComponent("timer")
+    -- 守卫行为管理
+    inst:AddComponent("ling_guard")
+    inst.components.ling_guard:SetLevel(1)
+    inst.components.ling_guard:SetForm(FORM.QINGPING)
     inst:AddComponent("ling_guard_plant")
     inst:AddComponent("ling_guard_skill")
 
@@ -416,10 +399,6 @@ local function ling_guard_elite_fn()
     inst.components.combat:SetKeepTargetFunction(KeepTargetFn)
     inst.components.combat:SetAttackPeriod(1)
 
-    inst:AddComponent("ling_guard")
-    inst.components.ling_guard:SetLevel(3)
-    inst.components.ling_guard:SetForm(FORM.XIANJING)
-
     inst:AddComponent("locomotor")
 
     inst:AddComponent("follower")
@@ -432,6 +411,10 @@ local function ling_guard_elite_fn()
     inst:AddComponent("talker")
 
     inst:AddComponent("timer")
+
+    inst:AddComponent("ling_guard")
+    inst.components.ling_guard:SetLevel(3)
+    inst.components.ling_guard:SetForm(FORM.XIANJING)
     inst:AddComponent("ling_guard_plant")
     inst:AddComponent("ling_guard_skill")
 

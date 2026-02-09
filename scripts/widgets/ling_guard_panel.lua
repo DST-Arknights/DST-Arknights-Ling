@@ -433,7 +433,7 @@ function LingGuardPanel:RefreshFusionButton()
         self.fusionButton:Hide()
     else
         self.fusionButton:Show()
-        if self.level >= 2 then -- 假设等级2解锁
+        if self.level >= 3 then -- 假设等级2解锁
             self.fusionButton:SetHoverText(STRINGS.UI.LING_GUARD_PANEL.FUSION_BUTTON)
             self.fusionButton.image:SetTint(1, 1, 1, 1)
             self.fusionButton:SetClickable(true)

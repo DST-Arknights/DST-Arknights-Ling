@@ -56,7 +56,8 @@ local skillConfig = {{
     }
   }, {
     desc = STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING["2"]["2"],
-    activationEnergy = 10,
+    activationEnergy = 3,
+    -- activationEnergy = 10,
     maxActivationStacks = 2,
     config = {
       damageMultiplier = 3.7,
@@ -186,19 +187,17 @@ local function RegisterSkill2(self)
     local damageMultiplier = skill2:GetLevelConfig().damageMultiplier
     inst.components.combat.externaldamagemultipliers:SetModifier(inst, damageMultiplier, damageMultiplierSource)
     -- 设置为真实伤害
-    inst.components.combat:EnableTrueDamage()
+    inst.components.combat.truedamagemultipliers:SetModifier(inst, 1, damageMultiplierSource)
   end)
   skill2:SetOnDeactivate(function()
     -- 伤害恢复
     inst.components.combat.externaldamagemultipliers:RemoveModifier(inst, damageMultiplierSource)
     -- 取消真实伤害
-    inst.components.combat:DisableTrueDamage()
+    inst.components.combat.truedamagemultipliers:RemoveModifier(inst, damageMultiplierSource)
   end)
-  -- hook
-  self._combat_StartAttack = self.inst.components.combat.StartAttack
-  self.skill2_unregistered = false
-  inst.components.combat.StartAttack = function(comp)
-    self._combat_StartAttack(comp)
+  self._combat_DoAttack = self.inst.components.combat.DoAttack
+  inst.components.combat.DoAttack = function(comp, targ, weapon, projectile, stimuli, instancemult, instrangeoverride,
+    instpos)
     if self.skill2_unregistered then
       return
     end
@@ -206,14 +205,7 @@ local function RegisterSkill2(self)
     if weapon and weapon.prefab == "ling_lantern" then
       inst.components.ark_skill:GetSkill("skill2"):TryActivate()
     end
-  end
-  self._combat_DoAttack = self.inst.components.combat.DoAttack
-  inst.components.combat.DoAttack = function(comp, targ, weapon, projectile, stimuli, instancemult, instrangeoverride,
-    instpos)
     self._combat_DoAttack(comp, targ, weapon, projectile, stimuli, instancemult, instrangeoverride, instpos)
-    if self.skill2_unregistered then
-      return
-    end
     if skill2:IsActivating() then
       local x, y, z = targ.Transform:GetWorldPosition()
       local AOEarc = skill2:GetLevelConfig().AOEarc
@@ -236,10 +228,6 @@ end
 
 local function UnregisterSkill2(self)
   self.skill2_unregistered = true
-  if self._combat_StartAttack == self.inst.components.combat.StartAttack then
-    self.inst.components.combat.StartAttack = self._combat_StartAttack
-    self._combat_StartAttack = nil
-  end
 end
 
 local function RegisterSkill3(self)

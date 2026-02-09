@@ -222,7 +222,11 @@ function LingGuardBehavior:SetForm(form)
     -- 事件通知（prefab 用于挂载武器等）
     self.inst:PushEvent("ling_form_changed", { form = form })
     -- 切换后根据当前等级刷新一次数值
-    self:SetLevel(self.level)
+    self:ApplyLevelEffects()
+    local leader = self.inst.components.follower.leader
+    if leader and leader.components.ling_summon_manager then
+        leader.components.ling_summon_manager:SetForm(self.inst, form)
+    end
     return true
 end
 

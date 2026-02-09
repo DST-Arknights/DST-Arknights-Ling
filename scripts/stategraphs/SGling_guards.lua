@@ -151,7 +151,7 @@ local states =
     -- 采矿：使用 attack_0 动作 + 稿子敲石头音效（不加 busy 标记，保证循环调度顺畅）
     State{
         name = "mine",
-        tags = { "mining" },
+        tags = { "mining", "busy" },
         onenter = function(inst)
             inst.Physics:Stop()
             inst.AnimState:PlayAnimation("attack_0")
@@ -162,7 +162,7 @@ local states =
                     inst.SoundEmitter:PlaySound("dontstarve/wilson/use_pick_rock")
                 end
             end),
-            TimeEvent(30*FRAMES, function(inst)
+            TimeEvent(18*FRAMES, function(inst)
                 inst:PerformBufferedAction()
             end),
         },
@@ -365,10 +365,22 @@ local states =
 -- 行走/跑步/睡眠
 CommonStates.AddSimpleWalkStates(states, "run")
 CommonStates.AddSimpleRunStates(states, "run")
-CommonStates.AddSleepStates(states, {
-    sleeptimeline = {
-        TimeEvent(1*FRAMES, function(inst) end),
-    },
+local sleep_health_task_symbol = Symbol("sleep_health_task")
+CommonStates.AddSleepStates(states, nil, {
+    onsleep = function(inst)
+        inst[sleep_health_task_symbol] = inst:DoPeriodicTask(1, function()
+            if inst.components.health and not inst.components.health:IsDead() then
+                local max_health = inst.components.health.maxhealth
+                local current_health = inst.components.health.currenthealth
+                if current_health < max_health then
+                    inst.components.health:DoDelta(max_health * 0.02)
+                end
+            end
+        end)
+    end,
+    onwake = function(inst)
+        if inst[sleep_health_task_symbol] then inst[sleep_health_task_symbol]:Cancel() end
+    end,
 })
 CommonStates.AddSimpleActionState(states, "unpin", "pick", 21 * FRAMES, { "busy" })
 

@@ -60,6 +60,11 @@ msgctxt "STRINGS.NAMES.LING_LANTERN"
 msgid "Ling's Lantern"
 msgstr "引梦灯"
 
+#. STRINGS.RECIPE_DESC.LING_LANTERN
+msgctxt "STRINGS.RECIPE_DESC.LING_LANTERN"
+msgid "A mystical lantern that glows with ethereal light."
+msgstr "一盏散发着奇异光芒的灯。"
+
 #. STRINGS.CHARACTER_DESCRIPTIONS.LING
 msgctxt "STRINGS.CHARACTER_DESCRIPTIONS.LING"
 msgid "Cloudy peaks surge like waves, a thousand leagues of parched path unfolds"

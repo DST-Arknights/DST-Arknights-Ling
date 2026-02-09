@@ -240,6 +240,13 @@ function LingSummonManager:RemoveGuardFromSlot(guard_inst)
   return false
 end
 
+function LingSummonManager:SetForm(guard_inst, form)
+  local index = self:FindGuardIndex(guard_inst)
+  if index then
+    self:SetSlotData(index, { form = form })
+  end
+end
+
 -- 获取所有槽位数据（从网络变量）
 function LingSummonManager:GetAllSlots()
   local slots_data = {}

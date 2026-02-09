@@ -28,7 +28,6 @@ end)
 
 -- 离开动作
 AddAction('EXIT_CLOUD_PAVILION', STRINGS.ACTIONS.EXIT_CLOUD_PAVILION, function(act)
-    lprint('EXIT_CLOUD_PAVILION--------------------')
     if act.target.components.ling_cloud_pavilion_exit then
         act.target.components.ling_cloud_pavilion_exit:ExitCloudPavilion(act.doer)
         return true
@@ -279,8 +278,6 @@ end
 
 local function _ling_OnDirtyCameraAnchor(inst)
     local anchor = inst.ling_netvarCameraAnchor:value()
-    lprint("DirtyCameraAnchor", anchor)
-
     if anchor ~= nil then
         -- 室内模式：立即锁定到地板实体，不随玩家移动
         TheCamera:SetTarget(anchor)
@@ -290,7 +287,6 @@ local function _ling_OnDirtyCameraAnchor(inst)
         TheCamera:SetHeadingTarget(0)
         TheCamera:SetDistance(21.5)
         TheCamera.targetoffset = Vector3(2, 1.5, 0)
-
         -- 立即快照相机到目标位置（不是渐进式移动）
         TheCamera:Snap()
     else
@@ -321,7 +317,6 @@ AddPlayerPostInit(function(inst)
     inst.ling_netvarCameraAnchor = net_entity(inst.GUID, "LingCloudPavilion", "DirtyCameraAnchor")
 
     if not TheNet:IsDedicated() then
-        lprint("ListenForEvent DirtyCameraAnchor =================================")
         inst:ListenForEvent("DirtyCameraAnchor", _ling_OnDirtyCameraAnchor)
     end
 
@@ -351,7 +346,6 @@ end)
 
 AddComponentPostInit("sleepingbaguser", function(self)
     local _DoSleep = self.DoSleep
-    lprint("sleepingbaguser:DoSleep", self.inst)
     function self:DoSleep(bed)
         if not TheWorld.ismastershard then
             return _DoSleep(self, bed)

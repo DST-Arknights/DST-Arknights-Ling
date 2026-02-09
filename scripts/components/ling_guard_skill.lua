@@ -51,6 +51,7 @@ function LingGuardSkill:ActivateSkill1(level)
   self.inst.components.combat.externaldamagemultipliers:SetModifier(self.inst, config.damageMultiplier,
     SKILL1_DAMAGE_SOURCE)
   self.inst.components.combat.attackspeedmodifiers:SetModifier(self.inst, config.attackSpeed, SKILL1_DAMAGE_SOURCE)
+  self.inst.components.combat.truedamagemultipliers:SetModifier(self.inst, 1, SKILL1_DAMAGE_SOURCE)
   self.active_skills[id] = true
   return true
 end
@@ -59,6 +60,7 @@ function LingGuardSkill:DeactivateSkill1()
   local id = 'skill1'
   self.inst.components.combat.externaldamagemultipliers:RemoveModifier(self.inst, SKILL1_DAMAGE_SOURCE)
   self.inst.components.combat.attackspeedmodifiers:RemoveModifier(self.inst, SKILL1_DAMAGE_SOURCE)
+  self.inst.components.combat.truedamagemultipliers:RemoveModifier(self.inst, SKILL1_DAMAGE_SOURCE)
   self.active_skills[id] = false
 end
 
@@ -98,7 +100,7 @@ function LingGuardSkill:DoAuraDamage(damage, range)
   for _, target in ipairs(ents) do
     -- if ling_targeting.IsThreatToGuard(self.inst, target) then
       ArkLogger:Debug("LingGuardSkill:DoAuraDamage attacking", target, damage)
-    target.components.combat:GetAttacked(self.inst, damage, nil, "ling_skill_3_aura")
+    target.components.combat:GetAttacked(self.inst, 0, nil, "ling_skill_3_aura", { true_damage = damage })
     -- end
   end
 end

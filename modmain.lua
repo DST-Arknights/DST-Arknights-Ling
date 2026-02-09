@@ -14,7 +14,7 @@ end
 -- 加载语言文件
 common.LoadPOFile("scripts/languages/ling_chinese_s.po", "zh")
 
-PrefabFiles = {'ling', 'ling_lantern', 'ling_lantern_smoke', 'ling_guards', 'ling_guard_basic_start_fx', 'ling_guard_basic_fusion_fx', 'ling_aoe_attack_fx', 'ling_guard_elite_attack_hit_fx', 'ling_guard_skill_halo_fx', 'ling_guard_plant_container', 'ling_guard_plant_club', 'poem_0', 'poem_1', 'poem_2', 'poem_3', 'ling_desk', 'ling_jars', 'ling_cloud_pavilion_exit_door', 'ling_interior_texture_packages', 'ling_wall_tigerpond'}
+PrefabFiles = {'ling', 'ling_lantern', 'ling_lantern_smoke', 'ling_guards', 'ling_guard_basic_start_fx', 'ling_guard_basic_fusion_fx', 'ling_aoe_attack_fx', 'ling_guard_elite_attack_hit_fx', 'ling_guard_skill_halo_fx', 'ling_guard_plant_container', 'ling_guard_plant_club', 'poem_0', 'poem_1', 'poem_2', 'poem_3', 'ling_desk', 'ling_jars', 'ling_cloud_pavilion_exit_door', 'ling_interior_texture_packages', 'ling_wall_tigerpond', 'so_is_writ_an_ode_to_wine_buff'}
 
 Assets = {
   Asset('ATLAS', 'images/saveslot_portraits/ling.xml'),
@@ -58,8 +58,6 @@ ArkLogger:DeclareLogger('TRACE', 'ling')
 -- 常量配置
 TUNING.LING = {}
 
-
-modimport("lingmain/widget_extension")
 modimport("lingmain/ling_elite")
 modimport("lingmain/summon_guard")
 modimport("lingmain/ling_guard_containers")
@@ -100,3 +98,10 @@ DefineNetState('ling_summon_manager', (function()
     end
     return state
 end)())
+-- 6*木板 2*活木 1*蝴蝶翅膀 10*噩梦燃料
+AddRecipe2('ling_lantern', {Ingredient("boards", 6), Ingredient("livinglog", 2), Ingredient("butterflywings", 1), Ingredient("nightmarefuel", 10)}, TECH.MAGIC_THREE, nil, {
+  "MAGIC",
+  "CHARACTER",
+  "MODS",
+})
+RegisterInventoryItemAtlas("images/inventoryimages/ling_lantern.xml", "ling_lantern.tex")

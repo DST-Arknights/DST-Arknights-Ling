@@ -60,7 +60,4 @@ AddRecipe2("ling_desk", {Ingredient("boards", 3), Ingredient("featherpencil", 1)
   atlas = "images/inventoryimages/ling_desk.xml",
   image = "ling_desk.tex",
   force_hint = true,
-}, { "CHARACTER", "MODS" })
-AddRecipeToFilter("ling_desk", "PROTOTYPERS")
--- 加到建筑
-AddRecipeToFilter("ling_desk", "STRUCTURES")
+}, { "CHARACTER", "MODS", "PROTOTYPERS", "STRUCTURES" })
