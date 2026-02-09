@@ -156,8 +156,10 @@ function LingGuardReplica:SetWorkMode(mode)
 end
 
 function LingGuardReplica:Fusion()
-  if self.inst.components.ling_guard then
-    self.inst.components.ling_guard:Fusion()
+  if self.inst.components.follower and self.inst.components.follower.leader then
+    if self.inst.components.follower.leader.components.ling_summon_manager then
+      self.inst.components.follower.leader.components.ling_summon_manager:Fusion(self.inst)
+    end
   else
     SendModRPCToServer(GetModRPC("ling_summon", "guard_fusion"), self.inst)
   end
