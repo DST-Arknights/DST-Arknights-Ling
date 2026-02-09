@@ -14,7 +14,7 @@ end
 -- 加载语言文件
 common.LoadPOFile("scripts/languages/ling_chinese_s.po", "zh")
 
-PrefabFiles = {'ling', 'ling_lantern', 'ling_lantern_smoke', 'ling_guards', 'ling_guard_basic_start_fx', 'ling_guard_basic_fusion_fx', 'ling_aoe_attack_fx', 'ling_guard_elite_attack_hit_fx', 'ling_guard_skill_halo_fx', 'ling_guard_plant_container', 'ling_guard_plant_club', 'poem_0', 'poem_1', 'poem_2', 'poem_3', 'ling_desk', 'ling_jars', 'ling_cloud_pavilion_exit_door', 'ling_interior_texture_packages', 'ling_wall_tigerpond', 'so_is_writ_an_ode_to_wine_buff'}
+PrefabFiles = {'ling_lantern', 'ling', 'ling_lantern_smoke', 'ling_guards', 'ling_guard_basic_start_fx', 'ling_guard_basic_fusion_fx', 'ling_aoe_attack_fx', 'ling_guard_elite_attack_hit_fx', 'ling_guard_skill_halo_fx', 'ling_guard_plant_container', 'ling_guard_plant_club', 'poem_0', 'poem_1', 'poem_2', 'poem_3', 'ling_desk', 'ling_jars', 'ling_cloud_pavilion_exit_door', 'ling_interior_texture_packages', 'ling_wall_tigerpond', 'so_is_writ_an_ode_to_wine_buff'}
 
 Assets = {
   Asset('ATLAS', 'images/saveslot_portraits/ling.xml'),
@@ -44,6 +44,9 @@ Assets = {
   Asset('ANIM', 'anim/ui_ling_guard_plant_club.zip'),
   Asset('ANIM', 'anim/ling_poetry.zip'),
 }
+TUNING.GAMEMODE_STARTING_ITEMS.DEFAULT.LING = {"ling_lantern", "ark_backpack"}
+TUNING.GAMEMODE_STARTING_ITEMS.LAVAARENA.LING = {"ling_lantern", "ark_backpack"}
+TUNING.GAMEMODE_STARTING_ITEMS.QUAGMIRE.LING = {"ling_lantern", "ark_backpack"}
 
 AddMinimapAtlas('images/map_icons/ling.xml')
 AddModCharacter("ling", "FEMALE")

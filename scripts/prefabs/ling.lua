@@ -1,20 +1,18 @@
 local MakePlayerCharacter = require "prefabs/player_common"
-local CONSTANTS = require "ark_constants_ling"
-
-local SKILL1_DAMAGE_SOURCE = "ling_skill_1"
-local SKILL2_DAMAGE_SOURCE = "ling_skill_2"
-local SKILL3_DAMAGE_SOURCE = "ling_skill_3"
 
 local assets = {
     Asset( "ANIM", "anim/ling.zip" ),
 }
 local prefabs = {
+  "ling_lantern",
+  "ark_backpack",
 	-- "silence_glass",
 	-- "silence_coat",
 	-- "silence_remote_control",
 }
 local start_inv = {
-  "ling_lantern",
+  "ark_backpack",
+  "ling_lantern"
 }
 
 
@@ -106,7 +104,21 @@ local function OnReroll(inst)
       end
     end)
   end
-end 
+end
+
+local function OnPoetryChanged(inst, data)
+  if inst.components.ark_elite then
+    -- 取绝对值
+    local exp = math.abs(data.diff)
+    inst.components.ark_elite:AddExp(exp * 5)
+  end
+end
+
+local function AddTimeExp(inst)
+  if inst.components.ark_elite then
+    inst.components.ark_elite:AddExp(2)
+  end
+end
 
 local function common_post_init(inst)
   inst:AddTag("ling")
@@ -127,6 +139,7 @@ local function master_post_init(inst)
   inst:AddComponent("ling_cloud_pavilion_transfer")
   inst:AddComponent("ling_skill")
   inst:AddComponent("ark_elite")
+  inst:ListenForEvent("ling_poetry_changed", OnPoetryChanged)
   inst.components.ark_elite:SetRarity(6)
   inst.components.ark_elite:OnApplyElite(OnApplyElite)
   inst.components.sanity.dapperness = 0.33
@@ -160,6 +173,7 @@ local function master_post_init(inst)
     end
   end
   inst:ListenForEvent("ms_playerreroll", OnReroll)
+  inst:DoPeriodicTask(2, AddTimeExp)
 end
 
 return MakePlayerCharacter("ling", prefabs, assets, common_post_init, master_post_init, start_inv)

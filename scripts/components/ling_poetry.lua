@@ -47,6 +47,7 @@ end
 
 function LingPoetry:Dirty(diff)
   self.current_poetry = math.clamp(self.current_poetry + diff, 0, self.max_poetry)
+  self.inst:PushEvent("ling_poetry_changed", { diff = diff, current = self.current_poetry, max = self.max_poetry })
 end
 
 -- 获取当前诗意值
