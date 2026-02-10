@@ -51,19 +51,17 @@ end
 
 AddEliteLevelUpRecipes("ling", {{
   ingredients = {
-    Ingredient("goldnugget", 30),
-    Ingredient("papyrus", 5),
-    Ingredient("tentaclespots", 10),
-    Ingredient("honey", 3),
+    Ingredient("ark_gold", 30000),
+    Ingredient("ark_item_mtl_sl_rush2", 10),
+    Ingredient("ark_item_mtl_sl_ketone2", 3),
   },
   atlas = "images/inventoryimages/ling_elite.xml",
   image = "elite1.tex",
 }, {
   ingredients = {
-    Ingredient("goldnugget", 180),
-    Ingredient("papyrus", 8),
-    Ingredient("purebrilliance", 5),
-    Ingredient("wagpunk_bits", 4),
+    Ingredient("ark_gold", 180000),
+    Ingredient("ark_item_mtl_sl_ds", 4),
+    Ingredient("ark_item_mtl_sl_oc4", 5),
   },
   atlas = "images/inventoryimages/ling_elite.xml",
   image = "elite2.tex",
