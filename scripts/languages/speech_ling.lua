@@ -3454,7 +3454,7 @@ return
 			MATCH_BUT_SNACK = "还好。",		-- 物品名:未找到（暴食）
 		},
 
-		QUAGMIRE_FERN = 富含维生素。",	-- 物品名:"蕨类植物"（暴食）
+		QUAGMIRE_FERN = "富含维生素。",	-- 物品名:"蕨类植物"（暴食）
 		QUAGMIRE_FOLIAGE_COOKED = "就当煮茶了。",	-- 物品名:"熟叶子"（暴食）
 		QUAGMIRE_COIN1 = "至少能买点东西。",	-- 物品名:"旧硬币"（暴食）
 		QUAGMIRE_COIN2 = "会有人想要它的。",	-- 物品名:"蓝宝石徽章"（暴食）
