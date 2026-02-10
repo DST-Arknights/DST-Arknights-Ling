@@ -18,6 +18,8 @@ local LING_LANTERN_CONFIG = {
     LIGHT_INTENSITY_MIN = 0.75,
     LIGHT_INTENSITY_MAX = 0.75,
     LIGHT_COLOR = {255/255, 211/255, 151/255},
+    -- 打开光照最低环境光
+    LIGHT_MIN_AMBIENT = 0.5,
 
     -- 攻击相关
     ATTACK_DAMAGE = 22,
@@ -277,7 +279,7 @@ local function OnDropped(inst)
     if not inst.turn_on_task then
         inst.turn_on_task = inst:DoTaskInTime(0, function()
             inst.turn_on_task = nil
-            if not inst:IsLightGreaterThan(0.5) then
+            if not inst:IsLightGreaterThan(LING_LANTERN_CONFIG.LIGHT_MIN_AMBIENT) then
                 TurnOn(inst)
             end
         end)
@@ -304,6 +306,10 @@ local function OnEquip(inst, owner)
     -- end, owner)
     -- 更新武器状态
     UpdateWeaponDamage(inst)
+    -- 如果环境光不足, 或者是晚上, 打开提灯
+    -- if TheWorld.state.isnight or not inst:IsLightGreaterThan(LING_LANTERN_CONFIG.LIGHT_MIN_AMBIENT) then
+    --     TurnOn(inst)
+    -- end
     TurnOn(inst)
 end
 
@@ -366,7 +372,8 @@ local function OnPhaseChanged(inst, phase)
     if phase == "night" and inst._auto_turnon_at_night then
         TurnOn(inst)
     end
-    if phase == 'day' then
+    -- 白天, 且未装被身上, 关闭
+    if phase == 'day' and not inst.components.equippable:IsEquipped() then
         TurnOff(inst)
     end
 end
