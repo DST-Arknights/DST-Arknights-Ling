@@ -13,7 +13,7 @@ local LING_LANTERN_CONFIG = {
     -- 光照相关
     -- 光照相关（提高最大可视范围与亮度，使用平滑曲线计算）
     LIGHT_RADIUS_MIN = 2,
-    LIGHT_RADIUS_MAX = 10,
+    LIGHT_RADIUS_MAX = 6,
     LIGHT_FALLOFF = 0.8,
     LIGHT_INTENSITY_MIN = 0.75,
     LIGHT_INTENSITY_MAX = 0.75,
