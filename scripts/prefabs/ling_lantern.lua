@@ -313,11 +313,13 @@ local function OnUnequip(inst, owner)
     -- 更新武器状态（卸下时重新计算，诗意信息不再可用）
     RemoveLanternBody(inst)
     UpdateWeaponDamage(inst)
+
+    TurnOff(inst)
 end
 
 local function OnEquipToModel(inst, owner, from_ground)
     -- 装备到模型时关闭
-    TurnOff(inst)
+    -- TurnOff(inst)
 end
 
 local function OnFuelEmpty(inst)
