@@ -14,7 +14,7 @@ local LING_LANTERN_CONFIG = {
     -- 光照相关（提高最大可视范围与亮度，使用平滑曲线计算）
     LIGHT_RADIUS_MIN = 2,
     LIGHT_RADIUS_MAX = 6,
-    LIGHT_FALLOFF = 0.8,
+    LIGHT_FALLOFF = 0.9,
     LIGHT_INTENSITY_MIN = 0.75,
     LIGHT_INTENSITY_MAX = 0.75,
     LIGHT_COLOR = {255/255, 211/255, 151/255},
@@ -76,37 +76,14 @@ local function GetLight(inst)
     end
 end
 
-local function EvalRadius(t)
-    if t <= 0 then return LING_LANTERN_CONFIG.LIGHT_RADIUS_MIN end
-    -- 从最小值到最大值的平滑过渡
-    local scaled = 0.35 + 0.65 * (t ^ 0.7)
-    return LING_LANTERN_CONFIG.LIGHT_RADIUS_MIN + (LING_LANTERN_CONFIG.LIGHT_RADIUS_MAX - LING_LANTERN_CONFIG.LIGHT_RADIUS_MIN) * scaled
-end
-
-local function EvalIntensity(t)
-    if t <= 0 then return LING_LANTERN_CONFIG.LIGHT_INTENSITY_MIN end
-    -- 从最小值到最大值的平滑过渡
-    local scaled = t ^ 0.9
-    return LING_LANTERN_CONFIG.LIGHT_INTENSITY_MIN + (LING_LANTERN_CONFIG.LIGHT_INTENSITY_MAX - LING_LANTERN_CONFIG.LIGHT_INTENSITY_MIN) * scaled
-end
-
 -- 统一的光照更新函数
 local function UpdateLightSystem(inst)
     
     local fuel_percent = GetFuelPercent(inst)
-
-    local radius = EvalRadius(fuel_percent)
-    local intensity = EvalIntensity(fuel_percent)
-
-    -- 颜色随燃料略微变暗（低燃料时偏冷/暗）
-    local c1, c2, c3 = unpack(LING_LANTERN_CONFIG.LIGHT_COLOR)
-    local color_scale = 0.6 + 0.4 * fuel_percent
-    local r, g, b = c1 * color_scale, c2 * color_scale, c3 * color_scale
     local light = GetLight(inst)
-    light:SetRadius(radius)
-    light:SetIntensity(intensity)
+    light:SetRadius(Lerp(LING_LANTERN_CONFIG.LIGHT_RADIUS_MIN, LING_LANTERN_CONFIG.LIGHT_RADIUS_MAX, fuel_percent))
+    light:SetIntensity(Lerp(LING_LANTERN_CONFIG.LIGHT_INTENSITY_MIN, LING_LANTERN_CONFIG.LIGHT_INTENSITY_MAX, fuel_percent))
     light:SetFalloff(LING_LANTERN_CONFIG.LIGHT_FALLOFF)
-    light:SetColour(r, g, b)
 end
 
 -- ========== 烟雾效果管理 ==========
