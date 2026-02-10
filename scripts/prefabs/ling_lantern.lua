@@ -317,7 +317,7 @@ end
 
 local function OnEquipToModel(inst, owner, from_ground)
     -- 装备到模型时关闭
-    -- TurnOff(inst)
+    TurnOff(inst)
 end
 
 local function OnFuelEmpty(inst)
