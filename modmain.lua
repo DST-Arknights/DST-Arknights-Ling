@@ -11,6 +11,9 @@ function GLOBAL.lprint(...)
   print(unpack(args))
 end
 
+if LOC.GetLocaleCode() == "zh" then
+  STRINGS.CHARACTERS.LING = require("languages/speech_ling")
+end
 -- 加载语言文件
 common.LoadPOFile("scripts/languages/ling_chinese_s.po", "zh")
 
