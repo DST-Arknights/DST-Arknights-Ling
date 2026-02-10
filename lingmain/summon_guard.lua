@@ -5,10 +5,6 @@ local LingCloseContainer = require "widgets/ling_close_container"
 local LingPoetryBadge = require "widgets/ling_poetry"
 
 local FORM = CONSTANTS.GUARD_FORM
--- 守卫数值与消耗配置已迁移至 scripts/ling_guard_tuning.lua（通过 require("ling_guard_tuning") 使用）
-local LING_TUNING = require("ling_guard_tuning")
-
-
 
 -- 自定义动作：守卫挖地皮（无需工具）
 local LING_TERRAFORM = AddAction("LING_TERRAFORM", "Terraform", function(act)

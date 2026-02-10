@@ -133,7 +133,7 @@ end
 function LingGuardPlant:OnPlantTimerDone()
     self:ProduceCrop()
 
-    local config = LING_TUNING.PLANT[self.level]
+    local config = LING_TUNING[self.level] and LING_TUNING[self.level].PLANT
     if not config or self.completed_tasks >= config.MAX_CROP then
         self:StopPlanting()
         return
@@ -150,7 +150,7 @@ function LingGuardPlant:SetupPlantingTimer()
         self.inst.components.timer:StopTimer("plant_crop")
     end
 
-    local config = LING_TUNING.PLANT[self.level]
+    local config = LING_TUNING[self.level] and LING_TUNING[self.level].PLANT
     if not config then
         return
     end
