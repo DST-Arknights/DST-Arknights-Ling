@@ -18,7 +18,7 @@ local T = {
         },
         PLANT = {
             MAX_CROP = 40,
-            TIME_PER_CROP = 8, -- 若需与游戏分钟对齐，改为 8 * 60
+            TIME_PER_CROP = 8 * 60, -- 若需与游戏分钟对齐，改为 8 * 60
         }
     },
     {
