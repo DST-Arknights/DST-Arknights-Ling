@@ -1,20 +1,20 @@
 local CONSTANTS = require "ark_constants_ling"
 -- 进入动作
-AddAction('ENTER_CLOUD_PAVILION', STRINGS.ACTIONS.ENTER_CLOUD_PAVILION, function(act)
-    if act.target.components.ling_cloud_pavilion_enter then
-        act.target.components.ling_cloud_pavilion_enter:EnterCloudPavilion(act.doer)
-        return true
-    end
-end)
+-- AddAction('ENTER_CLOUD_PAVILION', STRINGS.ACTIONS.ENTER_CLOUD_PAVILION, function(act)
+--     if act.target.components.ling_cloud_pavilion_enter then
+--         act.target.components.ling_cloud_pavilion_enter:EnterCloudPavilion(act.doer)
+--         return true
+--     end
+-- end)
 
-AddComponentAction("SCENE", "ling_cloud_pavilion_enter", function(inst, doer, actions, right)
-    if right then
-        table.insert(actions, ACTIONS.ENTER_CLOUD_PAVILION)
-    end
-end)
+-- AddComponentAction("SCENE", "ling_cloud_pavilion_enter", function(inst, doer, actions, right)
+--     if right then
+--         table.insert(actions, ACTIONS.ENTER_CLOUD_PAVILION)
+--     end
+-- end)
 
-AddStategraphActionHandler("wilson", ActionHandler(ACTIONS.ENTER_CLOUD_PAVILION, "doshortaction"))
-AddStategraphActionHandler("wilson_client", ActionHandler(ACTIONS.ENTER_CLOUD_PAVILION, "doshortaction"))
+-- AddStategraphActionHandler("wilson", ActionHandler(ACTIONS.ENTER_CLOUD_PAVILION, "doshortaction"))
+-- AddStategraphActionHandler("wilson_client", ActionHandler(ACTIONS.ENTER_CLOUD_PAVILION, "doshortaction"))
 
 -- 帐篷作为云山亭的入口
 
@@ -42,6 +42,33 @@ end)
 
 AddStategraphActionHandler("wilson", ActionHandler(ACTIONS.EXIT_CLOUD_PAVILION, "doshortaction"))
 AddStategraphActionHandler("wilson_client", ActionHandler(ACTIONS.EXIT_CLOUD_PAVILION, "doshortaction"))
+
+-- 在云山亭里禁止睡觉
+AddStategraphPostInit("wilson", function(sg)
+    -- 禁止睡觉的state列表
+    local no_sleep_states = { "bedroll", "tent" }
+
+    for _, state_name in ipairs(no_sleep_states) do
+        local state = sg.states[state_name]
+        if state and state.onenter then
+            local old_onenter = state.onenter
+            state.onenter = function(inst, ...)
+                inst.components.locomotor:Stop()
+                -- 如果检测到周围有 ling_cloud_pavilion_interior_floor, 禁止睡觉, 返回原因
+                if inst.ling_inHouse then
+                    inst:PushEvent("performaction", { action = inst.bufferedaction })
+                    inst:ClearBufferedAction()
+                    inst.sg:GoToState("idle")
+                    if inst.components.talker ~= nil then
+                        inst.components.talker:Say(GetString(inst, 'LING_CLOUD_PAVILION_PRIVATE_SLEEP'))
+                    end
+                    return
+                end
+                old_onenter(inst, ...)
+            end
+        end
+    end
+end)
 
 -- ============================================================================
 -- 私有工具函数 (从 ptribe_utils/utils.lua 简化版本)

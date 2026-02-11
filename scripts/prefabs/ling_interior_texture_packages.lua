@@ -5,7 +5,6 @@ local floorAssets =
 }
 
 local function OnPlayerNear(inst, doer)
-    lprint('OnPlayerNear')
     -- 先赋值锚点（地板实体）
     doer.ling_netvarCameraAnchor:set(inst)
     -- 翻转触发确保客户端一定收到 Dirty 事件
@@ -16,7 +15,6 @@ local function OnPlayerNear(inst, doer)
 end
 
 local function OnPlayerFar(inst, doer)
-    lprint('OnPlayerFar')
     -- 清空锚点，恢复室外相机
     doer.ling_netvarCameraAnchor:set(nil)
     doer.ling_inHouse = false

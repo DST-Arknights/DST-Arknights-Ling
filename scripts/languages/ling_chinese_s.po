@@ -451,3 +451,8 @@ msgstr "离开"
 msgctxt "STRINGS.NAMES.LING_CLOUD_PAVILION_EXIT_DOOR"
 msgid "Cloud Pavilion"
 msgstr "云山亭"
+
+#. 云山亭里不能睡觉
+msgctxt "STRINGS.CHARACTERS.GENERIC.LING_CLOUD_PAVILION_PRIVATE_SLEEP"
+msgid "云山亭里不能睡觉"
+msgstr "占位符 LING_CLOUD_PAVILION_PRIVATE_SLEEP"
