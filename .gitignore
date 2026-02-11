@@ -50,5 +50,5 @@ anim/
 temp/
 /imageSource
 .VSCodeCounter
-
+.vscode
 out
