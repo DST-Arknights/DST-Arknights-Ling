@@ -1,7 +1,7 @@
 local prefabs = {}
 local floorAssets =
 {
-    Asset("ANIM", "anim/pisohamlet.zip"), --地板
+    Asset("ANIM", "anim/ling_cloud_pavilion.zip"), --地板
 }
 
 local function OnPlayerNear(inst, doer)
@@ -41,13 +41,13 @@ local function floorFn()
     inst.entity:AddLight()
     inst.entity:AddNetwork()
 
-    inst.AnimState:SetBank("pisohamlet")
-    inst.AnimState:SetBuild("pisohamlet")
+    inst.AnimState:SetBank("ling_cloud_pavilion")
+    inst.AnimState:SetBuild("ling_cloud_pavilion")
     inst.AnimState:SetOrientation(ANIM_ORIENTATION.OnGround)
     inst.AnimState:SetLayer(LAYER_BACKGROUND)
     inst.AnimState:SetSortOrder(5)
     inst.AnimState:SetScale(4.5, 4.5, 4.5)
-    inst.AnimState:PlayAnimation("noise_woodfloor")
+    inst.AnimState:PlayAnimation("floor")
 
     inst.Light:SetFalloff(0.7)
     inst.Light:SetIntensity(0.8)
@@ -95,15 +95,15 @@ local function wall_common()
     inst.entity:AddNetwork()
     inst.entity:AddAnimState()
 
-    inst.AnimState:SetBank("wallhamletcity")
-    inst.AnimState:SetBuild("wallhamletcity1")
-    inst.AnimState:PlayAnimation("shop_wall_woodwall", true)
+    inst.AnimState:SetBank("ling_cloud_pavilion")
+    inst.AnimState:SetBuild("ling_cloud_pavilion")
+    inst.AnimState:PlayAnimation("wall", true)
     inst.AnimState:SetLayer(LAYER_WORLD_BACKGROUND)
     inst.AnimState:SetScale(2.8, 2.8, 2.8)
 
     inst:AddTag("NOCLICK")
     inst:AddTag("NOBLOCK")
-    inst:AddTag("hamlet_housewall")
+    -- inst:AddTag("hamlet_housewall")
 
 
     inst.entity:SetPristine()

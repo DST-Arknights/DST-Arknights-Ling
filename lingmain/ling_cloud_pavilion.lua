@@ -47,7 +47,6 @@ AddStategraphActionHandler("wilson_client", ActionHandler(ACTIONS.EXIT_CLOUD_PAV
 AddStategraphPostInit("wilson", function(sg)
     -- 禁止睡觉的state列表
     local no_sleep_states = { "bedroll", "tent" }
-
     for _, state_name in ipairs(no_sleep_states) do
         local state = sg.states[state_name]
         if state and state.onenter then
