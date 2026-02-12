@@ -73,9 +73,8 @@ local function OnApplyElite(inst, elite, level)
   inst.components.locomotor:SetExternalSpeedMultiplier(inst, "ling_elite_speed", data.SPEED_MULTIPLIER)
   inst.components.combat.externaldamagemultipliers:SetModifier(inst, data.DAMAGE_MULTIPLIER, "ling_elite_damage")
   -- 应用睡眠抗性
-  if inst.components.sleeper then
-    inst.components.sleeper:SetResistance(data.SLEEP_RESISTANCE)
-  end
+	local mult = TUNING.CHANNELCAST_SPEED_MOD * data.SPEED_MULTIPLIER
+	inst.components.grogginess:SetSpeedModMultiplier(1 / math.max(TUNING.MAX_GROGGY_SPEED_MOD, mult))
   -- 应用召唤管理器槽位
   if inst.components.ling_summon_manager then
     ArkLogger:Debug("SetMaxSlots", data.MAX_GUARDS)
@@ -131,7 +130,6 @@ local function master_post_init(inst)
   -- 添加组件
   inst:AddComponent("ark_currency")
   inst:AddComponent("ling_poetry")
-  inst:AddComponent("sleeper")
   inst:AddComponent("planarentity")
   inst:AddComponent("reader")
   inst:AddComponent("ling_summon_manager")
