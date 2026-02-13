@@ -45,10 +45,9 @@ luac.out
 *.fsb
 *.fdp.bak
 .fsbcache/
-images/
-anim/
-temp/
-/imageSource
-.VSCodeCounter
-.vscode
-out
+/images/
+/anim/
+/temp/
+/.VSCodeCounter
+/.vscode
+/out
