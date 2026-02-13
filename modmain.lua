@@ -41,12 +41,12 @@ Assets = {
   Asset('ATLAS', 'images/ling_container_slot.xml'),
   Asset('ATLAS', 'images/ui_ling_guard_plant_slot.xml'),
   Asset('ATLAS', 'images/ling_desk_prototyper.xml'),
+  Asset('ATLAS', 'images/ling_cloud_pavilion_mist.xml'),
   Asset('IMAGE', 'fx/lantern_fx.tex'),
   Asset('ANIM', 'anim/ui_ling_guard_container.zip'),
   Asset('ANIM', 'anim/ui_ling_guard_plant_container.zip'),
   Asset('ANIM', 'anim/ui_ling_guard_plant_club.zip'),
   Asset('ANIM', 'anim/ling_poetry.zip'),
-  Asset('ANIM', 'anim/ling_cloud_pavilion_mist.zip'),
 }
 TUNING.GAMEMODE_STARTING_ITEMS.DEFAULT.LING = {"ling_lantern", "ark_backpack"}
 TUNING.GAMEMODE_STARTING_ITEMS.LAVAARENA.LING = {"ling_lantern", "ark_backpack"}
