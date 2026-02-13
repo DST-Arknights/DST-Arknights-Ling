@@ -1,4 +1,5 @@
 local CONSTANTS = require "ark_constants_ling"
+local LingCloudPavilionMist = require "widgets/ling_cloud_pavilion_mist"
 -- 进入动作
 -- AddAction('ENTER_CLOUD_PAVILION', STRINGS.ACTIONS.ENTER_CLOUD_PAVILION, function(act)
 --     if act.target.components.ling_cloud_pavilion_enter then
@@ -321,7 +322,13 @@ local function _ling_OnDirtyCameraAnchor(inst)
         TheCamera:SetDefault()
         TheCamera:SetTarget(TheFocalPoint)
         TheCamera:Snap()
+        ThePlayer.HUD.ling_cloud_pavilion_mist:CloudOut()
     end
+end
+
+local function _ling_OnDirtyInCloudPavilion(inst)
+    ArkLogger:Debug("_ling_OnDirtyInCloudPavilion")
+    ThePlayer.HUD.ling_cloud_pavilion_mist:CloudIn()
 end
 
 -- ============================================================================
@@ -340,10 +347,11 @@ end
 -- ============================================================================
 
 AddPlayerPostInit(function(inst)
-    inst.ling_netvarCameraAnchor = net_entity(inst.GUID, "LingCloudPavilion", "DirtyCameraAnchor")
-
+    inst.ling_netvarCameraAnchor = net_entity(inst.GUID, "ling_netvarCameraAnchor", "DirtyCameraAnchor")
+    inst.ling_netvar_inCloudPavilion = net_event(inst.GUID, "DirtyInCloudPavilion")
     if not TheNet:IsDedicated() then
         inst:ListenForEvent("DirtyCameraAnchor", _ling_OnDirtyCameraAnchor)
+        inst:ListenForEvent("DirtyInCloudPavilion", _ling_OnDirtyInCloudPavilion)
     end
 
     if not TheWorld.ismastersim then return end
@@ -385,6 +393,10 @@ AddComponentPostInit("sleepingbaguser", function(self)
         local res = { _DoSleep(self, bed) }
         -- 4-6秒后随机迁移
         local timeout = math.random(4, 6)
+        -- 迁移前最最多2秒的时候, 播放云
+        self.inst:DoTaskInTime(math.max(timeout - 1, 0), function()
+            self.inst.ling_netvar_inCloudPavilion:push()
+        end)
         self.inst:DoTaskInTime(timeout, function()
             if not self.inst.sleepingbag then
                 return
@@ -404,4 +416,8 @@ AddComponentPostInit("sleepingbaguser", function(self)
         end)
         return unpack(res)
     end
+end)
+
+AddClassPostConstruct("screens/playerhud", function(self)
+    self.ling_cloud_pavilion_mist = self.root:AddChild(LingCloudPavilionMist())
 end)
