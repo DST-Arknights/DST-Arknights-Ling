@@ -363,7 +363,7 @@ local states =
 }
 
 -- 行走/跑步/睡眠
-CommonStates.AddSimpleWalkStates(states, "run")
+CommonStates.AddSimpleWalkStates(states, "idle")
 CommonStates.AddSimpleRunStates(states, "run")
 local sleep_health_task_symbol = Symbol("sleep_health_task")
 CommonStates.AddSleepStates(states, nil, {
