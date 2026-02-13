@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<spriter_data scml_version="1.0" generator="BrashMonkey Spriter" generator_version="r4.1">
+    <folder id="0">
+        <file id="0" name="plant_bg.png" width="345" height="199" pivot_x="0.5" pivot_y="0.5"/>
+        <file id="1" name="stage-0.png" width="126" height="157" pivot_x="0.5" pivot_y="0.5"/>
+        <file id="2" name="stage-1.png" width="195" height="174" pivot_x="0.5" pivot_y="0.5"/>
+        <file id="3" name="stage-2.png" width="273" height="174" pivot_x="0.5" pivot_y="0.5"/>
+    </folder>
+    <entity id="0" name="ui_ling_guard_plant_container">
+        <animation id="0" name="close" length="1000" interval="100">
+            <mainline>
+                <key id="0"/>
+            </mainline>
+        </animation>
+        <animation id="1" name="open" length="1000" interval="100">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" timeline="0" key="0" z_index="0"/>
+                    <object_ref id="1" timeline="1" key="0" z_index="1"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="plant_bg">
+                <key id="0" spin="0">
+                    <object folder="0" file="0" angle="0"/>
+                </key>
+            </timeline>
+            <timeline id="1" name="stage-0">
+                <key id="0" spin="0">
+                    <object folder="0" file="1" x="-91" y="-2" angle="0"/>
+                </key>
+            </timeline>
+        </animation>
+        <animation id="2" name="open_1" length="1000" interval="100">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" timeline="0" key="0" z_index="0"/>
+                    <object_ref id="1" timeline="1" key="0" z_index="1"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="plant_bg">
+                <key id="0" spin="0">
+                    <object folder="0" file="0" angle="0"/>
+                </key>
+            </timeline>
+            <timeline id="1" name="stage-0">
+                <key id="0" spin="0">
+                    <object folder="0" file="2" x="-56" y="4" angle="0"/>
+                </key>
+            </timeline>
+        </animation>
+        <animation id="3" name="open_2" length="1000" interval="100">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" timeline="0" key="0" z_index="0"/>
+                    <object_ref id="1" timeline="1" key="0" z_index="1"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="plant_bg">
+                <key id="0" spin="0">
+                    <object folder="0" file="0" angle="0"/>
+                </key>
+            </timeline>
+            <timeline id="1" name="stage-0">
+                <key id="0" spin="0">
+                    <object folder="0" file="3" x="-17" y="4" angle="0"/>
+                </key>
+            </timeline>
+        </animation>
+    </entity>
+</spriter_data>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<spriter_data scml_version="1.0" generator="BrashMonkey Spriter" generator_version="r4.1">
+    <folder id="0" name="loong_1_attack_fx">
+        <file id="0" name="loong_1_attack_fx/attack-2.png" width="487" height="440" pivot_x="0.5" pivot_y="0.1"/>
+        <file id="1" name="loong_1_attack_fx/attack-0.png" width="431" height="458" pivot_x="0.5" pivot_y="0.1"/>
+        <file id="2" name="loong_1_attack_fx/attack-1.png" width="415" height="408" pivot_x="0.5" pivot_y="0.1"/>
+        <file id="3" name="loong_1_attack_fx/attack-3.png" width="435" height="494" pivot_x="0.5" pivot_y="0.15"/>
+        <file id="4" name="loong_1_attack_fx/attack-4.png" width="473" height="414" pivot_x="0.5" pivot_y="0.1"/>
+    </folder>
+    <entity id="0" name="loong_1_attack_hit_fx">
+        <animation id="0" name="attack_fx_up" length="500" interval="100">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" timeline="1" key="0" z_index="0"/>
+                    <object_ref id="1" timeline="0" key="0" z_index="1"/>
+                </key>
+                <key id="1" time="199">
+                    <object_ref id="0" timeline="1" key="1" z_index="0"/>
+                    <object_ref id="1" timeline="0" key="1" z_index="1"/>
+                </key>
+                <key id="2" time="500">
+                    <object_ref id="0" timeline="1" key="2" z_index="0"/>
+                    <object_ref id="1" timeline="0" key="2" z_index="1"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="attack-0_000">
+                <key id="0" spin="0">
+                    <object folder="0" file="2" x="-398.245849" y="16.600625" angle="0" scale_x="0.33385" scale_y="0.216193"/>
+                </key>
+                <key id="1" time="199" spin="0">
+                    <object folder="0" file="0" x="45.739394" y="42.543508" angle="0" scale_x="0.60148" scale_y="0.420346"/>
+                </key>
+                <key id="2" time="500" spin="0">
+                    <object folder="0" file="0" x="185.47563" y="122.496563" angle="0" scale_x="0.988064" scale_y="0.845093"/>
+                </key>
+            </timeline>
+            <timeline id="1" name="attack-2_000">
+                <key id="0" spin="0">
+                    <object folder="0" file="2" x="-423.421658" y="29.81928" angle="0" scale_x="0.218412" scale_y="0.125331"/>
+                </key>
+                <key id="1" time="199" spin="0">
+                    <object folder="0" file="3" x="-66.908786" y="51.6974" angle="0" scale_x="0.60148" scale_y="0.308948"/>
+                </key>
+                <key id="2" time="500" spin="0">
+                    <object folder="0" file="3" x="-46.057559" y="138.482223" angle="0" scale_x="0.988064" scale_y="0.672526"/>
+                </key>
+            </timeline>
+        </animation>
+        <animation id="1" name="attack_fx_down" length="500" interval="100">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" timeline="4" key="0" z_index="0"/>
+                    <object_ref id="1" timeline="1" key="0" z_index="1"/>
+                    <object_ref id="2" timeline="2" key="0" z_index="2"/>
+                </key>
+                <key id="1" time="199">
+                    <object_ref id="0" timeline="4" key="1" z_index="0"/>
+                    <object_ref id="1" timeline="1" key="1" z_index="1"/>
+                    <object_ref id="2" timeline="2" key="1" z_index="2"/>
+                </key>
+                <key id="2" time="500">
+                    <object_ref id="0" timeline="3" key="0" z_index="0"/>
+                    <object_ref id="1" timeline="0" key="0" z_index="1"/>
+                    <object_ref id="2" timeline="4" key="2" z_index="2"/>
+                    <object_ref id="3" timeline="1" key="2" z_index="3"/>
+                    <object_ref id="4" timeline="2" key="2" z_index="4"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="attack-0_000">
+                <key id="0" time="500" spin="0">
+                    <object folder="0" file="0" x="185.47563" y="122.496563" angle="0" scale_x="0.988064" scale_y="0.845093"/>
+                </key>
+            </timeline>
+            <timeline id="1" name="attack-1">
+                <key id="0" spin="0">
+                    <object folder="0" file="2" x="-402.551433" y="-42.851228" angle="0" scale_x="0.363309" scale_y="0.270598"/>
+                </key>
+                <key id="1" time="199" spin="0">
+                    <object folder="0" file="4" x="17.146898" y="-128.857368" angle="0" scale_x="0.60148" scale_y="0.504068"/>
+                </key>
+                <key id="2" time="500" spin="0">
+                    <object folder="0" file="4" x="195.337721" y="-143.506184" angle="0" scale_x="1.119276" scale_y="0.953169"/>
+                </key>
+            </timeline>
+            <timeline id="2" name="attack-2">
+                <key id="0" spin="0">
+                    <object folder="0" file="2" x="-432.681515" y="-51.839624" angle="0" scale_x="0.23547" scale_y="0.149175"/>
+                </key>
+                <key id="1" time="199" spin="0">
+                    <object folder="0" file="3" x="-136.257642" y="-174.056072" angle="0" scale_x="0.60148" scale_y="0.323259"/>
+                </key>
+                <key id="2" time="500" spin="0">
+                    <object folder="0" file="3" x="-111.220525" y="-241.435771" angle="0" scale_x="0.988064" scale_y="0.797753"/>
+                </key>
+            </timeline>
+            <timeline id="3" name="attack-2_000">
+                <key id="0" time="500" spin="0">
+                    <object folder="0" file="3" x="-46.057559" y="138.482223" angle="0" scale_x="0.988064" scale_y="0.672526"/>
+                </key>
+            </timeline>
+            <timeline id="4" name="attack-4">
+                <key id="0" spin="0">
+                    <object folder="0" file="2" x="-385.068386" y="-26.191811" angle="0" scale_x="0.446037" scale_y="0.339389"/>
+                </key>
+                <key id="1" time="199" spin="0">
+                    <object folder="0" file="1" x="137.364837" y="-66.726731" angle="0" scale_x="0.882745" scale_y="0.665426"/>
+                </key>
+                <key id="2" time="500" spin="0">
+                    <object folder="0" file="1" x="364.29856" y="-37.169273" angle="0" scale_x="1.450104" scale_y="1.450104"/>
+                </key>
+            </timeline>
+        </animation>
+    </entity>
+</spriter_data>

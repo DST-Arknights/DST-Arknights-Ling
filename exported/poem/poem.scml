@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<spriter_data scml_version="1.0" generator="BrashMonkey Spriter" generator_version="r4.1">
+    <folder id="0" name="poem_0">
+        <file id="0" name="poem_0/poem_0.png" width="204" height="102" pivot_x="0.5" pivot_y="0.5"/>
+    </folder>
+    <folder id="1" name="poem_1">
+        <file id="0" name="poem_1/poem_1.png" width="204" height="102" pivot_x="0.5" pivot_y="0.5"/>
+    </folder>
+    <folder id="2" name="poem_2">
+        <file id="0" name="poem_2/poem_2.png" width="204" height="106" pivot_x="0.544118" pivot_y="0.40566"/>
+    </folder>
+    <folder id="3" name="poem_3">
+        <file id="0" name="poem_3/poem_3.png" width="204" height="106" pivot_x="0.514706" pivot_y="0.226415"/>
+    </folder>
+    <entity id="0" name="poem">
+        <animation id="0" name="poem_0" length="1000" interval="100">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" timeline="0" key="0" z_index="0"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="poem_0">
+                <key id="0" spin="0">
+                    <object folder="0" file="0" pivot_x="0.514634" pivot_y="0.276699"/>
+                </key>
+            </timeline>
+        </animation>
+        <animation id="1" name="poem_1" length="1000" interval="100">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" timeline="0" key="0" z_index="0"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="poem_1">
+                <key id="0" spin="0">
+                    <object folder="1" file="0" pivot_x="0.499976" pivot_y="0.279998"/>
+                </key>
+            </timeline>
+        </animation>
+        <animation id="2" name="poem_2" length="1000" interval="100">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" timeline="0" key="0" z_index="0"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="poem_2">
+                <key id="0" spin="0">
+                    <object folder="2" file="0"/>
+                </key>
+            </timeline>
+        </animation>
+        <animation id="3" name="poem_3" length="1000" interval="100">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" timeline="0" key="0" z_index="0"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="poem_3">
+                <key id="0" spin="0">
+                    <object folder="3" file="0"/>
+                </key>
+            </timeline>
+        </animation>
+    </entity>
+</spriter_data>

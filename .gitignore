@@ -45,7 +45,6 @@ luac.out
 *.fsb
 *.fdp.bak
 .fsbcache/
-exported/
 images/
 anim/
 temp/
