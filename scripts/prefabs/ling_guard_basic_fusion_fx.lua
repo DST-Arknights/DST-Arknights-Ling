@@ -71,7 +71,4 @@ local assets = {
     Asset("ANIM", "anim/"..BUILD..".zip"),
 }
 
-
-
-
 return Prefab("ling_guard_basic_fusion_fx", fn, assets)

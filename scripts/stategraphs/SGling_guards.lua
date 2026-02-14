@@ -104,10 +104,10 @@ local states =
                 -- 弦惊特效
                 if inst.components.ling_guard.form == CONSTANTS.GUARD_FORM.XIANJING then
                     local target = inst.sg.statemem.target
-                    local x, y, z = target.Transform:GetWorldPosition()
+                    local x, y, z = inst.Transform:GetWorldPosition()
                     local fx = SpawnPrefab("ling_guard_elite_attack_hit_fx")
-                    lprint("elite attack hit fx spawned at", x, y, z)
                     fx.Transform:SetPosition(x, y, z)
+                    fx.Transform:SetRotation(inst.Transform:GetRotation())
                 end
             end),
             TimeEvent(8*FRAMES, function(inst)
