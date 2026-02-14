@@ -316,6 +316,7 @@ local function _ling_OnDirtyCameraAnchor(inst)
         TheCamera.targetoffset = Vector3(2, 1.5, 0)
         -- 立即快照相机到目标位置（不是渐进式移动）
         TheCamera:Snap()
+        ThePlayer.HUD.ling_cloud_pavilion_mist:CloudIdle()
     else
         -- 室外模式：恢复默认
         TheCamera:SetControllable(true)
@@ -327,8 +328,11 @@ local function _ling_OnDirtyCameraAnchor(inst)
 end
 
 local function _ling_OnDirtyInCloudPavilion(inst)
-    ArkLogger:Debug("_ling_OnDirtyInCloudPavilion")
     ThePlayer.HUD.ling_cloud_pavilion_mist:CloudIn()
+end
+
+local function _ling_OnDirtyOutCloudPavilion(inst)
+    ThePlayer.HUD.ling_cloud_pavilion_mist:CloudOut()
 end
 
 -- ============================================================================
@@ -349,9 +353,11 @@ end
 AddPlayerPostInit(function(inst)
     inst.ling_netvarCameraAnchor = net_entity(inst.GUID, "ling_netvarCameraAnchor", "DirtyCameraAnchor")
     inst.ling_netvar_inCloudPavilion = net_event(inst.GUID, "DirtyInCloudPavilion")
+    inst.ling_netvar_outCloudPavilion = net_event(inst.GUID, "DirtyOutCloudPavilion")
     if not TheNet:IsDedicated() then
         inst:ListenForEvent("DirtyCameraAnchor", _ling_OnDirtyCameraAnchor)
         inst:ListenForEvent("DirtyInCloudPavilion", _ling_OnDirtyInCloudPavilion)
+        inst:ListenForEvent("DirtyOutCloudPavilion", _ling_OnDirtyOutCloudPavilion)
     end
 
     if not TheWorld.ismastersim then return end
@@ -394,11 +400,13 @@ AddComponentPostInit("sleepingbaguser", function(self)
         -- 4-6秒后随机迁移
         local timeout = math.random(4, 6)
         -- 迁移前最最多2秒的时候, 播放云
-        self.inst:DoTaskInTime(math.max(timeout - 1, 0), function()
+        local task = self.inst:DoTaskInTime(math.max(timeout - 3, 0), function()
             self.inst.ling_netvar_inCloudPavilion:push()
         end)
         self.inst:DoTaskInTime(timeout, function()
             if not self.inst.sleepingbag then
+                task:Cancel()
+                self.inst.ling_netvar_outCloudPavilion:push()
                 return
             end
             -- 检查附近有没有 ling_cloud_pavilion_exit_door, 有就跳出, 没有就进入
