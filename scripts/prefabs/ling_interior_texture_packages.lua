@@ -52,7 +52,7 @@ local function floorFn()
     inst.Light:SetFalloff(0.7)
     inst.Light:SetIntensity(0.8)
     inst.Light:SetRadius(12)
-    inst.Light:SetColour(1, 0.95, 0.8)
+    inst.Light:SetColour(1, 1, 1)
     inst.Light:Enable(true)
 
     inst:AddTag("NOCLICK")
@@ -86,7 +86,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 local wallAssets = {
-    Asset("ANIM", "anim/wallhamletcity1.zip")
+    Asset("ANIM", "anim/ling_cloud_pavilion.zip")
 }
 
 local function wall_common()
