@@ -235,6 +235,10 @@ function LingGuardBehavior:GetForm()
 end
 
 function LingGuardBehavior:Recall()
+-- 关闭面板
+if self.panel_opener then
+    self:ClosePanel(self.panel_opener)
+end
   local act = BufferedAction(self.inst, self.inst, ACTIONS.LING_GUARD_RECALL)
   self.inst.components.locomotor:PushAction(act, false)
 end
