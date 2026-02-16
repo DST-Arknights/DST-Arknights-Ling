@@ -3,7 +3,6 @@ local function ApplyBuffEffect(inst, target, cfg)
   if not inst.spawnByLoad then
     local reduceCd = cfg.SO_IS_WRIT_AN_ODE_TO_WINE_BUFF_REDUCE_CD or 0
     local skillComp = target.components.ark_skill
-    ArkLogger:Debug("so_is_writ_an_ode_to_wine_buff ApplyBuffEffect", reduceCd, skillComp)
     if skillComp then
       for id, skill in pairs(skillComp.skillsById) do
         skill:AddEnergyProgress(reduceCd)
@@ -29,11 +28,14 @@ local function OnAttached(inst, target)
   local totalTime = cfg.SO_IS_WRIT_AN_ODE_TO_WINE_BUFF_DURATION or 10
   local remainingTime = inst.components.timer:GetTimeLeft("so_is_writ_an_ode_to_wine_buff_duration") or totalTime
   inst.components.timer:StartTimer("so_is_writ_an_ode_to_wine_buff_duration", totalTime)
+  ArkLogger:Debug("so_is_writ_an_ode_to_wine_buff OnAttached targetElite=", targetElite, STRINGS.UI.SO_IS_WRIT_AN_ODE_TO_WINE.DESC[tostring(targetElite)])
+  inst.components.ark_buff_icon:SetDesc(STRINGS.UI.SO_IS_WRIT_AN_ODE_TO_WINE.DESC[tostring(targetElite)])
   inst.components.ark_buff_icon:SetTotalTime(totalTime)
   inst.components.ark_buff_icon:SetRemainingTime(remainingTime)
   inst.components.ark_buff_icon:AttachTo(target)
 
   -- 应用一次性触发效果
+  ApplyBuffEffect(inst, target, cfg)
 end
 
 local function OnDetached(inst, target)
@@ -86,6 +88,7 @@ local function fn()
 
     inst:AddComponent("ark_buff_icon")
     inst.components.ark_buff_icon:SetTexture("images/ling_skill.xml", "skill_icon_skchr_ling_1.tex")
+    inst.components.ark_buff_icon:SetTitle(STRINGS.UI.SO_IS_WRIT_AN_ODE_TO_WINE.NAME)
 
     inst.OnLoad = OnLoad
     return inst

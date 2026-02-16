@@ -456,3 +456,23 @@ msgstr "云山亭"
 msgctxt "STRINGS.CHARACTERS.GENERIC.LING_CLOUD_PAVILION_PRIVATE_SLEEP"
 msgid "云山亭里不能睡觉"
 msgstr "占位符 LING_CLOUD_PAVILION_PRIVATE_SLEEP"
+
+#. 随付笺咏醉屠苏
+msgctxt "STRINGS.UI.SO_IS_WRIT_AN_ODE_TO_WINE.NAME"
+msgid "So Is Writ An Ode To Wine"
+msgstr "随付笺咏醉屠苏"
+
+#. 随付笺咏醉屠苏描述
+msgctxt "STRINGS.UI.SO_IS_WRIT_AN_ODE_TO_WINE.DESC.1"
+msgid "STRINGS.UI.SO_IS_WRIT_AN_ODE_TO_WINE.DESC.1"
+msgstr "-清平、逍遥、弦惊被击倒、融合、回收时触发\n-触发时所有技能充能-5秒\n-攻击力增加2%\n-持续20秒"
+
+#. 随付笺咏醉屠苏描述
+msgctxt "STRINGS.UI.SO_IS_WRIT_AN_ODE_TO_WINE.DESC.2"
+msgid "STRINGS.UI.SO_IS_WRIT_AN_ODE_TO_WINE.DESC.2"
+msgstr "-清平、逍遥、弦惊被击倒、融合、回收时触发\n-触发时所有技能充能-10秒\n-攻击力增加3%\n-持续20秒"
+
+#. 随付笺咏醉屠苏描述
+msgctxt "STRINGS.UI.SO_IS_WRIT_AN_ODE_TO_WINE.DESC.3"
+msgid "STRINGS.UI.SO_IS_WRIT_AN_ODE_TO_WINE.DESC.3"
+msgstr "-清平、逍遥、弦惊被击倒、融合、回收时触发\n-触发时所有技能充能-15秒\n-攻击力增加4%\n-持续20秒"

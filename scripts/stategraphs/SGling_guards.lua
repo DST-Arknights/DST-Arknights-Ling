@@ -335,7 +335,12 @@ local states =
         {
             EventHandler("animover", function(inst)
                 if inst.AnimState:AnimDone() then
+                    local guid = inst.GUID
+                    local leader = inst.components.follower.leader
                     inst:Remove()
+                    if leader then
+                        leader:AddDebuff("so_is_writ_an_ode_to_wine_buff" .. guid, "so_is_writ_an_ode_to_wine_buff")
+                    end
                 end
             end),
         },

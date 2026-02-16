@@ -237,6 +237,15 @@ local function HookHealth(inst)
         end
     end)
 end
+
+local function addBuff(inst)
+    local buffName = "so_is_writ_an_ode_to_wine_buff" .. inst.GUID
+    local leader = inst.components.follower.leader
+    if leader then
+        leader:AddDebuff(buffName, "so_is_writ_an_ode_to_wine_buff")
+    end
+end
+    
 ----------------------------
 -- 普通守卫（ling_guard_basic）
 ----------------------------
@@ -345,6 +354,7 @@ local function ling_guard_basic_fn()
     inst.OnPreLoad = OnPreLoad_Common
     inst.OnRemoveEntity = OnRemoveEntity_Common
     inst:ListenForEvent("despawn", onDespawn)
+    inst:ListenForEvent("death", addBuff)
     inst:DoTaskInTime(0, CreateFogRevealerIcon)
     return inst
 end
@@ -439,6 +449,7 @@ local function ling_guard_elite_fn()
     inst.OnPreLoad = OnPreLoad_Common
     inst.OnRemoveEntity = OnRemoveEntity_Common
     inst:ListenForEvent("despawn", onDespawn)
+    inst:ListenForEvent("death", addBuff)
     inst:DoTaskInTime(0, CreateFogRevealerIcon)
     return inst
 end
