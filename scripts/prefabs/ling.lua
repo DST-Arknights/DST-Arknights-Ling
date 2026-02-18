@@ -119,6 +119,17 @@ local function AddTimeExp(inst)
   end
 end
 
+local function OnChangeArea(inst, area)
+  local on_ling_island = area ~= nil and area.tags and table.contains(area.tags, "ling_dream_island")
+  if on_ling_island then
+    ArkLogger:Debug("Player entered Dream Butterfly Island")
+    inst.components.talker:Say("欢迎来到梦蝶岛！")
+  else
+    ArkLogger:Debug("Player left Dream Butterfly Island")
+    inst.components.talker:Say("离开了梦蝶岛...")
+  end
+end
+
 local function common_post_init(inst)
   inst:AddTag("ling")
   inst:AddTag("reader")
@@ -171,6 +182,7 @@ local function master_post_init(inst)
     end
   end
   inst:ListenForEvent("ms_playerreroll", OnReroll)
+  inst:ListenForEvent("changearea", OnChangeArea)
   inst:DoPeriodicTask(2, AddTimeExp)
 end
 
