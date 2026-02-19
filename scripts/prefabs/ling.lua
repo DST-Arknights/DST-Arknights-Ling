@@ -122,11 +122,28 @@ end
 local function OnChangeArea(inst, area)
   local on_ling_island = area ~= nil and area.tags and table.contains(area.tags, "ling_dream_island")
   if on_ling_island then
-    ArkLogger:Debug("Player entered Dream Butterfly Island")
-    inst.components.talker:Say("欢迎来到梦蝶岛！")
+    inst:AddDebuff("ling_dream_island_buff", "ling_dream_island_buff")
+    if not inst._visited_dream_island then
+      inst._visited_dream_island = true
+      inst.components.talker:Say(GetString(inst, "ANNOUNCE_ENTER_DREAM_ISLAND"))
+      ArkLogger:Debug("Player entered Dream Butterfly Island")
+    end
   else
-    ArkLogger:Debug("Player left Dream Butterfly Island")
-    inst.components.talker:Say("离开了梦蝶岛...")
+    inst:RemoveDebuff("ling_dream_island_buff")
+  end
+end
+
+local function OnSave(inst, data)
+  data._visited_dream_island = inst._visited_dream_island
+  data._visited_cloud_pavilion = inst._visited_cloud_pavilion
+end
+
+local function OnLoad(inst, data)
+  if data._visited_dream_island then
+    inst._visited_dream_island = data._visited_dream_island
+  end
+  if data._visited_cloud_pavilion then
+    inst._visited_cloud_pavilion = data._visited_cloud_pavilion
   end
 end
 
@@ -184,6 +201,12 @@ local function master_post_init(inst)
   inst:ListenForEvent("ms_playerreroll", OnReroll)
   inst:ListenForEvent("changearea", OnChangeArea)
   inst:DoPeriodicTask(2, AddTimeExp)
+  -- 记录是否登陆过梦岛
+  inst._visited_dream_island = false
+  -- 记录是否登陆过云山亭
+  inst._visited_cloud_pavilion = false
+  inst.OnSave = OnSave
+  inst.OnLoad = OnLoad
 end
 
 return MakePlayerCharacter("ling", prefabs, assets, common_post_init, master_post_init, start_inv)

@@ -12,12 +12,14 @@ local function OnPlayerNear(inst, doer)
     --     doer.ling_netvarCameraAnchor:set(inst)
     -- end)
     doer.ling_inHouse = true
+    doer:AddDebuff("ling_dream_island_buff", "ling_dream_island_buff")
 end
 
 local function OnPlayerFar(inst, doer)
     -- 清空锚点，恢复室外相机
     doer.ling_netvarCameraAnchor:set(nil)
     doer.ling_inHouse = false
+    doer:RemoveDebuff("ling_dream_island_buff")
 end
 
 local function OnSave(inst, data)

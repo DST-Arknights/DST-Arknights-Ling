@@ -327,12 +327,12 @@ local function _ling_OnDirtyCameraAnchor(inst)
     end
 end
 
-local function _ling_OnDirtyInCloudPavilion(inst)
-    ThePlayer.HUD.ling_cloud_pavilion_mist:CloudIn()
-end
-
-local function _ling_OnDirtyOutCloudPavilion(inst)
-    ThePlayer.HUD.ling_cloud_pavilion_mist:CloudOut()
+local function _ling_OnDirtyCloudPavilionMist(inst)
+    if inst.ling_netvarCloudPavilionMist:value() then
+        ThePlayer.HUD.ling_cloud_pavilion_mist:CloudIn()
+    else
+        ThePlayer.HUD.ling_cloud_pavilion_mist:CloudOut()
+    end
 end
 
 -- ============================================================================
@@ -352,12 +352,10 @@ end
 
 AddPlayerPostInit(function(inst)
     inst.ling_netvarCameraAnchor = net_entity(inst.GUID, "ling_netvarCameraAnchor", "DirtyCameraAnchor")
-    inst.ling_netvar_inCloudPavilion = net_event(inst.GUID, "DirtyInCloudPavilion")
-    inst.ling_netvar_outCloudPavilion = net_event(inst.GUID, "DirtyOutCloudPavilion")
+    inst.ling_netvarCloudPavilionMist = net_bool(inst.GUID, "ling_netvarCloudPavilionMist", "DirtyCloudPavilionMist")
     if not TheNet:IsDedicated() then
         inst:ListenForEvent("DirtyCameraAnchor", _ling_OnDirtyCameraAnchor)
-        inst:ListenForEvent("DirtyInCloudPavilion", _ling_OnDirtyInCloudPavilion)
-        inst:ListenForEvent("DirtyOutCloudPavilion", _ling_OnDirtyOutCloudPavilion)
+        inst:ListenForEvent("DirtyCloudPavilionMist", _ling_OnDirtyCloudPavilionMist)
     end
 
     if not TheWorld.ismastersim then return end
@@ -401,12 +399,16 @@ AddComponentPostInit("sleepingbaguser", function(self)
         local timeout = math.random(4, 6)
         -- 迁移前最最多2秒的时候, 播放云
         local task = self.inst:DoTaskInTime(math.max(timeout - 3, 0), function()
-            self.inst.ling_netvar_inCloudPavilion:push()
+            if self.inst.ling_netvarCloudPavilionMist ~= nil then
+                self.inst.ling_netvarCloudPavilionMist:set(true)
+            end
         end)
         self.inst:DoTaskInTime(timeout, function()
             if not self.inst.sleepingbag then
                 task:Cancel()
-                self.inst.ling_netvar_outCloudPavilion:push()
+                if self.inst.ling_netvarCloudPavilionMist ~= nil then
+                    self.inst.ling_netvarCloudPavilionMist:set(false)
+                end
                 return
             end
             -- 检查附近有没有 ling_cloud_pavilion_exit_door, 有就跳出, 没有就进入
