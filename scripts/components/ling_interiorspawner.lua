@@ -80,29 +80,29 @@ function InteriorSpawner:GetPos()
     return Vector3(x, 0, z)
 end
 
---- 不可见墙，两层，里侧阻挡玩家移动，外侧限制建造和摆放位置
+--- 不可见墙，里侧阻挡玩家移动，外侧限制建造和摆放位置
 function InteriorSpawner:SpawnWall(x, z)
     local origin = self:getSpawnOrigin()
-    for dx = origin.dx[1], origin.dx[2] do --因为两侧墙角度不一样，所以墙壁并不是对称的
-        for dz = origin.dz[1], origin.dz[2] do
-            if dx == origin.dx[1] or dx == origin.dx[2] or dz == origin.dz[1] or dz == origin.dz[2] then
-                local part = SpawnPrefab("ling_wall_tigerpond")
-                part:AddTag("NOBLOCK")
-                part.Transform:SetPosition(x + dx + 0.5, 0, z + dz + 0.5)
-                lprint('SpawnWall', x + dx + 0.5, z + dz + 0.5)
-                -- SpawnAt("deco_plantholder_basic", Vector3(x + dx + 0.5, 0, z + dz + 0.5))
-            end
-        end
+    local STEP = 1
+
+    local function placeWall(wx, wz)
+        local part = SpawnPrefab("ling_wall_tigerpond")
+        part:AddTag("NOBLOCK")
+        part.Transform:SetPosition(wx, 0, wz)
+        lprint('SpawnWall', wx, wz)
     end
-    -- 可能会影响墙上贴纸的建设
-    -- for dx = origin.dx[1] - 2, origin.dx[2] + 2 do
-    --     for dz = origin.dz[1] - 2, origin.dz[2] + 2 do
-    --         if dx == (origin.dx[1] - 2) or dx == (origin.dx[2] + 2) or dz == (origin.dz[1] - 2) or dz == (origin.dz[2] + 2) then
-    --             local part = SpawnPrefab("ling_wall_tigerpond")
-    --             part.Transform:SetPosition(x + dx + 0.5, 0, z + dz + 0.5)
-    --         end
-    --     end
-    -- end
+
+    -- 上下两条边（沿 z 轴）
+    for dz = origin.dz[1], origin.dz[2], STEP do
+        placeWall(x + origin.dx[1] + 0.5, z + dz + 0.5)
+        placeWall(x + origin.dx[2] + 0.5, z + dz + 0.5)
+    end
+
+    -- 左右两条边（沿 x 轴，跳过已放置的角）
+    for dx = origin.dx[1] + STEP, origin.dx[2], STEP do
+        placeWall(x + dx + 0.5, z + origin.dz[1] + 0.5)
+        placeWall(x + dx + 0.5, z + origin.dz[2] + 0.5)
+    end
 end
 
 function InteriorSpawner:OnSave()
