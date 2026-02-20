@@ -258,7 +258,9 @@ function LingGuardBehavior:ApplyLevelEffects()
     local cfg = LING_GUARD_TUNING.GetLevelConfig(self.form, level)
     if not cfg then return end
     if self.inst.components.health then
+        local currentHealth = self.inst.components.health.currenthealth
         self.inst.components.health:SetMaxHealth(cfg.HEALTH)
+        self.inst.components.health:SetCurrentHealth(currentHealth)
     end
     if self.inst.components.combat then
         self.inst.components.combat:SetDefaultDamage(cfg.DAMAGE)

@@ -37,7 +37,6 @@ local function OnNewTarget(inst, data)
 end
 
 local function OnApplyElite(inst, elite, level)
-  ArkLogger:Debug("OnApplyElite", elite, level)
   if inst.components.ling_poetry and elite then
     inst.components.ling_poetry:SetElite(elite)
   end
@@ -66,9 +65,15 @@ local function OnApplyElite(inst, elite, level)
       return
   end
   -- 更新基础属性
+  local currentHealth = inst.components.health.currenthealth
   inst.components.health:SetMaxHealth(data.MAX_HEALTH)
+  inst.components.health:SetCurrentHealth(currentHealth)
+  local currentHunger = inst.components.hunger.current
   inst.components.hunger:SetMax(data.MAX_HUNGER)
+  inst.components.hunger:SetCurrent(currentHunger)
+  local currentSanity = inst.components.sanity.current
   inst.components.sanity:SetMax(data.MAX_SANITY)
+  inst.components.sanity.current = currentSanity
   -- 应用移动速度
   inst.components.locomotor:SetExternalSpeedMultiplier(inst, "ling_elite_speed", data.SPEED_MULTIPLIER)
   inst.components.combat.externaldamagemultipliers:SetModifier(inst, data.DAMAGE_MULTIPLIER, "ling_elite_damage")

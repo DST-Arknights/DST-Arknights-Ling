@@ -29,8 +29,6 @@ function LingPoetry:SetElite(level)
   self.poetry_recovery_while_idle_per_frames = data.POETRY_RECOVERY_WHILE_IDLE_PER_SECOND * FRAMES
   self.poetry_recovery_in_dream_per_frames = data.POETRY_RECOVERY_IN_DREAM_PER_SECOND * FRAMES
   self.max_poetry = data.MAX_POETRY
-  -- TODO: 测试模式 - 初始化时设为满值
-  self.current_poetry = self.max_poetry -- 测试期间总是满诗意
 end
 
 function LingPoetry:OnSave()
