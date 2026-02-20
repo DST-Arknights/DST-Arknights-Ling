@@ -298,6 +298,7 @@ end)
 -- ============================================================================
 
 AddComponentPostInit("sleepingbaguser", function(self)
+    self._ling_transfer_task = nil
     local _DoSleep = self.DoSleep
     function self:DoSleep(bed)
         if not TheWorld.ismastershard then
@@ -311,9 +312,9 @@ AddComponentPostInit("sleepingbaguser", function(self)
         end
         local res = { _DoSleep(self, bed) }
         local timeout = math.random(4, 6)
-        local task = nil
+        self._ling_transfer_task = nil
         if self.inst.ling_netvarCloudPavilionMist ~= nil then
-            task = self.inst:DoTaskInTime(math.max(timeout - 3, 0), function()
+            self._ling_transfer_task = self.inst:DoTaskInTime(math.max(timeout - 3, 0), function()
                 if self.inst.ling_netvarCloudPavilionMist ~= nil then
                     self.inst.ling_netvarCloudPavilionMist:set(true)
                 end
@@ -321,8 +322,9 @@ AddComponentPostInit("sleepingbaguser", function(self)
         end
         self.inst:DoTaskInTime(timeout, function()
             if not self.inst.sleepingbag then
-                if task ~= nil then
-                    task:Cancel()
+                if self._ling_transfer_task ~= nil then
+                    self._ling_transfer_task:Cancel()
+                    self._ling_transfer_task = nil
                     self.inst.ling_netvarCloudPavilionMist:set(false)
                 end
                 return
@@ -340,6 +342,26 @@ AddComponentPostInit("sleepingbaguser", function(self)
             end
         end)
         return unpack(res)
+    end
+    local _DoWakeUp = self.DoWakeUp
+    function self:DoWakeUp(nostatechange)
+        if not TheWorld.ismastershard then
+            return _DoWakeUp(self, nostatechange)
+        end
+        if not TheWorld.ismastersim then
+            return _DoWakeUp(self, nostatechange)
+        end
+        if not self.inst.components.ling_cloud_pavilion_transfer then
+            return _DoWakeUp(self, nostatechange)
+        end
+        if self.inst.ling_netvarCloudPavilionMist ~= nil then
+            if self._ling_transfer_task ~= nil then
+                self._ling_transfer_task:Cancel()
+                self._ling_transfer_task = nil
+            end
+            self.inst.ling_netvarCloudPavilionMist:set(false)
+        end
+        return _DoWakeUp(self, nostatechange)
     end
 end)
 
