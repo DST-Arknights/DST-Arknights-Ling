@@ -30,15 +30,9 @@ local function OnAttached(inst, target)
   inst._buffTask = inst:DoPeriodicTask(TUNING.SLEEP_TICK_PERIOD, function() OnTick(inst, target) end)
   -- 50%减伤, 5点位面防御
   target.components.combat.externaldamagetakenmultipliers:SetModifier(inst, 0.5)
-  if target.ling_netvarCloudPavilionMist ~= nil then
-    target.ling_netvarCloudPavilionMist:set(true)
-  end
 end
 
 local function OnDetached(inst, target)
-  if target ~= nil and target.ling_netvarCloudPavilionMist ~= nil then
-    target.ling_netvarCloudPavilionMist:set(false)
-  end
   inst:Remove()
 end
 

@@ -398,15 +398,18 @@ AddComponentPostInit("sleepingbaguser", function(self)
         -- 4-6秒后随机迁移
         local timeout = math.random(4, 6)
         -- 迁移前最最多2秒的时候, 播放云
-        local task = self.inst:DoTaskInTime(math.max(timeout - 3, 0), function()
-            if self.inst.ling_netvarCloudPavilionMist ~= nil then
-                self.inst.ling_netvarCloudPavilionMist:set(true)
-            end
-        end)
+        local task = nil
+        if self.inst.ling_netvarCloudPavilionMist ~= nil then
+            task = self.inst:DoTaskInTime(math.max(timeout - 3, 0), function()
+                if self.inst.ling_netvarCloudPavilionMist ~= nil then
+                    self.inst.ling_netvarCloudPavilionMist:set(true)
+                end
+            end)
+        end
         self.inst:DoTaskInTime(timeout, function()
             if not self.inst.sleepingbag then
-                task:Cancel()
-                if self.inst.ling_netvarCloudPavilionMist ~= nil then
+                if task ~= nil then
+                    task:Cancel()
                     self.inst.ling_netvarCloudPavilionMist:set(false)
                 end
                 return

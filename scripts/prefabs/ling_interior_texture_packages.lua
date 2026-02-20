@@ -13,6 +13,9 @@ local function OnPlayerNear(inst, doer)
     -- end)
     doer.ling_inHouse = true
     doer:AddDebuff("ling_dream_island_buff", "ling_dream_island_buff")
+    if doer.ling_netvarCloudPavilionMist ~= nil then
+        doer.ling_netvarCloudPavilionMist:set(true)
+    end
 end
 
 local function OnPlayerFar(inst, doer)
@@ -20,6 +23,9 @@ local function OnPlayerFar(inst, doer)
     doer.ling_netvarCameraAnchor:set(nil)
     doer.ling_inHouse = false
     doer:RemoveDebuff("ling_dream_island_buff")
+    if doer.ling_netvarCloudPavilionMist ~= nil then
+        doer.ling_netvarCloudPavilionMist:set(false)
+    end
 end
 
 local function OnSave(inst, data)
