@@ -360,22 +360,6 @@ AddPlayerPostInit(function(inst)
 
     if not TheWorld.ismastersim then return end
 
-    -- 添加带前缀的 ptribe_entnearby 组件
-    if not inst.components.ling_ptribe_entnearby then
-        inst:AddComponent("ling_ptribe_entnearby")
-    end
-
-    -- 注意：这里需要根据实际的 GetMaxDisSq 和 MarkTestFn 来调整
-    -- 如果这些函数在其他地方定义，需要确保它们存在
-    if inst.components.ling_ptribe_entnearby.AddMark then
-        inst.components.ling_ptribe_entnearby:AddMark("ptribe_playerMark", {
-            period = 5,
-            maxDisSq = GetMaxDisSq,
-            radius = TUNING.TRIBE_MAX_DIS,
-            testFn = MarkTestFn
-        })
-    end
-
     inst.ling_inHouse = false --是否在屋里，控制温度的变化
     _FnDecorator(inst.components.temperature, "OnUpdate", _ling_OnTemperatureUpdateBefore)
     _FnDecorator(inst.components.moisture, "OnUpdate", _ling_OnMoistureUpdateBefore)
