@@ -15,6 +15,7 @@ local function fn()
     inst.AnimState:SetBank("poem")
     inst.AnimState:SetBuild("poem")
     inst.AnimState:PlayAnimation("poem_3")
+    inst:AddTag("poem")
 
     inst.entity:SetPristine()
 

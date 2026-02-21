@@ -16,12 +16,12 @@ end
 -- ============================================================================
 
 -- 帐篷作为云山亭的入口
-AddPrefabPostInit("tent", function(inst)
-    if not TheWorld.ismastersim then
-        return
-    end
-    inst:AddComponent("ling_cloud_pavilion_enter")
-end)
+-- AddPrefabPostInit("tent", function(inst)
+--     if not TheWorld.ismastersim then
+--         return
+--     end
+--     inst:AddComponent("ling_cloud_pavilion_enter")
+-- end)
 
 -- 离开动作
 AddAction('EXIT_CLOUD_PAVILION', STRINGS.ACTIONS.EXIT_CLOUD_PAVILION, function(act)

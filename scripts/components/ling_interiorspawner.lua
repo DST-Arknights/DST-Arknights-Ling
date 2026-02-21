@@ -89,7 +89,6 @@ function InteriorSpawner:SpawnWall(x, z)
         local part = SpawnPrefab("ling_wall_tigerpond")
         part:AddTag("NOBLOCK")
         part.Transform:SetPosition(wx, 0, wz)
-        lprint('SpawnWall', wx, wz)
     end
 
     -- 上下两条边（沿 z 轴）

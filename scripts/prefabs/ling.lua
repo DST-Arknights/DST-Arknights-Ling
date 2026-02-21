@@ -46,14 +46,17 @@ local function OnApplyElite(inst, elite, level)
       inst.components.ark_skill:GetSkill("skill1"):SetLevel(1)
     end
     if elite == 2 then
-      if inst.components.builder then
-        inst.components.builder:AddRecipe("ling_desk")
-        -- inst.components.builder:AddRecipe("ling_jars")
-      end
+      -- if inst.components.builder then
+      --   inst.components.builder:AddRecipe("ling_desk")
+      --   -- inst.components.builder:AddRecipe("ling_jars")
+      -- end
       inst.components.ark_skill:GetSkill("skill1"):SetLevel(2)
       inst.components.ark_skill:GetSkill("skill2"):Unlock()
       inst.components.ark_skill:GetSkill("skill2"):SetLevel(1)
     elseif elite == 3 then
+      -- if inst.components.builder then
+      --   inst.components.builder:AddRecipe("ling_bookshelf")
+      -- end
       inst.components.ark_skill:GetSkill("skill1"):SetLevel(3)
       inst.components.ark_skill:GetSkill("skill2"):SetLevel(2)
       inst.components.ark_skill:GetSkill("skill3"):Unlock()
@@ -77,9 +80,11 @@ local function OnApplyElite(inst, elite, level)
   -- 应用移动速度
   inst.components.locomotor:SetExternalSpeedMultiplier(inst, "ling_elite_speed", data.SPEED_MULTIPLIER)
   inst.components.combat.externaldamagemultipliers:SetModifier(inst, data.DAMAGE_MULTIPLIER, "ling_elite_damage")
-  -- 应用睡眠抗性
-	local mult = TUNING.CHANNELCAST_SPEED_MOD * data.SPEED_MULTIPLIER
-	inst.components.grogginess:SetSpeedModMultiplier(1 / math.max(TUNING.MAX_GROGGY_SPEED_MOD, mult))
+  -- 应用睡眠抗性 (组件死亡会删除)
+  if inst.components.grogginess then
+    local mult = TUNING.CHANNELCAST_SPEED_MOD * data.SPEED_MULTIPLIER
+    inst.components.grogginess:SetSpeedModMultiplier(1 / math.max(TUNING.MAX_GROGGY_SPEED_MOD, mult))
+  end
   -- 应用召唤管理器槽位
   if inst.components.ling_summon_manager then
     ArkLogger:Debug("SetMaxSlots", data.MAX_GUARDS)
@@ -205,6 +210,17 @@ local function master_post_init(inst)
   end
   inst:ListenForEvent("ms_playerreroll", OnReroll)
   inst:ListenForEvent("changearea", OnChangeArea)
+
+  -- 复活后重新应用睡眠抗性
+  inst:ListenForEvent("ms_respawnedfromghost", function()
+    ArkLogger:Debug("ms_respawnedfromghost")
+    if inst.components.grogginess then
+      local elite = inst.components.ark_elite and inst.components.ark_elite.elite or 1
+      local data = TUNING.LING.ELITE[elite]
+      local mult = TUNING.CHANNELCAST_SPEED_MOD * data.SPEED_MULTIPLIER
+      inst.components.grogginess:SetSpeedModMultiplier(1 / math.max(TUNING.MAX_GROGGY_SPEED_MOD, mult))
+    end
+  end)
   inst:DoPeriodicTask(2, AddTimeExp)
   -- 记录是否登陆过梦岛
   inst._visited_dream_island = false

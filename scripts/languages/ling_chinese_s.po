@@ -75,6 +75,21 @@ msgctxt "STRINGS.CHARACTER_QUOTES.LING"
 msgid "The endless river through layered peaks, a solitary citadel in barren expanse, etched upon my sight"
 msgstr "长河千嶂，大荒孤城，历历在目"
 
+#. 令的书架
+msgctxt "STRINGS.NAMES.LING_BOOKSHELF"
+msgid "Ling's Bookshelf"
+msgstr "书架"
+
+#. 令的书架在制作栏的描述
+msgctxt "STRINGS.RECIPE_DESC.LING_BOOKSHELF"
+msgid "A bookshelf."
+msgstr "一个书架。"
+
+#. 令的书架在.inspectable的描述
+msgctxt "STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_BOOKSHELF"
+msgid "A bookshelf."
+msgstr "一个书架。"
+
 #. STRINGS.NAMES.LING_ELITE_2
 msgctxt "STRINGS.NAMES.LING_ELITE_2"
 msgid "Elite Level 1"
@@ -159,11 +174,6 @@ msgstr "阅读"
 msgctxt "STRINGS.UI.CRAFTING.NEEDSPOETRY_ONE"
 msgid "Needs Poetry Desk"
 msgstr "在诗台绘制"
-
-#. STRINGS.UI.CRAFTING.NEEDSLING_DESK_ONE
-msgctxt "STRINGS.UI.CRAFTING.NEEDSLING_DESK_ONE"
-msgid "Needs Elite Level 1"
-msgstr "精英化一解锁"
 
 #. STRINGS.UI.CRAFTING_FILTERS.LING_DESK
 msgctxt "STRINGS.UI.CRAFTING_FILTERS.LING_DESK"
