@@ -19,7 +19,8 @@ local T = {
         PLANT = {
             MAX_CROP = 40,
             TIME_PER_CROP = 8 * 60, -- 若需与游戏分钟对齐，改为 8 * 60
-        }
+        },
+        WORK_MULTIPLIER = 1,
     },
     {
         GUARD = {
@@ -47,7 +48,8 @@ local T = {
         PLANT = {
             MAX_CROP = 60,
             TIME_PER_CROP = 6 * 60,
-        }
+        },
+        WORK_MULTIPLIER = 2,
     },
     {
         GUARD = {
@@ -86,18 +88,18 @@ local T = {
         PLANT = {
             MAX_CROP = 80,
             TIME_PER_CROP = 4 * 60,
-        }
+        },
+        WORK_MULTIPLIER = 4,
     }
 }
 
-function T.GetLevelConfig(form, level)
-    return T[level] and T[level].GUARD[form] or nil
+function T.GetLevelConfig(level)
+    return T[level]
 end
 
--- 计算召唤消耗
-function T.GetSummonCost(form, level)
-    local cfg = T.GetLevelConfig(form, level)
-    return cfg and cfg.SUMMON_COST or nil
+function T.GetLevelGuardConfig(form, level)
+    local cfg = T.GetLevelConfig(level)
+    return cfg and cfg.GUARD[form] or nil
 end
 
 return T

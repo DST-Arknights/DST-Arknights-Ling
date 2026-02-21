@@ -304,6 +304,8 @@ local function ling_guard_basic_fn()
     inst.components.follower:KeepLeaderOnAttacked()
     inst.components.follower.keepdeadleader = true
 
+    inst:AddComponent("workmultiplier")
+
 
     inst:AddComponent("inspectable")
     inst:AddComponent("lootdropper")

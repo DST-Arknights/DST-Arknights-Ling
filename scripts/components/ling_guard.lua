@@ -255,7 +255,7 @@ end
 
 function LingGuardBehavior:ApplyLevelEffects()
     local level = self.level
-    local cfg = LING_GUARD_TUNING.GetLevelConfig(self.form, level)
+    local cfg = LING_GUARD_TUNING.GetLevelGuardConfig(self.form, level)
     if not cfg then return end
     if self.inst.components.health then
         local currentHealth = self.inst.components.health.currenthealth
@@ -274,6 +274,12 @@ function LingGuardBehavior:ApplyLevelEffects()
     end
     if self.inst.components.ling_guard_plant then
         self.inst.components.ling_guard_plant:SetLevel(level)
+    end
+    if self.inst.components.workmultiplier then
+        self.inst.components.workmultiplier:AddMultiplier(ACTIONS.CHOP, cfg.WORK_MULTIPLIER, self.inst)
+        self.inst.components.workmultiplier:AddMultiplier(ACTIONS.MINE, cfg.WORK_MULTIPLIER, self.inst)
+        self.inst.components.workmultiplier:AddMultiplier(ACTIONS.HAMMER, cfg.WORK_MULTIPLIER, self.inst)
+        self.inst.components.workmultiplier:AddMultiplier(ACTIONS.DIG, cfg.WORK_MULTIPLIER, self.inst)
     end
     -- 同步给manager
     self.inst:PushEvent("ling_guard_level_changed", { level = level })

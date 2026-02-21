@@ -321,7 +321,8 @@ function LingSummonManager:SummonBasic(slot_index, pos)
 
   -- 诗意直接扣掉
   if self.inst.components.ling_poetry then
-    local cost = LING_TUNING.GetSummonCost(form, elite_level)
+    local cfg = LING_TUNING.GetLevelGuardConfig(form, elite_level)
+    local cost = cfg and cfg.SUMMON_COST or 0
     if not self.inst.components.ling_poetry:HasEnough(cost) then
       -- TODO: 可以说话提示诗意不足
       return false
@@ -393,7 +394,8 @@ function LingSummonManager:Fusion(guard_inst)
   end
   local form = FORM.XIANJING
   if self.inst.components.ling_poetry then
-    local cost = LING_TUNING.GetSummonCost(form, elite_level)
+    local cfg = LING_TUNING.GetLevelGuardConfig(form, elite_level)
+    local cost = cfg and cfg.SUMMON_COST or 0
     if not self.inst.components.ling_poetry:HasEnough(cost) then
       -- TODO: 可以说话提示诗意不足
       return false
