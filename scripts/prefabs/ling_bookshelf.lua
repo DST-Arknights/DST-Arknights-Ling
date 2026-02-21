@@ -160,6 +160,7 @@ local function fn()
     UpdateBookAesthetics(inst, 0)
 
     inst:AddTag("structure")
+    inst:AddTag("dream_island_teleporter")
 
     MakeSnowCoveredPristine(inst)
 
@@ -169,7 +170,9 @@ local function fn()
         return inst
     end
 
-    inst:AddComponent("ark_transfer")
+    inst:AddComponent("entitytracker")
+
+    inst:AddComponent("teleporter")
     inst:AddComponent("inspectable")
     inst:ListenForEvent("onbuilt", onbuilt)
 

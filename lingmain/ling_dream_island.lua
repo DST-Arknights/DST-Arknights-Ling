@@ -4,7 +4,6 @@ AddPrefabPostInit("world", function(inst)
         inst:DoTaskInTime(0, function()
             for i, id in ipairs(TheWorld.topology.ids) do
                 if id == "StaticLayoutIsland:LingDreamIsland" then
-                    ArkLogger:Debug("Found LingDreamIsland")
                     local node = TheWorld.topology.nodes[i]
                     local x, z = node.cent[1], node.cent[2]
 

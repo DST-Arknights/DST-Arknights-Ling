@@ -496,3 +496,18 @@ msgstr "看起来有些荒芜呢。"
 msgctxt "STRINGS.CHARACTERS.LING.ANNOUNCE_ENTER_CLOUD_PAVILION"
 msgid "hidden but beautiful spot"
 msgstr "别有洞天"
+
+#. 书架找不到传送目标
+msgctxt "STRINGS.CHARACTERS.LING.ANNOUNCE_DREAM_ISLAND_TELEPORT_FAILED"
+msgid "The lights on the distant shore are a galaxy that I cannot touch."
+msgstr "远岸的灯火，是我触不到的星河。"
+
+#. 书架找不到传送目标
+msgctxt "STRINGS.CHARACTERS.GENERIC.ANNOUNCE_DREAM_ISLAND_TELEPORT_FAILED"
+msgid "Cannot find teleport target."
+msgstr "找不到传送目标"
+
+#. STRINGS.ACTIONS.DREAM_ISLAND_TELEPORT
+msgctxt "STRINGS.ACTIONS.DREAM_ISLAND_TELEPORT"
+msgid "Teleport"
+msgstr "传送"

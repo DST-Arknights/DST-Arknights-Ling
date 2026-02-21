@@ -46,17 +46,10 @@ local function OnApplyElite(inst, elite, level)
       inst.components.ark_skill:GetSkill("skill1"):SetLevel(1)
     end
     if elite == 2 then
-      -- if inst.components.builder then
-      --   inst.components.builder:AddRecipe("ling_desk")
-      --   -- inst.components.builder:AddRecipe("ling_jars")
-      -- end
       inst.components.ark_skill:GetSkill("skill1"):SetLevel(2)
       inst.components.ark_skill:GetSkill("skill2"):Unlock()
       inst.components.ark_skill:GetSkill("skill2"):SetLevel(1)
     elseif elite == 3 then
-      -- if inst.components.builder then
-      --   inst.components.builder:AddRecipe("ling_bookshelf")
-      -- end
       inst.components.ark_skill:GetSkill("skill1"):SetLevel(3)
       inst.components.ark_skill:GetSkill("skill2"):SetLevel(2)
       inst.components.ark_skill:GetSkill("skill3"):Unlock()
@@ -135,8 +128,9 @@ local function OnChangeArea(inst, area)
     inst:AddDebuff("ling_dream_island_buff", "ling_dream_island_buff")
     if not inst._visited_dream_island then
       inst._visited_dream_island = true
-      inst.components.talker:Say(GetString(inst, "ANNOUNCE_ENTER_DREAM_ISLAND"))
-      ArkLogger:Debug("Player entered Dream Butterfly Island")
+      inst:DoTaskInTime(7, function()
+        inst.components.talker:Say(GetString(inst, "ANNOUNCE_ENTER_DREAM_ISLAND"))
+      end)
     end
   else
     inst:RemoveDebuff("ling_dream_island_buff")
