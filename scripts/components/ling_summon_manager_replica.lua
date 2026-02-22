@@ -1,6 +1,8 @@
 local CONSTANTS = require "ark_constants_ling"
 
 local MAX_GUARDS = TUNING.LING.MAX_GUARDS
+local SLOT_ROLE = CONSTANTS.SLOT_ROLE
+
 
 local SafeCallLingPoetryUI = GenSafeCall(function(inst)
   return inst and inst.HUD and inst.HUD.controls and inst.HUD.controls.ling_poetry
@@ -16,6 +18,10 @@ local LingSummonManagerReplica = Class(function(self, inst)
       "level_" .. i,
       "status_" .. i,
       "world" .. i,
+      "world_id" .. i,
+      "role_" .. i,
+      "primary_slot_" .. i,
+      "slot_count_" .. i,
     }
   end
   self.state = NetState(self.inst, "ling_summon_manager")
@@ -49,6 +55,9 @@ function LingSummonManagerReplica:GetSlotData(slot_index)
       status = self.state["status_" .. slot_index],
       world = self.state["world" .. slot_index],
       world_id = self.state["world_id" .. slot_index],
+      role = self.state["role_" .. slot_index],
+      primary_slot = self.state["primary_slot_" .. slot_index],
+      slot_count = self.state["slot_count_" .. slot_index],
       index = slot_index
     }
   end
@@ -75,6 +84,15 @@ function LingSummonManagerReplica:SetSlotData(slot_index, data)
     if data.world_id ~= nil then
       self.state["world_id" .. slot_index] = data.world_id
     end
+    if data.role ~= nil then
+      self.state["role_" .. slot_index] = data.role
+    end
+    if data.primary_slot ~= nil then
+      self.state["primary_slot_" .. slot_index] = data.primary_slot
+    end
+    if data.slot_count ~= nil then
+      self.state["slot_count_" .. slot_index] = data.slot_count
+    end
   end
 end
 
@@ -89,7 +107,16 @@ end
 
 -- 获取可用的槽位数量（基于 max_slots，更可靠）
 function LingSummonManagerReplica:GetAvailableSlotCount()
-  return self.state.max_slots
+  local visible_count = 0
+  for i = 1, self.state.max_slots do
+    local slot_data = self:GetSlotData(i)
+    if slot_data
+      and slot_data.status ~= CONSTANTS.GUARD_SLOT_STATUS.DISABLED
+      and (slot_data.role == nil or slot_data.role ~= SLOT_ROLE.SECONDARY) then
+      visible_count = visible_count + 1
+    end
+  end
+  return visible_count
 end
 
 -- 获取可用的槽位数据列表（基于 max_slots）
@@ -98,7 +125,9 @@ function LingSummonManagerReplica:GetAvailableSlotsData()
   local max_slots = self.state.max_slots
   for i = 1, max_slots do
     local slot_data = self:GetSlotData(i)
-    if slot_data and slot_data.status ~= CONSTANTS.GUARD_SLOT_STATUS.DISABLED then
+    if slot_data
+      and slot_data.status ~= CONSTANTS.GUARD_SLOT_STATUS.DISABLED
+      and (slot_data.role == nil or slot_data.role ~= SLOT_ROLE.SECONDARY) then
       table.insert(available_slots, slot_data)
     end
   end
@@ -108,7 +137,7 @@ end
 function LingSummonManagerReplica:GetGuardSlotIndex(inst)
   for i = 1, MAX_GUARDS do
     local slot_data = self:GetSlotData(i)
-    if slot_data and slot_data.inst == inst then
+    if slot_data and slot_data.inst == inst and (slot_data.role == nil or slot_data.role ~= SLOT_ROLE.SECONDARY) then
       return i
     end
   end

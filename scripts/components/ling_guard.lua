@@ -51,8 +51,6 @@ local LingGuardBehavior = Class(function(self, inst)
     self.level = 1
     self.form = FORM.QINGPING
     self.panel_opener = nil
-    -- 插槽信息（从 prefab 迁移过来）
-    self.saved_slots = nil
     inst:ListenForEvent("onremove", OnRemove)
 end, nil, {
     behavior_mode = onbehaviormode,
@@ -243,24 +241,19 @@ end
   self.inst.components.locomotor:PushAction(act, false)
 end
 
--- 设置插槽信息
-function LingGuardBehavior:SetSlots(slots)
-    self.saved_slots = slots
-end
-
--- 获取插槽信息
-function LingGuardBehavior:GetSlots()
-    return self.saved_slots
-end
-
-function LingGuardBehavior:ApplyLevelEffects()
+function LingGuardBehavior:ApplyLevelEffects(full_property)
     local level = self.level
     local cfg = LING_GUARD_TUNING.GetLevelGuardConfig(self.form, level)
     if not cfg then return end
     if self.inst.components.health then
-        local currentHealth = self.inst.components.health.currenthealth
-        self.inst.components.health:SetMaxHealth(cfg.HEALTH)
-        self.inst.components.health:SetCurrentHealth(currentHealth)
+        if full_property then
+            self.inst.components.health:SetMaxHealth(cfg.HEALTH)
+        else
+            local health = self.inst.components.health
+            local currentHealth = health.currenthealth
+            health:SetMaxHealth(cfg.HEALTH)
+            health:SetCurrentHealth(math.min(currentHealth, cfg.HEALTH))
+        end
     end
     if self.inst.components.combat then
         self.inst.components.combat:SetDefaultDamage(cfg.DAMAGE)
@@ -286,9 +279,9 @@ function LingGuardBehavior:ApplyLevelEffects()
 end
 
 -- 设置等级
-function LingGuardBehavior:SetLevel(level)
+function LingGuardBehavior:SetLevel(level, full_property)
     self.level = level
-    self:ApplyLevelEffects()
+    self:ApplyLevelEffects(not full_property)
 end
 
 -- 获取等级
@@ -306,7 +299,6 @@ function LingGuardBehavior:OnSave()
     return {
         behavior_mode = self.behavior_mode,
         work_mode = self.work_mode,
-        saved_slots = self.saved_slots,
         level = self.level,
         form = self.form,
         guard_pos = self.guard_pos and {self.guard_pos:Get()} or nil,
@@ -316,9 +308,6 @@ end
 -- 加载数据
 function LingGuardBehavior:OnLoad(data)
     if data then
-        -- 加载插槽信息
-        self.saved_slots = data.saved_slots
-
         -- 加载等级信息
         if data.level then
             self.level = data.level

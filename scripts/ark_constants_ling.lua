@@ -1,4 +1,9 @@
 return {
+  SLOT_ROLE = {
+    NONE = 0,
+    PRIMARY = 1,
+    SECONDARY = 2,
+  },
   GUARD_LOCATION = {
     NONE= 0,
     CURRENT_WORLD = 1,

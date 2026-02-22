@@ -91,6 +91,7 @@ end
 
 -- 保持目标：根据行为模式限制追击范围
 local function KeepTargetFn(inst, target)
+    if inst == nil or not inst:IsValid() then return false end
     if target == nil or not target:IsValid() then return false end
     if target:HasTag("INLIMBO") then return false end
     if target.components and target.components.health and target.components.health:IsDead() then return false end
@@ -106,12 +107,13 @@ local function KeepTargetFn(inst, target)
         end
         -- 正在攻击主人：以主人为中心判定
         local leader = inst.components.follower and inst.components.follower.leader or nil
-        if leader ~= nil and target.components and target.components.combat and target.components.combat:TargetIs(leader) then
+        if leader ~= nil and leader:IsValid() and target.components and target.components.combat and target.components.combat:TargetIs(leader) then
             local allow_r = guardConfig.LEADER_DEFENSE_DIST
             return leader:GetDistanceSqToInst(target) <= allow_r * allow_r
         end
         -- 否则按守点为中心判定
-        local guardpos = inst.components.ling_guard and inst.components.ling_guard.guard_pos or (inst.components.follower and inst.components.follower.leader and inst.components.follower.leader:GetPosition()) or inst:GetPosition()
+        local guardpos = inst.components.ling_guard and inst.components.ling_guard.guard_pos or (leader and leader:IsValid() and leader:GetPosition()) or inst:GetPosition()
+        if guardpos == nil then return false end
         local gx, gy, gz = guardpos:Get()
         local tx, ty, tz = target.Transform:GetWorldPosition()
         local dx, dz = tx - gx, tz - gz

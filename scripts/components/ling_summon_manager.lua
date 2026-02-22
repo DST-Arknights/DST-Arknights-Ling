@@ -5,6 +5,7 @@ local FORM = CONSTANTS.GUARD_FORM
 
 local GUARD_LOCATION = CONSTANTS.GUARD_LOCATION
 local GUARD_SLOT_STATUS = CONSTANTS.GUARD_SLOT_STATUS
+local SLOT_ROLE = CONSTANTS.SLOT_ROLE
 
 local MAX_GUARDS = 0;
 -- 遍历 TUNING.LING.ELITE
@@ -14,6 +15,38 @@ end
 
 local function getSlotCountByForm(form)
   return form == FORM.XIANJING and 2 or 1
+end
+
+local function clone_slots(slots)
+  if not slots then
+    return nil
+  end
+  local copied = {}
+  for i = 1, #slots do
+    copied[i] = slots[i]
+  end
+  return copied
+end
+
+local function EncodeWorldId(raw_world_id)
+  local str = tostring(raw_world_id or "")
+  local hash = 0
+  for i = 1, #str do
+    hash = (hash * 131 + string.byte(str, i)) % 65536
+  end
+  return hash
+end
+
+local function GetCurrentWorldId()
+  return EncodeWorldId(TheShard and TheShard:GetShardId() or 0)
+end
+
+local function NormalizeWorldId(world_id)
+  local as_number = tonumber(world_id)
+  if as_number ~= nil then
+    return math.floor(as_number) % 65536
+  end
+  return EncodeWorldId(world_id)
 end
 
 -- 寻找周围可用地块用于生成召唤物
@@ -48,10 +81,27 @@ local LingSummonManager = Class(function(self, inst)
   self.max_slots = 0
   self.callerOpened = false
   self.ready_for_migration = false
+  self.guard_slots = {}
+  self.pending_sync_task = nil
+  self.periodic_sync_task = self.inst:DoPeriodicTask(1, function()
+    self:SyncCurrentWorldSlots()
+  end)
   self:SetMaxSlots(3)
+  self:RequestCurrentWorldSync(0)
 end, nil, {
   max_slots = onmax_slots,
 })
+
+function LingSummonManager:OnRemoveFromEntity()
+  if self.pending_sync_task then
+    self.pending_sync_task:Cancel()
+    self.pending_sync_task = nil
+  end
+  if self.periodic_sync_task then
+    self.periodic_sync_task:Cancel()
+    self.periodic_sync_task = nil
+  end
+end
 
 -- 设置槽位数据到网络变量（通过 replica）
 function LingSummonManager:SetSlotData(slot_index, data)
@@ -72,6 +122,9 @@ function LingSummonManager:DisableSlot(idx)
       status = GUARD_SLOT_STATUS.DISABLED,
       -- 其他世界
       world = GUARD_LOCATION.NONE,
+      role = SLOT_ROLE.NONE,
+      primary_slot = 0,
+      slot_count = 1,
     })
   end
 end
@@ -84,7 +137,73 @@ function LingSummonManager:EmptySlot(idx)
       level = 0,
       status = GUARD_SLOT_STATUS.EMPTY,
       world = GUARD_LOCATION.NONE,
+      role = SLOT_ROLE.NONE,
+      primary_slot = 0,
+      slot_count = 1,
     })
+  end
+end
+
+function LingSummonManager:SetGuardSlots(guard, slots)
+  if guard and guard.GUID and slots and #slots > 0 then
+    self.guard_slots[guard.GUID] = clone_slots(slots)
+  end
+end
+
+function LingSummonManager:GetGuardSlots(guard)
+  if not guard or not guard.GUID then
+    return nil
+  end
+  local slots = self.guard_slots[guard.GUID]
+  if slots then
+    return clone_slots(slots)
+  end
+  local primary = self:GetGuardSlotIndex(guard)
+  if primary then
+    return self:GetSlotsByPrimary(primary)
+  end
+  return nil
+end
+
+function LingSummonManager:ClearGuardSlots(guard)
+  if guard and guard.GUID then
+    self.guard_slots[guard.GUID] = nil
+  end
+end
+
+function LingSummonManager:GetSlotsByPrimary(primary_slot)
+  if not primary_slot then
+    return nil
+  end
+  local primary_data = self:GetSlotData(primary_slot)
+  if not primary_data then
+    return nil
+  end
+  local slots = {primary_slot}
+  for i = 1, self.max_slots do
+    if i ~= primary_slot then
+      local slot_data = self:GetSlotData(i)
+      if slot_data and slot_data.role == SLOT_ROLE.SECONDARY and slot_data.primary_slot == primary_slot then
+        table.insert(slots, i)
+      end
+    end
+  end
+  table.sort(slots)
+  return slots
+end
+
+function LingSummonManager:ClearSlotsByPrimary(primary_slot)
+  local primary_data = self:GetSlotData(primary_slot)
+  if primary_data and primary_data.inst then
+    self:ClearGuardSlots(primary_data.inst)
+  end
+  local slots = self:GetSlotsByPrimary(primary_slot)
+  if not slots then
+    self:EmptySlot(primary_slot)
+    return
+  end
+  for i = 1, #slots do
+    self:EmptySlot(slots[i])
   end
 end
 
@@ -148,19 +267,9 @@ end
 
 -- 获取某个召唤物在插槽中的索引
 function LingSummonManager:GetGuardSlotIndex(inst)
-  if inst.components.ling_guard then
-    local saved_slots = inst.components.ling_guard:GetSlots()
-    if saved_slots then
-      local idx = saved_slots[1]
-      local slot_data = self:GetSlotData(idx)
-      if slot_data and slot_data.inst == inst then
-        return idx
-      end
-    end
-  end
   for i = 1, self.max_slots do
     local slot_data = self:GetSlotData(i)
-    if slot_data and slot_data.inst == inst then
+    if slot_data and slot_data.inst == inst and slot_data.role ~= SLOT_ROLE.SECONDARY then
       return i
     end
   end
@@ -179,38 +288,71 @@ end
 
 -- 设置插槽为召唤中状态
 function LingSummonManager:SetSlotSummoning(slots, form, level)
-  -- 第一个插槽设为召唤中状态，并设置类型（基础/高级）和等级
-  self:SetSlotData(slots[1], {
+  local world_id = GetCurrentWorldId()
+  local primary_slot = slots[1]
+  self:SetSlotData(primary_slot, {
     inst = nil,
     form = form,
     level = level,
     status = GUARD_SLOT_STATUS.SUMMONING,
+    world = GUARD_LOCATION.CURRENT_WORLD,
+    world_id = world_id,
+    role = SLOT_ROLE.PRIMARY,
+    primary_slot = primary_slot,
+    slot_count = #slots,
   })
-  -- 其他插槽（如果有）设为禁用状态
   for i = 2, #slots do
-    self:DisableSlot(slots[i])
+    self:SetSlotData(slots[i], {
+      inst = nil,
+      form = form,
+      level = level,
+      status = GUARD_SLOT_STATUS.DISABLED,
+      world = GUARD_LOCATION.CURRENT_WORLD,
+      world_id = world_id,
+      role = SLOT_ROLE.SECONDARY,
+      primary_slot = primary_slot,
+      slot_count = #slots,
+    })
   end
 end
 
 function LingSummonManager:InsertGuardToSlot(guard, slots)
-  self:SetSlotData(slots[1], {
+  if not guard or not slots or #slots == 0 then
+    return
+  end
+  local world_id = GetCurrentWorldId()
+  local primary_slot = slots[1]
+  self:SetSlotData(primary_slot, {
     inst = guard,
     form = guard.components.ling_guard.form,
     level = guard.components.ling_guard.level,
     status = GUARD_SLOT_STATUS.OCCUPIED,
     world = GUARD_LOCATION.CURRENT_WORLD,
-    world_id = TheShard:GetShardId(),
+    world_id = world_id,
+    role = SLOT_ROLE.PRIMARY,
+    primary_slot = primary_slot,
+    slot_count = #slots,
   })
-  -- 设置额外插槽为禁用状态（如果有）
   for i = 2, #slots do
-    self:DisableSlot(slots[i])
+    self:SetSlotData(slots[i], {
+      inst = guard,
+      form = guard.components.ling_guard.form,
+      level = guard.components.ling_guard.level,
+      status = GUARD_SLOT_STATUS.DISABLED,
+      world = GUARD_LOCATION.CURRENT_WORLD,
+      world_id = world_id,
+      role = SLOT_ROLE.SECONDARY,
+      primary_slot = primary_slot,
+      slot_count = #slots,
+    })
   end
+  self:SetGuardSlots(guard, slots)
 end
 
 function LingSummonManager:FindGuardIndex(inst)
   for i = 1, self.max_slots do
     local slot_data = self:GetSlotData(i)
-    if slot_data and slot_data.inst == inst then
+    if slot_data and slot_data.inst == inst and slot_data.role ~= SLOT_ROLE.SECONDARY then
       return i
     end
   end
@@ -222,22 +364,68 @@ function LingSummonManager:RemoveGuardFromSlot(guard_inst)
     return false
   end
 
-  -- 使用组件中的saved_slots直接清理所有相关插槽
   if guard_inst.components.ling_guard then
-    local saved_slots = guard_inst.components.ling_guard:GetSlots()
     if (guard_inst.components.ling_guard:IsPanelOpenedBy(self.inst)) then
       guard_inst.components.ling_guard:ClosePanel(self.inst)
     end
-    if saved_slots then
-      for i = 1, #saved_slots do
-        local slot_index = saved_slots[i]
-        self:EmptySlot(slot_index)
-      end
-      return true
+  end
+  local slots = self:GetGuardSlots(guard_inst)
+  if not slots then
+    local primary = self:GetGuardSlotIndex(guard_inst)
+    if primary then
+      slots = self:GetSlotsByPrimary(primary)
     end
   end
 
+  if slots then
+    for i = 1, #slots do
+      self:EmptySlot(slots[i])
+    end
+    self:ClearGuardSlots(guard_inst)
+    return true
+  end
+
   return false
+end
+
+function LingSummonManager:RequestCurrentWorldSync(delay)
+  if self.pending_sync_task then
+    self.pending_sync_task:Cancel()
+    self.pending_sync_task = nil
+  end
+  self.pending_sync_task = self.inst:DoTaskInTime(delay or 0.5, function()
+    self.pending_sync_task = nil
+    self:SyncCurrentWorldSlots()
+  end)
+end
+
+function LingSummonManager:SyncCurrentWorldSlots()
+  if self.ready_for_migration then
+    return
+  end
+  local world_id = GetCurrentWorldId()
+  for i = 1, self.max_slots do
+    local slot_data = self:GetSlotData(i)
+    if slot_data and slot_data.role ~= SLOT_ROLE.SECONDARY and slot_data.status == GUARD_SLOT_STATUS.OCCUPIED then
+      local is_same_world = NormalizeWorldId(slot_data.world_id) == world_id
+      if is_same_world then
+        local guard_inst = slot_data.inst
+        local is_alive = guard_inst and guard_inst:IsValid() and not (guard_inst.components.health and guard_inst.components.health:IsDead())
+        local still_following = is_alive and self.inst.components.leader and self.inst.components.leader.followers and self.inst.components.leader.followers[guard_inst] ~= nil
+        if still_following then
+          if slot_data.world ~= GUARD_LOCATION.CURRENT_WORLD then
+            self:SetSlotData(i, { world = GUARD_LOCATION.CURRENT_WORLD })
+          end
+        else
+          self:ClearSlotsByPrimary(i)
+        end
+      else
+        if slot_data.world ~= GUARD_LOCATION.OTHER_WORLD then
+          self:SetSlotData(i, { world = GUARD_LOCATION.OTHER_WORLD })
+        end
+      end
+    end
+  end
 end
 
 function LingSummonManager:SetForm(guard_inst, form)
@@ -272,6 +460,7 @@ function LingSummonManager:OnFollowerLost(follower)
     if not self.ready_for_migration then
       self:RemoveGuardFromSlot(follower)
     end
+    self:RequestCurrentWorldSync(0.1)
 end
 -- 更新守卫的迁移状态（当behavior_mode变化时调用）
 function LingSummonManager:PrepareForMigration()
@@ -295,13 +484,42 @@ function LingSummonManager:OnFollowerAdded(follower)
     return
   end
   follower.owner = self.inst
-  local saved_slots = follower.components.ling_guard:GetSlots()
-  self:InsertGuardToSlot(follower, saved_slots)
+  local slots = self:GetGuardSlots(follower)
+
+  if not slots then
+    for i = 1, self.max_slots do
+      local slot_data = self:GetSlotData(i)
+      if slot_data and slot_data.status == GUARD_SLOT_STATUS.OCCUPIED and slot_data.inst == nil and slot_data.role ~= SLOT_ROLE.SECONDARY then
+        if slot_data.form == follower.components.ling_guard.form and slot_data.level == follower.components.ling_guard.level then
+          slots = self:GetSlotsByPrimary(i)
+          break
+        end
+      end
+    end
+  end
+
+  if not slots then
+    ArkLogger:Warn("LingSummonManager:OnFollowerAdded: 未找到槽位，尝试兜底分配")
+    local required = getSlotCountByForm(follower.components.ling_guard.form)
+    for i = 1, self.max_slots do
+      slots = self:CanAssignToSlot(i, required)
+      if slots then
+        break
+      end
+    end
+  end
+
+  if slots then
+    self:InsertGuardToSlot(follower, slots)
+  else
+    ArkLogger:Warn("LingSummonManager:OnFollowerAdded: 槽位分配失败", follower)
+  end
 
   -- 关联时，检查令的技能状态并同步
   if follower.components.ling_guard_skill then
     follower.components.ling_guard_skill:SyncWithOwner()
   end
+  self:RequestCurrentWorldSync(0.1)
 end
 
 -- 召唤相关方法
@@ -425,8 +643,8 @@ end
 function LingSummonManager:SpawnGuardAtPosition(form, elite_level, pos, slots)
   local guard = SpawnPrefab(form == FORM.XIANJING and "ling_guard_elite" or "ling_guard_basic")
   guard.Transform:SetPosition(pos:Get())
-  guard.components.ling_guard:SetSlots(slots)
-  guard.components.ling_guard:SetLevel(elite_level)
+  self:SetGuardSlots(guard, slots)
+  guard.components.ling_guard:SetLevel(elite_level, true)
   guard.components.follower:SetLeader(self.inst)
 
   if guard.components.ling_guard_plant then
@@ -458,6 +676,7 @@ function LingSummonManager:OnSave()
     migrationguards = {},
     slots = {},
   }
+  local migration_saved = {}
   -- 保存所有待迁移的守卫
   local slots_data = self:GetAllSlots()
   for _, slot_data in ipairs(slots_data) do
@@ -466,11 +685,18 @@ function LingSummonManager:OnSave()
       level = slot_data.level,
       status = slot_data.status,
       world_id = slot_data.world_id,
+      role = slot_data.role,
+      primary_slot = slot_data.primary_slot,
+      slot_count = slot_data.slot_count,
     })
     local ready_for_migration = slot_data.inst and slot_data.inst:IsValid() and slot_data.inst.ready_for_migration
     if ready_for_migration then
-      local save_record = slot_data.inst:GetSaveRecord()
-      table.insert(data.migrationguards, save_record)
+      local guid = slot_data.inst.GUID
+      if not migration_saved[guid] then
+        migration_saved[guid] = true
+        local save_record = slot_data.inst:GetSaveRecord()
+        table.insert(data.migrationguards, save_record)
+      end
     end
   end
   return data
@@ -482,16 +708,39 @@ function LingSummonManager:OnLoad(data)
         self:SetMaxSlots(data.max_slots)
     end
     if data and data.slots then
+    local broken_summoning_primaries = {}
+    for i, slot_data in ipairs(data.slots) do
+      if slot_data.status == GUARD_SLOT_STATUS.SUMMONING then
+        broken_summoning_primaries[i] = true
+      end
+    end
+        local world_id = GetCurrentWorldId()
         for i, slot_data in ipairs(data.slots) do
           ArkLogger:Debug("LingSummonManager:OnLoad:", i, slot_data.status)
+      local primary_slot = slot_data.primary_slot or 0
+      local is_broken_summoning = slot_data.status == GUARD_SLOT_STATUS.SUMMONING
+      local is_broken_secondary = slot_data.role == SLOT_ROLE.SECONDARY and broken_summoning_primaries[primary_slot]
+      if is_broken_summoning or is_broken_secondary then
+        self:EmptySlot(i)
+      else
+            local is_occupied = slot_data.status == GUARD_SLOT_STATUS.OCCUPIED
+            local world = GUARD_LOCATION.NONE
+            local slot_world_id = NormalizeWorldId(slot_data.world_id)
+            if is_occupied then
+              world = slot_world_id == world_id and GUARD_LOCATION.CURRENT_WORLD or GUARD_LOCATION.OTHER_WORLD
+            end
             self:SetSlotData(i, {
                 inst = nil,
                 form = slot_data.form,
                 level = slot_data.level,
                 status = slot_data.status,
-                world_id = slot_data.world_id,
-                world = slot_data.status == GUARD_SLOT_STATUS.OCCUPIED and GUARD_LOCATION.OTHER_WORLD or GUARD_LOCATION.NONE,
+                world_id = slot_world_id,
+                world = world,
+                role = slot_data.role or SLOT_ROLE.NONE,
+        primary_slot = primary_slot,
+                slot_count = slot_data.slot_count or 1,
             })
+      end
         end
     end
     if data and data.migrationguards and self.inst.migrationpets then
@@ -504,6 +753,7 @@ function LingSummonManager:OnLoad(data)
             end
         end
     end
+      self:RequestCurrentWorldSync(1)
 end
 
 return LingSummonManager
