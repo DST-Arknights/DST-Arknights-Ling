@@ -17,8 +17,10 @@ local function OnTick(inst, target)
   if target.components.sanity and not target.components.sanity:IsInsane() and not (target.components.sanity:GetPercent() >= 1) then
     target.components.sanity:DoDelta(TUNING.SLEEP_SANITY_PER_TICK * 5 / 60, true, inst.prefab, true)
   end
-  -- 恢复温度
-  temperaturetick(inst, target)
+  if not target.ling_inHouse then -- cloud pavilion 有自己的温度管理, 这里跳过
+    -- 恢复温度
+    temperaturetick(inst, target)
+  end
 end
 
 local function OnAttached(inst, target)

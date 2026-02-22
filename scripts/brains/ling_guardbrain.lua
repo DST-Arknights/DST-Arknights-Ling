@@ -265,6 +265,120 @@ local function _ScanTerraformableGround(inst, center, radius, find_nearest)
     return find_nearest and best_point or false
 end
 
+-- 拾取可用性：允许“有 inventory”或“有容器且未满”均可
+local function HasPickupCapacity(inst)
+    -- 仅检查是否具备拾取所需的inventory组件；具体容量在逐物品上判定
+    return inst.components ~= nil and inst.components.inventory ~= nil
+end
+
+local function _PickupCooldownActive(inst)
+    local colldown =  inst._ling_pick_cooldown_end ~= nil and GetTime() < inst._ling_pick_cooldown_end
+    return colldown
+end
+
+
+
+-- 竞争锁：拾取目标的临时预定，避免重叠范围的守卫竞争同一物品
+local function _IsReservedByOther(item, inst)
+    local until_t = item._ling_pick_reserved_until
+    local by = item._ling_pick_reserved_by
+    return until_t ~= nil and GetTime() < until_t and by ~= nil and by ~= inst
+end
+
+local function _ReserveItemFor(item, inst, dur)
+    item._ling_pick_reserved_by = inst
+    item._ling_pick_reserved_until = GetTime() + (dur or 1.0)
+end
+
+local function CanAcceptPickup(inst, item)
+    if item == nil or item.components == nil or item.components.inventoryitem == nil then
+        return false
+    end
+    local inv = inst.components and inst.components.inventory or nil
+    if inv ~= nil then
+        local slot = inv:GetNextAvailableSlot(item)
+        if slot ~= nil then
+            return true
+        end
+    end
+    local container = inst.components and inst.components.container or nil
+    if container ~= nil and container:CanTakeItemInSlot(item, nil) then
+        if container:AcceptsStacks() then
+            for k = 1, container:GetNumSlots() do
+                local other = container:GetItemInSlot(k)
+                if other == nil then
+                    return true
+                elseif other.prefab == item.prefab and other.skinname == item.skinname and other.components.stackable ~= nil and not other.components.stackable:IsFull() then
+                    return true
+                end
+            end
+            return false
+        else
+            for k = 1, container:GetNumSlots() do
+                if container:GetItemInSlot(k) == nil then
+                    return true
+                end
+            end
+            return false
+        end
+    end
+    return false
+end
+
+
+local function _FindPickupTargetInGuardRange(inst, respect_cooldown)
+    if inst.sg:HasStateTag("busy") then return nil end
+    if respect_cooldown and _PickupCooldownActive(inst) then return nil end
+    if not HasPickupCapacity(inst) then return nil end
+
+    local center = GetGuardPos(inst)
+    local guardConfig = getGuardConfig(inst)
+    local r = guardConfig.GUARD_RANGE or 16
+    local ents = TheSim:FindEntities(center.x, center.y, center.z, r, nil, {"INLIMBO", "NOCLICK"})
+
+    local nearest, best = nil, math.huge
+    for _, item in ipairs(ents) do
+        local invitem = item.components and item.components.inventoryitem or nil
+        if item:IsValid() and invitem
+            and (invitem.canbepickedup ~= false) and not invitem:IsHeld()
+            and not (item.components.burnable and (item.components.burnable:IsBurning() or item.components.burnable:IsSmoldering()))
+            and not _IsReservedByOther(item, inst)
+            and CanAcceptPickup(inst, item)
+        then
+            local d = inst:GetDistanceSqToInst(item)
+            if d < best then
+                best = d
+                nearest = item
+            end
+        end
+    end
+
+    return nearest
+end
+
+local function ShouldPrioritizePickup(inst)
+    local guard_cmp = inst.components and inst.components.ling_guard or nil
+    if guard_cmp == nil or guard_cmp:GetBehaviorMode() ~= CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD then
+        return false
+    end
+    if IsInCombatMode(inst) then
+        return false
+    end
+    return _FindPickupTargetInGuardRange(inst, false) ~= nil
+end
+
+
+local function TryPickupAnyInGuardRange(inst)
+    local nearest = _FindPickupTargetInGuardRange(inst, true)
+    if nearest ~= nil then
+        -- 先行预定，防止其他守卫在本tick竞争
+        _ReserveItemFor(nearest, inst, 0.6)
+        inst._ling_pick_cooldown_end = GetTime() + 0.30
+        return BufferedAction(inst, nearest, ACTIONS.PICKUP)
+    end
+    return nil
+end
+
 -- 开始工作条件
 local function StartWorkingCondition(inst)
     local guard_cmp = inst.components.ling_guard
@@ -272,6 +386,7 @@ local function StartWorkingCondition(inst)
         return false
     end
     if IsInCombatMode(inst) then return false end
+    if ShouldPrioritizePickup(inst) then return false end
 
     local work_mode = guard_cmp:GetWorkMode()
     local work_cfg = _GetWorkModeConfig(work_mode)
@@ -319,6 +434,10 @@ local function KeepWorkingAction(inst)
         return nil
     end
     if IsInCombatMode(inst) then
+        inst._ling_work_target = nil
+        return nil
+    end
+    if ShouldPrioritizePickup(inst) then
         inst._ling_work_target = nil
         return nil
     end
@@ -398,101 +517,6 @@ local function KeepWorkingAction(inst)
     return nil
 end
 
-
-
--- 拾取可用性：允许“有 inventory”或“有容器且未满”均可
-local function HasPickupCapacity(inst)
-    -- 仅检查是否具备拾取所需的inventory组件；具体容量在逐物品上判定
-    return inst.components ~= nil and inst.components.inventory ~= nil
-end
-
-local function _PickupCooldownActive(inst)
-    local colldown =  inst._ling_pick_cooldown_end ~= nil and GetTime() < inst._ling_pick_cooldown_end
-    return colldown
-end
-
-
-
--- 竞争锁：拾取目标的临时预定，避免重叠范围的守卫竞争同一物品
-local function _IsReservedByOther(item, inst)
-    local until_t = item._ling_pick_reserved_until
-    local by = item._ling_pick_reserved_by
-    return until_t ~= nil and GetTime() < until_t and by ~= nil and by ~= inst
-end
-
-local function _ReserveItemFor(item, inst, dur)
-    item._ling_pick_reserved_by = inst
-    item._ling_pick_reserved_until = GetTime() + (dur or 1.0)
-end
-
-local function CanAcceptPickup(inst, item)
-    if item == nil or item.components == nil or item.components.inventoryitem == nil then
-        return false
-    end
-    local inv = inst.components and inst.components.inventory or nil
-    if inv ~= nil then
-        local slot = inv:GetNextAvailableSlot(item)
-        if slot ~= nil then
-            return true
-        end
-    end
-    local container = inst.components and inst.components.container or nil
-    if container ~= nil and container:CanTakeItemInSlot(item, nil) then
-        if container:AcceptsStacks() then
-            for k = 1, container:GetNumSlots() do
-                local other = container:GetItemInSlot(k)
-                if other == nil then
-                    return true
-                elseif other.prefab == item.prefab and other.skinname == item.skinname and other.components.stackable ~= nil and not other.components.stackable:IsFull() then
-                    return true
-                end
-            end
-            return false
-        else
-            for k = 1, container:GetNumSlots() do
-                if container:GetItemInSlot(k) == nil then
-                    return true
-                end
-            end
-            return false
-        end
-    end
-    return false
-end
-
-
-local function TryPickupAnyInGuardRange(inst)
-    if inst.sg:HasStateTag("busy") or _PickupCooldownActive(inst) then return nil end
-    if not HasPickupCapacity(inst) then return nil end
-    local center = GetGuardPos(inst)
-    local guardConfig = getGuardConfig(inst)
-    local r = guardConfig.GUARD_RANGE or 16
-    local ents = TheSim:FindEntities(center.x, center.y, center.z, r, nil, {"INLIMBO", "NOCLICK"})
-    local nearest, best = nil, math.huge
-    for _, item in ipairs(ents) do
-        local invitem = item.components and item.components.inventoryitem or nil
-        if item:IsValid() and invitem
-            and (invitem.canbepickedup ~= false) and not invitem:IsHeld()
-            and not (item.components.burnable and (item.components.burnable:IsBurning() or item.components.burnable:IsSmoldering()))
-            and not _IsReservedByOther(item, inst)
-            and CanAcceptPickup(inst, item)
-        then
-            local d = inst:GetDistanceSqToInst(item)
-            if d < best then
-                best = d
-                nearest = item
-            end
-        end
-    end
-    if nearest ~= nil then
-        -- 先行预定，防止其他守卫在本tick竞争
-        _ReserveItemFor(nearest, inst, 0.6)
-        inst._ling_pick_cooldown_end = GetTime() + 0.30
-        return BufferedAction(inst, nearest, ACTIONS.PICKUP)
-    end
-    return nil
-end
-
 local LingGuardBrain = Class(Brain, function(self, inst)
     Brain._ctor(self, inst)
 end)
@@ -524,12 +548,13 @@ function LingGuardBrain:OnStart()
 
         -- 先拾取后工作：PickupGuardRange 提前于 GuardWork
         WhileNode(function()
-            local mode = self.inst.components.ling_guard and self.inst.components.ling_guard:GetBehaviorMode() or CONSTANTS.GUARD_BEHAVIOR_MODE.CAUTIOUS
-            return mode == CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD
+            return ShouldPrioritizePickup(self.inst)
         end, "PickupGuardRange",
-            DoAction(self.inst, function()
-                return TryPickupAnyInGuardRange(self.inst)
-            end)),
+            LoopNode{
+                DoAction(self.inst, function()
+                    return TryPickupAnyInGuardRange(self.inst)
+                end)
+            }),
 
         -- 守形态：工作循环（猪人风格，去掉调试日志）
         WhileNode(function()
