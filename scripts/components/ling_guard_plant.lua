@@ -1,4 +1,5 @@
 local LING_TUNING = require("ling_guard_tuning")
+local PLANT_DEFS = require("prefabs/farm_plant_defs").PLANT_DEFS
 
 local function onlevel(self, level)
 
