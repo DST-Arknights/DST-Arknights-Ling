@@ -150,31 +150,12 @@ local function UnregisterSkill1(self)
 end
 -- 束缚目标5秒
 local function ShackleTarget(target, duration)
-  if target.components.locomotor then
-    if not target:IsValid() then
-      return
-    end
-    local effectiveName = "ling_skill2_shackle"
-    -- 设置移动速度为0（完全束缚）
-    target.components.locomotor:SetExternalSpeedMultiplier(target, effectiveName, 0)
-
-    -- 创建束缚特效
-    -- TODO: 替换为真实特效
-    local fx = SpawnPrefab("spat_splat_fx")
-    fx.entity:SetParent(target.entity)
-    fx.Transform:SetPosition(0, 0, 0)
-
-    -- 定时解除束缚
-    target:DoTaskInTime(duration, function()
-      if target:IsValid() then
-        target.components.locomotor:RemoveExternalSpeedMultiplier(target, effectiveName)
-        if fx and fx:IsValid() then
-          fx:Remove()
-        end
-      end
-    end)
+  if not target.components.immobilizable then
+    target:AddComponent("immobilizable")
   end
+  target.components.immobilizable:Immobilize(duration)
 end
+
 local AREAATTACK_EXCLUDETAGS = {"noauradamage", "INLIMBO", "notarget", "noattack", "flight", "invisible", "playerghost",
   "ling_summon"}
 local function RegisterSkill2(self)
@@ -221,7 +202,7 @@ local function RegisterSkill2(self)
         end
       end
       ShackleTarget(targ, shackleTime)
-      inst.components.combat:DoAreaAttack(targ, AOEarc, weapon, nil, nil, nil)
+      inst.components.combat:DoAreaAttack(targ, AOEarc, weapon, nil, nil, AREAATTACK_EXCLUDETAGS)
     end
   end
 end

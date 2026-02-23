@@ -428,7 +428,7 @@ local function ling_guard_elite_fn()
 
     inst:AddComponent("ling_guard")
     inst.components.ling_guard:SetLevel(3)
-    inst.components.ling_guard:SetForm(FORM.XIANJING)
+    inst.components.ling_guard:SetForm(FORM.XIANJING, true)
     inst:AddComponent("ling_guard_plant")
     inst:AddComponent("ling_guard_skill")
 

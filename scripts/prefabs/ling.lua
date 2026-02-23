@@ -28,7 +28,8 @@ end
 
 local function OnNewTarget(inst, data)
   local target = data.target
-  if target == nil then
+  if target == nil or target:HasTag("ling_summon") then
+    ArkLogger:Debug("OnNewTarget: target is ling_summon", target)
     return
   end
   inst.components.combat:ShareTarget(target, 30, function(dude)
