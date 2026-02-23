@@ -247,7 +247,8 @@ end
 local function addBuff(inst)
     local buffName = "so_is_writ_an_ode_to_wine_buff" .. inst.GUID
     local leader = inst.components.follower.leader
-    if leader then
+    local eliteLevel = leader and leader.components.ark_elite and leader.components.ark_elite.elite or 0
+    if leader and eliteLevel >= 2 then
         leader:AddDebuff(buffName, "so_is_writ_an_ode_to_wine_buff")
     end
 end

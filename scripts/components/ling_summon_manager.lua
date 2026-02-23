@@ -636,7 +636,9 @@ function LingSummonManager:Fusion(guard_inst)
   startfx.Transform:SetPosition(pos:Get())
   self:SpawnGuardAtPosition(form, elite_level, pos, slots)
   -- 添加buff
-  self.inst:AddDebuff("so_is_writ_an_ode_to_wine_buff" .. guard1.GUID, "so_is_writ_an_ode_to_wine_buff")
+  if elite_level >= 2 then
+    self.inst:AddDebuff("so_is_writ_an_ode_to_wine_buff" .. guard1.GUID, "so_is_writ_an_ode_to_wine_buff")
+  end
   return true
 end
 

@@ -329,18 +329,19 @@ local states =
         onenter = function(inst)
             inst.Physics:Stop()
             inst.AnimState:PlayAnimation("die")
+            local guid = inst.GUID
+            local leader = inst.components.follower.leader
+            local eliteLevel = leader and leader.components.ark_elite and leader.components.ark_elite.elite or 0
+            if leader and eliteLevel >= 2 then
+                leader:AddDebuff("so_is_writ_an_ode_to_wine_buff" .. guid, "so_is_writ_an_ode_to_wine_buff")
+            end
         end,
 
         events =
         {
             EventHandler("animover", function(inst)
                 if inst.AnimState:AnimDone() then
-                    local guid = inst.GUID
-                    local leader = inst.components.follower.leader
                     inst:Remove()
-                    if leader then
-                        leader:AddDebuff("so_is_writ_an_ode_to_wine_buff" .. guid, "so_is_writ_an_ode_to_wine_buff")
-                    end
                 end
             end),
         },
