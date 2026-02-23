@@ -20,7 +20,7 @@ local function onhammered(inst, worker)
         inst.components.container:DropEverything()
     end
 
-    inst.components.lootdropper:DropLoot()
+    -- inst.components.lootdropper:DropLoot()
     local fx = SpawnPrefab("collapse_small")
     fx.Transform:SetPosition(inst.Transform:GetWorldPosition())
     fx:SetMaterial("wood")
