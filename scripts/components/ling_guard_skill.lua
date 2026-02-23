@@ -107,19 +107,17 @@ end
 
 function LingGuardSkill:StartAuraDamage(damage, interval, range)
   self:StopAuraDamage()
-  local fx = SpawnPrefab("ling_guard_skill_halo_fx")
-  fx.entity:SetParent(self.inst.entity)
-  self._auraFx = fx
   self._auraTask = self.inst:DoPeriodicTask(interval, function()
+    local fx = SpawnPrefab("ling_guard_skill_halo_fx")
+    if fx ~= nil then
+      local x, y, z = self.inst.Transform:GetWorldPosition()
+      fx.Transform:SetPosition(x, y, z)
+    end
     self:DoAuraDamage(damage, range)
   end)
 end
 
 function LingGuardSkill:StopAuraDamage()
-  if self._auraFx then
-    self._auraFx:Remove()
-    self._auraFx = nil
-  end
   if self._auraTask then
     self._auraTask:Cancel()
     self._auraTask = nil
