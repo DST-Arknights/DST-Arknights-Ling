@@ -113,6 +113,10 @@ local function IsThreatToGuard(inst, guy)
     return false
   end
 
+  if guy:HasTag("ling_summon") then
+    return false
+  end
+
   local leader = inst.components.follower and inst.components.follower.leader or nil
   if guy.components and guy.components.combat then
     if guy.components.combat:TargetIs(inst) then
