@@ -7,6 +7,12 @@ local function temperaturetick(inst, sleeper)
     end
 end
 
+local function moisturetick(inst, sleeper)
+    if sleeper.components.moisture ~= nil then
+        sleeper.components.moisture:DoDelta(-5)
+    end
+end
+
 local function OnTick(inst, target)
   -- 玩家在生命值未满时逐渐消耗饥饿度。
   if target.components.health and not target.components.health:IsDead() and not (target.components.health:GetPercent() >= 1) and target.components.hunger  and not target.components.hunger:IsStarving() then
@@ -20,6 +26,7 @@ local function OnTick(inst, target)
   if not target.ling_inHouse then -- cloud pavilion 有自己的温度管理, 这里跳过
     -- 恢复温度
     temperaturetick(inst, target)
+    moisturetick(inst, target)
   end
 end
 
