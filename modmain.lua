@@ -72,12 +72,14 @@ modimport("lingmain/ling_dream_island")
 
 RegisterInventoryItemAtlas("images/inventoryimages/ling_lantern.xml", "ling_lantern.tex")
 -- 6*木板 2*活木 1*蝴蝶翅膀 10*噩梦燃料
-AddRecipe2('ling_lantern', {Ingredient("boards", 6), Ingredient("livinglog", 2), Ingredient("butterflywings", 1), Ingredient("nightmarefuel", 10)}, TECH.MAGIC_THREE, nil, {
+AddRecipe2('ling_lantern', {Ingredient("boards", 6), Ingredient("livinglog", 2), Ingredient("butterflywings", 1), Ingredient("nightmarefuel", 10)}, TECH.MAGIC_THREE, {
+  force_hint = true,
+}, {
   "MAGIC",
+  "LIGHT",
   "CHARACTER",
   "MODS",
 })
-
 DefineNetState('ling_guard', {
   behavior_mode = "tinybyte:classified",
   work_mode = "tinybyte:classified",
