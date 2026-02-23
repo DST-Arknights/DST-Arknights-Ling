@@ -1,5 +1,6 @@
 local brain = require("brains/ling_guardbrain")
 local CONSTANTS = require("ark_constants_ling")
+local targeting = require("ling_targeting")
 local getGuardConfig = require("ling_guard_config").getGuardConfig
 
 local FORM = CONSTANTS.GUARD_FORM
@@ -82,7 +83,6 @@ end
 
 -- 选择目标（依赖外部 targeting 模块）
 local function NormalRetargetFn(inst)
-    local targeting = require("ling_targeting")
     if inst.is_fusing then
         return nil
     end
@@ -96,6 +96,10 @@ local function KeepTargetFn(inst, target)
     if target:HasTag("INLIMBO") then return false end
     if target.components and target.components.health and target.components.health:IsDead() then return false end
     if not (inst.components and inst.components.combat and inst.components.combat:CanTarget(target)) then return false end
+
+    if not targeting.IsThreatToGuard(inst, target) then
+        return false
+    end
 
     local guardConfig = getGuardConfig(inst)
     local mode = inst.components.ling_guard and inst.components.ling_guard:GetBehaviorMode() or CONSTANTS.GUARD_BEHAVIOR_MODE.CAUTIOUS
