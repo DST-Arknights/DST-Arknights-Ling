@@ -34,12 +34,14 @@ end
 function LingPoetry:OnSave()
   return {
     level = self.level,
+    current_poetry = self.current_poetry,
   }
 end
 
 function LingPoetry:OnLoad(data)
   if data then
     self:SetElite(data.level)
+    self.current_poetry = data.current_poetry or 0
   end
 end
 
