@@ -212,7 +212,7 @@ function LingGuardBehavior:GetWorkMode()
 end
 
 -- 设置/获取/切换 形态（门槛：自身等级>=2；弦惊不可切换；初始化时总是应用）
-function LingGuardBehavior:SetForm(form, full_property)
+function LingGuardBehavior:SetForm(form)
     if self.level < 2 then
         return false
     end
@@ -220,7 +220,7 @@ function LingGuardBehavior:SetForm(form, full_property)
     -- 事件通知（prefab 用于挂载武器等）
     self.inst:PushEvent("ling_form_changed", { form = form })
     -- 切换后根据当前等级刷新一次数值
-    self:ApplyLevelEffects(full_property)
+    self:ApplyLevelEffects()
     local leader = self.inst.components.follower.leader
     if leader and leader.components.ling_summon_manager then
         leader.components.ling_summon_manager:SetForm(self.inst, form)
@@ -279,9 +279,9 @@ function LingGuardBehavior:ApplyLevelEffects(full_property)
 end
 
 -- 设置等级
-function LingGuardBehavior:SetLevel(level, full_property)
+function LingGuardBehavior:SetLevel(level)
     self.level = level
-    self:ApplyLevelEffects(not full_property)
+    self:ApplyLevelEffects()
 end
 
 -- 获取等级

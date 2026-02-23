@@ -644,7 +644,8 @@ function LingSummonManager:SpawnGuardAtPosition(form, elite_level, pos, slots)
   local guard = SpawnPrefab(form == FORM.XIANJING and "ling_guard_elite" or "ling_guard_basic")
   guard.Transform:SetPosition(pos:Get())
   self:SetGuardSlots(guard, slots)
-  guard.components.ling_guard:SetLevel(elite_level, true)
+  guard.components.ling_guard:SetLevel(elite_level)
+  guard.components.ling_guard:ApplyLevelEffects(true)
   guard.components.follower:SetLeader(self.inst)
 
   if guard.components.ling_guard_plant then
