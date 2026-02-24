@@ -343,7 +343,7 @@ end
 
 local function OnPhaseChanged(inst, phase)
     local status = GetLanternState(inst)
-    if not status == LANTERN_STATE.GROUND then
+    if not (status == LANTERN_STATE.GROUND) then
         return
     end
     if phase == "night" and inst._auto_turnon_at_night then
