@@ -21,6 +21,8 @@ local function fn()
         inst.loading = false
         print("ling guard plant container load")
     end
+    -- 不保存数据
+    inst.persists = false
     return inst
 end
 

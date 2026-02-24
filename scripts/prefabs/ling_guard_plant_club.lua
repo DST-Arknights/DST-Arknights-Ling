@@ -19,6 +19,8 @@ local function fn()
             parent.components.ling_guard_plant:StartPlanting()
         end
     end)
+    -- 不保存数据
+    inst.persists = false
     return inst
 end
 
