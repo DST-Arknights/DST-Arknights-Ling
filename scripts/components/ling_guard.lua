@@ -152,8 +152,9 @@ function LingGuardBehavior:ThrowContainerItems(container)
         local container = container.components.container
         -- 使用源码中的 MoveItemFromAllOfSlot 方法转移所有物品
         for i = 1, container.numslots do
-            if container:GetItemInSlot(i) then
-                container:MoveItemFromAllOfSlot(i, leader, leader)
+            local item = container:RemoveItemBySlot(i)
+            if item then
+                leader.components.inventory:GiveItem(item)
             end
         end
     else

@@ -64,14 +64,14 @@ local function OnPreLoad_Common(inst, data)
 end
 
 local function OnRemoveEntity_Common(inst)
-    if inst.plant_container then
-        inst.plant_container.components.container:DropEverything(inst:GetPosition(), true)
-        inst.plant_container:Remove()
-    end
-    if inst.plant_club then
-        inst.plant_club.components.container:DropEverything(inst:GetPosition(), true)
-        inst.plant_club:Remove()
-    end
+    -- if inst.plant_container then
+    --     inst.plant_container.components.container:DropEverything(inst:GetPosition(), true)
+    --     inst.plant_container:Remove()
+    -- end
+    -- if inst.plant_club then
+    --     inst.plant_club.components.container:DropEverything(inst:GetPosition(), true)
+    --     inst.plant_club:Remove()
+    -- end
     -- 若存在固定武器（普通守卫-逍遥），一并清理
     if inst._ling_fixed_weapon and inst._ling_fixed_weapon:IsValid() then
         inst._ling_fixed_weapon:Remove()
