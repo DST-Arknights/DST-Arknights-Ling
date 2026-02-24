@@ -1,5 +1,3 @@
-local LING_TREASURE_BUFF_BASE_PLANAR_DEFENSE = 5
-
 local function ApplyBuffEffect(inst, target, cfg)
   ArkLogger:Debug("so_is_writ_an_ode_to_wine_buff ApplyBuffEffect spawnByLoad=", inst.spawnByLoad, inst, target, cfg)
   if not inst.spawnByLoad then
@@ -25,10 +23,6 @@ local function OnAttached(inst, target)
   inst:ListenForEvent("death", function()
     inst.components.debuff:Stop()
   end, target)
-  if not target.components.planardefense then
-    target:AddComponent("planardefense")
-    target.components.planardefense:SetBaseDefense(LING_TREASURE_BUFF_BASE_PLANAR_DEFENSE)
-  end
   local targetElite = target.components.ark_elite.elite
   local cfg = TUNING.LING.ELITE[targetElite] or {}
   local totalTime = cfg.SO_IS_WRIT_AN_ODE_TO_WINE_BUFF_DURATION or 10
@@ -46,9 +40,6 @@ end
 
 local function OnDetached(inst, target)
   ArkLogger:Debug("so_is_writ_an_ode_to_wine_buff OnDetached")
-  if target.components.planardefense then
-    target.components.planardefense:SetBaseDefense(0)
-  end
   inst.components.ark_buff_icon:AttachTo(inst)
   inst:Remove()
 end
