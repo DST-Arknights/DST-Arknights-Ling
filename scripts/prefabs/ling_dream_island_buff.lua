@@ -1,4 +1,5 @@
-
+local LING_TREASURE_BUFF_BASE_PLANAR_DEFENSE = 5
+local GRUE_IMMUNITY = "ling_dream_island_buff"
 local function temperaturetick(inst, sleeper)
     if sleeper.components.temperature ~= nil then
         if sleeper.components.temperature:GetCurrent() < TUNING.SLEEP_TARGET_TEMP_TENT then
@@ -36,12 +37,26 @@ local function OnAttached(inst, target)
   inst:ListenForEvent("death", function()
     inst.components.debuff:Stop()
   end, target)
-  inst._buffTask = inst:DoPeriodicTask(TUNING.SLEEP_TICK_PERIOD, function() OnTick(inst, target) end)
   -- 50%减伤, 5点位面防御
   target.components.combat.externaldamagetakenmultipliers:SetModifier(inst, 0.5)
+  if not target.components.planardefense then
+    target:AddComponent("planardefense")
+  end
+  target.components.planardefense:SetBaseDefense(LING_TREASURE_BUFF_BASE_PLANAR_DEFENSE)
+  if not target.components.grue then
+    target:AddComponent("grue")
+  end
+  target.components.grue:AddImmunity(GRUE_IMMUNITY)
+  inst._buffTask = inst:DoPeriodicTask(TUNING.SLEEP_TICK_PERIOD, function() OnTick(inst, target) end)
 end
 
 local function OnDetached(inst, target)
+  if target.components.planardefense then
+    target.components.planardefense:SetBaseDefense(0)
+  end
+  if target.components.grue then
+    target.components.grue:RemoveImmunity(GRUE_IMMUNITY)
+  end
   inst:Remove()
 end
 
