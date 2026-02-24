@@ -190,6 +190,9 @@ local function master_post_init(inst)
     end
   end
 
+  -- 移除尸体
+  inst.skeleton_prefab = nil
+
   -- 保存和加载由组件自动处理
 
   -- 添加催眠抗性
