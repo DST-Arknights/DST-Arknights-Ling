@@ -287,9 +287,6 @@ local states =
             inst.Physics:Stop()
             inst.AnimState:PlayAnimation("level_up")
             inst.SoundEmitter:PlaySound("dontstarve/common/together/celestial_orb/active")
-            if inst.components.talker then
-                inst.components.talker:Say("等级提升！")
-            end
         end,
 
         events =

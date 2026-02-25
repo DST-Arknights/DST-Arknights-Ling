@@ -511,3 +511,13 @@ msgstr "找不到传送目标"
 msgctxt "STRINGS.ACTIONS.DREAM_ISLAND_TELEPORT"
 msgid "Teleport"
 msgstr "传送"
+
+#. 诗化物
+msgctxt "STRINGS.CHARACTERS.GENERIC.POETIC_OBJECTS"
+msgid "Poetic Objects"
+msgstr "无中生有"
+
+#. 诗意不足
+msgctxt "STRINGS.CHARACTERS.GENERIC.LING_SKILL_NOT_ENOUGH_POETRY"
+msgid "Not enough poetry."
+msgstr "诗意不足"

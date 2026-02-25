@@ -105,10 +105,7 @@ local function RegisterSkill1(self)
     local cost = skill1:GetLevelConfig().poetryCost
     local allow = poetry >= cost
     if not allow then
-      if inst.components.talker then
-        -- TODO: 说话提示诗意不足
-        -- inst.components.talker:Say(STRINGS.UI.ARK_SKILL.LING.SKILL1_NOT_ENOUGH_POETRY)
-      end
+      SayAndVoice(inst, "LING_SKILL_NOT_ENOUGH_POETRY")
     end
     return allow
   end)
@@ -220,11 +217,7 @@ local function RegisterSkill3(self)
     local cost = skill3:GetLevelConfig().poetryCost
     local allow = poetry >= cost
     if not allow then
-      if inst.components.talker then
-        ArkLogger:Debug("ling_skill", "ling_skill3: Not enough poetry")
-        -- TODO: 说话提示诗意不足
-        -- inst.components.talker:Say(STRINGS.UI.ARK_SKILL.LING.SKILL1_NOT_ENOUGH_POETRY)
-      end
+      SayAndVoice(inst, "LING_SKILL_NOT_ENOUGH_POETRY")
     end
     return allow
   end)

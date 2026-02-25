@@ -131,7 +131,7 @@ local function OnChangeArea(inst, area)
     if not inst._visited_dream_island then
       inst._visited_dream_island = true
       inst:DoTaskInTime(7, function()
-        inst.components.talker:Say(GetString(inst, "ANNOUNCE_ENTER_DREAM_ISLAND"))
+        SayAndVoice(inst, "ANNOUNCE_ENTER_DREAM_ISLAND")
       end)
     end
   else

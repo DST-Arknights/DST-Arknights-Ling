@@ -52,9 +52,7 @@ AddStategraphPostInit("wilson", function(sg)
                     inst:PushEvent("performaction", { action = inst.bufferedaction })
                     inst:ClearBufferedAction()
                     inst.sg:GoToState("idle")
-                    if inst.components.talker ~= nil then
-                        inst.components.talker:Say(GetString(inst, 'LING_CLOUD_PAVILION_PRIVATE_SLEEP'))
-                    end
+                    SayAndVoice(inst, 'LING_CLOUD_PAVILION_PRIVATE_SLEEP')
                     return
                 end
                 old_onenter(inst, ...)

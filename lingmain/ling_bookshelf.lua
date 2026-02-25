@@ -70,10 +70,7 @@ AddAction("DREAM_ISLAND_TELEPORT", STRINGS.ACTIONS.DREAM_ISLAND_TELEPORT, functi
         end
         return true
     end
-    if act.doer.components.talker ~= nil then
-        act.doer.components.talker:Say(GetString(act.doer, "ANNOUNCE_DREAM_ISLAND_TELEPORT_FAILED"))
-        return true
-    end
+    SayAndVoice(act.doer, "ANNOUNCE_DREAM_ISLAND_TELEPORT_FAILED")
     return false
 end)
 ACTIONS.DREAM_ISLAND_TELEPORT.distance = 2

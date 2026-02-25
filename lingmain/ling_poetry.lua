@@ -23,9 +23,11 @@ AddComponentPostInit("builder", function(self)
       if has_island_buff and comp_ling_poetry ~= nil then
         local poetry = comp_ling_poetry:GetCurrent()
         if poetry >= 70 then
+          SayAndVoice(self.inst, "POETIC_OBJECTS")
           comp_ling_poetry:Dirty(-70)
           return
         elseif poetry >= 40 and math.random() < 0.4 then
+          SayAndVoice(self.inst, "POETIC_OBJECTS")
           comp_ling_poetry:Dirty(-40)
           return
         end
