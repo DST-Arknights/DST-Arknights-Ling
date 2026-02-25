@@ -16,6 +16,21 @@ AddComponentPostInit("builder", function(self)
     if self.freebuildmode then
       return
     end
+    -- 有buff的情况下, 若诗意值大于70, 免费制作, 40以上, 40%概率消耗40点免费制作.
+    if self.inst.components.debuffable then
+      local has_island_buff = self.inst.components.debuffable:HasDebuff("ling_dream_island_buff")
+      local comp_ling_poetry = self.inst.components.ling_poetry
+      if has_island_buff and comp_ling_poetry ~= nil then
+        local poetry = comp_ling_poetry:GetCurrent()
+        if poetry >= 70 then
+          comp_ling_poetry:Dirty(-70)
+          return
+        elseif poetry >= 40 and math.random() < 0.4 then
+          comp_ling_poetry:Dirty(-40)
+          return
+        end
+      end
+    end
 
     local recipe = AllRecipes[recname]
     if recipe then
