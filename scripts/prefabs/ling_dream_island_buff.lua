@@ -1,35 +1,5 @@
 local LING_TREASURE_BUFF_BASE_PLANAR_DEFENSE = 5
 local GRUE_IMMUNITY = "ling_dream_island_buff"
-local REVIVE_DELAY = 3
-local REVIVE_TASK_KEY = "_ling_dream_island_revive_task"
-
-local function TryRevive(target)
-  if target == nil or not target:IsValid() or target.components.health == nil then
-    return
-  end
-
-  if not target.components.health:IsDead() then
-    return
-  end
-
-  if target:HasTag("playerghost") then
-    target:PushEvent("respawnfromghost", {source = target})
-  elseif target.components.health.Respawn ~= nil then
-    target.components.health:Respawn(TUNING.REVIVE_HEALTH)
-  end
-end
-
-local function ScheduleRevive(target)
-  if target == nil or not target:IsValid() or target[REVIVE_TASK_KEY] ~= nil then
-    return
-  end
-
-  target[REVIVE_TASK_KEY] = target:DoTaskInTime(REVIVE_DELAY, function(owner)
-    owner[REVIVE_TASK_KEY] = nil
-    TryRevive(owner)
-  end)
-end
-
 local function temperaturetick(inst, sleeper)
     if sleeper.components.temperature ~= nil then
         if sleeper.components.temperature:GetCurrent() < TUNING.SLEEP_TARGET_TEMP_TENT then
@@ -64,13 +34,9 @@ end
 local function OnAttached(inst, target)
   inst.entity:SetParent(target.entity)
   inst.Transform:SetPosition(0, 0, 0)
-  inst._ondeath = function()
-    ScheduleRevive(target)
-    if inst.components.debuff ~= nil then
-      inst.components.debuff:Stop()
-    end
-  end
-  inst:ListenForEvent("death", inst._ondeath, target)
+  inst:ListenForEvent("death", function()
+    inst.components.debuff:Stop()
+  end, target)
   -- 50%减伤, 5点位面防御
   target.components.combat.externaldamagetakenmultipliers:SetModifier(inst, 0.5)
   if not target.components.planardefense then
@@ -85,14 +51,6 @@ local function OnAttached(inst, target)
 end
 
 local function OnDetached(inst, target)
-  if inst._buffTask ~= nil then
-    inst._buffTask:Cancel()
-    inst._buffTask = nil
-  end
-  if inst._ondeath ~= nil then
-    inst:RemoveEventCallback("death", inst._ondeath, target)
-    inst._ondeath = nil
-  end
   if target.components.planardefense then
     target.components.planardefense:SetBaseDefense(0)
   end
