@@ -29,7 +29,7 @@ local function Teleport(inst, targetPos)
     end)
   end
   inst:DoTaskInTime(CONSTANTS.LING_TRANSFER_FADE_TIME, function()
-    inst.Transform:SetPosition(targetPos[1], targetPos[2], targetPos[3])
+    inst.Transform:SetPosition(targetPos.x, targetPos.y, targetPos.z)
     inst:SnapCamera()
     inst:ScreenFade(true, CONSTANTS.LING_TRANSFER_FADE_TIME)
     if inst.components.fader then
