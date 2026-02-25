@@ -28,7 +28,7 @@ function LingPoetry:SetElite(level)
   end
   self.level = level
   self.poetry_recovery_while_idle_per_frames = data.POETRY_RECOVERY_WHILE_IDLE_PER_SECOND
-  self.poetry_recovery_in_dream_bonus = data.POETRY_RECOVERY_IN_DREAM_PER_SECOND
+  self.poetry_recovery_in_dream_bonus = data.POETRY_RECOVERY_IN_DREAM_BONUS
   self.max_poetry = data.MAX_POETRY
 end
 
