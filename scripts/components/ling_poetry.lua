@@ -13,7 +13,8 @@ local LingPoetry = Class(function(self, inst)
   self.poetry_recovery_in_dream_per_frames = 0
   self.current_poetry = 0
   self.max_poetry = 0
-  self.inst:StartUpdatingComponent(self)
+  -- 每秒1次的循环任务
+  self._update_task = self.inst:DoPeriodicTask(1, function() self:Recover() end)
   self:SetElite(1)
 end, nil, {
   current_poetry = oncurrent_poetry,
@@ -27,7 +28,7 @@ function LingPoetry:SetElite(level)
   end
   self.level = level
   self.poetry_recovery_while_idle_per_frames = data.POETRY_RECOVERY_WHILE_IDLE_PER_SECOND
-  self.poetry_recovery_in_dream_per_frames = data.POETRY_RECOVERY_IN_DREAM_PER_SECOND
+  self.poetry_recovery_in_dream_bonus = data.POETRY_RECOVERY_IN_DREAM_PER_SECOND
   self.max_poetry = data.MAX_POETRY
 end
 
@@ -65,19 +66,25 @@ function LingPoetry:HasEnough(amount)
   return self.current_poetry >= amount
 end
 
-function LingPoetry:OnUpdate(dt)
+function LingPoetry:Recover()
   if self.inst.components.sanity:IsInsane() then
     return
   end
-  -- if self.inst:InDream() then
-  if true then
-    local diff = self.poetry_recovery_in_dream_per_frames * dt
-    self:Dirty(diff)
-  else
-    if self.inst:HasTag('idle') then
-      local diff = self.poetry_recovery_while_idle_per_frames * dt
-      self:Dirty(diff)
-    end
+  if not self.inst:HasTag("idle") then
+    return
+  end
+  local bonus = 1
+  if IsEntityInDreamIsland(self.inst) or IsEntityInCloudPavilion(self.inst) then
+    bonus = self.poetry_recovery_in_dream_bonus
+  end
+  local diff = self.poetry_recovery_while_idle_per_frames * bonus
+  self:Dirty(diff)
+end
+
+function LingPoetry:OnRemoveFromEntity()
+  if self._update_task then
+    self._update_task:Cancel()
+    self._update_task = nil
   end
 end
 

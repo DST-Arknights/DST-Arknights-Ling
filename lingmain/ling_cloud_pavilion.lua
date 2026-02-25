@@ -48,7 +48,7 @@ AddStategraphPostInit("wilson", function(sg)
             local old_onenter = state.onenter
             state.onenter = function(inst, ...)
                 inst.components.locomotor:Stop()
-                if inst.ling_inHouse then
+                if IsEntityInCloudPavilion(inst) then
                     inst:PushEvent("performaction", { action = inst.bufferedaction })
                     inst:ClearBufferedAction()
                     inst.sg:GoToState("idle")
@@ -248,13 +248,10 @@ AddPlayerPostInit(function(inst)
     end
 
     if not TheWorld.ismastersim then return end
-
-    inst.ling_inHouse = false
-
     -- 温度调节（直接包装，替代 _FnDecorator）
     local _origTempOnUpdate = inst.components.temperature.OnUpdate
     inst.components.temperature.OnUpdate = function(self, dt, ...)
-        if self.inst.ling_inHouse then
+        if IsEntityInCloudPavilion(inst) then
             local cur = self:GetCurrent()
             if cur > 30 then
                 self:SetTemperature(self.current - 0.1)
@@ -269,7 +266,7 @@ AddPlayerPostInit(function(inst)
     -- 湿度调节
     local _origMoistOnUpdate = inst.components.moisture.OnUpdate
     inst.components.moisture.OnUpdate = function(self, dt, ...)
-        if self.inst.ling_inHouse then
+        if IsEntityInCloudPavilion(inst) then
             if self.moisture > 0 then
                 self:DoDelta(-0.1)
             end
@@ -327,17 +324,11 @@ AddComponentPostInit("sleepingbaguser", function(self)
                 end
                 return
             end
-            local x, y, z = self.inst.Transform:GetWorldPosition()
-            local ents = TheSim:FindEntities(x, y, z, 10, { "ling_cloud_pavilion_exit_door" })
-            if #ents > 0 then
-                self.inst.components.ling_cloud_pavilion_transfer:ExitCloudPavilion()
-            else
-                self.inst.components.ling_cloud_pavilion_transfer:EnterCloudPavilion()
-                self.inst:DoTaskInTime(CONSTANTS.LING_TRANSFER_FADE_TIME, function()
-                    self.inst.AnimState:PlayAnimation("bedroll_sleep_loop", true)
-                    self.inst:Show()
-                end)
-            end
+            self.inst.components.ling_cloud_pavilion_transfer:EnterCloudPavilion()
+            self.inst:DoTaskInTime(CONSTANTS.LING_TRANSFER_FADE_TIME, function()
+                self.inst.AnimState:PlayAnimation("bedroll_sleep_loop", true)
+                self.inst:Show()
+            end)
         end)
         return unpack(res)
     end

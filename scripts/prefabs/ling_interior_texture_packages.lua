@@ -11,7 +11,6 @@ local function OnPlayerNear(inst, doer)
     -- doer:DoTaskInTime(0, function()
     --     doer.ling_netvarCameraAnchor:set(inst)
     -- end)
-    doer.ling_inHouse = true
     doer:AddDebuff("ling_dream_island_buff", "ling_dream_island_buff")
     if doer.ling_netvarCloudPavilionMist ~= nil then
         doer.ling_netvarCloudPavilionMist:set(true)
@@ -21,7 +20,6 @@ end
 local function OnPlayerFar(inst, doer)
     -- 清空锚点，恢复室外相机
     doer.ling_netvarCameraAnchor:set(nil)
-    doer.ling_inHouse = false
     doer:RemoveDebuff("ling_dream_island_buff")
     if doer.ling_netvarCloudPavilionMist ~= nil then
         doer.ling_netvarCloudPavilionMist:set(false)

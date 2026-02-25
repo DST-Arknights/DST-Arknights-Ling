@@ -121,3 +121,7 @@ function GLOBAL.IsEntityInDreamIsland(inst)
     local node = TheWorld.topology.nodes[node_index]
     return node ~= nil and node.tags ~= nil and table.contains(node.tags, "ling_dream_island")
 end
+
+function GLOBAL.IsEntityInCloudPavilion(inst)
+  return inst.ling_netvarCameraAnchor ~= nil and inst.ling_netvarCameraAnchor:value() ~= nil
+end

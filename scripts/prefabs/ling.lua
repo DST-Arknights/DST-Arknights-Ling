@@ -1,14 +1,14 @@
 local MakePlayerCharacter = require "prefabs/player_common"
 
 local assets = {
-    Asset( "ANIM", "anim/ling.zip" ),
+  Asset("ANIM", "anim/ling.zip"),
 }
 local prefabs = {
   "ling_lantern",
   "ark_backpack",
-	-- "silence_glass",
-	-- "silence_coat",
-	-- "silence_remote_control",
+  -- "silence_glass",
+  -- "silence_coat",
+  -- "silence_remote_control",
 }
 local start_inv = {
   "ark_backpack",
@@ -59,7 +59,7 @@ local function OnApplyElite(inst, elite, level)
   end
   local data = TUNING.LING.ELITE[elite]
   if not data then
-      return
+    return
   end
   -- 更新基础属性
   local currentHealth = inst.components.health.currenthealth
@@ -219,17 +219,17 @@ local function master_post_init(inst)
       local mult = TUNING.CHANNELCAST_SPEED_MOD * data.SPEED_MULTIPLIER
       inst.components.grogginess:SetSpeedModMultiplier(1 / math.max(TUNING.MAX_GROGGY_SPEED_MOD, mult))
     end
-    if IsEntityInDreamIsland(inst) or inst.ling_inHouse then
+    if IsEntityInDreamIsland(inst) or IsEntityInCloudPavilion(inst) then
       inst:AddDebuff("ling_dream_island_buff", "ling_dream_island_buff")
     end
   end)
   inst:ListenForEvent("death", function()
-    ArkLogger:Debug("ling death", IsEntityInDreamIsland(inst))
     if IsEntityInDreamIsland(inst) then
       inst:DoTaskInTime(8, function()
         -- 复活
         if inst:HasTag("playerghost") then
-          inst:PushEvent("respawnfromghost", {source = inst})
+          SayAndVoice(inst, "ANNOUNCE_REVIVE_IN_DREAM_ISLAND")
+          inst:PushEvent("respawnfromghost", { source = inst })
         end
       end)
     end
