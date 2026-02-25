@@ -1,3 +1,4 @@
+local ling_voice = require "languages/ling_voice"
 local MakePlayerCharacter = require "prefabs/player_common"
 
 local assets = {
@@ -175,6 +176,10 @@ local function master_post_init(inst)
   inst:AddComponent("ark_elite")
   inst.components.ark_elite:SetRarity(6)
   inst.components.ark_elite:OnApplyElite(OnApplyElite)
+  inst:AddComponent("i18n_talker")
+  inst.components.i18n_talker:RegisterVoice(ling_voice)
+  inst.components.i18n_talker:SetVoiceLang(TUNING.LING.VOICE_LANG)
+
   inst.components.sanity.dapperness = 0.33
 
   -- 设置leader组件的回调函数
@@ -225,10 +230,12 @@ local function master_post_init(inst)
   end)
   inst:ListenForEvent("death", function()
     if IsEntityInDreamIsland(inst) then
-      inst:DoTaskInTime(8, function()
+      inst:DoTaskInTime(6, function()
         -- 复活
         if inst:HasTag("playerghost") then
-          SayAndVoice(inst, "ANNOUNCE_REVIVE_IN_DREAM_ISLAND")
+          inst:DoTaskInTime(5, function()
+            SayAndVoice(inst, "ANNOUNCE_REVIVE_IN_DREAM_ISLAND")
+          end)
           inst:PushEvent("respawnfromghost", { source = inst })
         end
       end)

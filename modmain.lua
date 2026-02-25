@@ -115,6 +115,11 @@ DefineNetState('ling_summon_manager', (function()
     return state
 end)())
 
+
+local voice_cfg = GetModConfigData("voice_language")
+local voice_lang = voice_cfg == "auto" and LOC.GetLocaleCode(LOC.GetLanguage()) or voice_cfg
+TUNING.LING.VOICE_LANG = voice_lang
+
 function GLOBAL.IsEntityInDreamIsland(inst)
     local x, y, z = inst.Transform:GetWorldPosition()
     local node_index = TheWorld.Map:GetNodeIdAtPoint(x, y, z)
