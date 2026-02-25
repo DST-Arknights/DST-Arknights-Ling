@@ -348,7 +348,9 @@ AddComponentPostInit("sleepingbaguser", function(self)
                 self._ling_transfer_task:Cancel()
                 self._ling_transfer_task = nil
             end
-            self.inst.ling_netvarCloudPavilionMist:set(false)
+            if not IsEntityInCloudPavilion(self.inst) then
+                self.inst.ling_netvarCloudPavilionMist:set(false)
+            end
         end
         return _DoWakeUp(self, nostatechange)
     end
