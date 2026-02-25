@@ -32,6 +32,7 @@ local function OnTick(inst, target)
 end
 
 local function OnAttached(inst, target)
+  ArkLogger:Debug("ling_dream_island_buff OnAttached")
   inst.entity:SetParent(target.entity)
   inst.Transform:SetPosition(0, 0, 0)
   inst:ListenForEvent("death", function()
@@ -51,6 +52,7 @@ local function OnAttached(inst, target)
 end
 
 local function OnDetached(inst, target)
+  ArkLogger:Debug("ling_dream_island_buff OnDetached")
   if target.components.planardefense then
     target.components.planardefense:SetBaseDefense(0)
   end

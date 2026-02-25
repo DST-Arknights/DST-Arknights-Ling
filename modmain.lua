@@ -114,3 +114,10 @@ DefineNetState('ling_summon_manager', (function()
     end
     return state
 end)())
+
+function GLOBAL.IsEntityInDreamIsland(inst)
+    local x, y, z = inst.Transform:GetWorldPosition()
+    local node_index = TheWorld.Map:GetNodeIdAtPoint(x, y, z)
+    local node = TheWorld.topology.nodes[node_index]
+    return node ~= nil and node.tags ~= nil and table.contains(node.tags, "ling_dream_island")
+end

@@ -119,9 +119,10 @@ end
 
 local function AddTimeExp(inst)
   if inst.components.ark_elite then
-    inst.components.ark_elite:AddExp(2)
+    inst.components.ark_elite:AddExp(1)
   end
 end
+
 
 local function OnChangeArea(inst, area)
   local on_ling_island = area ~= nil and area.tags and table.contains(area.tags, "ling_dream_island")
@@ -212,15 +213,28 @@ local function master_post_init(inst)
 
   -- 复活后重新应用睡眠抗性
   inst:ListenForEvent("ms_respawnedfromghost", function()
-    ArkLogger:Debug("ms_respawnedfromghost")
     if inst.components.grogginess then
       local elite = inst.components.ark_elite and inst.components.ark_elite.elite or 1
       local data = TUNING.LING.ELITE[elite]
       local mult = TUNING.CHANNELCAST_SPEED_MOD * data.SPEED_MULTIPLIER
       inst.components.grogginess:SetSpeedModMultiplier(1 / math.max(TUNING.MAX_GROGGY_SPEED_MOD, mult))
     end
+    if IsEntityInDreamIsland(inst) or inst.ling_inHouse then
+      inst:AddDebuff("ling_dream_island_buff", "ling_dream_island_buff")
+    end
   end)
-  inst:DoPeriodicTask(2, AddTimeExp)
+  inst:ListenForEvent("death", function()
+    ArkLogger:Debug("ling death", IsEntityInDreamIsland(inst))
+    if IsEntityInDreamIsland(inst) then
+      inst:DoTaskInTime(8, function()
+        -- 复活
+        if inst:HasTag("playerghost") then
+          inst:PushEvent("respawnfromghost", {source = inst})
+        end
+      end)
+    end
+  end)
+  inst:DoPeriodicTask(60, AddTimeExp)
   -- 记录是否登陆过梦岛
   inst._visited_dream_island = false
   -- 记录是否登陆过云山亭

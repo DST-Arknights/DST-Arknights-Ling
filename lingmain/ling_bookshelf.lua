@@ -38,13 +38,6 @@ AddRecipe2("ling_bookshelf", { Ingredient("boards", 3) }, TECH.ARK_ELITE_TWO, {
   force_hint = true,
 }, { "CHARACTER", "MODS", "STRUCTURES" })
 
-local function IsEntityInDreamIsland(inst)
-    local x, y, z = inst.Transform:GetWorldPosition()
-    local node_index = TheWorld.Map:GetNodeIdAtPoint(x, y, z)
-    local node = TheWorld.topology.nodes[node_index]
-    return node ~= nil and node.tags ~= nil and table.contains(node.tags, "ling_dream_island")
-end
-
 local trackEntityKey = "ling_bookshelf_transfer_target"
 AddAction("DREAM_ISLAND_TELEPORT", STRINGS.ACTIONS.DREAM_ISLAND_TELEPORT, function(act)
     if not act.target or not act.target:HasTag("dream_island_teleporter") then return false end
