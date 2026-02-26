@@ -290,6 +290,17 @@ local function _ReserveItemFor(item, inst, dur)
     item._ling_pick_reserved_until = GetTime() + (dur or 1.0)
 end
 
+local function _IsValidPickupPoint(item)
+    if item == nil or item.Transform == nil then
+        return false
+    end
+    local x, y, z = item.Transform:GetWorldPosition()
+    if not TheWorld.Map:IsPassableAtPoint(x, y, z) then
+        return false
+    end
+    return not TheWorld.Map:IsOceanAtPoint(x, y, z)
+end
+
 local function CanAcceptPickup(inst, item)
     if item == nil or item.components == nil or item.components.inventoryitem == nil then
         return false
@@ -342,6 +353,7 @@ local function _FindPickupTargetInGuardRange(inst, respect_cooldown)
         if item:IsValid() and invitem
             and (invitem.canbepickedup ~= false) and not invitem:IsHeld()
             and not (item.components.burnable and (item.components.burnable:IsBurning() or item.components.burnable:IsSmoldering()))
+            and _IsValidPickupPoint(item)
             and not _IsReservedByOther(item, inst)
             and CanAcceptPickup(inst, item)
         then
