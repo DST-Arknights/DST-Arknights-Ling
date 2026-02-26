@@ -34,6 +34,34 @@ end
 
 local SKILL1_DAMAGE_SOURCE = "ling_skill_1"
 local SKILL3_DAMAGE_SOURCE = "ling_skill_3"
+local DEFAULT_GUARD_LIGHT_COLOR = {0.8, 0.8, 1.0}
+local SKILL3_GUARD_LIGHT_COLOR = {0.68, 0.88, 1.0}
+local SKILL3_GUARD_LIGHT_RADIUS_BONUS = 1
+
+local function GetDefaultGuardLightRadius(inst)
+  if inst:HasTag("ling_guard_elite") then
+    return 1.5
+  end
+  return 0.5
+end
+
+local function SetGuardLight(inst, radius, color)
+  if inst == nil or inst.Light == nil then
+    return
+  end
+  inst.Light:SetRadius(radius)
+  inst.Light:SetColour(color[1], color[2], color[3])
+end
+
+local function ApplySkill3Light(inst)
+  local baseRadius = GetDefaultGuardLightRadius(inst)
+  SetGuardLight(inst, baseRadius + SKILL3_GUARD_LIGHT_RADIUS_BONUS, SKILL3_GUARD_LIGHT_COLOR)
+end
+
+local function RestoreDefaultLight(inst)
+  SetGuardLight(inst, GetDefaultGuardLightRadius(inst), DEFAULT_GUARD_LIGHT_COLOR)
+end
+
 local LingGuardSkill = Class(function(self, inst)
   self.inst = inst
   self.active_skills = {}
@@ -78,6 +106,7 @@ function LingGuardSkill:ActivateSkill3(level)
   self:StartAuraDamage(function()
     return config.auraDamageOwnerPercent * self:GetOwnerAttackDamage()
   end, config.auraInterval, config.auraRange)
+  ApplySkill3Light(self.inst)
   self.active_skills[id] = true
 end
 
@@ -86,6 +115,7 @@ function LingGuardSkill:DeactivateSkill3()
   self.inst.components.combat.externaldamagemultipliers:RemoveModifier(self.inst, SKILL3_DAMAGE_SOURCE)
   self.inst.components.combat.externaldamagetakenmultipliers:RemoveModifier(self.inst, SKILL3_DAMAGE_SOURCE)
   self:StopAuraDamage()
+  RestoreDefaultLight(self.inst)
   self.active_skills[id] = false
 end
 
