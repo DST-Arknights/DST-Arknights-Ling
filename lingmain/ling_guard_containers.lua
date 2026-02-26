@@ -5,8 +5,13 @@ local slotAtlas = { image = "ling_container_slot.tex", atlas = "images/ling_cont
 
 -- 种植容器物品测试函数 - 只允许放入守卫生产的作物
 local function planitemtestfn(container, item, slot)
-  -- 只允许放入带有ling_guard_crop标签的物品
-  return container.loading or item:HasTag("ling_guard_crop")
+  -- 仅允许两种场景写入：
+  -- 1) 读档恢复容器内容（container.loading）
+  -- 2) 组件内部生产作物时的瞬时写入（allow_internal_insert）
+  local inst_loading = container.inst ~= nil and container.inst.loading == true
+  local internal_insert = container.allow_internal_insert == true
+      or (container.inst ~= nil and container.inst.allow_internal_insert == true)
+  return inst_loading or internal_insert
 end
 
 -- 种植俱乐部物品测试函数 - 只允许放入种子
@@ -37,10 +42,6 @@ for y = 2, 0, -1 do
 end
 
 containers.params.xiaoyao = deepcopy(containers.params.ling_guard_basic)
-
-local function planitemtestfn(container, item, slot)
-  return container.loading or item:HasTag("ling_guard_crop")
-end
 
 local plantContainerPos = CONSTANTS.LING_GUARD_PANEL_POSITION + CONSTANTS.LING_GUARD_PANEL_PLANT_CONTAINER_CLOSED_POSITION * CONSTANTS.LING_GUARD_PANEL_SCALE
 local openPos = CONSTANTS.LING_GUARD_PANEL_POSITION + CONSTANTS.LING_GUARD_PANEL_PLANT_CONTAINER_POSITION * CONSTANTS.LING_GUARD_PANEL_SCALE

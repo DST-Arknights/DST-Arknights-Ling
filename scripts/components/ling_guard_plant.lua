@@ -176,6 +176,9 @@ function LingGuardPlant:ProduceCrop()
         return
     end
 
+    plant_container.allow_internal_insert = true
+    plant_container.components.container.allow_internal_insert = true
+
     -- 根据等级决定放入哪个格子和产物类型
     local enabled_slots = self:GetEnabledSlots()
     for _, slot_index in ipairs(enabled_slots) do
@@ -207,9 +210,6 @@ function LingGuardPlant:ProduceCrop()
             local item = SpawnPrefab(item_prefab)
             if item then
                 print("[LingGuardPlant] ProduceCrop:", item.prefab)
-                -- 添加守卫作物标签
-                item:AddTag("ling_guard_crop")
-
                 -- 设置堆叠数量
                 if item.components.stackable and quantity > 1 then
                     item.components.stackable:SetStackSize(quantity)
@@ -220,6 +220,9 @@ function LingGuardPlant:ProduceCrop()
             end
         end
     end
+
+    plant_container.allow_internal_insert = false
+    plant_container.components.container.allow_internal_insert = false
 
     -- 增加完成任务次数
     self.completed_tasks = self.completed_tasks + 1
