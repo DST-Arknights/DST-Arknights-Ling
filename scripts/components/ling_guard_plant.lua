@@ -179,6 +179,7 @@ function LingGuardPlant:ProduceCrop()
     -- 根据等级决定放入哪个格子和产物类型
     local enabled_slots = self:GetEnabledSlots()
     for _, slot_index in ipairs(enabled_slots) do
+        ArkLogger:Debug("LingGuardPlant:ProduceCrop", slot_index)
         local item_prefab = nil
         local quantity = 1
         local should_create = true
@@ -202,7 +203,6 @@ function LingGuardPlant:ProduceCrop()
         end
 
             -- 创建新物品并直接放入容器
-        print("[LingGuardPlant] ProduceCrop:", item_prefab)
         if should_create and item_prefab then
             local item = SpawnPrefab(item_prefab)
             if item then
@@ -216,7 +216,7 @@ function LingGuardPlant:ProduceCrop()
                 end
 
                 -- 直接使用GiveItem，容器会自动处理堆叠
-                plant_container.components.container:GiveItem(item)
+                plant_container.components.container:GiveItem(item, slot_index)
             end
         end
     end
