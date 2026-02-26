@@ -10,6 +10,12 @@ end
 
 local LingCloudPavilionTransfer = Class(function(self, inst)
     self.inst = inst
+    if not self.inst.components.knownlocations then
+      self.inst:AddComponent("knownlocations")
+    end
+    if not self.inst.components.entitytracker then
+      self.inst:AddComponent("entitytracker")
+    end
 end)
 
 function LingCloudPavilionTransfer:CanEnterCloudPavilion(enterInst)
@@ -47,13 +53,6 @@ function LingCloudPavilionTransfer:EnterCloudPavilion(enterInst)
   local target = TheWorld.components.ling_interiorspawner:GetGlobalInstance()
   if not target or not target:IsValid() then
     return
-  end
-
-  if not self.inst.components.knownlocations then
-    self.inst:AddComponent("knownlocations")
-  end
-  if not self.inst.components.entitytracker then
-    self.inst:AddComponent("entitytracker")
   end
   local enterPos
   if enterInst then
