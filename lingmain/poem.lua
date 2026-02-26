@@ -26,7 +26,7 @@ AddRecipe2("poem_2", { Ingredient("poem_1", 222), Ingredient("papyrus", 2), Ingr
   force_hint = true,
 }, { "CHARACTER", "MODS" })
 
-AddRecipe2("poem_3", { Ingredient("poem_2", 305), Ingredient("silk", 4) }, TECH.POETRY_ONE, {
+AddRecipe2("poem_3", { Ingredient("poem_1", 305), Ingredient("silk", 4) }, TECH.POETRY_ONE, {
   nounlock = true,
   builder_tag = "ling",
   station_tag = "ling_desk",
