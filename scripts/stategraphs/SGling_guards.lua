@@ -7,6 +7,7 @@ local actionhandlers = {
     ActionHandler(ACTIONS.MINE,   "mine"),
     ActionHandler(ACTIONS.DIG,    "dig"),
     ActionHandler(ACTIONS.HAMMER, "hammer"),
+    ActionHandler(ACTIONS.INTERACT_WITH, "plant_dance"),
     ActionHandler(ACTIONS.PICKUP, "pick"),
     ActionHandler(ACTIONS.UNPIN, "unpin"),
     ActionHandler(ACTIONS.LING_GUARD_RECALL, "recall"),
@@ -232,6 +233,33 @@ local states =
             end),
         },
         events = {
+            EventHandler("animover", goto_idle),
+        },
+    },
+
+    -- 照看作物：使用 pick 动画（不播放音乐）
+    State{
+        name = "plant_dance",
+        tags = { "busy" },
+
+        onenter = function(inst)
+            inst.Physics:Stop()
+            inst.AnimState:PlayAnimation("pick")
+        end,
+
+        onexit = function(inst)
+            inst:ClearBufferedAction()
+        end,
+
+        timeline =
+        {
+            TimeEvent(14 * FRAMES, function(inst)
+                inst:PerformBufferedAction()
+            end),
+        },
+
+        events =
+        {
             EventHandler("animover", goto_idle),
         },
     },

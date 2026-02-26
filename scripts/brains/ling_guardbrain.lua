@@ -4,6 +4,7 @@ require "behaviours/chaseandattack"
 require "behaviours/runaway"
 require "behaviours/doaction"
 require "behaviours/leash"
+require "behaviours/findfarmplant"
 
 local BrainCommon = require "brains/braincommon"
 
@@ -438,6 +439,20 @@ local function StartWorkingCondition(inst)
     return false
 end
 
+local function ShouldTendFarmPlant(inst)
+    local guard_cmp = inst.components and inst.components.ling_guard or nil
+    if guard_cmp == nil or guard_cmp:GetBehaviorMode() ~= CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD then
+        return false
+    end
+    if guard_cmp:GetWorkMode() ~= CONSTANTS.GUARD_WORK_MODE.PLANT then
+        return false
+    end
+    if IsInCombatMode(inst) then
+        return false
+    end
+    return true
+end
+
 -- 猪人风格工作流：保持工作动作
 local function KeepWorkingAction(inst)
     local guard_cmp = inst.components.ling_guard
@@ -567,6 +582,11 @@ function LingGuardBrain:OnStart()
                     return TryPickupAnyInGuardRange(self.inst)
                 end)
             }),
+
+        WhileNode(function()
+            return ShouldTendFarmPlant(self.inst)
+        end, "TendFarmPlant",
+            FindFarmPlant(self.inst, ACTIONS.INTERACT_WITH, true, GetGuardPos)),
 
         -- 守形态：工作循环（猪人风格，去掉调试日志）
         WhileNode(function()
