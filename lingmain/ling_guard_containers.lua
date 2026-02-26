@@ -51,10 +51,10 @@ containers.params.ling_guard_plant_container = {
       image = "bg_1.tex",
       atlas = "images/ui_ling_guard_plant_slot.xml",
     }, {
-      image = "bg_2.tex",
+      image = "bg_3.tex",
       atlas = "images/ui_ling_guard_plant_slot.xml",
     }, {
-      image = "bg_3.tex",
+      image = "bg_2.tex",
       atlas = "images/ui_ling_guard_plant_slot.xml",
     }},
     bgimage = nil,
