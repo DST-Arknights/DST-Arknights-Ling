@@ -47,6 +47,7 @@ TUNING.GAMEMODE_STARTING_ITEMS.LAVAARENA.LING = {"ling_lantern", "ark_backpack"}
 TUNING.GAMEMODE_STARTING_ITEMS.QUAGMIRE.LING = {"ling_lantern", "ark_backpack"}
 
 AddMinimapAtlas('images/map_icons/ling.xml')
+AddMinimapAtlas('images/map_icons/ling_desk.xml')
 AddModCharacter("ling", "FEMALE")
 AddReplicableComponent("ling_poetry")
 AddReplicableComponent("ling_summon_manager")
