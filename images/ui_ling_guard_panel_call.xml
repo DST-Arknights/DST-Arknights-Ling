@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Atlas>
+	<Texture filename="ui_ling_guard_panel_call.tex" />
+	<Elements>
+		<Element name="close.tex" u1="0.001" u2="0.23728125" v2="0.999" v1="0.698265625" variant="" />
+		<Element name="planr.tex" u1="0.001" u2="0.23728125" v2="0.696265625" v1="0.39553125" variant="" />
+		<Element name="qingping.tex" u1="0.23928125" u2="0.4755625" v2="0.696265625" v1="0.39553125" variant="" />
+		<Element name="summary.tex" u1="0.71584375" u2="0.952125" v2="0.999" v1="0.698265625" variant="" />
+		<Element name="xianjing.tex" u1="0.23928125" u2="0.4755625" v2="0.999" v1="0.698265625" variant="" />
+		<Element name="xiaoyao.tex" u1="0.4775625" u2="0.71384375" v2="0.999" v1="0.698265625" variant="" />
+	</Elements>
+</Atlas>

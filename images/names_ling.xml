@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<Atlas>
+	<Texture filename="names_ling.tex" />
+	<Elements>
+		<Element name="ling.tex" u1="0.000976563" u2="0.645508" v1="0.349609" v2="0.998047" />
+	</Elements>
+</Atlas>

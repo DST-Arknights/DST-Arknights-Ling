@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Atlas>
+	<Texture filename="ling_elite.tex" />
+	<Elements>
+		<Element name="elite1.tex" u1="0.001" u2="0.4130625" v2="0.999" v1="0.079125" variant="" />
+		<Element name="elite2.tex" u1="0.4150625" u2="0.827125" v2="0.999" v1="0.079125" variant="" />
+	</Elements>
+</Atlas>

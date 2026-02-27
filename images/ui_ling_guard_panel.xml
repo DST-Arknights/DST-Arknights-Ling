@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Atlas>
+	<Texture filename="ui_ling_guard_panel.tex" />
+	<Elements>
+		<Element name="bg.tex" u1="0.001" u2="0.5644296875" v2="0.999" v1="0.5664296875" variant="" />
+		<Element name="close.tex" u1="0.5664296875" u2="0.6796640625" v2="0.999" v1="0.6025625" variant="" />
+		<Element name="command_attack.tex" u1="0.001" u2="0.0898203125" v2="0.5644296875" v1="0.0586171875" variant="" />
+		<Element name="command_cautious.tex" u1="0.0918203125" u2="0.180640625" v2="0.5644296875" v1="0.0586171875" variant="" />
+		<Element name="command_guard.tex" u1="0.182640625" u2="0.2714609375" v2="0.5644296875" v1="0.0586171875" variant="" />
+		<Element name="container_close.tex" u1="0.6816640625" u2="0.793921875" v2="0.999" v1="0.885765625" variant="" />
+		<Element name="container_open.tex" u1="0.2734609375" u2="0.420875" v2="0.5644296875" v1="0.362328125" variant="" />
+		<Element name="fusion_button.tex" u1="0.795921875" u2="0.92478125" v2="0.999" v1="0.8144765625" variant="" />
+		<Element name="health.tex" u1="0.6816640625" u2="0.7616953125" v2="0.883765625" v1="0.803734375" variant="" />
+		<Element name="name_qingping.tex" u1="0.422875" u2="0.47946875" v2="0.5644296875" v1="0.41115625" variant="" />
+		<Element name="name_xianjing.tex" u1="0.6816640625" u2="0.7402109375" v2="0.801734375" v1="0.6621328125" variant="" />
+		<Element name="name_xiaoyao.tex" u1="0.2734609375" u2="0.3349375" v2="0.360328125" v1="0.2168203125" variant="" />
+		<Element name="plant_bg.tex" u1="0.3369375" u2="0.6718515625" v2="0.3281015625" v1="0.0508046875" variant="" />
+		<Element name="recall.tex" u1="0.48146875" u2="0.5380625" v2="0.5644296875" v1="0.506859375" variant="" />
+		<Element name="rename.tex" u1="0.92678125" u2="0.965796875" v2="0.999" v1="0.850609375" variant="" />
+		<Element name="work_chop.tex" u1="0.7422109375" u2="0.786109375" v2="0.801734375" v1="0.766625" variant="" />
+		<Element name="work_dig.tex" u1="0.001" u2="0.0429453125" v2="0.0566171875" v1="0.0195546875" variant="" />
+		<Element name="work_dig_land.tex" u1="0.5664296875" u2="0.608375" v2="0.6005625" v1="0.55959375" variant="" />
+		<Element name="work_hammer.tex" u1="0.48146875" u2="0.524390625" v2="0.504859375" v1="0.4648671875" variant="" />
+		<Element name="work_mine.tex" u1="0.3369375" u2="0.3788828125" v2="0.360328125" v1="0.3301015625" variant="" />
+		<Element name="work_plant.tex" u1="0.7422109375" u2="0.7851328125" v2="0.764625" v1="0.71975" variant="" />
+		<Element name="work_selector.tex" u1="0.788109375" u2="0.860328125" v2="0.8124765625" v1="0.678734375" variant="" />
+	</Elements>
+</Atlas>

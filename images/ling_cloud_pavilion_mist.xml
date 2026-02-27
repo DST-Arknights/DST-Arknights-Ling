@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Atlas>
+	<Texture filename="ling_cloud_pavilion_mist.tex" />
+	<Elements>
+		<Element name="cloud-0.tex" u1="0.001" u2="0.702125" v2="0.3202890625" v1="0.24709375" variant="" />
+		<Element name="cloud-1.tex" u1="0.001" u2="0.2880625" v2="0.999" v1="0.885765625" variant="" />
+		<Element name="cloud-2.tex" u1="0.001" u2="0.4238046875" v2="0.883765625" v1="0.77053125" variant="" />
+		<Element name="cloud-3.tex" u1="0.001" u2="0.3398203125" v2="0.76853125" v1="0.6181875" variant="" />
+		<Element name="cloud-4.tex" u1="0.001" u2="0.2909921875" v2="0.6161875" v1="0.51271875" variant="" />
+		<Element name="cloud-5.tex" u1="0.4258046875" u2="0.79978125" v2="0.999" v1="0.8242421875" variant="" />
+		<Element name="cloud-6.tex" u1="0.2929921875" u2="0.9941171875" v2="0.6161875" v1="0.5429921875" variant="" />
+		<Element name="cloud-7.tex" u1="0.3418203125" u2="0.8027109375" v2="0.76853125" v1="0.6181875" variant="" />
+		<Element name="cloud-8.tex" u1="0.001" u2="0.543921875" v2="0.51071875" v1="0.3222890625" variant="" />
+	</Elements>
+</Atlas>

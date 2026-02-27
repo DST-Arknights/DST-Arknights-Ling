@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Atlas>
+	<Texture filename="ui_ling_guard_plant_slot.tex" />
+	<Elements>
+		<Element name="bg_0.tex" u1="0.53225" u2="0.795875" v2="0.999" v1="0.735375" variant="" />
+		<Element name="bg_1.tex" u1="0.001" u2="0.264625" v2="0.733375" v1="0.46975" variant="" />
+		<Element name="bg_2.tex" u1="0.001" u2="0.264625" v2="0.999" v1="0.735375" variant="" />
+		<Element name="bg_3.tex" u1="0.266625" u2="0.53025" v2="0.999" v1="0.735375" variant="" />
+	</Elements>
+</Atlas>
