@@ -26,7 +26,6 @@ Assets = {
   Asset('ATLAS', 'images/inventoryimages/ling_bookshelf.xml'),
   Asset('ATLAS', 'bigportraits/ling.xml'),
   Asset('ATLAS', 'images/names_ling.xml'),
-  Asset('ATLAS', 'images/ark_skill.xml'),
   Asset('ATLAS', 'images/ling_skill.xml'),
   Asset('ATLAS', 'images/ui_ling_guard_panel.xml'),
   Asset('ATLAS', 'images/ui_ling_guard_panel_call.xml'),
