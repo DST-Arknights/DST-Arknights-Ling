@@ -269,7 +269,7 @@ local function ling_guard_basic_fn()
 
     inst.entity:SetCanSleep(false)
 
-    inst.MiniMapEntity:SetIcon("ling.tex")
+    inst.MiniMapEntity:SetIcon("ling_guard_basic.tex")
 
     inst.AnimState:SetBank("loong_0")
     inst.AnimState:SetBuild("loong_0")
@@ -384,7 +384,7 @@ local function ling_guard_elite_fn()
     inst.entity:AddNetwork()
 
     inst.entity:SetCanSleep(false)
-    inst.MiniMapEntity:SetIcon("ling.tex")
+    inst.MiniMapEntity:SetIcon("ling_guard_elite.tex")
 
     inst.AnimState:SetBank("loong_1")
     inst.AnimState:SetBuild("loong_1")
