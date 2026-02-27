@@ -210,4 +210,4 @@ end
 --------------------------------------------------------------------------
 
 return Prefab("ling_bookshelf", fn, assets, prefabs),
-       MakePlacer("ling_bookshelf_placer", "bookstation", "bookstation", "idle")
+       MakePlacer("ling_bookshelf_placer", "ling_bookshelf", "ling_bookshelf", "idle")
