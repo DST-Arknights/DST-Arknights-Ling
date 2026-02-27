@@ -13,8 +13,8 @@ params.ling_bookshelf =
     widget =
     {
         slotpos = {},
-        animbank = "ui_bookstation_4x5",
-        animbuild = "ui_bookstation_4x5",
+        animbank = "ui_ling_bookshelf_4x5",
+        animbuild = "ui_ling_bookshelf_4x5",
         pos = Vector3(0, 280, 0),
         side_align_tip = 160,
     },

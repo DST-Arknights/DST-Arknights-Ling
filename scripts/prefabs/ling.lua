@@ -3,6 +3,7 @@ local MakePlayerCharacter = require "prefabs/player_common"
 
 local assets = {
   Asset("ANIM", "anim/ling.zip"),
+  Asset("ATLAS", "images/map_icons/ling.xml"),
 }
 local prefabs = {
   "ling_lantern",

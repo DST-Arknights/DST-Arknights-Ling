@@ -15,8 +15,6 @@ PrefabFiles = {'ling_lantern', 'ling', 'ling_none', 'ling_lantern_smoke', 'ling_
 Assets = {
   Asset('ATLAS', 'images/saveslot_portraits/ling.xml'),
   Asset('ATLAS', 'images/selectscreen_portraits/ling.xml'),
-  Asset('ATLAS', 'images/map_icons/ling.xml'),
-  Asset('ATLAS', 'images/map_icons/ling_desk.xml'),
   Asset('ATLAS', 'images/avatars/avatar_ling.xml'),
   Asset('ATLAS', 'images/avatars/avatar_ghost_ling.xml'),
   Asset('ATLAS', 'images/avatars/self_inspect_ling.xml'),
@@ -41,6 +39,7 @@ Assets = {
   Asset('ANIM', 'anim/ui_ling_guard_plant_container.zip'),
   Asset('ANIM', 'anim/ui_ling_guard_plant_club.zip'),
   Asset('ANIM', 'anim/ling_poetry.zip'),
+  Asset('ANIM', 'anim/ui_ling_bookshelf_4x5.zip'),
 }
 TUNING.GAMEMODE_STARTING_ITEMS.DEFAULT.LING = {"ling_lantern", "ark_backpack"}
 TUNING.GAMEMODE_STARTING_ITEMS.LAVAARENA.LING = {"ling_lantern", "ark_backpack"}

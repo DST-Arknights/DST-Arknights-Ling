@@ -5,9 +5,14 @@ local getGuardConfig = require("ling_guard_config").getGuardConfig
 
 local FORM = CONSTANTS.GUARD_FORM
 
-local assets = {
+local assets_basic = {
     Asset("ANIM", "anim/loong_0.zip"),
+    Asset("ATLAS", "images/map_icons/ling_guard_basic.xml"),
+}
+
+local assets_elite = {
     Asset("ANIM", "anim/loong_1.zip"),
+    Asset("ATLAS", "images/map_icons/ling_guard_elite.xml"),
 }
 
 -- 创建持续点亮视野的图标
@@ -464,6 +469,6 @@ local function ling_guard_elite_fn()
     return inst
 end
 
-return Prefab("ling_guard_basic", ling_guard_basic_fn, assets),
-       Prefab("ling_guard_elite", ling_guard_elite_fn, assets)
+return Prefab("ling_guard_basic", ling_guard_basic_fn, assets_basic),
+       Prefab("ling_guard_elite", ling_guard_elite_fn, assets_elite)
 
