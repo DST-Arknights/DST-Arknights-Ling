@@ -31,7 +31,7 @@ end
 
 local function GetFaceTargetFn(inst)
     local leader = GetLeader(inst)
-    if WobyBrainCommon.KeepGenericInteractionFn(inst, leader) then
+    if not WobyBrainCommon.IsTryingToPerformAction(inst, leader, nil) then
         return leader
     end
     local openers = inst.components.container and inst.components.container:GetOpeners() or {}
@@ -42,7 +42,7 @@ local function GetFaceTargetFn(inst)
 end
 
 local function KeepFaceTargetFn(inst, target)
-    return WobyBrainCommon.KeepGenericInteractionFn(inst, target) or
+    return not WobyBrainCommon.IsTryingToPerformAction(inst, target, nil) or
         (inst.components.container and inst.components.container:IsOpenedBy(target))
 end
     
