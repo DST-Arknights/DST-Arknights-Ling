@@ -1,0 +1,1090 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<spriter_data scml_version="1.0" generator="BrashMonkey Spriter" generator_version="r11">
+	<folder id="0" name="lantern_stick">
+		<file id="0" name="lantern_stick/lantern_stick-0.png" width="146" height="293" pivot_x="0.550135" pivot_y="0.439937" />
+	</folder>
+	<folder id="1" name="lantern_swing">
+		<file id="0" name="lantern_swing/lantern_swing-0.png" width="155" height="212" pivot_x="0.533065" pivot_y="0.97155297" />
+	</folder>
+	<folder id="2" name="dirt">
+		<file id="0" name="dirt/dirt-0.png" width="190" height="47" pivot_x="0.500038" pivot_y="0.500428" />
+	</folder>
+	<entity id="0" name="ling_lantern">
+		<animation id="0" name="idle_body_loop" length="1300" interval="25">
+			<mainline>
+				<key id="0" time="0">
+					<object_ref id="0" timeline="0" key="0" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="1" time="25">
+					<object_ref id="0" timeline="0" key="1" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="2" time="50">
+					<object_ref id="0" timeline="0" key="2" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="3" time="75">
+					<object_ref id="0" timeline="0" key="3" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="4" time="100">
+					<object_ref id="0" timeline="0" key="4" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="5" time="125">
+					<object_ref id="0" timeline="0" key="5" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="6" time="150">
+					<object_ref id="0" timeline="0" key="6" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="7" time="175">
+					<object_ref id="0" timeline="0" key="7" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="8" time="200">
+					<object_ref id="0" timeline="0" key="8" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="9" time="225">
+					<object_ref id="0" timeline="0" key="9" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="10" time="250">
+					<object_ref id="0" timeline="0" key="10" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="11" time="275">
+					<object_ref id="0" timeline="0" key="11" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="12" time="300">
+					<object_ref id="0" timeline="0" key="12" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="13" time="325">
+					<object_ref id="0" timeline="0" key="13" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="14" time="350">
+					<object_ref id="0" timeline="0" key="14" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="15" time="375">
+					<object_ref id="0" timeline="0" key="15" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="16" time="400">
+					<object_ref id="0" timeline="0" key="16" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="17" time="425">
+					<object_ref id="0" timeline="0" key="17" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="18" time="450">
+					<object_ref id="0" timeline="0" key="18" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="19" time="475">
+					<object_ref id="0" timeline="0" key="19" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="20" time="500">
+					<object_ref id="0" timeline="0" key="20" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="21" time="525">
+					<object_ref id="0" timeline="0" key="21" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="22" time="550">
+					<object_ref id="0" timeline="0" key="22" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="23" time="575">
+					<object_ref id="0" timeline="0" key="23" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="24" time="600">
+					<object_ref id="0" timeline="0" key="24" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="25" time="625">
+					<object_ref id="0" timeline="0" key="25" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="26" time="650">
+					<object_ref id="0" timeline="0" key="26" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="27" time="675">
+					<object_ref id="0" timeline="0" key="27" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="28" time="700">
+					<object_ref id="0" timeline="0" key="28" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="29" time="725">
+					<object_ref id="0" timeline="0" key="29" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="30" time="750">
+					<object_ref id="0" timeline="0" key="30" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="31" time="775">
+					<object_ref id="0" timeline="0" key="31" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="32" time="800">
+					<object_ref id="0" timeline="0" key="32" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="33" time="825">
+					<object_ref id="0" timeline="0" key="33" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="34" time="850">
+					<object_ref id="0" timeline="0" key="34" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="35" time="875">
+					<object_ref id="0" timeline="0" key="35" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="36" time="900">
+					<object_ref id="0" timeline="0" key="36" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="37" time="925">
+					<object_ref id="0" timeline="0" key="37" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="38" time="950">
+					<object_ref id="0" timeline="0" key="38" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="39" time="975">
+					<object_ref id="0" timeline="0" key="39" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="40" time="1000">
+					<object_ref id="0" timeline="0" key="40" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="41" time="1025">
+					<object_ref id="0" timeline="0" key="41" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="42" time="1050">
+					<object_ref id="0" timeline="0" key="42" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="43" time="1075">
+					<object_ref id="0" timeline="0" key="43" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="44" time="1100">
+					<object_ref id="0" timeline="0" key="44" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="45" time="1125">
+					<object_ref id="0" timeline="0" key="45" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="46" time="1150">
+					<object_ref id="0" timeline="0" key="46" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="47" time="1175">
+					<object_ref id="0" timeline="0" key="47" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="48" time="1200">
+					<object_ref id="0" timeline="0" key="48" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="49" time="1225">
+					<object_ref id="0" timeline="0" key="49" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="50" time="1250">
+					<object_ref id="0" timeline="0" key="50" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="51" time="1275">
+					<object_ref id="0" timeline="0" key="51" z_index="0" name="lantern_swing" />
+				</key>
+				<key id="52" time="1300">
+					<object_ref id="0" timeline="0" key="52" z_index="0" name="lantern_swing" />
+				</key>
+			</mainline>
+			<timeline id="0" name="lantern_swing">
+				<key id="0" time="0" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.95927423" scale_y="1.0048003" angle="0.39855012" />
+				</key>
+				<key id="1" time="25" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.959174" scale_y="1.0046899" angle="0.8475364" />
+				</key>
+				<key id="2" time="50" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.9590837" scale_y="1.0045966" angle="1.2486148" />
+				</key>
+				<key id="3" time="75" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.95900506" scale_y="1.0045178" angle="1.6004153" />
+				</key>
+				<key id="4" time="100" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.95893687" scale_y="1.0044501" angle="1.9046879" />
+				</key>
+				<key id="5" time="125" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.958883" scale_y="1.0043907" angle="2.1434662" />
+				</key>
+				<key id="6" time="150" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.95883536" scale_y="1.0043408" angle="2.3543653" />
+				</key>
+				<key id="7" time="175" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.9587952" scale_y="1.0042977" angle="2.5348847" />
+				</key>
+				<key id="8" time="200" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.9587619" scale_y="1.0042597" angle="2.6841345" />
+				</key>
+				<key id="9" time="225" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.9587391" scale_y="1.0042379" angle="2.787114" />
+				</key>
+				<key id="10" time="250" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.9587215" scale_y="1.0042204" angle="2.8652208" />
+				</key>
+				<key id="11" time="275" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.9587102" scale_y="1.0042081" angle="2.9157887" />
+				</key>
+				<key id="12" time="300" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.95870477" scale_y="1.0041995" angle="2.9375253" />
+				</key>
+				<key id="13" time="325" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.9587091" scale_y="1.0042071" angle="2.9204092" />
+				</key>
+				<key id="14" time="350" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.9587187" scale_y="1.0042152" angle="2.8809278" />
+				</key>
+				<key id="15" time="375" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.9587324" scale_y="1.0042274" angle="2.8180268" />
+				</key>
+				<key id="16" time="400" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.9587507" scale_y="1.0042504" angle="2.7320259" />
+				</key>
+				<key id="17" time="425" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.9587775" scale_y="1.0042799" angle="2.615072" />
+				</key>
+				<key id="18" time="450" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.9588088" scale_y="1.0043142" angle="2.4727378" />
+				</key>
+				<key id="19" time="475" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.9588469" scale_y="1.0043547" angle="2.3036277" />
+				</key>
+				<key id="20" time="500" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.95889086" scale_y="1.0043998" angle="2.1079946" />
+				</key>
+				<key id="21" time="525" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.9589431" scale_y="1.0044515" angle="1.8762709" />
+				</key>
+				<key id="22" time="550" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.9590028" scale_y="1.0045137" angle="1.6083025" />
+				</key>
+				<key id="23" time="575" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.9590723" scale_y="1.004587" angle="1.3011329" />
+				</key>
+				<key id="24" time="600" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.9591499" scale_y="1.0046703" angle="0.9539135" />
+				</key>
+				<key id="25" time="625" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.9592415" scale_y="1.0047655" angle="0.5454827" />
+				</key>
+				<key id="26" time="650" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.95920414" scale_y="1.0047271" angle="-0.027948858" />
+				</key>
+				<key id="27" time="675" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.959101" scale_y="1.004618" angle="-0.65696764" />
+				</key>
+				<key id="28" time="700" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.95900977" scale_y="1.0045199" angle="-1.2069741" />
+				</key>
+				<key id="29" time="725" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.95893687" scale_y="1.0044466" angle="-1.6503634" />
+				</key>
+				<key id="30" time="750" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.9588708" scale_y="1.0043759" angle="-2.0519419" />
+				</key>
+				<key id="31" time="775" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.9588128" scale_y="1.0043129" angle="-2.408145" />
+				</key>
+				<key id="32" time="800" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.9587616" scale_y="1.0042597" angle="-2.717971" />
+				</key>
+				<key id="33" time="825" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.95872235" scale_y="1.0042231" angle="-2.95915" />
+				</key>
+				<key id="34" time="850" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.9586882" scale_y="1.0041857" angle="-3.1681461" />
+				</key>
+				<key id="35" time="875" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.95866" scale_y="1.0041523" angle="-3.341627" />
+				</key>
+				<key id="36" time="900" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.95863664" scale_y="1.0041304" angle="-3.477977" />
+				</key>
+				<key id="37" time="925" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.9586241" scale_y="1.0041149" angle="-3.5574021" />
+				</key>
+				<key id="38" time="950" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.9586168" scale_y="1.0041097" angle="-3.6039596" />
+				</key>
+				<key id="39" time="975" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.95861536" scale_y="1.0041099" angle="-3.614024" />
+				</key>
+				<key id="40" time="1000" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.95861995" scale_y="1.00411" angle="-3.5859654" />
+				</key>
+				<key id="41" time="1025" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.9586328" scale_y="1.0041249" angle="-3.5065668" />
+				</key>
+				<key id="42" time="1050" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.95865124" scale_y="1.0041449" angle="-3.3906922" />
+				</key>
+				<key id="43" time="1075" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.95867646" scale_y="1.0041721" angle="-3.2368913" />
+				</key>
+				<key id="44" time="1100" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.9587084" scale_y="1.0042098" angle="-3.0459723" />
+				</key>
+				<key id="45" time="1125" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.95874757" scale_y="1.0042471" angle="-2.804798" />
+				</key>
+				<key id="46" time="1150" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.9587949" scale_y="1.0042939" angle="-2.5196395" />
+				</key>
+				<key id="47" time="1175" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.9588484" scale_y="1.0043517" angle="-2.1916194" />
+				</key>
+				<key id="48" time="1200" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.95890826" scale_y="1.0044173" angle="-1.8246852" />
+				</key>
+				<key id="49" time="1225" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.9589827" scale_y="1.0044928" angle="-1.3714828" />
+				</key>
+				<key id="50" time="1250" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.9590678" scale_y="1.0045828" angle="-0.85498214" />
+				</key>
+				<key id="51" time="1275" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.95916396" scale_y="1.0046854" angle="-0.2740446" />
+				</key>
+				<key id="52" time="1300" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="0.85" y="-0.8" scale_x="0.9592693" scale_y="1.0047952" angle="0.3726464" />
+				</key>
+			</timeline>
+		</animation>
+		<animation id="1" name="idle_loop" length="1300" interval="25">
+			<mainline>
+				<key id="0" time="0">
+					<object_ref id="0" timeline="0" key="0" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="0" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="0" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="1" time="25">
+					<object_ref id="0" timeline="0" key="1" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="1" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="1" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="2" time="50">
+					<object_ref id="0" timeline="0" key="2" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="2" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="2" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="3" time="75">
+					<object_ref id="0" timeline="0" key="3" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="3" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="3" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="4" time="100">
+					<object_ref id="0" timeline="0" key="4" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="4" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="4" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="5" time="125">
+					<object_ref id="0" timeline="0" key="5" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="5" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="5" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="6" time="150">
+					<object_ref id="0" timeline="0" key="6" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="6" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="6" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="7" time="175">
+					<object_ref id="0" timeline="0" key="7" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="7" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="7" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="8" time="200">
+					<object_ref id="0" timeline="0" key="8" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="8" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="8" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="9" time="225">
+					<object_ref id="0" timeline="0" key="9" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="9" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="9" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="10" time="250">
+					<object_ref id="0" timeline="0" key="10" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="10" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="10" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="11" time="275">
+					<object_ref id="0" timeline="0" key="11" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="11" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="11" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="12" time="300">
+					<object_ref id="0" timeline="0" key="12" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="12" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="12" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="13" time="325">
+					<object_ref id="0" timeline="0" key="13" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="13" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="13" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="14" time="350">
+					<object_ref id="0" timeline="0" key="14" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="14" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="14" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="15" time="375">
+					<object_ref id="0" timeline="0" key="15" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="15" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="15" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="16" time="400">
+					<object_ref id="0" timeline="0" key="16" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="16" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="16" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="17" time="425">
+					<object_ref id="0" timeline="0" key="17" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="17" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="17" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="18" time="450">
+					<object_ref id="0" timeline="0" key="18" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="18" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="18" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="19" time="475">
+					<object_ref id="0" timeline="0" key="19" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="19" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="19" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="20" time="500">
+					<object_ref id="0" timeline="0" key="20" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="20" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="20" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="21" time="525">
+					<object_ref id="0" timeline="0" key="21" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="21" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="21" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="22" time="550">
+					<object_ref id="0" timeline="0" key="22" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="22" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="22" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="23" time="575">
+					<object_ref id="0" timeline="0" key="23" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="23" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="23" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="24" time="600">
+					<object_ref id="0" timeline="0" key="24" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="24" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="24" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="25" time="625">
+					<object_ref id="0" timeline="0" key="25" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="25" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="25" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="26" time="650">
+					<object_ref id="0" timeline="0" key="26" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="26" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="26" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="27" time="675">
+					<object_ref id="0" timeline="0" key="27" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="27" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="27" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="28" time="700">
+					<object_ref id="0" timeline="0" key="28" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="28" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="28" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="29" time="725">
+					<object_ref id="0" timeline="0" key="29" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="29" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="29" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="30" time="750">
+					<object_ref id="0" timeline="0" key="30" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="30" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="30" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="31" time="775">
+					<object_ref id="0" timeline="0" key="31" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="31" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="31" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="32" time="800">
+					<object_ref id="0" timeline="0" key="32" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="32" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="32" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="33" time="825">
+					<object_ref id="0" timeline="0" key="33" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="33" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="33" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="34" time="850">
+					<object_ref id="0" timeline="0" key="34" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="34" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="34" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="35" time="875">
+					<object_ref id="0" timeline="0" key="35" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="35" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="35" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="36" time="900">
+					<object_ref id="0" timeline="0" key="36" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="36" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="36" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="37" time="925">
+					<object_ref id="0" timeline="0" key="37" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="37" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="37" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="38" time="950">
+					<object_ref id="0" timeline="0" key="38" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="38" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="38" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="39" time="975">
+					<object_ref id="0" timeline="0" key="39" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="39" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="39" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="40" time="1000">
+					<object_ref id="0" timeline="0" key="40" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="40" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="40" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="41" time="1025">
+					<object_ref id="0" timeline="0" key="41" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="41" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="41" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="42" time="1050">
+					<object_ref id="0" timeline="0" key="42" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="42" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="42" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="43" time="1075">
+					<object_ref id="0" timeline="0" key="43" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="43" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="43" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="44" time="1100">
+					<object_ref id="0" timeline="0" key="44" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="44" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="44" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="45" time="1125">
+					<object_ref id="0" timeline="0" key="45" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="45" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="45" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="46" time="1150">
+					<object_ref id="0" timeline="0" key="46" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="46" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="46" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="47" time="1175">
+					<object_ref id="0" timeline="0" key="47" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="47" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="47" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="48" time="1200">
+					<object_ref id="0" timeline="0" key="48" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="48" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="48" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="49" time="1225">
+					<object_ref id="0" timeline="0" key="49" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="49" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="49" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="50" time="1250">
+					<object_ref id="0" timeline="0" key="50" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="50" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="50" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="51" time="1275">
+					<object_ref id="0" timeline="0" key="51" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="51" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="51" z_index="2" name="lantern_swing" />
+				</key>
+				<key id="52" time="1300">
+					<object_ref id="0" timeline="0" key="52" z_index="0" name="dirt" />
+					<object_ref id="1" timeline="1" key="52" z_index="1" name="lantern_stick" />
+					<object_ref id="2" timeline="2" key="52" z_index="2" name="lantern_swing" />
+				</key>
+			</mainline>
+			<timeline id="0" name="dirt">
+				<key id="0" time="0" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="1" time="25" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="2" time="50" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="3" time="75" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="4" time="100" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="5" time="125" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="6" time="150" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="7" time="175" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="8" time="200" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="9" time="225" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="10" time="250" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="11" time="275" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="12" time="300" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="13" time="325" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="14" time="350" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="15" time="375" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="16" time="400" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="17" time="425" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="18" time="450" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="19" time="475" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="20" time="500" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="21" time="525" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="22" time="550" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="23" time="575" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="24" time="600" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="25" time="625" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="26" time="650" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="27" time="675" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="28" time="700" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="29" time="725" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="30" time="750" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="31" time="775" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="32" time="800" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="33" time="825" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="34" time="850" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="35" time="875" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="36" time="900" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="37" time="925" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="38" time="950" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="39" time="975" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="40" time="1000" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="41" time="1025" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="42" time="1050" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="43" time="1075" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="44" time="1100" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="45" time="1125" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="46" time="1150" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="47" time="1175" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="48" time="1200" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="49" time="1225" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="50" time="1250" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="51" time="1275" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+				<key id="52" time="1300" spin="0" curve_type="instant">
+					<object folder="2" file="0" x="-14.8" y="-19.05" scale_x="1" scale_y="1" angle="0" />
+				</key>
+			</timeline>
+			<timeline id="1" name="lantern_stick">
+				<key id="0" time="0" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="1" time="25" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="2" time="50" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="3" time="75" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="4" time="100" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="5" time="125" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="6" time="150" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="7" time="175" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="8" time="200" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="9" time="225" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="10" time="250" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="11" time="275" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="12" time="300" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="13" time="325" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="14" time="350" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="15" time="375" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="16" time="400" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="17" time="425" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="18" time="450" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="19" time="475" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="20" time="500" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="21" time="525" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="22" time="550" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="23" time="575" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="24" time="600" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="25" time="625" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="26" time="650" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="27" time="675" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="28" time="700" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="29" time="725" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="30" time="750" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="31" time="775" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="32" time="800" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="33" time="825" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="34" time="850" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="35" time="875" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="36" time="900" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="37" time="925" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="38" time="950" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="39" time="975" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="40" time="1000" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="41" time="1025" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="42" time="1050" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="43" time="1075" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="44" time="1100" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="45" time="1125" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="46" time="1150" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="47" time="1175" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="48" time="1200" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="49" time="1225" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="50" time="1250" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="51" time="1275" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+				<key id="52" time="1300" spin="0" curve_type="instant">
+					<object folder="0" file="0" x="-29" y="108" scale_x="0.9999205" scale_y="0.9842986" angle="-1.688984" />
+				</key>
+			</timeline>
+			<timeline id="2" name="lantern_swing">
+				<key id="0" time="0" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.95927423" scale_y="1.0048003" angle="0.39855012" />
+				</key>
+				<key id="1" time="25" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.959174" scale_y="1.0046899" angle="0.8475364" />
+				</key>
+				<key id="2" time="50" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.9590837" scale_y="1.0045966" angle="1.2486148" />
+				</key>
+				<key id="3" time="75" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.95900506" scale_y="1.0045178" angle="1.6004153" />
+				</key>
+				<key id="4" time="100" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.95893687" scale_y="1.0044501" angle="1.9046879" />
+				</key>
+				<key id="5" time="125" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.958883" scale_y="1.0043907" angle="2.1434662" />
+				</key>
+				<key id="6" time="150" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.95883536" scale_y="1.0043408" angle="2.3543653" />
+				</key>
+				<key id="7" time="175" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.9587952" scale_y="1.0042977" angle="2.5348847" />
+				</key>
+				<key id="8" time="200" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.9587619" scale_y="1.0042597" angle="2.6841345" />
+				</key>
+				<key id="9" time="225" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.9587391" scale_y="1.0042379" angle="2.787114" />
+				</key>
+				<key id="10" time="250" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.9587215" scale_y="1.0042204" angle="2.8652208" />
+				</key>
+				<key id="11" time="275" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.9587102" scale_y="1.0042081" angle="2.9157887" />
+				</key>
+				<key id="12" time="300" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.95870477" scale_y="1.0041995" angle="2.9375253" />
+				</key>
+				<key id="13" time="325" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.9587091" scale_y="1.0042071" angle="2.9204092" />
+				</key>
+				<key id="14" time="350" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.9587187" scale_y="1.0042152" angle="2.8809278" />
+				</key>
+				<key id="15" time="375" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.9587324" scale_y="1.0042274" angle="2.8180268" />
+				</key>
+				<key id="16" time="400" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.9587507" scale_y="1.0042504" angle="2.7320259" />
+				</key>
+				<key id="17" time="425" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.9587775" scale_y="1.0042799" angle="2.615072" />
+				</key>
+				<key id="18" time="450" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.9588088" scale_y="1.0043142" angle="2.4727378" />
+				</key>
+				<key id="19" time="475" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.9588469" scale_y="1.0043547" angle="2.3036277" />
+				</key>
+				<key id="20" time="500" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.95889086" scale_y="1.0043998" angle="2.1079946" />
+				</key>
+				<key id="21" time="525" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.9589431" scale_y="1.0044515" angle="1.8762709" />
+				</key>
+				<key id="22" time="550" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.9590028" scale_y="1.0045137" angle="1.6083025" />
+				</key>
+				<key id="23" time="575" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.9590723" scale_y="1.004587" angle="1.3011329" />
+				</key>
+				<key id="24" time="600" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.9591499" scale_y="1.0046703" angle="0.9539135" />
+				</key>
+				<key id="25" time="625" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.9592415" scale_y="1.0047655" angle="0.5454827" />
+				</key>
+				<key id="26" time="650" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.95920414" scale_y="1.0047271" angle="-0.027948858" />
+				</key>
+				<key id="27" time="675" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.959101" scale_y="1.004618" angle="-0.65696764" />
+				</key>
+				<key id="28" time="700" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.95900977" scale_y="1.0045199" angle="-1.2069741" />
+				</key>
+				<key id="29" time="725" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.95893687" scale_y="1.0044466" angle="-1.6503634" />
+				</key>
+				<key id="30" time="750" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.9588708" scale_y="1.0043759" angle="-2.0519419" />
+				</key>
+				<key id="31" time="775" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.9588128" scale_y="1.0043129" angle="-2.408145" />
+				</key>
+				<key id="32" time="800" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.9587616" scale_y="1.0042597" angle="-2.717971" />
+				</key>
+				<key id="33" time="825" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.95872235" scale_y="1.0042231" angle="-2.95915" />
+				</key>
+				<key id="34" time="850" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.9586882" scale_y="1.0041857" angle="-3.1681461" />
+				</key>
+				<key id="35" time="875" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.95866" scale_y="1.0041523" angle="-3.341627" />
+				</key>
+				<key id="36" time="900" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.95863664" scale_y="1.0041304" angle="-3.477977" />
+				</key>
+				<key id="37" time="925" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.9586241" scale_y="1.0041149" angle="-3.5574021" />
+				</key>
+				<key id="38" time="950" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.9586168" scale_y="1.0041097" angle="-3.6039596" />
+				</key>
+				<key id="39" time="975" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.95861536" scale_y="1.0041099" angle="-3.614024" />
+				</key>
+				<key id="40" time="1000" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.95861995" scale_y="1.00411" angle="-3.5859654" />
+				</key>
+				<key id="41" time="1025" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.9586328" scale_y="1.0041249" angle="-3.5065668" />
+				</key>
+				<key id="42" time="1050" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.95865124" scale_y="1.0041449" angle="-3.3906922" />
+				</key>
+				<key id="43" time="1075" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.95867646" scale_y="1.0041721" angle="-3.2368913" />
+				</key>
+				<key id="44" time="1100" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.9587084" scale_y="1.0042098" angle="-3.0459723" />
+				</key>
+				<key id="45" time="1125" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.95874757" scale_y="1.0042471" angle="-2.804798" />
+				</key>
+				<key id="46" time="1150" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.9587949" scale_y="1.0042939" angle="-2.5196395" />
+				</key>
+				<key id="47" time="1175" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.9588484" scale_y="1.0043517" angle="-2.1916194" />
+				</key>
+				<key id="48" time="1200" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.95890826" scale_y="1.0044173" angle="-1.8246852" />
+				</key>
+				<key id="49" time="1225" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.9589827" scale_y="1.0044928" angle="-1.3714828" />
+				</key>
+				<key id="50" time="1250" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.9590678" scale_y="1.0045828" angle="-0.85498214" />
+				</key>
+				<key id="51" time="1275" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.95916396" scale_y="1.0046854" angle="-0.2740446" />
+				</key>
+				<key id="52" time="1300" spin="0" curve_type="instant">
+					<object folder="1" file="0" x="-0.15" y="188.2" scale_x="0.9592693" scale_y="1.0047952" angle="0.3726464" />
+				</key>
+			</timeline>
+		</animation>
+	</entity>
+</spriter_data>
