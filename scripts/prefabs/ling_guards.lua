@@ -281,6 +281,7 @@ local function ling_guard_basic_fn()
     inst:AddTag("ling_guard_basic")
     inst:AddTag("companion")
     inst:AddTag("ling_summon")
+    inst:AddTag("fridge")
 
     MakeCharacterPhysics(inst, 50, 0.5)
 

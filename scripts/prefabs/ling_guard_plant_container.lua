@@ -4,6 +4,7 @@ local function fn()
     inst.entity:AddNetwork()
     inst.entity:SetPristine()
     inst:AddTag("ling_guard_plant_container")
+    inst:AddTag("fridge")
     if not TheWorld.ismastersim then
         return inst
     end
