@@ -2,8 +2,8 @@ require "prefabutil"
 
 local assets =
 {
-    Asset("ANIM", "anim/bookstation.zip"),
-    Asset("ANIM", "anim/ui_bookstation_4x5.zip")
+    Asset("ANIM", "anim/ling_bookshelf.zip"),
+    Asset("ANIM", "anim/ui_ling_bookshelf_4x5.zip")
 }
 
 local prefabs =

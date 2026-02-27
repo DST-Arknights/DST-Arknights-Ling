@@ -39,7 +39,6 @@ Assets = {
   Asset('ANIM', 'anim/ui_ling_guard_plant_container.zip'),
   Asset('ANIM', 'anim/ui_ling_guard_plant_club.zip'),
   Asset('ANIM', 'anim/ling_poetry.zip'),
-  Asset('ANIM', 'anim/ui_ling_bookshelf_4x5.zip'),
 }
 TUNING.GAMEMODE_STARTING_ITEMS.DEFAULT.LING = {"ling_lantern", "ark_backpack"}
 TUNING.GAMEMODE_STARTING_ITEMS.LAVAARENA.LING = {"ling_lantern", "ark_backpack"}
