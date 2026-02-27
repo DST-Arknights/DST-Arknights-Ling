@@ -40,13 +40,11 @@ luac.out
 # Assets
 *.xml
 *.tex
-*.zip
 *.fev
 *.fsb
 *.fdp.bak
 .fsbcache/
 /images/
-/anim/
 /temp/
 /.VSCodeCounter
 /.vscode
