@@ -38,13 +38,10 @@ luac.out
 *.hex
 
 # Assets
-*.xml
-*.tex
 *.fev
 *.fsb
 *.fdp.bak
 .fsbcache/
-/images/
 /temp/
 /.VSCodeCounter
 /.vscode
