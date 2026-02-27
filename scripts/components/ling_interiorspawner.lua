@@ -183,7 +183,7 @@ function InteriorSpawner:SpawnHouseDoorInteriorPrefabs(x, z)
         {
             name = "ling_cloud_pavilion_exit_door",
             x_offset = 4.7,
-            animdata = { bank = "pig_shop_doormats", build = "pig_shop_doormats", anim = "idle_old", background = true },
+            animdata = { bank = "ling_cloud_pavilion_exit_door", build = "ling_cloud_pavilion_exit_door", anim = "idle_old", background = true },
         },
         { name = "ling_wallinteriorplayerhouse", x_offset = -2.8, },
         { name = "ling_cloud_pavilion_interior_floor",   x_offset = -2.4 }

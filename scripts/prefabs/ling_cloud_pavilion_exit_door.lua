@@ -1,6 +1,6 @@
 local assets = {
     Asset("ANIM", "anim/acorn.zip"),
-    Asset("ANIM", "anim/pig_shop_doormats.zip"), --出口地毯
+    Asset("ANIM", "anim/ling_cloud_pavilion_exit_door.zip"), --出口地毯
 }
 
 
@@ -35,8 +35,8 @@ local function playerHouseExitDoorFn()
     inst.entity:AddSoundEmitter()
     inst.entity:AddNetwork()
 
-    inst.AnimState:SetBank("pig_shop_doormats")
-    inst.AnimState:SetBuild("pig_shop_doormats")
+    inst.AnimState:SetBank("ling_cloud_pavilion_exit_door")
+    inst.AnimState:SetBuild("ling_cloud_pavilion_exit_door")
     inst.AnimState:PlayAnimation("idle_old")
     -- inst.AnimState:SetSortOrder(0)
     -- inst.AnimState:SetLayer(LAYER_WORLD_BACKGROUND)
