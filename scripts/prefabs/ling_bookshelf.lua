@@ -154,8 +154,8 @@ local function fn()
     inst.MiniMapEntity:SetPriority(5)
     inst.MiniMapEntity:SetIcon("bookstation.png")
 
-    inst.AnimState:SetBank ("bookstation")
-    inst.AnimState:SetBuild("bookstation")
+    inst.AnimState:SetBank ("ling_bookshelf")
+    inst.AnimState:SetBuild("ling_bookshelf")
     inst.AnimState:PlayAnimation("idle")
     UpdateBookAesthetics(inst, 0)
 
