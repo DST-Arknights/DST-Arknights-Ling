@@ -7,6 +7,7 @@ require "behaviours/leash"
 require "behaviours/findfarmplant"
 
 local BrainCommon = require "brains/braincommon"
+local WobyBrainCommon = require "brains/wobycommon"
 
 local CONSTANTS = require("ark_constants_ling")
 local getGuardConfig = require("ling_guard_config").getGuardConfig
@@ -27,6 +28,24 @@ end
 local function RescueLeaderAction(inst)
     return BufferedAction(inst, GetLeader(inst), ACTIONS.UNPIN)
 end
+
+local function GetFaceTargetFn(inst)
+    local leader = GetLeader(inst)
+    if WobyBrainCommon.KeepGenericInteractionFn(inst, leader) then
+        return leader
+    end
+    local openers = inst.components.container and inst.components.container:GetOpeners() or {}
+    if next(openers) then
+        return openers[1]
+    end
+    return nil
+end
+
+local function KeepFaceTargetFn(inst, target)
+    return WobyBrainCommon.KeepGenericInteractionFn(inst, target) or
+        (inst.components.container and inst.components.container:IsOpenedBy(target))
+end
+    
 -- 寻找最近的玩家（优先主人）
 local function FindNearestPlayer(inst)
     if inst.components.follower and inst.components.follower.leader then
@@ -572,7 +591,7 @@ function LingGuardBrain:OnStart()
             },
             guardConfig.KITE.DETECTION_RANGE or guardConfig.KITE.RUN_DISTANCE,
             guardConfig.KITE.STOP_DISTANCE, nil, nil, nil, nil, GetKiteSafePoint)),
-
+        FaceEntity(self.inst, GetFaceTargetFn, KeepFaceTargetFn),
         -- 先拾取后工作：PickupGuardRange 提前于 GuardWork
         WhileNode(function()
             return ShouldPrioritizePickup(self.inst)
