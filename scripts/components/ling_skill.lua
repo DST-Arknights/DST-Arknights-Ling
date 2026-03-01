@@ -149,6 +149,7 @@ end
 local function ShackleTarget(target, duration)
   if not target.components.immobilizable then
     target:AddComponent("immobilizable")
+    target.components.immobilizable:AddImmobilizeFX("ling_aoe_attack_fx")
   end
   target.components.immobilizable:Immobilize(duration)
 end
@@ -188,17 +189,11 @@ local function RegisterSkill2(self)
       local x, y, z = targ.Transform:GetWorldPosition()
       local AOEarc = skill2:GetLevelConfig().AOEarc
       -- 排查所有友好目标
-      local fx = SpawnPrefab("ling_aoe_attack_fx")
-      fx.Transform:SetPosition(x, 1, z)
       local shackleTime = skill2:GetLevelConfig().shackleTime
       local targets = TheSim:FindEntities(x, y, z, AOEarc, {"_combat"}, AREAATTACK_EXCLUDETAGS)
       for _, target in ipairs(targets) do
-        -- TODO: 更多的过滤条件
-        if target ~= inst then
-          ShackleTarget(target, shackleTime)
-        end
+         ShackleTarget(target, shackleTime)
       end
-      ShackleTarget(targ, shackleTime)
       inst.components.combat:DoAreaAttack(targ, AOEarc, weapon, nil, nil, AREAATTACK_EXCLUDETAGS)
     end
   end
