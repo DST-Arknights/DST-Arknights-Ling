@@ -399,6 +399,7 @@ local function ling_guard_elite_fn()
     inst.Transform:SetFourFaced()
     inst.DynamicShadow:SetSize(1.5, 0.75)
 
+    inst:AddTag("epic")
     inst:AddTag("ling_guard_elite")
     inst:AddTag("ling_summon")
 

@@ -3,5 +3,7 @@ return ArkMakeFx({
   bank = "loong_1_attack_hit_fx",
   build = "loong_1_attack_hit_fx",
   anim = "attack",
---   nofaced = true,
+  fn = function(inst)
+    inst.AnimState:SetScale(0.8, 0.8, 0.8)
+  end,
 })

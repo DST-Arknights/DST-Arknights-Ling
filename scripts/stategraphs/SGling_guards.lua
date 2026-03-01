@@ -1,6 +1,117 @@
 require("stategraphs/commonstates")
 local CONSTANTS = require("ark_constants_ling")
 
+-------------------------------------------------------------------
+-- 弦惊形态 AOE 岩刺攻击（类似 deerclops 的满地攻击）
+-------------------------------------------------------------------
+local ROCKSPIKE_RADIUS = 2
+local ROCKSPIKE_AOE_ARC = 35  -- 扇形角度
+local AREA_EXCLUDE_TAGS = { "DECOR", "FX", "INLIMBO", "NOCLICK", "playerghost", "shadow" }
+local AREAATTACK_MUST_TAGS = { "_combat" }
+
+-- 在指定位置执行 AOE 伤害
+local function DoRockSpikeAOE(inst, x, z, data)
+    if inst.components.combat == nil then return end
+    inst.components.combat.ignorehitrange = true
+    local ents = TheSim:FindEntities(x, 0, z, ROCKSPIKE_RADIUS + 0.5, AREAATTACK_MUST_TAGS, AREA_EXCLUDE_TAGS)
+    for i, v in ipairs(ents) do
+        if not data.targets[v] and v:IsValid() and not v:IsInLimbo() and
+            not (v.components.health ~= nil and v.components.health:IsDead()) and
+            v ~= inst
+        then
+            local range = ROCKSPIKE_RADIUS + v:GetPhysicsRadius(0)
+            if v:GetDistanceSqToPoint(x, 0, z) < range * range and inst.components.combat:CanTarget(v) then
+                inst.components.combat:DoAttack(v)
+                data.targets[v] = true
+            end
+        end
+    end
+    inst.components.combat.ignorehitrange = false
+end
+
+-- 在指定位置生成岩刺特效
+local function DoSpawnRockSpikeFx(inst, info, data, hitdelay)
+    local fx = SpawnPrefab("ling_guard_elite_attack_hit_fx")
+    if fx then
+        fx.Transform:SetPosition(info.x, 0, info.z)
+        fx.Transform:SetRotation(inst.Transform:GetRotation())
+    end
+    if hitdelay < FRAMES then
+        DoRockSpikeAOE(inst, info.x, info.z, data)
+    else
+        inst:DoTaskInTime(hitdelay, DoRockSpikeAOE, info.x, info.z, data)
+    end
+end
+
+-- 按距离排序（近到远）
+local function SpikeInfoNearToFar(a, b)
+    return a.radius < b.radius
+end
+
+-- 生成满地岩刺特效（类似 deerclops 的攻击方式）
+local function SpawnEliteRockSpikeFx(inst)
+    local data = { targets = {} }
+    local attack_range = inst.components.combat and inst.components.combat:GetAttackRange() or 4
+
+    local x, _, z = inst.Transform:GetWorldPosition()
+    local angle = inst.Transform:GetRotation()
+    local spikeinfo = {}
+
+    local theta = angle * DEGREES
+    local cos_theta = math.cos(theta)
+    local sin_theta = math.sin(theta)
+
+    -- 中心直线上的岩刺
+    local num = 3
+    for _ = 1, num do
+        local radius = attack_range / num * _
+        table.insert(spikeinfo,
+        {
+            x = x + radius * cos_theta,
+            z = z - radius * sin_theta,
+            radius = radius,
+        })
+    end
+
+    -- 扇形区域内随机岩刺
+    num = math.random(8, 12)
+    for _ = 1, num do
+        local randtheta = (angle + math.random(ROCKSPIKE_AOE_ARC * 2) - ROCKSPIKE_AOE_ARC) * DEGREES
+        local radius = attack_range * math.sqrt(math.random())
+        table.insert(spikeinfo,
+        {
+            x = x + radius * math.cos(randtheta),
+            z = z - radius * math.sin(randtheta),
+            radius = radius,
+        })
+    end
+
+    -- 身后少量岩刺
+    num = math.random(3, 5)
+    local newarc = 180 - ROCKSPIKE_AOE_ARC
+    for _ = 1, num do
+        local randtheta = (angle - 180 + math.random(newarc * 2) - newarc) * DEGREES
+        local radius = 2 * math.random() + 1
+        table.insert(spikeinfo,
+        {
+            x = x + radius * math.cos(randtheta),
+            z = z - radius * math.sin(randtheta),
+            radius = radius,
+        })
+    end
+
+    -- 按距离排序，近的先生成
+    table.sort(spikeinfo, SpikeInfoNearToFar)
+
+    -- 分批生成岩刺特效，按距离延迟
+    for _, info in ipairs(spikeinfo) do
+        local delay = info.radius * 0.5 * FRAMES  -- 延迟时间与距离成正比
+        inst:DoTaskInTime(delay, DoSpawnRockSpikeFx, info, data, 0)
+    end
+
+    return data
+end
+
 
 local actionhandlers = {
     ActionHandler(ACTIONS.CHOP,   "chop"),
@@ -114,22 +225,22 @@ local states =
         timeline =
         {
             TimeEvent(7*FRAMES, function(inst)
-                -- 弦惊特效
+                -- 弦惊形态：满地岩刺 AOE 攻击（类似 deerclops）
                 if inst.components.ling_guard.form == CONSTANTS.GUARD_FORM.XIANJING then
-                    local target = inst.sg.statemem.target
-                    local x, y, z = inst.Transform:GetWorldPosition()
-                    local fx = SpawnPrefab("ling_guard_elite_attack_hit_fx")
-                    fx.Transform:SetPosition(x, y, z)
-                    fx.Transform:SetRotation(inst.Transform:GetRotation())
+                    inst.sg.statemem.attackdata = SpawnEliteRockSpikeFx(inst)
                 end
             end),
             TimeEvent(8*FRAMES, function(inst)
-                local weapon = nil
-                local is_xiaoyao = (inst.replica and inst.replica.ling_guard and inst.replica.ling_guard.IsXiaoyao and inst.replica.ling_guard:IsXiaoyao())
-                if is_xiaoyao and inst._ling_fixed_weapon and inst._ling_fixed_weapon:IsValid() then
-                    weapon = inst._ling_fixed_weapon
+                -- 非弦惊形态：普通攻击
+                if inst.components.ling_guard.form ~= CONSTANTS.GUARD_FORM.XIANJING then
+                    local weapon = nil
+                    local is_xiaoyao = (inst.replica and inst.replica.ling_guard and inst.replica.ling_guard.IsXiaoyao and inst.replica.ling_guard:IsXiaoyao())
+                    if is_xiaoyao and inst._ling_fixed_weapon and inst._ling_fixed_weapon:IsValid() then
+                        weapon = inst._ling_fixed_weapon
+                    end
+                    inst.components.combat:DoAttack(inst.sg.statemem.target, weapon)
                 end
-                inst.components.combat:DoAttack(inst.sg.statemem.target, weapon)
+                -- 弦惊形态的伤害由 SpawnEliteRockSpikeFx 中的 DoRockSpikeAOE 处理
             end),
         },
 
