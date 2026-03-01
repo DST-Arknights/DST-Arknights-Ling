@@ -526,3 +526,1253 @@ msgstr "诗意不足"
 msgctxt "STRINGS.CHARACTERS.LING.ANNOUNCE_REVIVE_IN_DREAM_ISLAND"
 msgid "I will not let this dream end."
 msgstr "梦醒时分，我将不败。"
+
+#. STRINGS.LINGGUARDNAMES.1
+msgctxt "STRINGS.LINGGUARDNAMES.1"
+msgid "孤鸿"
+msgstr "孤鸿"
+
+#. STRINGS.LINGGUARDNAMES.2
+msgctxt "STRINGS.LINGGUARDNAMES.2"
+msgid "断鸿"
+msgstr "断鸿"
+
+#. STRINGS.LINGGUARDNAMES.3
+msgctxt "STRINGS.LINGGUARDNAMES.3"
+msgid "归雁"
+msgstr "归雁"
+
+#. STRINGS.LINGGUARDNAMES.4
+msgctxt "STRINGS.LINGGUARDNAMES.4"
+msgid "沙鸥"
+msgstr "沙鸥"
+
+#. STRINGS.LINGGUARDNAMES.5
+msgctxt "STRINGS.LINGGUARDNAMES.5"
+msgid "白鹭"
+msgstr "白鹭"
+
+#. STRINGS.LINGGUARDNAMES.6
+msgctxt "STRINGS.LINGGUARDNAMES.6"
+msgid "黄莺"
+msgstr "黄莺"
+
+#. STRINGS.LINGGUARDNAMES.7
+msgctxt "STRINGS.LINGGUARDNAMES.7"
+msgid "鸳鸯"
+msgstr "鸳鸯"
+
+#. STRINGS.LINGGUARDNAMES.8
+msgctxt "STRINGS.LINGGUARDNAMES.8"
+msgid "鹧鸪"
+msgstr "鹧鸪"
+
+#. STRINGS.LINGGUARDNAMES.9
+msgctxt "STRINGS.LINGGUARDNAMES.9"
+msgid "画角"
+msgstr "画角"
+
+#. STRINGS.LINGGUARDNAMES.10
+msgctxt "STRINGS.LINGGUARDNAMES.10"
+msgid "胡笳"
+msgstr "胡笳"
+
+#. STRINGS.LINGGUARDNAMES.11
+msgctxt "STRINGS.LINGGUARDNAMES.11"
+msgid "琵琶"
+msgstr "琵琶"
+
+#. STRINGS.LINGGUARDNAMES.12
+msgctxt "STRINGS.LINGGUARDNAMES.12"
+msgid "箜篌"
+msgstr "箜篌"
+
+#. STRINGS.LINGGUARDNAMES.13
+msgctxt "STRINGS.LINGGUARDNAMES.13"
+msgid "玉笛"
+msgstr "玉笛"
+
+#. STRINGS.LINGGUARDNAMES.14
+msgctxt "STRINGS.LINGGUARDNAMES.14"
+msgid "渔火"
+msgstr "渔火"
+
+#. STRINGS.LINGGUARDNAMES.15
+msgctxt "STRINGS.LINGGUARDNAMES.15"
+msgid "客帆"
+msgstr "客帆"
+
+#. STRINGS.LINGGUARDNAMES.16
+msgctxt "STRINGS.LINGGUARDNAMES.16"
+msgid "归棹"
+msgstr "归棹"
+
+#. STRINGS.LINGGUARDNAMES.17
+msgctxt "STRINGS.LINGGUARDNAMES.17"
+msgid "兰舟"
+msgstr "兰舟"
+
+#. STRINGS.LINGGUARDNAMES.18
+msgctxt "STRINGS.LINGGUARDNAMES.18"
+msgid "画舫"
+msgstr "画舫"
+
+#. STRINGS.LINGGUARDNAMES.19
+msgctxt "STRINGS.LINGGUARDNAMES.19"
+msgid "征辔"
+msgstr "征辔"
+
+#. STRINGS.LINGGUARDNAMES.20
+msgctxt "STRINGS.LINGGUARDNAMES.20"
+msgid "瘦马"
+msgstr "瘦马"
+
+#. STRINGS.LINGGUARDNAMES.21
+msgctxt "STRINGS.LINGGUARDNAMES.21"
+msgid "西楼"
+msgstr "西楼"
+
+#. STRINGS.LINGGUARDNAMES.22
+msgctxt "STRINGS.LINGGUARDNAMES.22"
+msgid "南楼"
+msgstr "南楼"
+
+#. STRINGS.LINGGUARDNAMES.23
+msgctxt "STRINGS.LINGGUARDNAMES.23"
+msgid "江楼"
+msgstr "江楼"
+
+#. STRINGS.LINGGUARDNAMES.24
+msgctxt "STRINGS.LINGGUARDNAMES.24"
+msgid "危楼"
+msgstr "危楼"
+
+#. STRINGS.LINGGUARDNAMES.25
+msgctxt "STRINGS.LINGGUARDNAMES.25"
+msgid "小楼"
+msgstr "小楼"
+
+#. STRINGS.LINGGUARDNAMES.26
+msgctxt "STRINGS.LINGGUARDNAMES.26"
+msgid "朱阁"
+msgstr "朱阁"
+
+#. STRINGS.LINGGUARDNAMES.27
+msgctxt "STRINGS.LINGGUARDNAMES.27"
+msgid "绮户"
+msgstr "绮户"
+
+#. STRINGS.LINGGUARDNAMES.28
+msgctxt "STRINGS.LINGGUARDNAMES.28"
+msgid "雕栏"
+msgstr "雕栏"
+
+#. STRINGS.LINGGUARDNAMES.29
+msgctxt "STRINGS.LINGGUARDNAMES.29"
+msgid "玉砌"
+msgstr "玉砌"
+
+#. STRINGS.LINGGUARDNAMES.30
+msgctxt "STRINGS.LINGGUARDNAMES.30"
+msgid "金井"
+msgstr "金井"
+
+#. STRINGS.LINGGUARDNAMES.31
+msgctxt "STRINGS.LINGGUARDNAMES.31"
+msgid "银床"
+msgstr "银床"
+
+#. STRINGS.LINGGUARDNAMES.32
+msgctxt "STRINGS.LINGGUARDNAMES.32"
+msgid "珠帘"
+msgstr "珠帘"
+
+#. STRINGS.LINGGUARDNAMES.33
+msgctxt "STRINGS.LINGGUARDNAMES.33"
+msgid "翠幕"
+msgstr "翠幕"
+
+#. STRINGS.LINGGUARDNAMES.34
+msgctxt "STRINGS.LINGGUARDNAMES.34"
+msgid "罗帷"
+msgstr "罗帷"
+
+#. STRINGS.LINGGUARDNAMES.35
+msgctxt "STRINGS.LINGGUARDNAMES.35"
+msgid "纱橱"
+msgstr "纱橱"
+
+#. STRINGS.LINGGUARDNAMES.36
+msgctxt "STRINGS.LINGGUARDNAMES.36"
+msgid "玉簟"
+msgstr "玉簟"
+
+#. STRINGS.LINGGUARDNAMES.37
+msgctxt "STRINGS.LINGGUARDNAMES.37"
+msgid "冰簟"
+msgstr "冰簟"
+
+#. STRINGS.LINGGUARDNAMES.38
+msgctxt "STRINGS.LINGGUARDNAMES.38"
+msgid "银烛"
+msgstr "银烛"
+
+#. STRINGS.LINGGUARDNAMES.39
+msgctxt "STRINGS.LINGGUARDNAMES.39"
+msgid "红烛"
+msgstr "红烛"
+
+#. STRINGS.LINGGUARDNAMES.40
+msgctxt "STRINGS.LINGGUARDNAMES.40"
+msgid "寒灯"
+msgstr "寒灯"
+
+#. STRINGS.LINGGUARDNAMES.41
+msgctxt "STRINGS.LINGGUARDNAMES.41"
+msgid "残灯"
+msgstr "残灯"
+
+#. STRINGS.LINGGUARDNAMES.42
+msgctxt "STRINGS.LINGGUARDNAMES.42"
+msgid "兰膏"
+msgstr "兰膏"
+
+#. STRINGS.LINGGUARDNAMES.43
+msgctxt "STRINGS.LINGGUARDNAMES.43"
+msgid "玉漏"
+msgstr "玉漏"
+
+#. STRINGS.LINGGUARDNAMES.44
+msgctxt "STRINGS.LINGGUARDNAMES.44"
+msgid "更漏"
+msgstr "更漏"
+
+#. STRINGS.LINGGUARDNAMES.45
+msgctxt "STRINGS.LINGGUARDNAMES.45"
+msgid "沙漏"
+msgstr "沙漏"
+
+#. STRINGS.LINGGUARDNAMES.46
+msgctxt "STRINGS.LINGGUARDNAMES.46"
+msgid "莲漏"
+msgstr "莲漏"
+
+#. STRINGS.LINGGUARDNAMES.47
+msgctxt "STRINGS.LINGGUARDNAMES.47"
+msgid "玉壶"
+msgstr "玉壶"
+
+#. STRINGS.LINGGUARDNAMES.48
+msgctxt "STRINGS.LINGGUARDNAMES.48"
+msgid "金樽"
+msgstr "金樽"
+
+#. STRINGS.LINGGUARDNAMES.49
+msgctxt "STRINGS.LINGGUARDNAMES.49"
+msgid "玉觞"
+msgstr "玉觞"
+
+#. STRINGS.LINGGUARDNAMES.50
+msgctxt "STRINGS.LINGGUARDNAMES.50"
+msgid "瑶觞"
+msgstr "瑶觞"
+
+#. STRINGS.LINGGUARDNAMES.51
+msgctxt "STRINGS.LINGGUARDNAMES.51"
+msgid "银瓶"
+msgstr "银瓶"
+
+#. STRINGS.LINGGUARDNAMES.52
+msgctxt "STRINGS.LINGGUARDNAMES.52"
+msgid "玉盘"
+msgstr "玉盘"
+
+#. STRINGS.LINGGUARDNAMES.53
+msgctxt "STRINGS.LINGGUARDNAMES.53"
+msgid "金箸"
+msgstr "金箸"
+
+#. STRINGS.LINGGUARDNAMES.54
+msgctxt "STRINGS.LINGGUARDNAMES.54"
+msgid "象箸"
+msgstr "象箸"
+
+#. STRINGS.LINGGUARDNAMES.55
+msgctxt "STRINGS.LINGGUARDNAMES.55"
+msgid "玉碗"
+msgstr "玉碗"
+
+#. STRINGS.LINGGUARDNAMES.56
+msgctxt "STRINGS.LINGGUARDNAMES.56"
+msgid "冰碗"
+msgstr "冰碗"
+
+#. STRINGS.LINGGUARDNAMES.57
+msgctxt "STRINGS.LINGGUARDNAMES.57"
+msgid "鲈鱼"
+msgstr "鲈鱼"
+
+#. STRINGS.LINGGUARDNAMES.58
+msgctxt "STRINGS.LINGGUARDNAMES.58"
+msgid "莼菜"
+msgstr "莼菜"
+
+#. STRINGS.LINGGUARDNAMES.59
+msgctxt "STRINGS.LINGGUARDNAMES.59"
+msgid "鲈脍"
+msgstr "鲈脍"
+
+#. STRINGS.LINGGUARDNAMES.60
+msgctxt "STRINGS.LINGGUARDNAMES.60"
+msgid "蒓羹"
+msgstr "蒓羹"
+
+#. STRINGS.LINGGUARDNAMES.61
+msgctxt "STRINGS.LINGGUARDNAMES.61"
+msgid "荔枝"
+msgstr "荔枝"
+
+#. STRINGS.LINGGUARDNAMES.62
+msgctxt "STRINGS.LINGGUARDNAMES.62"
+msgid "龙眼"
+msgstr "龙眼"
+
+#. STRINGS.LINGGUARDNAMES.63
+msgctxt "STRINGS.LINGGUARDNAMES.63"
+msgid "枇杷"
+msgstr "枇杷"
+
+#. STRINGS.LINGGUARDNAMES.64
+msgctxt "STRINGS.LINGGUARDNAMES.64"
+msgid "杨梅"
+msgstr "杨梅"
+
+#. STRINGS.LINGGUARDNAMES.65
+msgctxt "STRINGS.LINGGUARDNAMES.65"
+msgid "樱桃"
+msgstr "樱桃"
+
+#. STRINGS.LINGGUARDNAMES.66
+msgctxt "STRINGS.LINGGUARDNAMES.66"
+msgid "芭蕉"
+msgstr "芭蕉"
+
+#. STRINGS.LINGGUARDNAMES.67
+msgctxt "STRINGS.LINGGUARDNAMES.67"
+msgid "梧桐"
+msgstr "梧桐"
+
+#. STRINGS.LINGGUARDNAMES.68
+msgctxt "STRINGS.LINGGUARDNAMES.68"
+msgid "榆钱"
+msgstr "榆钱"
+
+#. STRINGS.LINGGUARDNAMES.69
+msgctxt "STRINGS.LINGGUARDNAMES.69"
+msgid "柳絮"
+msgstr "柳絮"
+
+#. STRINGS.LINGGUARDNAMES.70
+msgctxt "STRINGS.LINGGUARDNAMES.70"
+msgid "杨花"
+msgstr "杨花"
+
+#. STRINGS.LINGGUARDNAMES.71
+msgctxt "STRINGS.LINGGUARDNAMES.71"
+msgid "萍叶"
+msgstr "萍叶"
+
+#. STRINGS.LINGGUARDNAMES.72
+msgctxt "STRINGS.LINGGUARDNAMES.72"
+msgid "浮萍"
+msgstr "浮萍"
+
+#. STRINGS.LINGGUARDNAMES.73
+msgctxt "STRINGS.LINGGUARDNAMES.73"
+msgid "菱角"
+msgstr "菱角"
+
+#. STRINGS.LINGGUARDNAMES.74
+msgctxt "STRINGS.LINGGUARDNAMES.74"
+msgid "莲蓬"
+msgstr "莲蓬"
+
+#. STRINGS.LINGGUARDNAMES.75
+msgctxt "STRINGS.LINGGUARDNAMES.75"
+msgid "藕丝"
+msgstr "藕丝"
+
+#. STRINGS.LINGGUARDNAMES.76
+msgctxt "STRINGS.LINGGUARDNAMES.76"
+msgid "荷衣"
+msgstr "荷衣"
+
+#. STRINGS.LINGGUARDNAMES.77
+msgctxt "STRINGS.LINGGUARDNAMES.77"
+msgid "芰荷"
+msgstr "芰荷"
+
+#. STRINGS.LINGGUARDNAMES.78
+msgctxt "STRINGS.LINGGUARDNAMES.78"
+msgid "芙蓉"
+msgstr "芙蓉"
+
+#. STRINGS.LINGGUARDNAMES.79
+msgctxt "STRINGS.LINGGUARDNAMES.79"
+msgid "菡萏"
+msgstr "菡萏"
+
+#. STRINGS.LINGGUARDNAMES.80
+msgctxt "STRINGS.LINGGUARDNAMES.80"
+msgid "茱萸"
+msgstr "茱萸"
+
+#. STRINGS.LINGGUARDNAMES.81
+msgctxt "STRINGS.LINGGUARDNAMES.81"
+msgid "萱草"
+msgstr "萱草"
+
+#. STRINGS.LINGGUARDNAMES.82
+msgctxt "STRINGS.LINGGUARDNAMES.82"
+msgid "忘忧草"
+msgstr "忘忧草"
+
+#. STRINGS.LINGGUARDNAMES.83
+msgctxt "STRINGS.LINGGUARDNAMES.83"
+msgid "红豆"
+msgstr "红豆"
+
+#. STRINGS.LINGGUARDNAMES.84
+msgctxt "STRINGS.LINGGUARDNAMES.84"
+msgid "相思子"
+msgstr "相思子"
+
+#. STRINGS.LINGGUARDNAMES.85
+msgctxt "STRINGS.LINGGUARDNAMES.85"
+msgid "连理枝"
+msgstr "连理枝"
+
+#. STRINGS.LINGGUARDNAMES.86
+msgctxt "STRINGS.LINGGUARDNAMES.86"
+msgid "比翼鸟"
+msgstr "比翼鸟"
+
+#. STRINGS.LINGGUARDNAMES.87
+msgctxt "STRINGS.LINGGUARDNAMES.87"
+msgid "双鲤鱼"
+msgstr "双鲤鱼"
+
+#. STRINGS.LINGGUARDNAMES.88
+msgctxt "STRINGS.LINGGUARDNAMES.88"
+msgid "尺素书"
+msgstr "尺素书"
+
+#. STRINGS.LINGGUARDNAMES.89
+msgctxt "STRINGS.LINGGUARDNAMES.89"
+msgid "雁字"
+msgstr "雁字"
+
+#. STRINGS.LINGGUARDNAMES.90
+msgctxt "STRINGS.LINGGUARDNAMES.90"
+msgid "鱼书"
+msgstr "鱼书"
+
+#. STRINGS.LINGGUARDNAMES.91
+msgctxt "STRINGS.LINGGUARDNAMES.91"
+msgid "驿使"
+msgstr "驿使"
+
+#. STRINGS.LINGGUARDNAMES.92
+msgctxt "STRINGS.LINGGUARDNAMES.92"
+msgid "梅花使"
+msgstr "梅花使"
+
+#. STRINGS.LINGGUARDNAMES.93
+msgctxt "STRINGS.LINGGUARDNAMES.93"
+msgid "青鸟"
+msgstr "青鸟"
+
+#. STRINGS.LINGGUARDNAMES.94
+msgctxt "STRINGS.LINGGUARDNAMES.94"
+msgid "鸾镜"
+msgstr "鸾镜"
+
+#. STRINGS.LINGGUARDNAMES.95
+msgctxt "STRINGS.LINGGUARDNAMES.95"
+msgid "凤箫"
+msgstr "凤箫"
+
+#. STRINGS.LINGGUARDNAMES.96
+msgctxt "STRINGS.LINGGUARDNAMES.96"
+msgid "鸾笙"
+msgstr "鸾笙"
+
+#. STRINGS.LINGGUARDNAMES.97
+msgctxt "STRINGS.LINGGUARDNAMES.97"
+msgid "凤管"
+msgstr "凤管"
+
+#. STRINGS.LINGGUARDNAMES.98
+msgctxt "STRINGS.LINGGUARDNAMES.98"
+msgid "龙笛"
+msgstr "龙笛"
+
+#. STRINGS.LINGGUARDNAMES.99
+msgctxt "STRINGS.LINGGUARDNAMES.99"
+msgid "鼍鼓"
+msgstr "鼍鼓"
+
+#. STRINGS.LINGGUARDNAMES.100
+msgctxt "STRINGS.LINGGUARDNAMES.100"
+msgid "渔鼓"
+msgstr "渔鼓"
+
+#. STRINGS.LINGGUARDNAMES.101
+msgctxt "STRINGS.LINGGUARDNAMES.101"
+msgid "樵斧"
+msgstr "樵斧"
+
+#. STRINGS.LINGGUARDNAMES.102
+msgctxt "STRINGS.LINGGUARDNAMES.102"
+msgid "耕犁"
+msgstr "耕犁"
+
+#. STRINGS.LINGGUARDNAMES.103
+msgctxt "STRINGS.LINGGUARDNAMES.103"
+msgid "钓竿"
+msgstr "钓竿"
+
+#. STRINGS.LINGGUARDNAMES.104
+msgctxt "STRINGS.LINGGUARDNAMES.104"
+msgid "蓑笠"
+msgstr "蓑笠"
+
+#. STRINGS.LINGGUARDNAMES.105
+msgctxt "STRINGS.LINGGUARDNAMES.105"
+msgid "纶竿"
+msgstr "纶竿"
+
+#. STRINGS.LINGGUARDNAMES.106
+msgctxt "STRINGS.LINGGUARDNAMES.106"
+msgid "钓矶"
+msgstr "钓矶"
+
+#. STRINGS.LINGGUARDNAMES.107
+msgctxt "STRINGS.LINGGUARDNAMES.107"
+msgid "钓台"
+msgstr "钓台"
+
+#. STRINGS.LINGGUARDNAMES.108
+msgctxt "STRINGS.LINGGUARDNAMES.108"
+msgid "严陵濑"
+msgstr "严陵濑"
+
+#. STRINGS.LINGGUARDNAMES.109
+msgctxt "STRINGS.LINGGUARDNAMES.109"
+msgid "富春山"
+msgstr "富春山"
+
+#. STRINGS.LINGGUARDNAMES.110
+msgctxt "STRINGS.LINGGUARDNAMES.110"
+msgid "首阳山"
+msgstr "首阳山"
+
+#. STRINGS.LINGGUARDNAMES.111
+msgctxt "STRINGS.LINGGUARDNAMES.111"
+msgid "箕山"
+msgstr "箕山"
+
+#. STRINGS.LINGGUARDNAMES.112
+msgctxt "STRINGS.LINGGUARDNAMES.112"
+msgid "颍水"
+msgstr "颍水"
+
+#. STRINGS.LINGGUARDNAMES.113
+msgctxt "STRINGS.LINGGUARDNAMES.113"
+msgid "商山"
+msgstr "商山"
+
+#. STRINGS.LINGGUARDNAMES.114
+msgctxt "STRINGS.LINGGUARDNAMES.114"
+msgid "紫芝"
+msgstr "紫芝"
+
+#. STRINGS.LINGGUARDNAMES.115
+msgctxt "STRINGS.LINGGUARDNAMES.115"
+msgid "黄石"
+msgstr "黄石"
+
+#. STRINGS.LINGGUARDNAMES.116
+msgctxt "STRINGS.LINGGUARDNAMES.116"
+msgid "赤松"
+msgstr "赤松"
+
+#. STRINGS.LINGGUARDNAMES.117
+msgctxt "STRINGS.LINGGUARDNAMES.117"
+msgid "白鹤"
+msgstr "白鹤"
+
+#. STRINGS.LINGGUARDNAMES.118
+msgctxt "STRINGS.LINGGUARDNAMES.118"
+msgid "青牛"
+msgstr "青牛"
+
+#. STRINGS.LINGGUARDNAMES.119
+msgctxt "STRINGS.LINGGUARDNAMES.119"
+msgid "紫气"
+msgstr "紫气"
+
+#. STRINGS.LINGGUARDNAMES.120
+msgctxt "STRINGS.LINGGUARDNAMES.120"
+msgid "丹砂"
+msgstr "丹砂"
+
+#. STRINGS.LINGGUARDNAMES.121
+msgctxt "STRINGS.LINGGUARDNAMES.121"
+msgid "玉芝"
+msgstr "玉芝"
+
+#. STRINGS.LINGGUARDNAMES.122
+msgctxt "STRINGS.LINGGUARDNAMES.122"
+msgid "金液"
+msgstr "金液"
+
+#. STRINGS.LINGGUARDNAMES.123
+msgctxt "STRINGS.LINGGUARDNAMES.123"
+msgid "白鹿"
+msgstr "白鹿"
+
+#. STRINGS.LINGGUARDNAMES.124
+msgctxt "STRINGS.LINGGUARDNAMES.124"
+msgid "青羊"
+msgstr "青羊"
+
+#. STRINGS.LINGGUARDNAMES.125
+msgctxt "STRINGS.LINGGUARDNAMES.125"
+msgid "玄鹤"
+msgstr "玄鹤"
+
+#. STRINGS.LINGGUARDNAMES.126
+msgctxt "STRINGS.LINGGUARDNAMES.126"
+msgid "苍鹰"
+msgstr "苍鹰"
+
+#. STRINGS.LINGGUARDNAMES.127
+msgctxt "STRINGS.LINGGUARDNAMES.127"
+msgid "黄犬"
+msgstr "黄犬"
+
+#. STRINGS.LINGGUARDNAMES.128
+msgctxt "STRINGS.LINGGUARDNAMES.128"
+msgid "白猿"
+msgstr "白猿"
+
+#. STRINGS.LINGGUARDNAMES.129
+msgctxt "STRINGS.LINGGUARDNAMES.129"
+msgid "玄猿"
+msgstr "玄猿"
+
+#. STRINGS.LINGGUARDNAMES.130
+msgctxt "STRINGS.LINGGUARDNAMES.130"
+msgid "青猿"
+msgstr "青猿"
+
+#. STRINGS.LINGGUARDNAMES.131
+msgctxt "STRINGS.LINGGUARDNAMES.131"
+msgid "杜鹃"
+msgstr "杜鹃"
+
+#. STRINGS.LINGGUARDNAMES.132
+msgctxt "STRINGS.LINGGUARDNAMES.132"
+msgid "子规"
+msgstr "子规"
+
+#. STRINGS.LINGGUARDNAMES.133
+msgctxt "STRINGS.LINGGUARDNAMES.133"
+msgid "谢豹"
+msgstr "谢豹"
+
+#. STRINGS.LINGGUARDNAMES.134
+msgctxt "STRINGS.LINGGUARDNAMES.134"
+msgid "布谷"
+msgstr "布谷"
+
+#. STRINGS.LINGGUARDNAMES.135
+msgctxt "STRINGS.LINGGUARDNAMES.135"
+msgid "提壶"
+msgstr "提壶"
+
+#. STRINGS.LINGGUARDNAMES.136
+msgctxt "STRINGS.LINGGUARDNAMES.136"
+msgid "画眉"
+msgstr "画眉"
+
+#. STRINGS.LINGGUARDNAMES.137
+msgctxt "STRINGS.LINGGUARDNAMES.137"
+msgid "黄鹂"
+msgstr "黄鹂"
+
+#. STRINGS.LINGGUARDNAMES.138
+msgctxt "STRINGS.LINGGUARDNAMES.138"
+msgid "紫燕"
+msgstr "紫燕"
+
+#. STRINGS.LINGGUARDNAMES.139
+msgctxt "STRINGS.LINGGUARDNAMES.139"
+msgid "白鸥"
+msgstr "白鸥"
+
+#. STRINGS.LINGGUARDNAMES.140
+msgctxt "STRINGS.LINGGUARDNAMES.140"
+msgid "朱鹮"
+msgstr "朱鹮"
+
+#. STRINGS.LINGGUARDNAMES.141
+msgctxt "STRINGS.LINGGUARDNAMES.141"
+msgid "翠鸟"
+msgstr "翠鸟"
+
+#. STRINGS.LINGGUARDNAMES.142
+msgctxt "STRINGS.LINGGUARDNAMES.142"
+msgid "锦鸡"
+msgstr "锦鸡"
+
+#. STRINGS.LINGGUARDNAMES.143
+msgctxt "STRINGS.LINGGUARDNAMES.143"
+msgid "孔雀"
+msgstr "孔雀"
+
+#. STRINGS.LINGGUARDNAMES.144
+msgctxt "STRINGS.LINGGUARDNAMES.144"
+msgid "凤凰"
+msgstr "凤凰"
+
+#. STRINGS.LINGGUARDNAMES.145
+msgctxt "STRINGS.LINGGUARDNAMES.145"
+msgid "麒麟"
+msgstr "麒麟"
+
+#. STRINGS.LINGGUARDNAMES.146
+msgctxt "STRINGS.LINGGUARDNAMES.146"
+msgid "獬豸"
+msgstr "獬豸"
+
+#. STRINGS.LINGGUARDNAMES.147
+msgctxt "STRINGS.LINGGUARDNAMES.147"
+msgid "辟邪"
+msgstr "辟邪"
+
+#. STRINGS.LINGGUARDNAMES.148
+msgctxt "STRINGS.LINGGUARDNAMES.148"
+msgid "天禄"
+msgstr "天禄"
+
+#. STRINGS.LINGGUARDNAMES.149
+msgctxt "STRINGS.LINGGUARDNAMES.149"
+msgid "角端"
+msgstr "角端"
+
+#. STRINGS.LINGGUARDNAMES.150
+msgctxt "STRINGS.LINGGUARDNAMES.150"
+msgid "白泽"
+msgstr "白泽"
+
+#. STRINGS.LINGGUARDNAMES.151
+msgctxt "STRINGS.LINGGUARDNAMES.151"
+msgid "玄龟"
+msgstr "玄龟"
+
+#. STRINGS.LINGGUARDNAMES.152
+msgctxt "STRINGS.LINGGUARDNAMES.152"
+msgid "神龙"
+msgstr "神龙"
+
+#. STRINGS.LINGGUARDNAMES.153
+msgctxt "STRINGS.LINGGUARDNAMES.153"
+msgid "应龙"
+msgstr "应龙"
+
+#. STRINGS.LINGGUARDNAMES.154
+msgctxt "STRINGS.LINGGUARDNAMES.154"
+msgid "烛龙"
+msgstr "烛龙"
+
+#. STRINGS.LINGGUARDNAMES.155
+msgctxt "STRINGS.LINGGUARDNAMES.155"
+msgid "鲲鹏"
+msgstr "鲲鹏"
+
+#. STRINGS.LINGGUARDNAMES.156
+msgctxt "STRINGS.LINGGUARDNAMES.156"
+msgid "蜉蝣"
+msgstr "蜉蝣"
+
+#. STRINGS.LINGGUARDNAMES.157
+msgctxt "STRINGS.LINGGUARDNAMES.157"
+msgid "蟪蛄"
+msgstr "蟪蛄"
+
+#. STRINGS.LINGGUARDNAMES.158
+msgctxt "STRINGS.LINGGUARDNAMES.158"
+msgid "寒螀"
+msgstr "寒螀"
+
+#. STRINGS.LINGGUARDNAMES.159
+msgctxt "STRINGS.LINGGUARDNAMES.159"
+msgid "秋蛩"
+msgstr "秋蛩"
+
+#. STRINGS.LINGGUARDNAMES.160
+msgctxt "STRINGS.LINGGUARDNAMES.160"
+msgid "络纬"
+msgstr "络纬"
+
+#. STRINGS.LINGGUARDNAMES.161
+msgctxt "STRINGS.LINGGUARDNAMES.161"
+msgid "促织"
+msgstr "促织"
+
+#. STRINGS.LINGGUARDNAMES.162
+msgctxt "STRINGS.LINGGUARDNAMES.162"
+msgid "蜻蜓"
+msgstr "蜻蜓"
+
+#. STRINGS.LINGGUARDNAMES.163
+msgctxt "STRINGS.LINGGUARDNAMES.163"
+msgid "蝴蝶"
+msgstr "蝴蝶"
+
+#. STRINGS.LINGGUARDNAMES.164
+msgctxt "STRINGS.LINGGUARDNAMES.164"
+msgid "庄周蝶"
+msgstr "庄周蝶"
+
+#. STRINGS.LINGGUARDNAMES.165
+msgctxt "STRINGS.LINGGUARDNAMES.165"
+msgid "望帝鹃"
+msgstr "望帝鹃"
+
+#. STRINGS.LINGGUARDNAMES.166
+msgctxt "STRINGS.LINGGUARDNAMES.166"
+msgid "苌弘血"
+msgstr "苌弘血"
+
+#. STRINGS.LINGGUARDNAMES.167
+msgctxt "STRINGS.LINGGUARDNAMES.167"
+msgid "杜鹃血"
+msgstr "杜鹃血"
+
+#. STRINGS.LINGGUARDNAMES.168
+msgctxt "STRINGS.LINGGUARDNAMES.168"
+msgid "湘妃竹"
+msgstr "湘妃竹"
+
+#. STRINGS.LINGGUARDNAMES.169
+msgctxt "STRINGS.LINGGUARDNAMES.169"
+msgid "斑竹"
+msgstr "斑竹"
+
+#. STRINGS.LINGGUARDNAMES.170
+msgctxt "STRINGS.LINGGUARDNAMES.170"
+msgid "潇湘竹"
+msgstr "潇湘竹"
+
+#. STRINGS.LINGGUARDNAMES.171
+msgctxt "STRINGS.LINGGUARDNAMES.171"
+msgid "淇澳竹"
+msgstr "淇澳竹"
+
+#. STRINGS.LINGGUARDNAMES.172
+msgctxt "STRINGS.LINGGUARDNAMES.172"
+msgid "渭川竹"
+msgstr "渭川竹"
+
+#. STRINGS.LINGGUARDNAMES.173
+msgctxt "STRINGS.LINGGUARDNAMES.173"
+msgid "箨龙"
+msgstr "箨龙"
+
+#. STRINGS.LINGGUARDNAMES.174
+msgctxt "STRINGS.LINGGUARDNAMES.174"
+msgid "竹萌"
+msgstr "竹萌"
+
+#. STRINGS.LINGGUARDNAMES.175
+msgctxt "STRINGS.LINGGUARDNAMES.175"
+msgid "竹实"
+msgstr "竹实"
+
+#. STRINGS.LINGGUARDNAMES.176
+msgctxt "STRINGS.LINGGUARDNAMES.176"
+msgid "桐花"
+msgstr "桐花"
+
+#. STRINGS.LINGGUARDNAMES.177
+msgctxt "STRINGS.LINGGUARDNAMES.177"
+msgid "桐乳"
+msgstr "桐乳"
+
+#. STRINGS.LINGGUARDNAMES.178
+msgctxt "STRINGS.LINGGUARDNAMES.178"
+msgid "桐阴"
+msgstr "桐阴"
+
+#. STRINGS.LINGGUARDNAMES.179
+msgctxt "STRINGS.LINGGUARDNAMES.179"
+msgid "槐安国"
+msgstr "槐安国"
+
+#. STRINGS.LINGGUARDNAMES.180
+msgctxt "STRINGS.LINGGUARDNAMES.180"
+msgid "南柯郡"
+msgstr "南柯郡"
+
+#. STRINGS.LINGGUARDNAMES.181
+msgctxt "STRINGS.LINGGUARDNAMES.181"
+msgid "邯郸道"
+msgstr "邯郸道"
+
+#. STRINGS.LINGGUARDNAMES.182
+msgctxt "STRINGS.LINGGUARDNAMES.182"
+msgid "黄粱梦"
+msgstr "黄粱梦"
+
+#. STRINGS.LINGGUARDNAMES.183
+msgctxt "STRINGS.LINGGUARDNAMES.183"
+msgid "华胥国"
+msgstr "华胥国"
+
+#. STRINGS.LINGGUARDNAMES.184
+msgctxt "STRINGS.LINGGUARDNAMES.184"
+msgid "无何有乡"
+msgstr "无何有乡"
+
+#. STRINGS.LINGGUARDNAMES.185
+msgctxt "STRINGS.LINGGUARDNAMES.185"
+msgid "广寒宫"
+msgstr "广寒宫"
+
+#. STRINGS.LINGGUARDNAMES.186
+msgctxt "STRINGS.LINGGUARDNAMES.186"
+msgid "蟾宫"
+msgstr "蟾宫"
+
+#. STRINGS.LINGGUARDNAMES.187
+msgctxt "STRINGS.LINGGUARDNAMES.187"
+msgid "桂殿"
+msgstr "桂殿"
+
+#. STRINGS.LINGGUARDNAMES.188
+msgctxt "STRINGS.LINGGUARDNAMES.188"
+msgid "月窟"
+msgstr "月窟"
+
+#. STRINGS.LINGGUARDNAMES.189
+msgctxt "STRINGS.LINGGUARDNAMES.189"
+msgid "日轮"
+msgstr "日轮"
+
+#. STRINGS.LINGGUARDNAMES.190
+msgctxt "STRINGS.LINGGUARDNAMES.190"
+msgid "曦和"
+msgstr "曦和"
+
+#. STRINGS.LINGGUARDNAMES.191
+msgctxt "STRINGS.LINGGUARDNAMES.191"
+msgid "望舒"
+msgstr "望舒"
+
+#. STRINGS.LINGGUARDNAMES.192
+msgctxt "STRINGS.LINGGUARDNAMES.192"
+msgid "纤阿"
+msgstr "纤阿"
+
+#. STRINGS.LINGGUARDNAMES.193
+msgctxt "STRINGS.LINGGUARDNAMES.193"
+msgid "素娥"
+msgstr "素娥"
+
+#. STRINGS.LINGGUARDNAMES.194
+msgctxt "STRINGS.LINGGUARDNAMES.194"
+msgid "姮娥"
+msgstr "姮娥"
+
+#. STRINGS.LINGGUARDNAMES.195
+msgctxt "STRINGS.LINGGUARDNAMES.195"
+msgid "吴刚"
+msgstr "吴刚"
+
+#. STRINGS.LINGGUARDNAMES.196
+msgctxt "STRINGS.LINGGUARDNAMES.196"
+msgid "玉兔"
+msgstr "玉兔"
+
+#. STRINGS.LINGGUARDNAMES.197
+msgctxt "STRINGS.LINGGUARDNAMES.197"
+msgid "金蟆"
+msgstr "金蟆"
+
+#. STRINGS.LINGGUARDNAMES.198
+msgctxt "STRINGS.LINGGUARDNAMES.198"
+msgid "蟾蜍"
+msgstr "蟾蜍"
+
+#. STRINGS.LINGGUARDNAMES.199
+msgctxt "STRINGS.LINGGUARDNAMES.199"
+msgid "天狗"
+msgstr "天狗"
+
+#. STRINGS.LINGGUARDNAMES.200
+msgctxt "STRINGS.LINGGUARDNAMES.200"
+msgid "银河"
+msgstr "银河"
+
+#. STRINGS.LINGGUARDNAMES.201
+msgctxt "STRINGS.LINGGUARDNAMES.201"
+msgid "云汉"
+msgstr "云汉"
+
+#. STRINGS.LINGGUARDNAMES.202
+msgctxt "STRINGS.LINGGUARDNAMES.202"
+msgid "天汉"
+msgstr "天汉"
+
+#. STRINGS.LINGGUARDNAMES.203
+msgctxt "STRINGS.LINGGUARDNAMES.203"
+msgid "星汉"
+msgstr "星汉"
+
+#. STRINGS.LINGGUARDNAMES.204
+msgctxt "STRINGS.LINGGUARDNAMES.204"
+msgid "霄汉"
+msgstr "霄汉"
+
+#. STRINGS.LINGGUARDNAMES.205
+msgctxt "STRINGS.LINGGUARDNAMES.205"
+msgid "银潢"
+msgstr "银潢"
+
+#. STRINGS.LINGGUARDNAMES.206
+msgctxt "STRINGS.LINGGUARDNAMES.206"
+msgid "银湾"
+msgstr "银湾"
+
+#. STRINGS.LINGGUARDNAMES.207
+msgctxt "STRINGS.LINGGUARDNAMES.207"
+msgid "天津"
+msgstr "天津"
+
+#. STRINGS.LINGGUARDNAMES.208
+msgctxt "STRINGS.LINGGUARDNAMES.208"
+msgid "天孙"
+msgstr "天孙"
+
+#. STRINGS.LINGGUARDNAMES.209
+msgctxt "STRINGS.LINGGUARDNAMES.209"
+msgid "织女"
+msgstr "织女"
+
+#. STRINGS.LINGGUARDNAMES.210
+msgctxt "STRINGS.LINGGUARDNAMES.210"
+msgid "牵牛"
+msgstr "牵牛"
+
+#. STRINGS.LINGGUARDNAMES.211
+msgctxt "STRINGS.LINGGUARDNAMES.211"
+msgid "河鼓"
+msgstr "河鼓"
+
+#. STRINGS.LINGGUARDNAMES.212
+msgctxt "STRINGS.LINGGUARDNAMES.212"
+msgid "北斗"
+msgstr "北斗"
+
+#. STRINGS.LINGGUARDNAMES.213
+msgctxt "STRINGS.LINGGUARDNAMES.213"
+msgid "南箕"
+msgstr "南箕"
+
+#. STRINGS.LINGGUARDNAMES.214
+msgctxt "STRINGS.LINGGUARDNAMES.214"
+msgid "东井"
+msgstr "东井"
+
+#. STRINGS.LINGGUARDNAMES.215
+msgctxt "STRINGS.LINGGUARDNAMES.215"
+msgid "西参"
+msgstr "西参"
+
+#. STRINGS.LINGGUARDNAMES.216
+msgctxt "STRINGS.LINGGUARDNAMES.216"
+msgid "辰宿"
+msgstr "辰宿"
+
+#. STRINGS.LINGGUARDNAMES.217
+msgctxt "STRINGS.LINGGUARDNAMES.217"
+msgid "列宿"
+msgstr "列宿"
+
+#. STRINGS.LINGGUARDNAMES.218
+msgctxt "STRINGS.LINGGUARDNAMES.218"
+msgid "三垣"
+msgstr "三垣"
+
+#. STRINGS.LINGGUARDNAMES.219
+msgctxt "STRINGS.LINGGUARDNAMES.219"
+msgid "四象"
+msgstr "四象"
+
+#. STRINGS.LINGGUARDNAMES.220
+msgctxt "STRINGS.LINGGUARDNAMES.220"
+msgid "二十八宿"
+msgstr "二十八宿"
+
+#. STRINGS.LINGGUARDNAMES.221
+msgctxt "STRINGS.LINGGUARDNAMES.221"
+msgid "苍龙"
+msgstr "苍龙"
+
+#. STRINGS.LINGGUARDNAMES.222
+msgctxt "STRINGS.LINGGUARDNAMES.222"
+msgid "白虎"
+msgstr "白虎"
+
+#. STRINGS.LINGGUARDNAMES.223
+msgctxt "STRINGS.LINGGUARDNAMES.223"
+msgid "朱雀"
+msgstr "朱雀"
+
+#. STRINGS.LINGGUARDNAMES.224
+msgctxt "STRINGS.LINGGUARDNAMES.224"
+msgid "玄武"
+msgstr "玄武"
+
+#. STRINGS.LINGGUARDNAMES.225
+msgctxt "STRINGS.LINGGUARDNAMES.225"
+msgid "勾陈"
+msgstr "勾陈"
+
+#. STRINGS.LINGGUARDNAMES.226
+msgctxt "STRINGS.LINGGUARDNAMES.226"
+msgid "华盖"
+msgstr "华盖"
+
+#. STRINGS.LINGGUARDNAMES.227
+msgctxt "STRINGS.LINGGUARDNAMES.227"
+msgid "紫微"
+msgstr "紫微"
+
+#. STRINGS.LINGGUARDNAMES.228
+msgctxt "STRINGS.LINGGUARDNAMES.228"
+msgid "太微"
+msgstr "太微"
+
+#. STRINGS.LINGGUARDNAMES.229
+msgctxt "STRINGS.LINGGUARDNAMES.229"
+msgid "天市"
+msgstr "天市"
+
+#. STRINGS.LINGGUARDNAMES.230
+msgctxt "STRINGS.LINGGUARDNAMES.230"
+msgid "文昌"
+msgstr "文昌"
+
+#. STRINGS.LINGGUARDNAMES.231
+msgctxt "STRINGS.LINGGUARDNAMES.231"
+msgid "文曲"
+msgstr "文曲"
+
+#. STRINGS.LINGGUARDNAMES.232
+msgctxt "STRINGS.LINGGUARDNAMES.232"
+msgid "武曲"
+msgstr "武曲"
+
+#. STRINGS.LINGGUARDNAMES.233
+msgctxt "STRINGS.LINGGUARDNAMES.233"
+msgid "贪狼"
+msgstr "贪狼"
+
+#. STRINGS.LINGGUARDNAMES.234
+msgctxt "STRINGS.LINGGUARDNAMES.234"
+msgid "巨门"
+msgstr "巨门"
+
+#. STRINGS.LINGGUARDNAMES.235
+msgctxt "STRINGS.LINGGUARDNAMES.235"
+msgid "禄存"
+msgstr "禄存"
+
+#. STRINGS.LINGGUARDNAMES.236
+msgctxt "STRINGS.LINGGUARDNAMES.236"
+msgid "廉贞"
+msgstr "廉贞"
+
+#. STRINGS.LINGGUARDNAMES.237
+msgctxt "STRINGS.LINGGUARDNAMES.237"
+msgid "破军"
+msgstr "破军"
+
+#. STRINGS.LINGGUARDNAMES.238
+msgctxt "STRINGS.LINGGUARDNAMES.238"
+msgid "左辅"
+msgstr "左辅"
+
+#. STRINGS.LINGGUARDNAMES.239
+msgctxt "STRINGS.LINGGUARDNAMES.239"
+msgid "右弼"
+msgstr "右弼"
+
+#. STRINGS.LINGGUARDNAMES.240
+msgctxt "STRINGS.LINGGUARDNAMES.240"
+msgid "天罡"
+msgstr "天罡"
+
+#. STRINGS.LINGGUARDNAMES.241
+msgctxt "STRINGS.LINGGUARDNAMES.241"
+msgid "地煞"
+msgstr "地煞"
+
+#. STRINGS.LINGGUARDNAMES.242
+msgctxt "STRINGS.LINGGUARDNAMES.242"
+msgid "玉帝"
+msgstr "玉帝"
+
+#. STRINGS.LINGGUARDNAMES.243
+msgctxt "STRINGS.LINGGUARDNAMES.243"
+msgid "王母"
+msgstr "王母"
+
+#. STRINGS.LINGGUARDNAMES.244
+msgctxt "STRINGS.LINGGUARDNAMES.244"
+msgid "三清"
+msgstr "三清"
+
+#. STRINGS.LINGGUARDNAMES.245
+msgctxt "STRINGS.LINGGUARDNAMES.245"
+msgid "四御"
+msgstr "四御"
+
+#. STRINGS.LINGGUARDNAMES.246
+msgctxt "STRINGS.LINGGUARDNAMES.246"
+msgid "五老"
+msgstr "五老"
+
+#. STRINGS.LINGGUARDNAMES.247
+msgctxt "STRINGS.LINGGUARDNAMES.247"
+msgid "六司"
+msgstr "六司"
+
+#. STRINGS.LINGGUARDNAMES.248
+msgctxt "STRINGS.LINGGUARDNAMES.248"
+msgid "七元"
+msgstr "七元"
+
+#. STRINGS.LINGGUARDNAMES.249
+msgctxt "STRINGS.LINGGUARDNAMES.249"
+msgid "八极"
+msgstr "八极"
+
+#. STRINGS.LINGGUARDNAMES.250
+msgctxt "STRINGS.LINGGUARDNAMES.250"
+msgid "九霄"
+msgstr "九霄"

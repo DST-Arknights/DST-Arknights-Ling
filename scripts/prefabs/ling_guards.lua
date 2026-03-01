@@ -298,7 +298,7 @@ local function ling_guard_basic_fn()
 
     inst:AddComponent("named")
     -- TODO: 设置正确的名称
-    inst.components.named.possiblenames = STRINGS.PIGNAMES
+    inst.components.named.possiblenames = STRINGS.LINGGUARDNAMES
     inst.components.named:PickNewName()
 
     inst:AddComponent("health")
@@ -411,7 +411,7 @@ local function ling_guard_elite_fn()
     end
 
     inst:AddComponent("named")
-    inst.components.named.possiblenames = STRINGS.PIGNAMES
+    inst.components.named.possiblenames = STRINGS.LINGGUARDNAMES
     inst.components.named:PickNewName()
 
     inst:AddComponent("health")
