@@ -526,6 +526,8 @@ end
 function LingSummonManager:SummonBasic(slot_index, pos)
   ArkLogger:Debug("LingSummonManager:SummonBasic", slot_index, pos)
   if self.inst.sg:HasStateTag("busy") then
+    -- 它正忙
+    SayAndVoice(self.inst, "LING_GUARD_BUSY")
     return false
   end
   local form = FORM.QINGPING
@@ -542,7 +544,7 @@ function LingSummonManager:SummonBasic(slot_index, pos)
     local cfg = LING_TUNING.GetLevelGuardConfig(form, elite_level)
     local cost = cfg and cfg.SUMMON_COST or 0
     if not self.inst.components.ling_poetry:HasEnough(cost) then
-      -- TODO: 可以说话提示诗意不足
+      SayAndVoice(self.inst, "LING_SKILL_NOT_ENOUGH_POETRY")
       return false
     end
     self.inst.components.ling_poetry:Dirty(-cost)
@@ -567,6 +569,7 @@ end
 
 function LingSummonManager:Fusion(guard_inst)
   if self.inst.sg:HasStateTag("busy") then
+    SayAndVoice(self.inst, "LING_GUARD_BUSY")
     return false
   end
   -- 精英化检查
@@ -601,9 +604,7 @@ function LingSummonManager:Fusion(guard_inst)
 
   -- 需要至少两个守卫进行融合
   if #fusion_candidates < 1 then
-    if self.inst.components.talker then
-      -- TODO: 说话提示
-    end
+    SayAndVoice(self.inst, "LING_SKILL_NOT_ENOUGH_GUARD")
     return false
   end
   local pos = FindValidSpawnPoint(self.inst, 3)
@@ -615,7 +616,7 @@ function LingSummonManager:Fusion(guard_inst)
     local cfg = LING_TUNING.GetLevelGuardConfig(form, elite_level)
     local cost = cfg and cfg.SUMMON_COST or 0
     if not self.inst.components.ling_poetry:HasEnough(cost) then
-      -- TODO: 可以说话提示诗意不足
+      SayAndVoice(self.inst, "LING_SKILL_NOT_ENOUGH_POETRY")
       return false
     end
     -- 立即扣除

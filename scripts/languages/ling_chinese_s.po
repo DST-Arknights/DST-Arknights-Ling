@@ -525,7 +525,17 @@ msgstr "诗意不足"
 #. 复活
 msgctxt "STRINGS.CHARACTERS.LING.ANNOUNCE_REVIVE_IN_DREAM_ISLAND"
 msgid "I will not let this dream end."
-msgstr "梦醒时分，我将不败。"
+msgstr "梦未醒时，我将不败。"
+
+#. 守卫正忙
+msgctxt "STRINGS.CHARACTERS.GENERIC.LING_GUARD_BUSY"
+msgid "The guard is busy."
+msgstr "它正忙"
+
+#. 融合时没有足够的守卫
+msgctxt "STRINGS.CHARACTERS.GENERIC.LING_SKILL_NOT_ENOUGH_GUARD"
+msgid "Not enough guard."
+msgstr "还需要另一个"
 
 #. STRINGS.LINGGUARDNAMES.1
 msgctxt "STRINGS.LINGGUARDNAMES.1"
