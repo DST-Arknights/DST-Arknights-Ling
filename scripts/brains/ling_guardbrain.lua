@@ -31,6 +31,9 @@ end
 
 local function GetFaceTargetFn(inst)
     local leader = GetLeader(inst)
+    if leader == nil then
+        return nil
+    end
     if not WobyBrainCommon.IsTryingToPerformAction(inst, leader, nil) then
         return leader
     end
