@@ -10,7 +10,7 @@ local skillConfig = {{
   activationMode = ARK_CONSTANTS.ACTIVATION_MODE.MANUAL,
   levels = {{
     desc = STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING[1][1],
-    activationEnergy = 10,
+    activationEnergy = 60,
     buffDuration = 25,
     config = {
       attackSpeed = 1.2,
@@ -56,8 +56,7 @@ local skillConfig = {{
     }
   }, {
     desc = STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING[2][2],
-    activationEnergy = 3,
-    -- activationEnergy = 10,
+    activationEnergy = 10,
     maxActivationStacks = 2,
     config = {
       damageMultiplier = 3.7,
