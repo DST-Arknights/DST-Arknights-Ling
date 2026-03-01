@@ -53,8 +53,6 @@ AddReplicableComponent("ling_summon_manager")
 AddReplicableComponent("ling_guard")
 AddReplicableComponent("ling_guard_plant")
 
-TUNING.ARK_SKILL = TUNING.ARK_SKILL or {}
-
 ArkLogger:DeclareLogger('TRACE', 'ling')
 -- 常量配置
 TUNING.LING = {}

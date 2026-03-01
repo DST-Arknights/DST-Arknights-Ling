@@ -125,6 +125,55 @@ local function AddTimeExp(inst)
   end
 end
 
+-- ========== 养成类经验获取 ==========
+
+-- 进食经验: 饱食度 ÷ 2
+local function OnEat(inst, data)
+  if inst.components.ark_elite and data.food and data.food.components.edible then
+    local hunger_value = data.food.components.edible.hungervalue or 0
+    local exp = math.floor(hunger_value / 2)
+    if exp > 0 then
+      inst.components.ark_elite:AddExp(exp)
+    end
+  end
+end
+
+-- 采摘经验: 固定10
+local function OnPickSomething(inst, data)
+  if inst.components.ark_elite then
+    inst.components.ark_elite:AddExp(10)
+  end
+end
+
+-- 完成劳动经验: 固定20 (砍树/挖矿/铲除等)
+local function OnFinishedWork(inst, data)
+  if inst.components.ark_elite then
+    inst.components.ark_elite:AddExp(20)
+  end
+end
+
+-- 烹饪经验: 固定50 (收获锅中食物时触发)
+local function OnHarvestCooking(inst, data)
+  if inst.components.ark_elite then
+    inst.components.ark_elite:AddExp(50)
+  end
+end
+
+-- 制作物品经验: 固定30
+local function OnBuildItem(inst, data)
+  if inst.components.ark_elite then
+    inst.components.ark_elite:AddExp(30)
+  end
+end
+
+-- 建造建筑经验: 固定50
+local function OnBuildStructure(inst, data)
+  if inst.components.ark_elite then
+    inst.components.ark_elite:AddExp(50)
+  end
+end
+
+-- ========================================
 
 local function OnChangeArea(inst, area)
   local on_ling_island = area ~= nil and area.tags and table.contains(area.tags, "ling_dream_island")
@@ -253,6 +302,14 @@ local function master_post_init(inst)
   inst:ListenForEvent("changearea", OnChangeArea)
   inst:ListenForEvent("emote", OnEmote)
 
+  -- 养成类经验事件监听
+  inst:ListenForEvent("oneat", OnEat)                           -- 进食
+  inst:ListenForEvent("picksomething", OnPickSomething)         -- 采摘
+  inst:ListenForEvent("finishedwork", OnFinishedWork)           -- 完成劳动
+  inst:ListenForEvent("builditem", OnBuildItem)                 -- 制作物品
+  inst:ListenForEvent("buildstructure", OnBuildStructure)       -- 建造建筑
+  inst:ListenForEvent("learncookbookrecipe", OnHarvestCooking)  -- 烹饪收获
+
   -- 复活后重新应用睡眠抗性
   inst:ListenForEvent("ms_respawnedfromghost", function()
     if inst.components.grogginess then
@@ -278,7 +335,7 @@ local function master_post_init(inst)
       end)
     end
   end)
-  inst:DoPeriodicTask(60, AddTimeExp)
+  -- inst:DoPeriodicTask(60, AddTimeExp)
   -- 记录是否登陆过梦岛
   inst._visited_dream_island = false
   -- 记录是否登陆过云山亭
