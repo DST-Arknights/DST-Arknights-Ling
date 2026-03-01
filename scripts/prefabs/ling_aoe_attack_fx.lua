@@ -9,6 +9,6 @@ return ArkMakeFx({
          -- 缩放
         inst.AnimState:SetScale(0.6, 0.6, 0.6)
         -- 动画减慢
-        inst.AnimState:SetDeltaTimeMultiplier(0.8)
+        inst.AnimState:SetDeltaTimeMultiplier(0.6)
     end,
 })
