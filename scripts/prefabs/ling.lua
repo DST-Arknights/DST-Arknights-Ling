@@ -141,6 +141,39 @@ local function OnChangeArea(inst, area)
   end
 end
 
+local function IsIdleBasicGuardForNerd(guard)
+  if guard == nil or not guard:IsValid() then
+    return false
+  end
+  if guard.prefab ~= "ling_guard_basic" then
+    return false
+  end
+  if guard.components == nil or guard.components.health == nil or guard.components.health:IsDead() then
+    return false
+  end
+  if guard.components.combat ~= nil and guard.components.combat.target ~= nil then
+    return false
+  end
+  if guard.sg:HasStateTag("busy") or guard.sg:HasStateTag("sleeping") then
+    return false
+  end
+  return guard.sg:HasStateTag("idle")
+end
+
+local function OnEmote(inst, data)
+  if inst.components == nil or inst.components.ling_summon_manager == nil then
+    return
+  end
+  inst.components.ling_summon_manager:OptionalAllGuard(function(guard)
+    if IsIdleBasicGuardForNerd(guard) then
+      guard:PushEvent("ling_guard_do_nerd", {
+        leader = inst,
+        emote = data,
+      })
+    end
+  end)
+end
+
 local function OnSave(inst, data)
   data._visited_dream_island = inst._visited_dream_island
   data._visited_cloud_pavilion = inst._visited_cloud_pavilion
@@ -216,6 +249,7 @@ local function master_post_init(inst)
   end
   inst:ListenForEvent("ms_playerreroll", OnReroll)
   inst:ListenForEvent("changearea", OnChangeArea)
+  inst:ListenForEvent("emote", OnEmote)
 
   -- 复活后重新应用睡眠抗性
   inst:ListenForEvent("ms_respawnedfromghost", function()

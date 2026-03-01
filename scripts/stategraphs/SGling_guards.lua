@@ -42,6 +42,18 @@ local events =
             inst.sg:GoToState("wake")
         end
     end),
+    EventHandler("ling_guard_do_nerd", function(inst)
+        if inst.components.health ~= nil and inst.components.health:IsDead() then
+            return
+        end
+        if inst.sg:HasStateTag("busy") or inst.sg:HasStateTag("sleeping") then
+            return
+        end
+        if not inst.sg:HasStateTag("idle") then
+            return
+        end
+        inst.sg:GoToState("nerd")
+    end),
 }
 
 local function goto_idle(inst)
@@ -299,9 +311,7 @@ local states =
         events =
         {
             EventHandler("animover", function(inst)
-                if inst.AnimState:AnimDone() then
-                    inst.sg:GoToState("idle")
-                end
+                inst.sg:GoToState("idle")
             end),
         },
     },
