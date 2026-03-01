@@ -28,8 +28,8 @@ local function OnAttached(inst, target)
   local totalTime = cfg.SO_IS_WRIT_AN_ODE_TO_WINE_BUFF_DURATION or 10
   local remainingTime = inst.components.timer:GetTimeLeft("so_is_writ_an_ode_to_wine_buff_duration") or totalTime
   inst.components.timer:StartTimer("so_is_writ_an_ode_to_wine_buff_duration", totalTime)
-  ArkLogger:Debug("so_is_writ_an_ode_to_wine_buff OnAttached targetElite=", targetElite, STRINGS.UI.SO_IS_WRIT_AN_ODE_TO_WINE.DESC[tostring(targetElite)])
-  inst.components.ark_buff_icon:SetDesc(STRINGS.UI.SO_IS_WRIT_AN_ODE_TO_WINE.DESC[tostring(targetElite)])
+  ArkLogger:Debug("so_is_writ_an_ode_to_wine_buff OnAttached targetElite=", targetElite, STRINGS.UI.SO_IS_WRIT_AN_ODE_TO_WINE.DESC[targetElite])
+  inst.components.ark_buff_icon:SetDesc(STRINGS.UI.SO_IS_WRIT_AN_ODE_TO_WINE.DESC[targetElite])
   inst.components.ark_buff_icon:SetTotalTime(totalTime)
   inst.components.ark_buff_icon:SetRemainingTime(remainingTime)
   inst.components.ark_buff_icon:AttachTo(target)
