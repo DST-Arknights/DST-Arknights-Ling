@@ -3658,7 +3658,7 @@
                 </key>
             </timeline>
         </animation>
-        <animation id="5" name="nerd" length="5500">
+        <animation id="5" name="nerd" length="6000">
             <mainline>
                 <key id="0">
                     <bone_ref id="0" timeline="38" key="0"/>
@@ -3708,14 +3708,14 @@
                     <object_ref id="16" parent="22" name="hand-1" folder="1" file="1" abs_x="-0.093365" abs_y="169.957472" abs_pivot_x="0.496445" abs_pivot_y="0.62881" abs_angle="36.645183" abs_scale_x="1" abs_scale_y="1" abs_a="1" timeline="13" key="0" z_index="16"/>
                     <object_ref id="17" parent="23" name="hand-2" folder="1" file="2" abs_x="-14.110341" abs_y="135.329682" abs_pivot_x="0.551421" abs_pivot_y="0.48846" abs_angle="21.311989" abs_scale_x="1" abs_scale_y="1" abs_a="1" timeline="14" key="0" z_index="17"/>
                     <object_ref id="18" parent="24" name="hand-3" folder="1" file="3" abs_x="-46.335334" abs_y="125.899453" abs_pivot_x="0.777784" abs_pivot_y="0.31354" abs_angle="42.676989" abs_scale_x="1" abs_scale_y="1" abs_a="1" timeline="15" key="0" z_index="18"/>
-                    <object_ref id="19" parent="25" name="hand-4" folder="1" file="4" abs_x="-83.499652" abs_y="110.565123" abs_pivot_x="0" abs_pivot_y="1" abs_angle="41.413163" abs_scale_x="1" abs_scale_y="1" abs_a="1" timeline="16" key="0" z_index="19"/>
-                    <object_ref id="20" parent="26" name="hand-5" folder="1" file="5" abs_x="-35.33154" abs_y="117.952851" abs_pivot_x="0.432823" abs_pivot_y="0.732906" abs_angle="19.142275" abs_scale_x="1" abs_scale_y="1" abs_a="1" timeline="17" key="0" z_index="20"/>
-                    <object_ref id="21" parent="4" name="head-0" folder="2" file="0" abs_x="176.478447" abs_y="364.421641" abs_pivot_x="0" abs_pivot_y="1" abs_angle="266.254895" abs_scale_x="1" abs_scale_y="1" abs_a="1" timeline="21" key="0" z_index="21"/>
-                    <object_ref id="22" parent="8" name="head-1" folder="2" file="1" abs_x="173.519845" abs_y="271.882117" abs_pivot_x="0.463073" abs_pivot_y="0.503687" abs_angle="337.115188" abs_scale_x="1" abs_scale_y="1" abs_a="1" timeline="22" key="0" z_index="22"/>
-                    <object_ref id="23" parent="2" name="head-2" folder="2" file="2" abs_x="47.301089" abs_y="284.096579" abs_pivot_x="0.662365" abs_pivot_y="0.5101" abs_angle="339.088006" abs_scale_x="0.966451" abs_scale_y="1.016206" abs_a="1" timeline="23" key="0" z_index="23"/>
-                    <object_ref id="24" parent="3" name="head-3" folder="2" file="3" abs_x="53.764366" abs_y="277.520958" abs_pivot_x="0.210938" abs_pivot_y="0.869884" abs_angle="6.755853" abs_scale_x="0.966451" abs_scale_y="1.016206" abs_a="1" timeline="24" key="0" z_index="24"/>
-                    <object_ref id="25" parent="2" name="head-4" folder="2" file="4" abs_x="38.124516" abs_y="297.839424" abs_pivot_x="0.208093" abs_pivot_y="0.288182" abs_angle="340.209739" abs_scale_x="0.966451" abs_scale_y="1.016206" abs_a="1" timeline="25" key="0" z_index="25"/>
-                    <object_ref id="26" parent="23" name="face-0_000" folder="3" file="0" abs_x="-98.520044" abs_y="111.284437" abs_pivot_x="0.77443" abs_pivot_y="0.326675" abs_angle="360" abs_scale_x="-1" abs_scale_y="1" abs_a="0" timeline="57" key="0" z_index="26"/>
+                    <object_ref id="19" parent="23" name="face-0_000" folder="3" file="0" abs_x="-98.520044" abs_y="111.284437" abs_pivot_x="0.77443" abs_pivot_y="0.326675" abs_angle="360" abs_scale_x="-1" abs_scale_y="1" abs_a="0" timeline="57" key="0" z_index="19"/>
+                    <object_ref id="20" parent="25" name="hand-4" folder="1" file="4" abs_x="-83.499652" abs_y="110.565123" abs_pivot_x="0" abs_pivot_y="1" abs_angle="41.413163" abs_scale_x="1" abs_scale_y="1" abs_a="1" timeline="16" key="0" z_index="20"/>
+                    <object_ref id="21" parent="26" name="hand-5" folder="1" file="5" abs_x="-35.33154" abs_y="117.952851" abs_pivot_x="0.432823" abs_pivot_y="0.732906" abs_angle="19.142275" abs_scale_x="1" abs_scale_y="1" abs_a="1" timeline="17" key="0" z_index="21"/>
+                    <object_ref id="22" parent="4" name="head-0" folder="2" file="0" abs_x="176.478447" abs_y="364.421641" abs_pivot_x="0" abs_pivot_y="1" abs_angle="266.254895" abs_scale_x="1" abs_scale_y="1" abs_a="1" timeline="21" key="0" z_index="22"/>
+                    <object_ref id="23" parent="8" name="head-1" folder="2" file="1" abs_x="173.519845" abs_y="271.882117" abs_pivot_x="0.463073" abs_pivot_y="0.503687" abs_angle="337.115188" abs_scale_x="1" abs_scale_y="1" abs_a="1" timeline="22" key="0" z_index="23"/>
+                    <object_ref id="24" parent="2" name="head-2" folder="2" file="2" abs_x="47.301089" abs_y="284.096579" abs_pivot_x="0.662365" abs_pivot_y="0.5101" abs_angle="339.088006" abs_scale_x="0.966451" abs_scale_y="1.016206" abs_a="1" timeline="23" key="0" z_index="24"/>
+                    <object_ref id="25" parent="3" name="head-3" folder="2" file="3" abs_x="53.764366" abs_y="277.520958" abs_pivot_x="0.210938" abs_pivot_y="0.869884" abs_angle="6.755853" abs_scale_x="0.966451" abs_scale_y="1.016206" abs_a="1" timeline="24" key="0" z_index="25"/>
+                    <object_ref id="26" parent="2" name="head-4" folder="2" file="4" abs_x="38.124516" abs_y="297.839424" abs_pivot_x="0.208093" abs_pivot_y="0.288182" abs_angle="340.209739" abs_scale_x="0.966451" abs_scale_y="1.016206" abs_a="1" timeline="25" key="0" z_index="26"/>
                     <object_ref id="27" parent="7" name="head-5" folder="2" file="5" abs_x="-11.24529" abs_y="308.009271" abs_pivot_x="0" abs_pivot_y="1" abs_angle="299.047825" abs_scale_x="1" abs_scale_y="1" abs_a="1" timeline="26" key="0" z_index="27"/>
                     <object_ref id="28" parent="6" name="head-6" folder="2" file="6" abs_x="23.04762" abs_y="384.212585" abs_pivot_x="0" abs_pivot_y="1" abs_angle="324.994288" abs_scale_x="1" abs_scale_y="1" abs_a="1" timeline="27" key="0" z_index="28"/>
                     <object_ref id="29" parent="5" name="head-7" folder="2" file="7" abs_x="118.014916" abs_y="410.983682" abs_pivot_x="0" abs_pivot_y="1" abs_angle="342.855167" abs_scale_x="1" abs_scale_y="1" abs_a="1" timeline="28" key="0" z_index="29"/>
@@ -3768,14 +3768,14 @@
                     <object_ref id="16" parent="22" timeline="13" key="0" z_index="16"/>
                     <object_ref id="17" parent="23" timeline="14" key="0" z_index="17"/>
                     <object_ref id="18" parent="24" timeline="15" key="0" z_index="18"/>
-                    <object_ref id="19" parent="25" timeline="16" key="0" z_index="19"/>
-                    <object_ref id="20" parent="26" timeline="17" key="0" z_index="20"/>
-                    <object_ref id="21" parent="4" timeline="21" key="0" z_index="21"/>
-                    <object_ref id="22" parent="8" timeline="22" key="0" z_index="22"/>
-                    <object_ref id="23" parent="2" timeline="23" key="0" z_index="23"/>
-                    <object_ref id="24" parent="3" timeline="24" key="0" z_index="24"/>
-                    <object_ref id="25" parent="2" timeline="25" key="0" z_index="25"/>
-                    <object_ref id="26" parent="23" timeline="57" key="0" z_index="26"/>
+                    <object_ref id="19" parent="23" timeline="57" key="0" z_index="19"/>
+                    <object_ref id="20" parent="25" timeline="16" key="0" z_index="20"/>
+                    <object_ref id="21" parent="26" timeline="17" key="0" z_index="21"/>
+                    <object_ref id="22" parent="4" timeline="21" key="0" z_index="22"/>
+                    <object_ref id="23" parent="8" timeline="22" key="0" z_index="23"/>
+                    <object_ref id="24" parent="2" timeline="23" key="0" z_index="24"/>
+                    <object_ref id="25" parent="3" timeline="24" key="0" z_index="25"/>
+                    <object_ref id="26" parent="2" timeline="25" key="0" z_index="26"/>
                     <object_ref id="27" parent="7" timeline="26" key="0" z_index="27"/>
                     <object_ref id="28" parent="6" timeline="27" key="0" z_index="28"/>
                     <object_ref id="29" parent="5" timeline="28" key="0" z_index="29"/>
@@ -3828,14 +3828,14 @@
                     <object_ref id="16" parent="22" timeline="13" key="0" z_index="16"/>
                     <object_ref id="17" parent="23" timeline="14" key="0" z_index="17"/>
                     <object_ref id="18" parent="24" timeline="15" key="0" z_index="18"/>
-                    <object_ref id="19" parent="25" timeline="16" key="0" z_index="19"/>
-                    <object_ref id="20" parent="26" timeline="17" key="0" z_index="20"/>
-                    <object_ref id="21" parent="4" timeline="21" key="0" z_index="21"/>
-                    <object_ref id="22" parent="8" timeline="22" key="0" z_index="22"/>
-                    <object_ref id="23" parent="2" timeline="23" key="0" z_index="23"/>
-                    <object_ref id="24" parent="3" timeline="24" key="0" z_index="24"/>
-                    <object_ref id="25" parent="2" timeline="25" key="0" z_index="25"/>
-                    <object_ref id="26" parent="23" timeline="57" key="1" z_index="26"/>
+                    <object_ref id="19" parent="23" timeline="57" key="1" z_index="19"/>
+                    <object_ref id="20" parent="25" timeline="16" key="0" z_index="20"/>
+                    <object_ref id="21" parent="26" timeline="17" key="0" z_index="21"/>
+                    <object_ref id="22" parent="4" timeline="21" key="0" z_index="22"/>
+                    <object_ref id="23" parent="8" timeline="22" key="0" z_index="23"/>
+                    <object_ref id="24" parent="2" timeline="23" key="0" z_index="24"/>
+                    <object_ref id="25" parent="3" timeline="24" key="0" z_index="25"/>
+                    <object_ref id="26" parent="2" timeline="25" key="0" z_index="26"/>
                     <object_ref id="27" parent="7" timeline="26" key="0" z_index="27"/>
                     <object_ref id="28" parent="6" timeline="27" key="0" z_index="28"/>
                     <object_ref id="29" parent="5" timeline="28" key="0" z_index="29"/>
@@ -3888,14 +3888,14 @@
                     <object_ref id="16" parent="22" timeline="13" key="0" z_index="16"/>
                     <object_ref id="17" parent="23" timeline="14" key="0" z_index="17"/>
                     <object_ref id="18" parent="24" timeline="15" key="0" z_index="18"/>
-                    <object_ref id="19" parent="25" timeline="16" key="0" z_index="19"/>
-                    <object_ref id="20" parent="26" timeline="17" key="0" z_index="20"/>
-                    <object_ref id="21" parent="4" timeline="21" key="0" z_index="21"/>
-                    <object_ref id="22" parent="8" timeline="22" key="0" z_index="22"/>
-                    <object_ref id="23" parent="2" timeline="23" key="0" z_index="23"/>
-                    <object_ref id="24" parent="3" timeline="24" key="0" z_index="24"/>
-                    <object_ref id="25" parent="2" timeline="25" key="0" z_index="25"/>
-                    <object_ref id="26" parent="23" timeline="57" key="2" z_index="26"/>
+                    <object_ref id="19" parent="23" timeline="57" key="2" z_index="19"/>
+                    <object_ref id="20" parent="25" timeline="16" key="0" z_index="20"/>
+                    <object_ref id="21" parent="26" timeline="17" key="0" z_index="21"/>
+                    <object_ref id="22" parent="4" timeline="21" key="0" z_index="22"/>
+                    <object_ref id="23" parent="8" timeline="22" key="0" z_index="23"/>
+                    <object_ref id="24" parent="2" timeline="23" key="0" z_index="24"/>
+                    <object_ref id="25" parent="3" timeline="24" key="0" z_index="25"/>
+                    <object_ref id="26" parent="2" timeline="25" key="0" z_index="26"/>
                     <object_ref id="27" parent="7" timeline="26" key="0" z_index="27"/>
                     <object_ref id="28" parent="6" timeline="27" key="0" z_index="28"/>
                     <object_ref id="29" parent="5" timeline="28" key="0" z_index="29"/>
@@ -3948,14 +3948,14 @@
                     <object_ref id="16" parent="22" timeline="13" key="0" z_index="16"/>
                     <object_ref id="17" parent="23" timeline="14" key="0" z_index="17"/>
                     <object_ref id="18" parent="24" timeline="15" key="0" z_index="18"/>
-                    <object_ref id="19" parent="25" timeline="16" key="0" z_index="19"/>
-                    <object_ref id="20" parent="26" timeline="17" key="0" z_index="20"/>
-                    <object_ref id="21" parent="4" timeline="21" key="0" z_index="21"/>
-                    <object_ref id="22" parent="8" timeline="22" key="0" z_index="22"/>
-                    <object_ref id="23" parent="2" timeline="23" key="0" z_index="23"/>
-                    <object_ref id="24" parent="3" timeline="24" key="0" z_index="24"/>
-                    <object_ref id="25" parent="2" timeline="25" key="0" z_index="25"/>
-                    <object_ref id="26" parent="23" timeline="57" key="2" z_index="26"/>
+                    <object_ref id="19" parent="23" timeline="57" key="2" z_index="19"/>
+                    <object_ref id="20" parent="25" timeline="16" key="0" z_index="20"/>
+                    <object_ref id="21" parent="26" timeline="17" key="0" z_index="21"/>
+                    <object_ref id="22" parent="4" timeline="21" key="0" z_index="22"/>
+                    <object_ref id="23" parent="8" timeline="22" key="0" z_index="23"/>
+                    <object_ref id="24" parent="2" timeline="23" key="0" z_index="24"/>
+                    <object_ref id="25" parent="3" timeline="24" key="0" z_index="25"/>
+                    <object_ref id="26" parent="2" timeline="25" key="0" z_index="26"/>
                     <object_ref id="27" parent="7" timeline="26" key="0" z_index="27"/>
                     <object_ref id="28" parent="6" timeline="27" key="0" z_index="28"/>
                     <object_ref id="29" parent="5" timeline="28" key="0" z_index="29"/>
@@ -8557,7 +8557,7 @@
                 </key>
             </timeline>
         </animation>
-        <animation id="10" name="levelup" length="400">
+        <animation id="10" name="leavl_up" length="400">
             <mainline>
                 <key id="0">
                     <bone_ref id="0" timeline="38" key="0"/>
