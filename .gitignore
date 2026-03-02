@@ -38,9 +38,9 @@ luac.out
 *.hex
 
 # Assets
-*.fev
-*.fsb
-*.fdp.bak
+/soundSource/**/*.fev
+/soundSource/**/*.fsb
+/soundSource/**/*.fdp.bak
 .fsbcache/
 /temp/
 /.VSCodeCounter
