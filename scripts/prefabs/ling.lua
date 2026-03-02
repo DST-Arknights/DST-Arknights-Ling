@@ -66,15 +66,15 @@ local function OnApplyElite(inst, elite, level)
     return
   end
   -- 更新基础属性
-  local currentHealth = inst.components.health.currenthealth
+  local healthPercent = inst.components.health:GetPercent()
   inst.components.health:SetMaxHealth(data.MAX_HEALTH)
-  inst.components.health:SetCurrentHealth(currentHealth)
-  local currentHunger = inst.components.hunger.current
+  inst.components.health:SetPercent(healthPercent)
+  local hungerPercent = inst.components.hunger:GetPercent()
   inst.components.hunger:SetMax(data.MAX_HUNGER)
-  inst.components.hunger:SetCurrent(currentHunger)
-  local currentSanity = inst.components.sanity.current
+  inst.components.hunger:SetPercent(hungerPercent)
+  local sanityPercent = inst.components.sanity:GetPercent()
   inst.components.sanity:SetMax(data.MAX_SANITY)
-  inst.components.sanity.current = currentSanity
+  inst.components.sanity:SetPercent(sanityPercent)
   -- 应用移动速度
   inst.components.locomotor:SetExternalSpeedMultiplier(inst, "ling_elite_speed", data.SPEED_MULTIPLIER)
   inst.components.combat.externaldamagemultipliers:SetModifier(inst, data.DAMAGE_MULTIPLIER, "ling_elite_damage")

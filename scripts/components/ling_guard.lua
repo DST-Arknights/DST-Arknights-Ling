@@ -251,9 +251,9 @@ function LingGuardBehavior:ApplyLevelEffects(full_property)
             self.inst.components.health:SetMaxHealth(cfg.HEALTH)
         else
             local health = self.inst.components.health
-            local currentHealth = health.currenthealth
+            local healthPercent = health:GetPercent()
             health:SetMaxHealth(cfg.HEALTH)
-            health:SetCurrentHealth(math.min(currentHealth, cfg.HEALTH))
+            health:SetPercent(healthPercent)
         end
     end
     if self.inst.components.combat then
