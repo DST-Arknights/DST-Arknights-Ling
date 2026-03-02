@@ -57,16 +57,16 @@ ArkLogger:DeclareLogger('TRACE', 'ling')
 -- 常量配置
 TUNING.LING = {}
 
-modimport("lingmain/ling_elite")
-modimport("lingmain/summon_guard")
-modimport("lingmain/ling_guard_containers")
-modimport("lingmain/ling_jars")
-modimport("lingmain/ling_poetry")
-modimport("lingmain/ling_desk")
-modimport("lingmain/ling_bookshelf")
-modimport("lingmain/poem")
-modimport("lingmain/ling_cloud_pavilion")
-modimport("lingmain/ling_dream_island")
+modimport("modmain/ling_elite")
+modimport("modmain/summon_guard")
+modimport("modmain/ling_guard_containers")
+modimport("modmain/ling_jars")
+modimport("modmain/ling_poetry")
+modimport("modmain/ling_desk")
+modimport("modmain/ling_bookshelf")
+modimport("modmain/poem")
+modimport("modmain/ling_cloud_pavilion")
+modimport("modmain/ling_dream_island")
 
 RegisterInventoryItemAtlas("images/inventoryimages/ling_lantern.xml", "ling_lantern.tex")
 -- 6*木板 2*活木 1*蝴蝶翅膀 10*噩梦燃料
