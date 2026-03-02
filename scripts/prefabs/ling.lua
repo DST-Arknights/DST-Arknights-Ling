@@ -4,6 +4,8 @@ local MakePlayerCharacter = require "prefabs/player_common"
 local assets = {
   Asset("ANIM", "anim/ling.zip"),
   Asset("ATLAS", "images/map_icons/ling.xml"),
+  Asset("SOUNDPACKAGE", "sound/ling.fev"),
+  Asset("FILE", "sound/ling.fsb"),
 }
 local prefabs = {
   "ling_lantern",
@@ -223,6 +225,12 @@ local function OnEmote(inst, data)
   end)
 end
 
+local function OnTalk(inst, data)
+  -- local idleVoices = { "IDLE1", "IDLE2" }
+  -- local voiceIndex = math.random(1, #idleVoices)
+  -- SayAndVoice(inst, idleVoices[voiceIndex], { notext = true })
+end
+
 local function OnSave(inst, data)
   data._visited_dream_island = inst._visited_dream_island
   data._visited_cloud_pavilion = inst._visited_cloud_pavilion
@@ -246,7 +254,7 @@ local function master_post_init(inst)
   inst.MiniMapEntity:SetIcon("ling.tex")
 
   -- 添加组件
-  inst:AddComponent("ark_currency")
+  -- inst:AddComponent("ark_currency")
   inst:AddComponent("ling_poetry")
   inst:AddComponent("planarentity")
   inst:AddComponent("reader")
@@ -301,6 +309,8 @@ local function master_post_init(inst)
   inst:ListenForEvent("ms_playerreroll", OnReroll)
   inst:ListenForEvent("changearea", OnChangeArea)
   inst:ListenForEvent("emote", OnEmote)
+
+  inst:ListenForEvent("ontalk", OnTalk)
 
   -- 养成类经验事件监听
   inst:ListenForEvent("oneat", OnEat)                           -- 进食

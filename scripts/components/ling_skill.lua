@@ -125,7 +125,7 @@ local function RegisterSkill1(self)
     end
   end)
   skill1:SetOnActive(function()
-    -- 播放点音效什么的
+    SayAndVoice(inst, "LING_SKILL1")
     -- 扣除诗意
     local cost = skill1:GetLevelConfig().poetryCost
     inst.components.ling_poetry:Dirty(-cost)
@@ -161,6 +161,7 @@ local function RegisterSkill2(self)
   local skill2 = inst.components.ark_skill:GetSkill("skill2")
   self.skill2_stack = 0
   skill2:SetOnActive(function()
+    SayAndVoice(inst, "LING_SKILL2")
     -- 伤害增加
     local damageMultiplier = skill2:GetLevelConfig().damageMultiplier
     inst.components.combat.externaldamagemultipliers:SetModifier(inst, damageMultiplier, damageMultiplierSource)
@@ -233,7 +234,9 @@ local function RegisterSkill3(self)
     end
   end)
   skill3:SetOnActive(function()
-    -- 播放点音效什么的
+    local voice = {"LING_SKILL3_1", "LING_SKILL3_2"}
+    local voiceIndex = math.random(1, #voice)
+    SayAndVoice(inst, voice[voiceIndex])
     -- 扣除诗意
     local cost = skill3:GetLevelConfig().poetryCost
     inst.components.ling_poetry:Dirty(-cost)

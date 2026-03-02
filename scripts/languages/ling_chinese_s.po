@@ -537,6 +537,36 @@ msgctxt "STRINGS.CHARACTERS.GENERIC.LING_SKILL_NOT_ENOUGH_GUARD"
 msgid "Not enough guard."
 msgstr "独木难支，尚缺一位。"
 
+#. 技能一
+msgctxt "STRINGS.CHARACTERS.GENERIC.LING_SKILL1"
+msgid "Skill 1"
+msgstr "折戟沉沙，壮志未酬。"
+
+#. 技能二
+msgctxt "STRINGS.CHARACTERS.GENERIC.LING_SKILL2"
+msgid "Skill 2"
+msgstr "万物一言，方有大气象。"
+
+#. 技能三 其一
+msgctxt "STRINGS.CHARACTERS.GENERIC.LING_SKILL3_1"
+msgid "Skill 3"
+msgstr "沙场埋恨何时绝？"
+
+#. 技能三 其二
+msgctxt "STRINGS.CHARACTERS.GENERIC.LING_SKILL3_2"
+msgid "Skill 4"
+msgstr "	直抒胸臆，酣畅淋漓。"
+
+#. 空闲时的台词1
+msgctxt "STRINGS.CHARACTERS.GENERIC.IDLE1"
+msgid "Idle 1"
+msgstr "轮到我了吗？"
+
+#. 空闲时的台词2
+msgctxt "STRINGS.CHARACTERS.GENERIC.IDLE2"
+msgid "Idle 2"
+msgstr "一曲战歌，一首悲词"
+
 #. STRINGS.LINGGUARDNAMES.1
 msgctxt "STRINGS.LINGGUARDNAMES.1"
 msgid "孤鸿"
