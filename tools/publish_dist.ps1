@@ -34,7 +34,6 @@ $rootDirs = @(
     'images',
     'languages',
     'modmain',
-    'lingman',
     'sound',
     'scripts',
     'shaders'
