@@ -23,6 +23,7 @@ $rootFiles = @(
     'modicon.xml',
     'modinfo.lua',
     'modmain.lua',
+    'modworldgenmain.lua',
     'LICENSE.md'
 )
 
