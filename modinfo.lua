@@ -48,5 +48,5 @@ configuration_options = { {
     default = "auto"
 }}
 mod_dependencies = {
-    {["DST-ArknightsItemPackage"] = false},
+    { workshop = "workshop-3677284770"},
 }
