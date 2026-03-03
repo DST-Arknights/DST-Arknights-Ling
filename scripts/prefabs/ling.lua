@@ -345,6 +345,11 @@ local function master_post_init(inst)
       end)
     end
   end)
+
+  -- 免疫诅咒
+  inst.components.cursable.IsCursable = function(self, item)
+    return false
+  end
   -- inst:DoPeriodicTask(60, AddTimeExp)
   -- 记录是否登陆过梦岛
   inst._visited_dream_island = false
