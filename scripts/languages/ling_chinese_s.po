@@ -537,6 +537,11 @@ msgctxt "STRINGS.CHARACTERS.GENERIC.LING_SKILL_NOT_ENOUGH_GUARD"
 msgid "Not enough guard."
 msgstr "独木难支，尚缺一位。"
 
+#. 附近没有可用落脚点
+msgctxt "STRINGS.CHARACTERS.GENERIC.LING_GUARD_NO_SPAWN_POINT"
+msgid "No valid spawn point nearby."
+msgstr "此地无处落足，且移步再引清平入梦。"
+
 #. 技能一
 msgctxt "STRINGS.CHARACTERS.GENERIC.LING_SKILL1"
 msgid "Skill 1"

@@ -6,6 +6,7 @@ local FORM = CONSTANTS.GUARD_FORM
 local GUARD_LOCATION = CONSTANTS.GUARD_LOCATION
 local GUARD_SLOT_STATUS = CONSTANTS.GUARD_SLOT_STATUS
 local SLOT_ROLE = CONSTANTS.SLOT_ROLE
+local GUARD_SPAWN_RADIUS = 5
 
 local MAX_GUARDS = 0;
 -- 遍历 TUNING.LING.ELITE
@@ -49,16 +50,6 @@ local function NormalizeWorldId(world_id)
   return EncodeWorldId(world_id)
 end
 
--- 寻找周围可用地块用于生成召唤物
-local function FindValidSpawnPoint(inst, radius)
-  local x, y, z = inst.Transform:GetWorldPosition()
-  local pt = Vector3(x, 0, z)
-  local offset = FindWalkableOffset(pt, math.random() * TWOPI, radius, 8, true, false, nil, false, true)
-  if offset then
-    return pt + offset
-  end
-  return nil
-end
 
 -- 直接献祭两名守卫：播放特效后移除
 local function SacrificeGuard(guard)
@@ -536,6 +527,14 @@ function LingSummonManager:SummonBasic(slot_index, pos)
     return false
   end
 
+  if pos == nil then
+    pos = FindNearbyLand(self.inst, GUARD_SPAWN_RADIUS)
+    if not pos then
+      SayAndVoice(self.inst, "LING_GUARD_NO_SPAWN_POINT")
+      return false
+    end
+  end
+
   -- 自动获取当前精英等级
   local elite_level = (self.inst.components.ark_elite and self.inst.components.ark_elite.elite) or 1
 
@@ -548,12 +547,6 @@ function LingSummonManager:SummonBasic(slot_index, pos)
       return false
     end
     self.inst.components.ling_poetry:Dirty(-cost)
-  end
-  if pos == nil then
-    pos = FindValidSpawnPoint(self.inst, 3)
-    if not pos then
-      return false
-    end
   end
   self:SetSlotSummoning(slots, form, elite_level)
   self.inst.sg:GoToState("ling_summon", {
@@ -607,8 +600,9 @@ function LingSummonManager:Fusion(guard_inst)
     SayAndVoice(self.inst, "LING_SKILL_NOT_ENOUGH_GUARD")
     return false
   end
-  local pos = FindValidSpawnPoint(self.inst, 3)
+  local pos = FindNearbyLand(self.inst, GUARD_SPAWN_RADIUS)
   if not pos then
+    SayAndVoice(self.inst, "LING_GUARD_NO_SPAWN_POINT")
     return false
   end
   local form = FORM.XIANJING
