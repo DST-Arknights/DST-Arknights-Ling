@@ -17,6 +17,9 @@ local function ApplyBuffEffect(inst, target, cfg)
   end
 end
 local function OnAttached(inst, target)
+  if not target.components.ark_elite then
+    return
+  end
   ArkLogger:Debug("so_is_writ_an_ode_to_wine_buff OnAttached", inst, target)
   inst.entity:SetParent(target.entity)
   inst.Transform:SetPosition(0, 0, 0) --in case of loading
@@ -45,7 +48,9 @@ local function OnDetached(inst, target)
 end
 
 local function OnExtended(inst, target)
-  ArkLogger:Debug("so_is_writ_an_ode_to_wine_buff OnExtended")
+  if not target.components.ark_elite then
+    return
+  end
   inst.components.timer:StopTimer("so_is_writ_an_ode_to_wine_buff_duration")
   local targetElite = target.components.ark_elite.elite
   local cfg = TUNING.LING.ELITE[targetElite] or {}
