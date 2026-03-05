@@ -19,7 +19,6 @@ local LingGuardReplica = Class(function(self, inst)
   self.inst = inst
   self.state = NetState(self.inst, "ling_guard")
   self.state:OnAttached(function()
-    ArkLogger:Debug("LingGuardReplica:OnAttached", self.inst)
     SafeCallHUD(ThePlayer):OpenGuardPanel(self.inst)
     local leader = self.inst.replica.follower and self.inst.replica.follower:GetLeader()
     if not TheNet:IsDedicated() and ThePlayer == leader then

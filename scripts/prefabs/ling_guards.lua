@@ -265,18 +265,24 @@ local function OnGuardKilled(inst, data)
         return
     end
     local leader = inst.components.follower and inst.components.follower.leader
-    if not leader or not leader.components.ark_elite then
+    if not leader then
         return
     end
-    -- 获取目标血量, 增加被击杀生物的最大血量数量的经验
-    local health = target.components.health and target.components.health.maxhealth or 0
-    local exp = math.floor(health)
-    if exp > 0 then
-        leader.components.ark_elite:AddExp(exp)
+    if leader.components.ark_elite then
+        if target.components.health then
+            local exp = math.floor(target.components.health.maxhealth)
+            leader.components.ark_elite:AddExp(exp)
+        end
+        -- 如果是击杀的巨兽，清除追踪（避免死亡回调重复发放）
+        if target:HasTag("epic") then
+            leader.components.ark_elite:_StopTrackingEpic(target)
+        end
     end
-    -- 如果是击杀的巨兽，清除追踪（避免死亡回调重复发放）
-    if target:HasTag("epic") then
-        leader.components.ark_elite:_StopTrackingEpic(target)
+    if leader.components.ark_currency then
+        if target.components.health then
+            local gold = math.floor(target.components.health.maxhealth)
+            leader.components.ark_currency:AddArkGold(gold)
+        end
     end
 end
 
