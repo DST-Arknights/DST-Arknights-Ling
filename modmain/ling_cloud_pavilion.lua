@@ -217,21 +217,24 @@ local function OnDirtyCameraAnchor(inst)
         TheCamera:SetDistance(21.5)
         TheCamera.targetoffset = Vector3(2, 1.5, 0)
         TheCamera:Snap()
-        ThePlayer.HUD.ling_cloud_pavilion_mist:CloudIdle()
+        local _ = inst and inst.HUD and inst.HUD.ling_cloud_pavilion_mist:CloudIdle()
     else
         TheCamera:SetControllable(true)
         TheCamera:SetDefault()
         TheCamera:SetTarget(TheFocalPoint)
         TheCamera:Snap()
-        ThePlayer.HUD.ling_cloud_pavilion_mist:CloudOut()
+        local _ = inst and inst.HUD and inst.HUD.ling_cloud_pavilion_mist:CloudOut()
     end
 end
 
 local function OnDirtyCloudPavilionMist(inst)
+    if not inst or not inst.HUD or not inst.HUD.ling_cloud_pavilion_mist then
+        return
+    end
     if inst.ling_netvarCloudPavilionMist:value() then
-        ThePlayer.HUD.ling_cloud_pavilion_mist:CloudIn()
+        inst.HUD.ling_cloud_pavilion_mist:CloudIn()
     else
-        ThePlayer.HUD.ling_cloud_pavilion_mist:CloudOut()
+        inst.HUD.ling_cloud_pavilion_mist:CloudOut()
     end
 end
 
