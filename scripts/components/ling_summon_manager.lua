@@ -528,7 +528,7 @@ function LingSummonManager:SummonBasic(slot_index, pos)
   end
 
   if pos == nil then
-    pos = FindNearbyLand(self.inst, GUARD_SPAWN_RADIUS)
+    pos = FindNearbyLand(self.inst:GetPosition(), GUARD_SPAWN_RADIUS)
     if not pos then
       SayAndVoice(self.inst, "LING_GUARD_NO_SPAWN_POINT")
       return false
@@ -600,7 +600,7 @@ function LingSummonManager:Fusion(guard_inst)
     SayAndVoice(self.inst, "LING_SKILL_NOT_ENOUGH_GUARD")
     return false
   end
-  local pos = FindNearbyLand(self.inst, GUARD_SPAWN_RADIUS)
+  local pos = FindNearbyLand(self.inst:GetPosition(), GUARD_SPAWN_RADIUS)
   if not pos then
     SayAndVoice(self.inst, "LING_GUARD_NO_SPAWN_POINT")
     return false
