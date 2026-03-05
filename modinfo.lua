@@ -25,7 +25,7 @@ QQ群: 666511586
 欢迎大家积极参与!]]
 })
 author = "让 望月心灵"
-version = "0.0.4"
+version = "0.0.5"
 forumthread = "https://github.com/TohsakaKuro/DST-Arknights-Typhon/issues"
 
 api_version = 10
@@ -66,6 +66,6 @@ configuration_options = { {
     default = "auto"
 }}
 mod_dependencies = {
-    { workshop = "workshop-3677284770"},
-    -- {["DST-ArknightsItemPackage"] = false},
+    -- { workshop = "workshop-3677284770"},
+    {["DST-ArknightsItemPackage"] = false},
 }
