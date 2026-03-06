@@ -70,9 +70,6 @@ function LingPoetry:Recover()
   if self.inst.components.sanity:IsInsane() then
     return
   end
-  if not self.inst:HasTag("idle") then
-    return
-  end
   local bonus = 1
   if IsEntityInDreamIsland(self.inst) or IsEntityInCloudPavilion(self.inst) then
     bonus = self.poetry_recovery_in_dream_bonus
