@@ -43,6 +43,10 @@ TUNING.GAMEMODE_STARTING_ITEMS.DEFAULT.LING = {"ling_lantern", "ark_backpack"}
 TUNING.GAMEMODE_STARTING_ITEMS.LAVAARENA.LING = {"ling_lantern", "ark_backpack"}
 TUNING.GAMEMODE_STARTING_ITEMS.QUAGMIRE.LING = {"ling_lantern", "ark_backpack"}
 
+TUNING.LING_HEALTH = 50
+TUNING.LING_HUNGER = 150
+TUNING.LING_SANITY = 250
+
 AddMinimapAtlas('images/map_icons/ling.xml')
 AddMinimapAtlas('images/map_icons/ling_desk.xml')
 AddMinimapAtlas('images/map_icons/ling_guard_basic.xml')

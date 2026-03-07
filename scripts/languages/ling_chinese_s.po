@@ -5,10 +5,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "POT Version: 2.0"
 
-#. STRINGS.CHARACTER_TITLES.LING
-msgctxt "STRINGS.CHARACTER_TITLES.LING"
+#. STRINGS.CHARACTER_TITLES.ling
+msgctxt "STRINGS.CHARACTER_TITLES.ling"
 msgid "Arknights Ling"
 msgstr "令"
+
+#. STRINGS.CHARACTER_SURVIVABILITY.ling
+msgctxt "STRINGS.CHARACTER_SURVIVABILITY.ling"
+msgid "Easy"
+msgstr "简单"
 
 #. STRINGS.CHARACTERS.LING.DESCRIBE.LING_LANTERN.NORMAL
 msgctxt "STRINGS.CHARACTERS.LING.DESCRIBE.LING_LANTERN.NORMAL"
@@ -25,8 +30,8 @@ msgctxt "STRINGS.CHARACTERS.LING.DESCRIBE.LING_LANTERN.OUT"
 msgid "The lantern has gone out. It needs nightmare fuel."
 msgstr "灯灭梦醒，壶中物空……需再寻噩梦为薪。"
 
-#. STRINGS.CHARACTER_NAMES.LING
-msgctxt "STRINGS.CHARACTER_NAMES.LING"
+#. STRINGS.CHARACTER_NAMES.ling
+msgctxt "STRINGS.CHARACTER_NAMES.ling"
 msgid "Ling"
 msgstr "令"
 
@@ -65,13 +70,13 @@ msgctxt "STRINGS.RECIPE_DESC.LING_LANTERN"
 msgid "A mystical lantern that glows with ethereal light."
 msgstr "灯中似有梦，梦中似有光。"
 
-#. STRINGS.CHARACTER_DESCRIPTIONS.LING
-msgctxt "STRINGS.CHARACTER_DESCRIPTIONS.LING"
+#. STRINGS.CHARACTER_DESCRIPTIONS.ling
+msgctxt "STRINGS.CHARACTER_DESCRIPTIONS.ling"
 msgid "Cloudy peaks surge like waves, a thousand leagues of parched path unfolds"
-msgstr "云峦波涛，千里枯路"
+msgstr "*擅长诗词\n*在岁的十二枚碎片中排行第三\n*睡眠后会发生意想不到的的事情"
 
-#. STRINGS.CHARACTER_QUOTES.LING
-msgctxt "STRINGS.CHARACTER_QUOTES.LING"
+#. STRINGS.CHARACTER_QUOTES.ling
+msgctxt "STRINGS.CHARACTER_QUOTES.ling"
 msgid "The endless river through layered peaks, a solitary citadel in barren expanse, etched upon my sight"
 msgstr "长河千嶂，大荒孤城，历历在目"
 
