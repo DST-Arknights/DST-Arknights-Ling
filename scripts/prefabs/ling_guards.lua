@@ -15,6 +15,17 @@ local assets_elite = {
     Asset("ATLAS", "images/map_icons/ling_guard_elite.xml"),
 }
 
+local function CloneSlots(slots)
+    if slots == nil then
+        return nil
+    end
+    local copied = {}
+    for i = 1, #slots do
+        copied[i] = slots[i]
+    end
+    return copied
+end
+
 -- 创建持续点亮视野的图标
 local function CreateFogRevealerIcon(inst)
     if inst._fog_icon == nil then
@@ -47,10 +58,16 @@ local function OnSave_Common(inst, data)
     ArkLogger:Debug("ling_guard:OnSave", inst)
     if inst.plant_container then data.plant_container = inst.plant_container:GetSaveRecord() end
     if inst.plant_club then data.plant_club = inst.plant_club:GetSaveRecord() end
+    if inst._ling_guard_slots ~= nil then
+        data.ling_guard_slots = CloneSlots(inst._ling_guard_slots)
+    end
 end
 
 local function OnPreLoad_Common(inst, data)
     if data then
+        if data.ling_guard_slots ~= nil then
+            inst._ling_guard_slots = CloneSlots(data.ling_guard_slots)
+        end
         if data.plant_container then
             inst.plant_container = SpawnSaveRecord(data.plant_container)
             if inst.plant_container then

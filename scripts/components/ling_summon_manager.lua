@@ -71,9 +71,8 @@ local LingSummonManager = Class(function(self, inst)
   self.inst = inst
   self.max_slots = 0
   self.callerOpened = false
-  self.ready_for_migration = false
-  self.guard_slots = {}
   self.pending_sync_task = nil
+  self.ready_to_migrate = false
   self.periodic_sync_task = self.inst:DoPeriodicTask(1, function()
     self:SyncCurrentWorldSlots()
   end)
@@ -136,16 +135,16 @@ function LingSummonManager:EmptySlot(idx)
 end
 
 function LingSummonManager:SetGuardSlots(guard, slots)
-  if guard and guard.GUID and slots and #slots > 0 then
-    self.guard_slots[guard.GUID] = clone_slots(slots)
+  if guard and slots and #slots > 0 then
+    guard._ling_guard_slots = clone_slots(slots)
   end
 end
 
 function LingSummonManager:GetGuardSlots(guard)
-  if not guard or not guard.GUID then
+  if not guard then
     return nil
   end
-  local slots = self.guard_slots[guard.GUID]
+  local slots = guard._ling_guard_slots
   if slots then
     return clone_slots(slots)
   end
@@ -157,8 +156,8 @@ function LingSummonManager:GetGuardSlots(guard)
 end
 
 function LingSummonManager:ClearGuardSlots(guard)
-  if guard and guard.GUID then
-    self.guard_slots[guard.GUID] = nil
+  if guard then
+    guard._ling_guard_slots = nil
   end
 end
 
@@ -391,7 +390,7 @@ function LingSummonManager:RequestCurrentWorldSync(delay)
 end
 
 function LingSummonManager:SyncCurrentWorldSlots()
-  if self.ready_for_migration then
+  if self.ready_to_migrate then
     return
   end
   local world_id = GetCurrentWorldId()
@@ -448,23 +447,10 @@ function LingSummonManager:OnFollowerLost(follower)
     if follower.components.ling_guard_skill then
       follower.components.ling_guard_skill:DeactivateAllSkills()
     end
-    if not self.ready_for_migration then
+    if not self.ready_to_migrate then
       self:RemoveGuardFromSlot(follower)
     end
     self:RequestCurrentWorldSync(0.1)
-end
--- 更新守卫的迁移状态（当behavior_mode变化时调用）
-function LingSummonManager:PrepareForMigration()
-    self.ready_for_migration = true
-    -- 遍历所有守卫，设置迁移状态
-    local slots = self:GetAllSlots()
-    for i, slot_data in ipairs(slots) do
-      ArkLogger:Debug("LingSummonManager:PrepareForMigration: 检查守卫 跟随迁移", slot_data.inst and slot_data.inst.components.ling_guard:CanMigrate())
-        if slot_data.inst and slot_data.inst:IsValid() and slot_data.inst.components.ling_guard and slot_data.inst.components.ling_guard:CanMigrate() then
-          slot_data.inst.components.ling_guard:PrepareForMigration()
-          slot_data.inst:PushEvent("despawn")
-        end
-    end
 end
 
 function LingSummonManager:OnFollowerAdded(follower)
@@ -671,11 +657,8 @@ function LingSummonManager:OnSave()
   ArkLogger:Debug("LingSummonManager:OnSave")
   local data = {
     max_slots = self.max_slots,
-    migrationguards = {},
     slots = {},
   }
-  local migration_saved = {}
-  -- 保存所有待迁移的守卫
   local slots_data = self:GetAllSlots()
   for _, slot_data in ipairs(slots_data) do
     table.insert(data.slots, {
@@ -687,21 +670,12 @@ function LingSummonManager:OnSave()
       primary_slot = slot_data.primary_slot,
       slot_count = slot_data.slot_count,
     })
-    local ready_for_migration = slot_data.inst and slot_data.inst:IsValid() and slot_data.inst.ready_for_migration
-    if ready_for_migration then
-      local guid = slot_data.inst.GUID
-      if not migration_saved[guid] then
-        migration_saved[guid] = true
-        local save_record = slot_data.inst:GetSaveRecord()
-        table.insert(data.migrationguards, save_record)
-      end
-    end
   end
   return data
 end
 
 function LingSummonManager:OnLoad(data)
-    ArkLogger:Debug("LingSummonManager:OnLoad", self.inst.migrationpets, data and data.migrationguards)
+    ArkLogger:Debug("LingSummonManager:OnLoad")
     if data and data.max_slots then
         self:SetMaxSlots(data.max_slots)
     end
@@ -739,16 +713,6 @@ function LingSummonManager:OnLoad(data)
                 slot_count = slot_data.slot_count or 1,
             })
       end
-        end
-    end
-    if data and data.migrationguards and self.inst.migrationpets then
-      ArkLogger:Debug("LingSummonManager:OnLoad: 读取待迁移守卫", #data.migrationguards)
-        for _, guard_data in ipairs(data.migrationguards) do
-          ArkLogger:Debug("LingSummonManager:OnLoad: 读取待迁移守卫", guard_data)
-            local guard = SpawnSaveRecord(guard_data)
-            if guard then
-                table.insert(self.inst.migrationpets, guard)
-            end
         end
     end
       self:RequestCurrentWorldSync(1)

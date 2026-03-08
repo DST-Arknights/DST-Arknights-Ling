@@ -301,18 +301,27 @@ local function master_post_init(inst)
   inst.components.grogginess:SetResistance(10) -- 设置催眠抗性为10
   inst:ListenForEvent("attacked", OnAttacked)
   inst:ListenForEvent("newcombattarget", OnNewTarget)
+  inst.components.petleash.IsFull = function(self)
+    local count = 0
+    for k, v in pairs(self.pets) do
+      if not v:HasTag("ling_summon") then
+        count = count + 1
+      end
+    end
+    ArkLogger:Debug("ling:petleash:IsFull", count, self.maxpets)
+    return count >= self.maxpets
+  end
 
   inst.OnDespawn = function(inst, migrationdata)
     if migrationdata ~= nil then
+      inst.components.ling_summon_manager.ready_to_migrate = true
       -- 非守状态的加入到petleash中
       local slots = inst.components.ling_summon_manager:GetAllSlots()
       for i, slot_data in ipairs(slots) do
         local guard = slot_data.inst
         if guard and guard:IsValid() then
-          if guard.components.ling_guard and not guard.components.ling_guard:GetBehaviorMode() == CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD then
+          if guard.components.ling_guard and not (guard.components.ling_guard:GetBehaviorMode() == CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD) then
             inst.components.petleash:AttachPet(guard)
-          else
-            inst.components.petleash:DetachPet(guard)
           end
         end
       end
