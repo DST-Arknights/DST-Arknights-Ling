@@ -1,5 +1,6 @@
 local ling_voice = require "languages/ling_voice"
 local MakePlayerCharacter = require "prefabs/player_common"
+local CONSTANTS = require "ark_constants_ling"
 
 local assets = {
   Asset("ANIM", "anim/ling.zip"),
@@ -303,8 +304,18 @@ local function master_post_init(inst)
 
   inst.OnDespawn = function(inst, migrationdata)
     if migrationdata ~= nil then
-      -- 准备迁移
-      inst.components.ling_summon_manager:PrepareForMigration()
+      -- 非守状态的加入到petleash中
+      local slots = inst.components.ling_summon_manager:GetAllSlots()
+      for i, slot_data in ipairs(slots) do
+        local guard = slot_data.inst
+        if guard and guard:IsValid() then
+          if guard.components.ling_guard and not guard.components.ling_guard:GetBehaviorMode() == CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD then
+            inst.components.petleash:AttachPet(guard)
+          else
+            inst.components.petleash:DetachPet(guard)
+          end
+        end
+      end
     end
   end
   inst:ListenForEvent("ms_playerreroll", OnReroll)
