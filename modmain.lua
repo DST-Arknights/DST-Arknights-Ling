@@ -57,7 +57,7 @@ AddReplicableComponent("ling_summon_manager")
 AddReplicableComponent("ling_guard")
 AddReplicableComponent("ling_guard_plant")
 
-ArkLogger:DeclareLogger('TRACE', 'ling')
+ArkLogger:DeclareLogger('INFO', 'ling')
 -- 常量配置
 TUNING.LING = {}
 
