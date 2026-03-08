@@ -15,7 +15,7 @@ local skillConfig = {{
     config = {
       attackSpeed = 1.2,
       damageMultiplier = 1.2,
-      poetryCost = 30 -- 消耗诗意值
+      poetryCost = 15 -- 消耗诗意值
     }
   }, {
     desc = STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING[1][2],
@@ -24,7 +24,7 @@ local skillConfig = {{
     config = {
       attackSpeed = 1.38,
       damageMultiplier = 1.38,
-      poetryCost = 25 -- 消耗诗意值
+      poetryCost = 13 -- 消耗诗意值
     }
   }, {
     desc = STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING[1][3],
@@ -33,7 +33,7 @@ local skillConfig = {{
     config = {
       attackSpeed = 1.5,
       damageMultiplier = 1.5,
-      poetryCost = 20 -- 消耗诗意值
+      poetryCost = 10 -- 消耗诗意值
     }
   }}
 }, {
@@ -80,7 +80,7 @@ local skillConfig = {{
     config = {
       damageMultiplier = 1.4,
       damageAbsorption = 0.6,
-      poetryCost = 50 -- 消耗诗意值
+      poetryCost = 18 -- 消耗诗意值
     }
   }}
 }}
