@@ -33,8 +33,17 @@ end
 
 local function OnRemove(inst)
     local comp = inst.components.ling_guard
+    if comp == nil then
+        return
+    end
     if comp and comp.panel_opener then
         comp:ClosePanel(comp.panel_opener)
+    end
+    -- 洞穴/分片迁移时，守卫会在旧世界被 petleash 统一移除。
+    -- 此时守卫本体已先通过 GetSaveRecord() 序列化，若这里再清空容器，
+    -- 就会出现“旧世界掉一份，新世界读档后身上还有一份”的复制问题。
+    if inst._ling_skip_remove_container_transfer then
+        return
     end
     comp:ThrowContainerItems(inst.plant_container)
     comp:ThrowContainerItems(inst.plant_club)

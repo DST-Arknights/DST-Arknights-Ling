@@ -322,6 +322,7 @@ local function master_post_init(inst)
         if guard and guard:IsValid() then
           if guard.components.ling_guard and not (guard.components.ling_guard:GetBehaviorMode() == CONSTANTS.GUARD_BEHAVIOR_MODE.GUARD) then
             inst.components.petleash:AttachPet(guard)
+            guard._ling_skip_remove_container_transfer = true
           end
         end
       end
