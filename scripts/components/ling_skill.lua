@@ -108,23 +108,21 @@ local function RegisterSkill1(self)
     end
     return allow
   end)
-  skill1:SetOnEffectsSync(function(inst, payload)
-    local to = payload.to
-    if to.status == SKILL_STATUS.BUFFING then
+  skill1:SetOnActivateEffect(function()
       -- 伤害增加
       local damageMultiplier = skill1:GetLevelConfig().damageMultiplier
+      local level = skill1:GetLevel()
       inst.components.combat.externaldamagemultipliers:SetModifier(inst, damageMultiplier, damageMultiplierSource)
       -- 攻速增加
       inst.components.combat.attackspeedmodifiers:SetModifier(inst, skill1:GetLevelConfig().attackSpeed,
         damageMultiplierSource)
       inst.components.ling_summon_manager:OptionalAllGuard(function(guard)
         if guard.components.ling_guard_skill then
-          guard.components.ling_guard_skill:ActivateSkill1(to.level)
+          guard.components.ling_guard_skill:ActivateSkill1(level)
         end
       end)
-    end
   end)
-  skill1:SetOnActive(function()
+  skill1:SetOnActivate(function()
     SayAndVoice(inst, "LING_SKILL1")
     -- 扣除诗意
     local cost = skill1:GetLevelConfig().poetryCost
@@ -160,7 +158,7 @@ local function RegisterSkill2(self)
   local damageMultiplierSource = "ling_skill2"
   local skill2 = inst.components.ark_skill:GetSkill("skill2")
   self.skill2_stack = 0
-  skill2:SetOnActive(function()
+  skill2:SetOnActivate(function()
     SayAndVoice(inst, "LING_SKILL2")
     -- 伤害增加
     local damageMultiplier = skill2:GetLevelConfig().damageMultiplier
@@ -207,7 +205,7 @@ local function RegisterSkill3(self)
   local inst = self.inst
   local damageMultiplierSource = "ling_skill3"
   local skill3 = inst.components.ark_skill:GetSkill("skill3")
-  skill3:SetActivateTest(function(target, targetPos, force)
+  skill3:SetActivateTest(function()
     local poetry = inst.components.ling_poetry and inst.components.ling_poetry:GetCurrent()
     local cost = skill3:GetLevelConfig().poetryCost
     local allow = poetry >= cost
@@ -216,24 +214,22 @@ local function RegisterSkill3(self)
     end
     return allow
   end)
-  skill3:SetOnEffectsSync(function(inst, payload)
-    local to = payload.to
-    if to.status == SKILL_STATUS.BUFFING then
-      -- 伤害增加
-      local damageMultiplier = skill3:GetLevelConfig().damageMultiplier
-      inst.components.combat.externaldamagemultipliers:SetModifier(inst, damageMultiplier, damageMultiplierSource)
-      -- 护甲增加
-      local damageTakenMultiplier = skill3:GetLevelConfig().damageTakenMultiplier
-      inst.components.combat.externaldamagetakenmultipliers:SetModifier(inst, damageTakenMultiplier,
-        damageMultiplierSource)
-        inst.components.ling_summon_manager:OptionalAllGuard(function(guard)
-          if guard.components.ling_guard_skill then
-            guard.components.ling_guard_skill:ActivateSkill3(to.level)
-          end
-        end)
-    end
+  skill3:SetOnActivateEffect(function()
+    local level = skill3:GetLevel()
+    -- 伤害增加
+    local damageMultiplier = skill3:GetLevelConfig().damageMultiplier
+    inst.components.combat.externaldamagemultipliers:SetModifier(inst, damageMultiplier, damageMultiplierSource)
+    -- 护甲增加
+    local damageTakenMultiplier = skill3:GetLevelConfig().damageTakenMultiplier
+    inst.components.combat.externaldamagetakenmultipliers:SetModifier(inst, damageTakenMultiplier,
+      damageMultiplierSource)
+    inst.components.ling_summon_manager:OptionalAllGuard(function(guard)
+      if guard.components.ling_guard_skill then
+        guard.components.ling_guard_skill:ActivateSkill3(level)
+      end
+    end)
   end)
-  skill3:SetOnActive(function()
+  skill3:SetOnActivate(function()
     local voice = {"LING_SKILL3_1", "LING_SKILL3_2"}
     local voiceIndex = math.random(1, #voice)
     SayAndVoice(inst, voice[voiceIndex])
