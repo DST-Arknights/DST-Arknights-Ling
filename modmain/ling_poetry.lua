@@ -2,7 +2,7 @@
 AddComponentPostInit("inventory", function(self)
   local _Has = self.Has
   self.Has = function(self, item, amount, ...)
-    if item == 'ling_poetry' then
+    if item == 'ling_poetry' and self.inst.components.ling_poetry then
       local left = self.inst.components.ling_poetry:GetCurrent()
       return left >= amount, left
     end
@@ -49,7 +49,7 @@ end)
 AddClassPostConstruct('components/inventory_replica', function(self)
   local _Has = self.Has
   self.Has = function(self, item, amount, ...)
-    if item == 'ling_poetry' then
+    if item == 'ling_poetry' and self.inst.replica.ling_poetry then
       local left = self.inst.replica.ling_poetry:GetCurrent()
       return left >= amount, left
     end
