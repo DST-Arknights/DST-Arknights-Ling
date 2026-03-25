@@ -500,12 +500,6 @@ local function ling_guard_elite_fn()
 
     inst:SetBrain(brain)
     inst:SetStateGraph("SGling_guards")
-
-    inst:ListenForEvent("onhitother", function(inst, data)
-        if data and data.target and data.target.prefab == "ling_guard_elite" then
-            inst.components.combat:PauseAttacks(1)
-        end
-    end)
     -- 附属容器保存/加载/清理（共用）
     inst.OnSave = OnSave_Common
     inst.OnPreLoad = OnPreLoad_Common

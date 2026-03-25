@@ -6,7 +6,7 @@ local CONSTANTS = require("ark_constants_ling")
 -------------------------------------------------------------------
 local ROCKSPIKE_RADIUS = 2
 local ROCKSPIKE_AOE_ARC = 35  -- 扇形角度
-local AREA_EXCLUDE_TAGS = { "DECOR", "FX", "INLIMBO", "NOCLICK", "playerghost", "shadow" }
+local AREA_EXCLUDE_TAGS = { "DECOR", "FX", "INLIMBO", "NOCLICK", "playerghost", "shadow", "ling_summon", "wall" }
 local AREAATTACK_MUST_TAGS = { "_combat" }
 
 -- 在指定位置执行 AOE 伤害
