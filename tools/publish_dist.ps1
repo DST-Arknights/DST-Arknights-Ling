@@ -18,27 +18,44 @@ if (Test-Path $distPath) {
 
 New-Item -Path $distPath -ItemType Directory | Out-Null
 
-$rootFiles = @(
-    'modicon.tex',
-    'modicon.xml',
-    'modinfo.lua',
-    'modmain.lua',
-    'modworldgenmain.lua',
-    'LICENSE.md'
+$publishBlacklist = @(
+    # Build/output and source asset work directories
+    'dist',
+    'temp',
+    'tools',
+    'animSource',
+    'imageSource',
+    'soundSource',
+    'out',
+    '.VSCodeCounter',
+
+    # VCS/editor metadata
+    '.git',
+    '.github',
+    '.vscode',
+    '.vs',
+    '.idea',
+
+    # Root-level files not needed in release package
+    '.gitignore',
+    '.gitattributes',
+    '*.code-workspace'
 )
 
-$rootDirs = @(
-    'anim',
-    'fonts',
-    'bigportraits',
-    'fx',
-    'images',
-    'languages',
-    'modmain',
-    'sound',
-    'scripts',
-    'shaders'
-)
+function Test-IsPublishBlacklisted {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Name
+    )
+
+    foreach ($pattern in $publishBlacklist) {
+        if ($Name -like $pattern) {
+            return $true
+        }
+    }
+
+    return $false
+}
 
 function Copy-ReleasePath {
     param(
@@ -62,12 +79,13 @@ function Copy-ReleasePath {
     Write-Host "[ok]   $RelativePath"
 }
 
-foreach ($file in $rootFiles) {
-    Copy-ReleasePath -RelativePath $file
-}
+foreach ($entry in Get-ChildItem -Path $ProjectRoot -Force) {
+    if (Test-IsPublishBlacklisted -Name $entry.Name) {
+        Write-Host "[skip] $($entry.Name) (blacklisted)"
+        continue
+    }
 
-foreach ($dir in $rootDirs) {
-    Copy-ReleasePath -RelativePath $dir
+    Copy-ReleasePath -RelativePath $entry.Name
 }
 
 function Set-ProductionModDependencies {
