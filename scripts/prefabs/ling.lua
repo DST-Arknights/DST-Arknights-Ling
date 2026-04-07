@@ -10,13 +10,11 @@ local assets = {
 }
 local prefabs = {
   "ling_lantern",
-  "ark_backpack",
   -- "silence_glass",
   -- "silence_coat",
   -- "silence_remote_control",
 }
 local start_inv = {
-  "ark_backpack",
   "ling_lantern"
 }
 

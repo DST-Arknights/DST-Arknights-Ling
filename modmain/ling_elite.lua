@@ -49,20 +49,39 @@ for k, v in pairs(TUNING.LING.ELITE) do
   TUNING.LING.MAX_GUARDS = math.max(TUNING.LING.MAX_GUARDS, v.MAX_GUARDS)
 end
 
+local Elite1Ingredients = {
+  Ingredient("ark_gold", 30000),
+  Ingredient("ark_item_mtl_sl_rush2", 10),
+  Ingredient("ark_item_mtl_sl_ketone2", 3),
+}
+
+local Elite2Ingredients = {
+  Ingredient("ark_gold", 180000),
+  Ingredient("ark_item_mtl_sl_ds", 4),
+  Ingredient("ark_item_mtl_sl_oc4", 5),
+}
+
+if not TUNING.ARK_CONFIG.enable_all_materials_drop then
+  Elite1Ingredients = {
+    Ingredient("goldnugget", 30),
+    Ingredient("papyrus", 5),
+    Ingredient("tentaclespots", 10),
+    Ingredient("honey", 3),
+  }
+  Elite2Ingredients = {
+    Ingredient("goldnugget", 180),
+    Ingredient("papyrus", 8),
+    Ingredient("purebrilliance", 5),
+    Ingredient("iron", 4),
+  }
+end
+
 AddEliteLevelUpRecipes("ling", {{
-  ingredients = {
-    Ingredient("ark_gold", 30000),
-    Ingredient("ark_item_mtl_sl_rush2", 10),
-    Ingredient("ark_item_mtl_sl_ketone2", 3),
-  },
+  ingredients = Elite1Ingredients,
   atlas = "images/inventoryimages/ling_elite.xml",
   image = "elite1.tex",
 }, {
-  ingredients = {
-    Ingredient("ark_gold", 180000),
-    Ingredient("ark_item_mtl_sl_ds", 4),
-    Ingredient("ark_item_mtl_sl_oc4", 5),
-  },
+  ingredients = Elite2Ingredients,
   atlas = "images/inventoryimages/ling_elite.xml",
   image = "elite2.tex",
 }})

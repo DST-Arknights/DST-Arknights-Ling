@@ -39,9 +39,10 @@ Assets = {
   Asset('ANIM', 'anim/ui_ling_guard_plant_club.zip'),
   Asset('ANIM', 'anim/ling_poetry.zip'),
 }
-TUNING.GAMEMODE_STARTING_ITEMS.DEFAULT.LING = {"ling_lantern", "ark_backpack"}
-TUNING.GAMEMODE_STARTING_ITEMS.LAVAARENA.LING = {"ling_lantern", "ark_backpack"}
-TUNING.GAMEMODE_STARTING_ITEMS.QUAGMIRE.LING = {"ling_lantern", "ark_backpack"}
+local StartItems = {"ling_lantern"}
+TUNING.GAMEMODE_STARTING_ITEMS.DEFAULT.LING = StartItems
+TUNING.GAMEMODE_STARTING_ITEMS.LAVAARENA.LING = StartItems
+TUNING.GAMEMODE_STARTING_ITEMS.QUAGMIRE.LING = StartItems
 
 TUNING.LING_HEALTH = 50
 TUNING.LING_HUNGER = 150
