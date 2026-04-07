@@ -71,8 +71,8 @@ if not TUNING.ARK_CONFIG.enable_all_materials_drop then
   Elite2Ingredients = {
     Ingredient("goldnugget", 180),
     Ingredient("papyrus", 8),
-    Ingredient("purebrilliance", 5),
-    Ingredient("iron", 4),
+    Ingredient("moonstorm_spark", 5),
+    Ingredient("wagpunk_bits", 4),
   }
 end
 
