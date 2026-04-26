@@ -198,15 +198,15 @@ function LingGuardSkill:SyncWithOwner()
   if not leader.components.ark_skill then
     return
   end
-  local leaderSkill1 = leader.components.ark_skill:GetSkill("skill1")
-  if leaderSkill1:IsActivating() then
+  local leaderSkill1 = leader.components.ark_skill:GetSkill("ling_skill1")
+  if leaderSkill1 and leaderSkill1:IsActivating() then
     local level = leaderSkill1:GetLevel()
     self:ActivateSkill1(level)
   else
     self:DeactivateSkill1()
   end
-  local leaderSkill3 = leader.components.ark_skill:GetSkill("skill3")
-  if leaderSkill3:IsActivating() then
+  local leaderSkill3 = leader.components.ark_skill:GetSkill("ling_skill3")
+  if leaderSkill3 and leaderSkill3:IsActivating() then
     local level = leaderSkill3:GetLevel()
     self:ActivateSkill3(level)
   else

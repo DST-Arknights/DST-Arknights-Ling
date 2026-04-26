@@ -44,30 +44,12 @@ local function OnApplyElite(inst, elite, level)
   if inst.components.ling_poetry and elite then
     inst.components.ling_poetry:SetElite(elite)
   end
-  if inst.components.ark_skill then
-    if elite == 1 then
-      inst.components.ark_skill:GetSkill("skill1"):Unlock()
-      inst.components.ark_skill:GetSkill("skill1"):SetLevel(1)
-    end
-    if elite == 2 then
-      inst.components.ark_skill:GetSkill("skill1"):SetLevel(2)
-      inst.components.ark_skill:GetSkill("skill2"):Unlock()
-      inst.components.ark_skill:GetSkill("skill2"):SetLevel(1)
-    elseif elite == 3 then
-      inst.components.ark_skill:GetSkill("skill1"):SetLevel(3)
-      inst.components.ark_skill:GetSkill("skill2"):SetLevel(2)
-      inst.components.ark_skill:GetSkill("skill3"):Unlock()
-      inst.components.ark_skill:GetSkill("skill3"):SetLevel(1)
-    end
-  end
   local data = TUNING.LING.ELITE[elite]
   if not data then
     return
   end
   -- 更新基础属性
-  local healthPercent = inst.components.health:GetPercent()
-  inst.components.health:SetMaxHealth(data.MAX_HEALTH)
-  inst.components.health:SetPercent(healthPercent)
+  inst.components.health.maxhealthaddmodifiers:SetModifier(inst, data.MAX_HEALTH_MODIFIED, "ling_elite_health")
   local currentHunger = inst.components.hunger.current
   inst.components.hunger:SetMax(data.MAX_HUNGER)
   inst.components.hunger:SetCurrent(currentHunger)
@@ -230,18 +212,49 @@ local function OnTalk(inst, data)
   -- SayAndVoice(inst, idleVoices[voiceIndex], { notext = true })
 end
 
+local DEFAULT_SKILL_IDS = {
+  "ling_skill1",
+  "ling_skill2",
+  "ling_skill3",
+}
+
+local function InstallDefaultSkills(inst)
+  if inst._compatibility_skills then
+    return
+  end
+  for _, skill_id in ipairs(DEFAULT_SKILL_IDS) do
+    if inst.components.ark_skill:GetSkill(skill_id) == nil then
+      inst.components.ark_skill:AddSkill(skill_id)
+    end
+  end
+  inst._compatibility_skills = true
+end
+
 local function OnSave(inst, data)
   data._visited_dream_island = inst._visited_dream_island
   data._visited_cloud_pavilion = inst._visited_cloud_pavilion
+  data._compatibility_skills = inst._compatibility_skills
 end
 
 local function OnLoad(inst, data)
+  if data == nil then
+    return
+  end
   if data._visited_dream_island then
     inst._visited_dream_island = data._visited_dream_island
   end
   if data._visited_cloud_pavilion then
     inst._visited_cloud_pavilion = data._visited_cloud_pavilion
   end
+  inst._compatibility_skills = data._compatibility_skills == true
+  -- 兼容历史存档, 补装一次默认技能
+  if not inst._compatibility_skills then
+    InstallDefaultSkills(inst)
+  end
+end
+
+local function OnNewSpawn(inst)
+  InstallDefaultSkills(inst)
 end
 
 local function common_post_init(inst)
@@ -251,8 +264,6 @@ end
 
 local function master_post_init(inst)
   inst.MiniMapEntity:SetIcon("ling.tex")
-
-  inst.components.health.save_maxhealth = true
   -- 添加组件
   -- inst:AddComponent("ark_currency")
   inst:AddComponent("ling_poetry")
@@ -261,14 +272,24 @@ local function master_post_init(inst)
   inst:AddComponent("ling_summon_manager")
   inst:AddComponent("fader")
   inst:AddComponent("ling_cloud_pavilion_transfer")
-  inst:AddComponent("ling_skill")
   inst:AddComponent("knownlocations")
   inst:ListenForEvent("ling_poetry_changed", OnPoetryChanged)
   inst:AddComponent("ark_elite")
   inst.components.ark_elite:SetRarity(6)
-  inst.components.ark_elite:OnApplyElite(OnApplyElite)
+  inst.components.ark_elite:SetOnApplyElite(OnApplyElite)
   inst.components.ark_elite:SetMaxHealthBonus(105)
   inst.components.ark_elite:SetMaxDamageBonus(21)
+
+  inst:AddComponent("ark_skill")
+  inst.components.ark_skill:DeclareBuiltinSkill("ling_skill1", {
+    requiredElite = 1,
+  })
+  inst.components.ark_skill:DeclareBuiltinSkill("ling_skill2", {
+    requiredElite = 2,
+  })
+  inst.components.ark_skill:DeclareBuiltinSkill("ling_skill3", {
+    requiredElite = 3,
+  })
   inst:AddComponent("i18n_talker")
   inst.components.i18n_talker:RegisterVoice(ling_voice)
   inst.components.i18n_talker:SetVoiceLang(TUNING.LING.VOICE_LANG)
@@ -377,6 +398,7 @@ local function master_post_init(inst)
   inst._visited_cloud_pavilion = false
   inst.OnSave = OnSave
   inst.OnLoad = OnLoad
+  inst.OnNewSpawn = OnNewSpawn
 end
 
 return MakePlayerCharacter("ling", prefabs, assets, common_post_init, master_post_init, start_inv)

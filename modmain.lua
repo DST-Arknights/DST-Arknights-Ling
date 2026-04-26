@@ -62,6 +62,7 @@ ArkLogger:DeclareLogger('INFO', 'ling')
 -- 常量配置
 TUNING.LING = {}
 
+modimport("modmain/ling_skill")
 modimport("modmain/ling_elite")
 modimport("modmain/summon_guard")
 modimport("modmain/ling_guard_containers")
