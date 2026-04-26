@@ -281,14 +281,17 @@ local function master_post_init(inst)
   inst.components.ark_elite:SetMaxDamageBonus(21)
 
   inst:AddComponent("ark_skill")
-  inst.components.ark_skill:DeclareBuiltinSkill("ling_skill1", {
+  inst.components.ark_skill:DeclareBuiltin("ling_skill1", {
     requiredElite = 1,
+    eliteLevelMap = { [1] = 1, [2] = 2, [3] = 3 },
   })
-  inst.components.ark_skill:DeclareBuiltinSkill("ling_skill2", {
+  inst.components.ark_skill:DeclareBuiltin("ling_skill2", {
     requiredElite = 2,
+    eliteLevelMap = { [2] = 1, [3] = 2 },
   })
-  inst.components.ark_skill:DeclareBuiltinSkill("ling_skill3", {
+  inst.components.ark_skill:DeclareBuiltin("ling_skill3", {
     requiredElite = 3,
+    eliteLevelMap = { [3] = 1 },
   })
   inst:AddComponent("i18n_talker")
   inst.components.i18n_talker:RegisterVoice(ling_voice)
@@ -354,12 +357,12 @@ local function master_post_init(inst)
   inst:ListenForEvent("ontalk", OnTalk)
 
   -- 养成类经验事件监听
-  inst:ListenForEvent("oneat", OnEat)                           -- 进食
-  inst:ListenForEvent("picksomething", OnPickSomething)         -- 采摘
-  inst:ListenForEvent("finishedwork", OnFinishedWork)           -- 完成劳动
-  inst:ListenForEvent("builditem", OnBuildItem)                 -- 制作物品
-  inst:ListenForEvent("buildstructure", OnBuildStructure)       -- 建造建筑
-  inst:ListenForEvent("learncookbookrecipe", OnHarvestCooking)  -- 烹饪收获
+  inst:ListenForEvent("oneat", OnEat)                          -- 进食
+  inst:ListenForEvent("picksomething", OnPickSomething)        -- 采摘
+  inst:ListenForEvent("finishedwork", OnFinishedWork)          -- 完成劳动
+  inst:ListenForEvent("builditem", OnBuildItem)                -- 制作物品
+  inst:ListenForEvent("buildstructure", OnBuildStructure)      -- 建造建筑
+  inst:ListenForEvent("learncookbookrecipe", OnHarvestCooking) -- 烹饪收获
 
   -- 复活后重新应用睡眠抗性
   inst:ListenForEvent("ms_respawnedfromghost", function()
