@@ -19,7 +19,6 @@ Assets = {
   Asset('ATLAS', 'images/avatars/avatar_ghost_ling.xml'),
   Asset('ATLAS', 'images/avatars/self_inspect_ling.xml'),
   Asset('ATLAS', 'images/inventoryimages/ling_lantern.xml'),
-  Asset('ATLAS', 'images/inventoryimages/ling_elite.xml'),
   Asset('ATLAS', 'images/inventoryimages/ling_poetry.xml'),
   Asset('ATLAS', 'images/inventoryimages/poem.xml'),
   Asset('ATLAS', 'images/inventoryimages/ling_desk.xml'),

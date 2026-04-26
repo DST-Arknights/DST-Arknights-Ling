@@ -78,10 +78,10 @@ end
 
 AddEliteLevelUpRecipes("ling", {{
   ingredients = Elite1Ingredients,
-  atlas = "images/inventoryimages/ling_elite.xml",
+  atlas = "images/ark_elite.xml",
   image = "elite1.tex",
 }, {
   ingredients = Elite2Ingredients,
-  atlas = "images/inventoryimages/ling_elite.xml",
+  atlas = "images/ark_elite.xml",
   image = "elite2.tex",
 }})
