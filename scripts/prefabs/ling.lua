@@ -260,6 +260,7 @@ end
 local function common_post_init(inst)
   inst:AddTag("ling")
   inst:AddTag("reader")
+  inst:AddTag("ark_character")
 end
 
 local function master_post_init(inst)

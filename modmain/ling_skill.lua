@@ -1,5 +1,10 @@
 local ARK_CONSTANTS = require("ark_constants")
 
+RegisterControlDefinition("ling_skill2_shackle", {
+  duration = 1.5,
+  fx = "ling_aoe_attack_fx",
+})
+
 local function CommonActivateTest(skill)
   local inst = skill.inst
   if not inst.components.ling_poetry then
@@ -60,15 +65,6 @@ local function OnSkill1Deactivate(skill)
   end
 end
 
--- 束缚目标5秒
-local function ShackleTarget(target, duration)
-  if not target.components.immobilizable then
-    target:AddComponent("immobilizable")
-    target.components.immobilizable:AddImmobilizeFX("ling_aoe_attack_fx")
-  end
-  target.components.immobilizable:Immobilize(duration)
-end
-
 local AREAATTACK_EXCLUDETAGS = { "noauradamage", "INLIMBO", "notarget", "noattack", "flight", "invisible", "playerghost",
   "ling_summon" }
 local function OnSkill2Install(skill)
@@ -87,7 +83,7 @@ local function OnSkill2Install(skill)
         local shackleTime = params.shackleTime
         local targets = TheSim:FindEntities(x, y, z, AOEarc, { "_combat" }, AREAATTACK_EXCLUDETAGS)
         for _, target in ipairs(targets) do
-          ShackleTarget(target, shackleTime)
+          ApplyControl(target, "ling_skill2_shackle", shackleTime)
         end
         self.inst.components.combat:DoAreaAttack(target, AOEarc, weapon, nil, nil, AREAATTACK_EXCLUDETAGS)
       end
