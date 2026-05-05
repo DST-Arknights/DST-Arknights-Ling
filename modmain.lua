@@ -6,7 +6,8 @@ GLOBAL.setmetatable(env, {
 
 -- 加载语言文件
 if LOC.GetLocaleCode() == "zh" then
-  STRINGS.CHARACTERS.LING = require("languages/speech_ling")
+  local new = require("languages/speech_ling")
+  STRINGS.CHARACTERS.LING = MergeMaps(STRINGS.CHARACTERS.LING, new)
 end
 MergePOFile("scripts/languages/ling_chinese_s.po", "zh", true)
 
@@ -133,3 +134,6 @@ end
 function GLOBAL.IsEntityInCloudPavilion(inst)
   return inst.ling_netvarCameraAnchor ~= nil and inst.ling_netvarCameraAnchor:value() ~= nil
 end
+
+local voice = require("languages/ling_voice")
+RegisterVoice("ling", voice)

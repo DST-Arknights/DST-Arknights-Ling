@@ -1,4 +1,3 @@
-local ling_voice = require "languages/ling_voice"
 local MakePlayerCharacter = require "prefabs/player_common"
 local CONSTANTS = require "ark_constants_ling"
 
@@ -295,7 +294,7 @@ local function master_post_init(inst)
     eliteLevelMap = { [3] = 1 },
   })
   inst:AddComponent("i18n_talker")
-  inst.components.i18n_talker:RegisterVoice(ling_voice)
+  inst.components.i18n_talker:SetupVoice('ling')
   inst.components.i18n_talker:SetVoiceLang(TUNING.LING.VOICE_LANG)
 
   inst.components.sanity.dapperness = 0.33
