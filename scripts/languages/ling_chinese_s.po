@@ -278,12 +278,12 @@ msgstr "-消耗10诗意值\n-自身与召唤物攻击力+50%，攻击速度+50%\
 #. STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.2.1
 msgctxt "STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.2.1"
 msgid "STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.2.1"
-msgstr "-令下次攻击变成范围伤害\n-造成250%攻击力的真实伤害并束缚1.5秒\n-可充能1次\n-精英化二后等级提升"
+msgstr "-令下次攻击变成范围伤害\n-造成250%攻击力的真实伤害并束缚1.5秒\n-限制装备引梦灯触发\n-可充能1次\n-精英化二后等级提升"
 
 #. STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.2.2
 msgctxt "STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.2.2"
 msgid "STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.2.2"
-msgstr "-令下次攻击变成范围伤害\n-造成370%攻击力的真实伤害并束缚2.5秒\n-可充能2次"
+msgstr "-令下次攻击变成范围伤害\n-造成370%攻击力的真实伤害并束缚2.5秒\n-限制装备引梦灯触发\n-可充能2次"
 
 #. STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.3.1
 msgctxt "STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.3.1"
