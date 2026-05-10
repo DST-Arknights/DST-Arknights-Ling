@@ -121,7 +121,12 @@ end)())
 
 
 local voice_cfg = GetModConfigData("voice_language")
-local voice_lang = voice_cfg == "auto" and LOC.GetLocaleCode(LOC.GetLanguage()) or voice_cfg
+local autoMap = {
+  ["zh"] = "mandarin",
+  ["ja"] = "japanese",
+  ["ko"] = "korea",
+}
+local voice_lang = voice_cfg == "auto" and autoMap[LOC.GetLocaleCode(LOC.GetLanguage())] or voice_cfg ~= "auto" and voice_cfg or "japanese"
 TUNING.LING.VOICE_LANG = voice_lang
 
 function GLOBAL.IsEntityInDreamIsland(inst)

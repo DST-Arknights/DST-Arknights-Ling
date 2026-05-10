@@ -55,7 +55,25 @@ configuration_options = { {
             en = "Japanese",
             zh = "日语"
         }),
-        data = "jp"
+        data = "japanese"
+    }, {
+        description = ChooseTranslationTable({
+            en = "Mandarin",
+            zh = "汉语-普通话"
+        }),
+        data = "mandarin"
+    }, {
+        description = ChooseTranslationTable({
+            en = "Dialect",
+            zh = "汉语-方言"
+        }),
+        data = "dialect"
+    }, {
+        description = ChooseTranslationTable({
+            en = "Korean",
+            zh = "韩语"
+        }),
+        data = "korea"
     }, {
         description = ChooseTranslationTable({
             en = "Auto",
