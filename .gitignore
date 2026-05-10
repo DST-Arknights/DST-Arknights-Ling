@@ -41,6 +41,7 @@ luac.out
 /soundSource/**/*.fev
 /soundSource/**/*.fsb
 /soundSource/**/*.fdp.bak
+/soundSource/**/*.fdp.autosave
 .fsbcache/
 /temp/
 /.VSCodeCounter
