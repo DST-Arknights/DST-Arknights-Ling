@@ -25,7 +25,7 @@ QQ群: 666511586
 欢迎大家积极参与!]]
 })
 author = "让 望月心灵"
-version = "1.0.0"
+version = "1.1.0"
 forumthread = "https://github.com/TohsakaKuro/DST-Arknights-Typhon/issues"
 
 api_version = 10
