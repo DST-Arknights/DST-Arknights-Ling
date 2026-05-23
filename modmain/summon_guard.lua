@@ -44,7 +44,7 @@ end)
 -- 诗意值ui
 AddClassPostConstruct("widgets/controls", function(self)
   self.guard_panels = {}
-  if not self.owner or self.owner.prefab ~= "ling" then
+  if not self.owner or not self.owner:HasTag("ling") then
     return
   end
   -- 将诗意值 UI 直接添加到 topright_root，这样坐标系统更简单
