@@ -489,6 +489,7 @@ local function ling_guard_elite_fn()
     inst.components.ling_guard:SetForm(FORM.XIANJING, true)
     inst:AddComponent("ling_guard_plant")
     inst:AddComponent("ling_guard_skill")
+    inst.components.ling_guard_skill.skill3_size = 'big'
 
     inst:AddComponent("colourtweener")
 

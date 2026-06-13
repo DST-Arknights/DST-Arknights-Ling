@@ -17,9 +17,8 @@ local skillConfig = {{
   levels = {{
     damageMultiplier = 1.4,
     damageAbsorption = 0.6,
-    auraRange = 2,
-    auraDamageOwnerPercent = 0.2,
-    auraInterval = 0.5
+    auraDamageOwnerPercent = 0.4,
+    auraInterval = 1
   }}
 }}
 
@@ -68,6 +67,7 @@ local LingGuardSkill = Class(function(self, inst)
   for _, skill in ipairs(skillConfig) do
     self.active_skills[skill.id] = false
   end
+  self.skill3_size = 'small'
 end)
 
 function LingGuardSkill:ActivateSkill1(level)
@@ -105,7 +105,7 @@ function LingGuardSkill:ActivateSkill3(level)
     SKILL3_DAMAGE_SOURCE)
   self:StartAuraDamage(function()
     return config.auraDamageOwnerPercent * self:GetOwnerAttackDamage()
-  end, config.auraInterval, config.auraRange)
+  end, config.auraInterval, self.skill3_size)
   ApplySkill3Light(self.inst)
   self.active_skills[id] = true
 end
@@ -135,10 +135,11 @@ function LingGuardSkill:DoAuraDamage(damage, range)
   end
 end
 
-function LingGuardSkill:StartAuraDamage(damage, interval, range)
+function LingGuardSkill:StartAuraDamage(damage, interval, size)
   self:StopAuraDamage()
   self._auraTask = self.inst:DoPeriodicTask(interval, function()
-    local fx = SpawnPrefab("ling_guard_skill_halo_fx")
+    local range = size == 'big' and 8 or 5
+    local fx = SpawnPrefab("ling_guard_skill_halo_fx_" .. self.skill3_size)
     if fx ~= nil then
       local x, y, z = self.inst.Transform:GetWorldPosition()
       fx.Transform:SetPosition(x, y, z)

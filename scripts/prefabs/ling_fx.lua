@@ -1,3 +1,4 @@
+local halo_base_size = 12
 local fxs = { {
   name = "ling_aoe_attack_fx",
   bank = "fx_skill_2",
@@ -20,19 +21,36 @@ local fxs = { {
     inst.AnimState:SetScale(0.8, 0.8, 0.8)
   end,
 }, {
-  name = "ling_guard_skill_halo_fx",
+  name = "ling_guard_skill_halo_fx_small",
   bank = "bearger_ring_fx",
   build = "bearger_ring_fx",
   anim = "idle",
   sound = "dontstarve/common/deathpoof",
   tint = Vector3(1, 1, 1, 0.6),
+  transform = Vector3(5/halo_base_size, 5/halo_base_size, 5/halo_base_size),
   fn = function(inst)
     -- 设置渲染层级：在角色脚下
     inst.AnimState:SetLayer(LAYER_BACKGROUND)
     inst.AnimState:SetSortOrder(3)
 
     inst.AnimState:SetOrientation(ANIM_ORIENTATION.OnGround)
-    inst.AnimState:SetScale(1.5, 1.5, 1.5)
+    inst.AnimState:SetScale(0.3, 0.3, 0.3)
+  end,
+}, {
+  name = "ling_guard_skill_halo_fx_big",
+  bank = "bearger_ring_fx",
+  build = "bearger_ring_fx",
+  anim = "idle",
+  sound = "dontstarve/common/deathpoof",
+  tint = Vector3(1, 1, 1, 0.6),
+  transform = Vector3(8/halo_base_size, 8/halo_base_size, 8/halo_base_size),
+  fn = function(inst)
+    -- 设置渲染层级：在角色脚下
+    inst.AnimState:SetLayer(LAYER_BACKGROUND)
+    inst.AnimState:SetSortOrder(3)
+
+    inst.AnimState:SetOrientation(ANIM_ORIENTATION.OnGround)
+    inst.AnimState:SetScale(0.6, 0.6, 0.6)
   end,
 } }
 
