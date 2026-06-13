@@ -264,6 +264,7 @@ end
 
 local function master_post_init(inst)
   inst.MiniMapEntity:SetIcon("ling.tex")
+  inst.components.health:SetMaxHealth(50)
   -- 添加组件
   -- inst:AddComponent("ark_currency")
   inst:AddComponent("ling_poetry")
