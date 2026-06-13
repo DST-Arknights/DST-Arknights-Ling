@@ -223,6 +223,10 @@ local function IsInCombatMode(inst)
     return inst.components and inst.components.combat and inst.components.combat.target ~= nil
 end
 
+local function IsEliteGuard(inst)
+    return inst ~= nil and inst:HasTag("ling_guard_elite")
+end
+
 -- 守态：追击范围限制（相对守点）
 
 -- 工作目标检索（以守点为中心）
@@ -575,7 +579,10 @@ function LingGuardBrain:OnStart()
 
     local root = PriorityNode({
         -- 追击
-        WhileNode(function() local combat = self.inst.components and self.inst.components.combat or nil return combat ~= nil and (combat.target == nil or not combat:InCooldown()) end, "AttackNoCD",
+        WhileNode(function()
+            local combat = self.inst.components and self.inst.components.combat or nil
+            return combat ~= nil and (combat.target == nil or not combat:InCooldown() or IsEliteGuard(self.inst))
+        end, "AttackNoCD",
             ChaseAndAttack(self.inst)),
         -- 救援
         WhileNode( function() return GetLeader(self.inst) and GetLeader(self.inst).components.pinnable and GetLeader(self.inst).components.pinnable:IsStuck() end, "Leader Phlegmed",
@@ -583,7 +590,7 @@ function LingGuardBrain:OnStart()
         -- 风筝
         WhileNode(function()
             local c = self.inst.components and self.inst.components.combat or nil
-            return c ~= nil and c.target ~= nil and c:InCooldown()
+            return c ~= nil and c.target ~= nil and c:InCooldown() and not IsEliteGuard(self.inst)
         end, "KiteHostileEnemies",
             RunAway(self.inst, {
                 fn = function(guy)
