@@ -232,6 +232,19 @@ local function SetupSleepHeal(inst)
 
 end
 
+local function SetupEliteNightRegen(inst)
+    inst:DoPeriodicTask(1, function()
+        local health = inst.components.health
+        if health == nil or health:IsDead() or not TheWorld.state.isnight then
+            return
+        end
+        if health.currenthealth >= health.maxhealth then
+            return
+        end
+        health:DoDelta(health.maxhealth * 0.005, true, inst.prefab, true)
+    end)
+end
+
 local function onDespawn(inst)
     ArkLogger:Debug("ling_guard:onDespawn", inst)
     local fx = SpawnPrefab("spawn_fx_medium")
@@ -342,7 +355,6 @@ local function ling_guard_basic_fn()
     end
 
     inst:AddComponent("named")
-    -- TODO: 设置正确的名称
     inst.components.named.possiblenames = STRINGS.LINGGUARDNAMES
     inst.components.named:PickNewName()
 
@@ -483,6 +495,8 @@ local function ling_guard_elite_fn()
     inst:AddComponent("talker")
 
     inst:AddComponent("timer")
+
+    SetupEliteNightRegen(inst)
 
     inst:AddComponent("ling_guard")
     inst.components.ling_guard:SetLevel(3)
