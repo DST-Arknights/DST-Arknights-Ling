@@ -3,6 +3,7 @@ GLOBAL.setmetatable(env, {
     return GLOBAL.rawget(GLOBAL, k)
   end
 })
+assert(ARK_ITEM_PACKAGE_LOADED, "请安装前置模组: ark_item_package\n please install the required mod: ark_item_package\n[https://steamcommunity.com/sharedfiles/filedetails/?id=3677284770]")
 
 -- 加载语言文件
 if LOC.GetLocaleCode() == "zh" then
