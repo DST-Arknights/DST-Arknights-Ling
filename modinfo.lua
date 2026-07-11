@@ -82,6 +82,36 @@ configuration_options = { {
         data = "auto"
     }},
     default = "auto"
+}, {
+    name = "voice_volume",
+    label = ChooseTranslationTable({
+        en = "Voice Volume",
+        zh = "角色语音音量"
+    }),
+    hover = ChooseTranslationTable({
+        en = "Adjust the volume of character voice lines",
+        zh = "调整角色语音的音量大小"
+    }),
+    options = {{
+        description = "0%",
+        data = 0
+    }, {
+        description = "20%",
+        data = 0.2
+    }, {
+        description = "40%",
+        data = 0.4
+    }, {
+        description = "60%",
+        data = 0.6
+    }, {
+        description = "80%",
+        data = 0.8
+    }, {
+        description = "100%",
+        data = 1.0
+    }},
+    default = 0.6
 }}
 mod_dependencies = {
     -- { workshop = "workshop-3677284770"},
