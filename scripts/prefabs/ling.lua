@@ -297,6 +297,9 @@ local function master_post_init(inst)
   inst:AddComponent("i18n_talker")
   inst.components.i18n_talker:SetupVoice('ling')
   inst.components.i18n_talker:SetVoiceLang(TUNING.LING.VOICE_LANG)
+  inst.components.i18n_talker.sound_params = {
+    volume = 0.5,
+  }
 
   inst.components.sanity.dapperness = 0.33
 
