@@ -3,9 +3,15 @@ name = ChooseTranslationTable({
     zh = "令"
 })
 -- 版本更新说明（由发布脚本自动维护，请勿手动编辑）
-local UPDATE_EN = [[]]
+local UPDATE_EN = [[
+v1.2.0 (2026-07-28)
+- Internal tooling and pipeline updates
+]]
 
-local UPDATE_ZH = [[]]
+local UPDATE_ZH = [[
+v1.2.0 (2026-07-28)
+- 内部工具链更新
+]]
 
 description = ChooseTranslationTable({
     en = [[The wildfire on the plains never dies; in a single night, every traveler longs for home.
@@ -30,7 +36,7 @@ QQ群: 666511586
 欢迎大家积极参与!]]
 })
 author = "让 望月心灵"
-version = "1.1.2"
+version = "1.2.0"
 forumthread = "https://github.com/TohsakaKuro/DST-Arknights-Typhon/issues"
 
 api_version = 10
