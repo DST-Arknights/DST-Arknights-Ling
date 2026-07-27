@@ -15,9 +15,10 @@ v1.2.0 (2026-07-28)
 
 description = ChooseTranslationTable({
     en = [[The wildfire on the plains never dies; in a single night, every traveler longs for home.
-]] .. UPDATE_EN .. [[
-Feedback channels for requests and suggestions:
 
+]] .. UPDATE_EN .. [[
+
+Feedback channels for requests and suggestions:
 Issues: https://github.com/DST-Arknights/DST-Arknights-Ling/issues
 QQ: 3139902761
 Email: tohsakakuro@outlook.com
@@ -25,9 +26,10 @@ QQ Group: 666511586
 
 Everyone is welcome to participate!]],
     zh = [[长风不灭原上火，一夜征夫尽望乡。
-]] .. UPDATE_ZH .. [[
-需求与建议反馈渠道:
 
+]] .. UPDATE_ZH .. [[
+
+需求与建议反馈渠道:
 Issues: https://github.com/DST-Arknights/DST-Arknights-Ling/issues
 QQ: 3139902761
 Email: tohsakakuro@outlook.com
