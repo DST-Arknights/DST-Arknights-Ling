@@ -1,4 +1,10 @@
-name = ChooseTranslationTable({
+-- 对不支持的语言兜底到英文（DST 原版 ChooseTranslationTable 只回退到 tbl[1]，
+-- 但我们用字典键值而非数字索引，非 en/zh 语言会返回 nil 导致崩溃）
+local function T(tbl)
+    return ChooseTranslationTable(tbl) or tbl["en"]
+end
+
+name = T({
     en = "Ling",
     zh = "令"
 })
@@ -19,7 +25,7 @@ v1.2.0 (2026-07-28)
 - 内部工具链更新
 ]]
 
-description = ChooseTranslationTable({
+description = T({
     en = [[The wildfire on the plains never dies; in a single night, every traveler longs for home.
 
 ]] .. UPDATE_EN .. [[
@@ -61,40 +67,40 @@ icon = "modicon.tex"
 server_filter_tags = {"character", "Ling", "arknights", "令", "明日方舟"}
 configuration_options = { {
     name = "voice_language",
-    label = ChooseTranslationTable({
+    label = T({
         en = "Choose Voice Language",
         zh = "选择角色语音语言"
     }),
-    hover = ChooseTranslationTable({
+    hover = T({
         en = "Choose the language of the voice",
         zh = "选择角色语音的语言"
     }),
     options = {{
-        description = ChooseTranslationTable({
+        description = T({
             en = "Japanese",
             zh = "日语"
         }),
         data = "japanese"
     }, {
-        description = ChooseTranslationTable({
+        description = T({
             en = "Mandarin",
             zh = "汉语-普通话"
         }),
         data = "mandarin"
     }, {
-        description = ChooseTranslationTable({
+        description = T({
             en = "Dialect",
             zh = "汉语-方言"
         }),
         data = "dialect"
     }, {
-        description = ChooseTranslationTable({
+        description = T({
             en = "Korean",
             zh = "韩语"
         }),
         data = "korea"
     }, {
-        description = ChooseTranslationTable({
+        description = T({
             en = "Auto",
             zh = "自动"
         }),
@@ -103,11 +109,11 @@ configuration_options = { {
     default = "auto"
 }, {
     name = "voice_volume",
-    label = ChooseTranslationTable({
+    label = T({
         en = "Voice Volume",
         zh = "角色语音音量"
     }),
-    hover = ChooseTranslationTable({
+    hover = T({
         en = "Adjust the volume of character voice lines",
         zh = "调整角色语音的音量大小"
     }),
