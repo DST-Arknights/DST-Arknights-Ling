@@ -2,9 +2,14 @@ name = ChooseTranslationTable({
     en = "Ling",
     zh = "令"
 })
+-- 版本更新说明（由发布脚本自动维护，请勿手动编辑）
+local UPDATE_EN = [[]]
+
+local UPDATE_ZH = [[]]
+
 description = ChooseTranslationTable({
     en = [[The wildfire on the plains never dies; in a single night, every traveler longs for home.
-
+]] .. UPDATE_EN .. [[
 Feedback channels for requests and suggestions:
 
 Issues: https://github.com/DST-Arknights/DST-Arknights-Ling/issues
@@ -14,7 +19,7 @@ QQ Group: 666511586
 
 Everyone is welcome to participate!]],
     zh = [[长风不灭原上火，一夜征夫尽望乡。
-
+]] .. UPDATE_ZH .. [[
 需求与建议反馈渠道:
 
 Issues: https://github.com/DST-Arknights/DST-Arknights-Ling/issues

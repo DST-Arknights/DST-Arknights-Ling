@@ -1,0 +1,1829 @@
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT Version: 2.0"
+
+#. STRINGS.CHARACTER_TITLES.ling
+msgctxt "STRINGS.CHARACTER_TITLES.ling"
+msgid "Arknights Ling"
+msgstr "Arknights Ling"
+
+#. STRINGS.CHARACTER_SURVIVABILITY.ling
+msgctxt "STRINGS.CHARACTER_SURVIVABILITY.ling"
+msgid "Easy"
+msgstr "Easy"
+
+#. STRINGS.CHARACTERS.LING.DESCRIBE.LING_LANTERN.NORMAL
+msgctxt "STRINGS.CHARACTERS.LING.DESCRIBE.LING_LANTERN.NORMAL"
+msgid "My lantern, illuminating the path ahead."
+msgstr "My lantern, illuminating the path ahead."
+
+#. STRINGS.CHARACTERS.LING.DESCRIBE.LING_LANTERN.LOWFUEL
+msgctxt "STRINGS.CHARACTERS.LING.DESCRIBE.LING_LANTERN.LOWFUEL"
+msgid "The light is fading, I need more nightmare fuel."
+msgstr "The light is fading, I need more nightmare fuel."
+
+#. STRINGS.CHARACTERS.LING.DESCRIBE.LING_LANTERN.OUT
+msgctxt "STRINGS.CHARACTERS.LING.DESCRIBE.LING_LANTERN.OUT"
+msgid "The lantern has gone out. It needs nightmare fuel."
+msgstr "The lantern has gone out. It needs nightmare fuel."
+
+#. STRINGS.CHARACTER_NAMES.ling
+msgctxt "STRINGS.CHARACTER_NAMES.ling"
+msgid "Ling"
+msgstr "Ling"
+
+#. STRINGS.NAMES.LING
+msgctxt "STRINGS.NAMES.LING"
+msgid "Ling"
+msgstr "Ling"
+
+#. STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_LANTERN
+msgctxt "STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_LANTERN"
+msgid "Autumn's orphans cling to foreign boughs, frost-lit vigil keeping shadows at bay"
+msgstr "Autumn's orphans cling to foreign boughs, frost-lit vigil keeping shadows at bay"
+
+#. STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_LANTERN.NORMAL
+msgctxt "STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_LANTERN.NORMAL"
+msgid "A mystical lantern that glows with ethereal light."
+msgstr "A mystical lantern that glows with ethereal light."
+
+#. STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_LANTERN.LOWFUEL
+msgctxt "STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_LANTERN.LOWFUEL"
+msgid "The light is growing dim. It needs more fuel."
+msgstr "The light is growing dim. It needs more fuel."
+
+#. STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_LANTERN.OUT
+msgctxt "STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_LANTERN.OUT"
+msgid "The lantern has gone out. It needs nightmare fuel to light again."
+msgstr "The lantern has gone out. It needs nightmare fuel to light again."
+
+#. STRINGS.NAMES.LING_LANTERN
+msgctxt "STRINGS.NAMES.LING_LANTERN"
+msgid "Ling's Lantern"
+msgstr "Ling's Lantern"
+
+#. STRINGS.RECIPE_DESC.LING_LANTERN
+msgctxt "STRINGS.RECIPE_DESC.LING_LANTERN"
+msgid "A mystical lantern that glows with ethereal light."
+msgstr "A mystical lantern that glows with ethereal light."
+
+#. STRINGS.CHARACTER_DESCRIPTIONS.ling
+msgctxt "STRINGS.CHARACTER_DESCRIPTIONS.ling"
+msgid "Cloudy peaks surge like waves, a thousand leagues of parched path unfolds"
+msgstr "Cloudy peaks surge like waves, a thousand leagues of parched path unfolds"
+
+#. STRINGS.CHARACTER_QUOTES.ling
+msgctxt "STRINGS.CHARACTER_QUOTES.ling"
+msgid "The endless river through layered peaks, a solitary citadel in barren expanse, etched upon my sight"
+msgstr "The endless river through layered peaks, a solitary citadel in barren expanse, etched upon my sight"
+
+#. STRINGS.NAMES.LING_BOOKSHELF
+msgctxt "STRINGS.NAMES.LING_BOOKSHELF"
+msgid "Ling's Bookshelf"
+msgstr "Ling's Bookshelf"
+
+#. STRINGS.RECIPE_DESC.LING_BOOKSHELF
+msgctxt "STRINGS.RECIPE_DESC.LING_BOOKSHELF"
+msgid "A bookshelf."
+msgstr "Poetry volumes spanning a thousand autumns, gathered in one place."
+
+#. STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_BOOKSHELF
+msgctxt "STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_BOOKSHELF"
+msgid "A bookshelf."
+msgstr "Poetry volumes spanning a thousand autumns, gathered in one place."
+
+#. STRINGS.NAMES.LING_ELITE_2
+msgctxt "STRINGS.NAMES.LING_ELITE_2"
+msgid "Elite Level 1"
+msgstr "Elite 1"
+
+#. STRINGS.NAMES.LING_ELITE_3
+msgctxt "STRINGS.NAMES.LING_ELITE_3"
+msgid "Elite Level 2"
+msgstr "Elite 2"
+
+#. STRINGS.NAMES.LING_POETRY
+msgctxt "STRINGS.NAMES.LING_POETRY"
+msgid "Poetry"
+msgstr "Poetry"
+
+#. STRINGS.NAMES.POEM_0
+msgctxt "STRINGS.NAMES.POEM_0"
+msgid "Verse"
+msgstr "Verse"
+
+#. STRINGS.NAMES.POEM_1
+msgctxt "STRINGS.NAMES.POEM_1"
+msgid "Stanza"
+msgstr "Stanza"
+
+#. STRINGS.NAMES.POEM_2
+msgctxt "STRINGS.NAMES.POEM_2"
+msgid "Scroll"
+msgstr "Scroll"
+
+#. STRINGS.NAMES.POEM_3
+msgctxt "STRINGS.NAMES.POEM_3"
+msgid "Codex"
+msgstr "Codex"
+
+#. STRINGS.RECIPE_DESC.POEM_0
+msgctxt "STRINGS.RECIPE_DESC.POEM_0"
+msgid "A poem."
+msgstr "Scattered ink traces — a verse discovered by chance."
+
+#. STRINGS.RECIPE_DESC.POEM_1
+msgctxt "STRINGS.RECIPE_DESC.POEM_1"
+msgid "A poem."
+msgstr "Words coalescing into form, taking on a certain grace."
+
+#. STRINGS.RECIPE_DESC.POEM_2
+msgctxt "STRINGS.RECIPE_DESC.POEM_2"
+msgid "A poem."
+msgstr "Flowing freely, now a completed scroll."
+
+#. STRINGS.RECIPE_DESC.POEM_3
+msgctxt "STRINGS.RECIPE_DESC.POEM_3"
+msgid "A poem."
+msgstr "All creation in a single verse — boundless in spirit."
+
+#. STRINGS.CHARACTERS.GENERIC.DESCRIBE.POEM_0
+msgctxt "STRINGS.CHARACTERS.GENERIC.DESCRIBE.POEM_0"
+msgid "A poem."
+msgstr "Scattered ink traces — a verse discovered by chance."
+
+#. STRINGS.CHARACTERS.GENERIC.DESCRIBE.POEM_1
+msgctxt "STRINGS.CHARACTERS.GENERIC.DESCRIBE.POEM_1"
+msgid "A poem."
+msgstr "Words coalescing into form, taking on a certain grace."
+
+#. STRINGS.CHARACTERS.GENERIC.DESCRIBE.POEM_2
+msgctxt "STRINGS.CHARACTERS.GENERIC.DESCRIBE.POEM_2"
+msgid "A poem."
+msgstr "Flowing freely, now a completed scroll."
+
+#. STRINGS.CHARACTERS.GENERIC.DESCRIBE.POEM_3
+msgctxt "STRINGS.CHARACTERS.GENERIC.DESCRIBE.POEM_3"
+msgid "A poem."
+msgstr "All creation in a single verse — boundless in spirit."
+
+#. STRINGS.ACTIONS.USE_POEM.GENERIC
+msgctxt "STRINGS.ACTIONS.USE_POEM.GENERIC"
+msgid "Read"
+msgstr "Read"
+
+#. STRINGS.UI.CRAFTING.NEEDSPOETRY_ONE
+msgctxt "STRINGS.UI.CRAFTING.NEEDSPOETRY_ONE"
+msgid "Needs Poetry Desk"
+msgstr "Requires Poetry Desk"
+
+#. STRINGS.UI.CRAFTING_FILTERS.LING_DESK
+msgctxt "STRINGS.UI.CRAFTING_FILTERS.LING_DESK"
+msgid "Poetry Desk"
+msgstr "Poetry Desk"
+
+#. STRINGS.UI.CRAFTING_STATION_FILTERS.LING_DESK
+msgctxt "STRINGS.UI.CRAFTING_STATION_FILTERS.LING_DESK"
+msgid "Poetry Desk"
+msgstr "Compose"
+
+#. STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_DESK
+msgctxt "STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_DESK"
+msgid "A desk for writing poetry."
+msgstr "Where the heart finds its voice and words take form — a desk to entrust one's aspirations."
+
+#. STRINGS.ACTIONS.OPEN_CRAFTING.LING_DESK
+msgctxt "STRINGS.ACTIONS.OPEN_CRAFTING.LING_DESK"
+msgid "Poetry Desk"
+msgstr "Compose"
+
+#. STRINGS.NAMES.LING_DESK
+msgctxt "STRINGS.NAMES.LING_DESK"
+msgid "Poetry Desk"
+msgstr "Poetry Desk"
+
+#. STRINGS.RECIPE_DESC.LING_DESK
+msgctxt "STRINGS.RECIPE_DESC.LING_DESK"
+msgid "A desk for writing poetry."
+msgstr "Where the brush runs dry yet creation comes alive — ink gives birth to spirit."
+
+#. STRINGS.RECIPE_DESC.LING_ELITE_2
+msgctxt "STRINGS.RECIPE_DESC.LING_ELITE_2"
+msgid "Elite level upgraded to level 1"
+msgstr "Promotes elite level to 1"
+
+#. STRINGS.RECIPE_DESC.LING_ELITE_3
+msgctxt "STRINGS.RECIPE_DESC.LING_ELITE_3"
+msgid "Elite level upgraded to level 2"
+msgstr "Promotes elite level to 2"
+
+#. STRINGS.UI.CRAFTING.RECIPEACTION.LING_ELITE_2
+msgctxt "STRINGS.UI.CRAFTING.RECIPEACTION.LING_ELITE_2"
+msgid "Elite"
+msgstr "Elite"
+
+#. STRINGS.UI.CRAFTING.RECIPEACTION.LING_ELITE_3
+msgctxt "STRINGS.UI.CRAFTING.RECIPEACTION.LING_ELITE_3"
+msgid "Elite"
+msgstr "Elite"
+
+#. STRINGS.UI.ARK_SKILL.NAMES.LING.1
+msgctxt "STRINGS.UI.ARK_SKILL.NAMES.LING.1"
+msgid "Sips of Wine"
+msgstr "Sips of Wine"
+
+#. STRINGS.UI.ARK_SKILL.LOCKED_DESC.LING.1
+msgctxt "STRINGS.UI.ARK_SKILL.LOCKED_DESC.LING.1"
+msgid "Auto unlock"
+msgstr "Auto unlock"
+
+#. STRINGS.UI.ARK_SKILL.LOCKED_DESC.LING.2
+msgctxt "STRINGS.UI.ARK_SKILL.LOCKED_DESC.LING.2"
+msgid "Elite 1 unlock at Prestihatitator"
+msgstr "Unlocked at Elite 1\n- Reach max level and complete elite promotion at the Training Station"
+
+#. STRINGS.UI.ARK_SKILL.LOCKED_DESC.LING.3
+msgctxt "STRINGS.UI.ARK_SKILL.LOCKED_DESC.LING.3"
+msgid "Elite 2 unlock at Shadow Manipulator"
+msgstr "Unlocked at Elite 2\n- Reach max level and complete elite promotion at the Training Station"
+
+#. STRINGS.UI.ARK_SKILL.NAMES.LING.2
+msgctxt "STRINGS.UI.ARK_SKILL.NAMES.LING.2"
+msgid "Amidst Pleasant Melodies"
+msgstr "Amidst Pleasant Melodies"
+
+#. STRINGS.UI.ARK_SKILL.NAMES.LING.3
+msgctxt "STRINGS.UI.ARK_SKILL.NAMES.LING.3"
+msgid "To Remain Oneself"
+msgstr "To Remain Oneself"
+
+#. STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.1.1
+msgctxt "STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.1.1"
+msgid "STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.1.1"
+msgstr "- Consumes 15 Poetry\n- Self and summons gain +20% ATK and +20% ASPD\n- Self and summons deal True damage\n- Upgrades at Elite 1"
+
+#. STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.1.2
+msgctxt "STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.1.2"
+msgid "STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.1.2"
+msgstr "- Consumes 13 Poetry\n- Self and summons gain +38% ATK and +38% ASPD\n- Self and summons deal True damage\n- Upgrades at Elite 2"
+
+#. STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.1.3
+msgctxt "STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.1.3"
+msgid "STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.1.3"
+msgstr "- Consumes 10 Poetry\n- Self and summons gain +50% ATK and +50% ASPD\n- Self and summons deal True damage"
+
+#. STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.2.1
+msgctxt "STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.2.1"
+msgid "STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.2.1"
+msgstr "- Next attack becomes AoE damage\n- Deals 250% ATK as True damage and Binds for 1.5s\n- Limited to Ling's Lantern equip trigger\n- Can store 1 charge\n- Upgrades at Elite 2"
+
+#. STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.2.2
+msgctxt "STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.2.2"
+msgid "STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.2.2"
+msgstr "- Next attack becomes AoE damage\n- Deals 370% ATK as True damage and Binds for 2.5s\n- Limited to Ling's Lantern equip trigger\n- Can store 2 charges"
+
+#. STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.3.1
+msgctxt "STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.3.1"
+msgid "STRINGS.UI.ARK_SKILL.LEVEL_DESC.LING.3.1"
+msgstr "- Consumes 18 Poetry\n- Self and summons gain +40% ATK, +40% damage reduction\n- Summons deal 20% of Ling's current ATK as True damage\n  to enemies within 4 walls every 0.5s"
+
+#. STRINGS.UI.LING_SUMMON.QINGPING
+msgctxt "STRINGS.UI.LING_SUMMON.QINGPING"
+msgid "Qingping"
+msgstr "Qingping"
+
+#. STRINGS.UI.LING_SUMMON.XIAOYAO
+msgctxt "STRINGS.UI.LING_SUMMON.XIAOYAO"
+msgid "Xiaoyao"
+msgstr "Xiaoyao"
+
+#. STRINGS.UI.LING_SUMMON.XIANJING
+msgctxt "STRINGS.UI.LING_SUMMON.XIANJING"
+msgid "Xianjing"
+msgstr "Xianjing"
+
+#. STRINGS.NAMES.LING_GUARD_BASIC
+msgctxt "STRINGS.NAMES.LING_GUARD_BASIC"
+msgid "Ling's Guard"
+msgstr "Ling's Guard"
+
+#. STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_GUARD_BASIC
+msgctxt "STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_GUARD_BASIC"
+msgid "Ling's Guard"
+msgstr "A cup cast breeds a wraith, a brush fallen brings forth a spirit. A loyal creature born of dreams."
+
+#. STRINGS.NAMES.LING_GUARD_ELITE
+msgctxt "STRINGS.NAMES.LING_GUARD_ELITE"
+msgid "Ling's Elite Guard"
+msgstr "Ling's Elite Guard"
+
+#. STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_GUARD_ELITE
+msgctxt "STRINGS.CHARACTERS.GENERIC.DESCRIBE.LING_GUARD_ELITE"
+msgid "Ling's Elite Guard"
+msgstr "Spine jutting proud, scales gleaming dark. Tempered through dreams, ever more fierce."
+
+#. STRINGS.UI.LING_COMMAND.GUARD
+msgctxt "STRINGS.UI.LING_COMMAND.GUARD"
+msgid "Guard"
+msgstr "Guard"
+
+#. STRINGS.UI.LING_COMMAND.ATTACK
+msgctxt "STRINGS.UI.LING_COMMAND.ATTACK"
+msgid "Attack"
+msgstr "Attack"
+
+#. STRINGS.UI.LING_COMMAND.CAUTIOUS
+msgctxt "STRINGS.UI.LING_COMMAND.CAUTIOUS"
+msgid "Cautious"
+msgstr "Cautious"
+
+#. STRINGS.UI.LING_GUARD_PANEL_CALL.SUMMARY
+msgctxt "STRINGS.UI.LING_GUARD_PANEL_CALL.SUMMARY"
+msgid "Summon"
+msgstr "Summon"
+
+#. STRINGS.UI.LING_SUMMON.SUMMONING
+msgctxt "STRINGS.UI.LING_SUMMON.SUMMONING"
+msgid "%s Summoning"
+msgstr "Summoning %s"
+
+#. STRINGS.UI.LING_SUMMON.OTHER_WORLD
+msgctxt "STRINGS.UI.LING_SUMMON.OTHER_WORLD"
+msgid "It is not in this world"
+msgstr "Guarding another dream"
+
+#. STRINGS.UI.LING_GUARD_PANEL.FUSION_BUTTON
+msgctxt "STRINGS.UI.LING_GUARD_PANEL.FUSION_BUTTON"
+msgid "Fuse into Xianjing"
+msgstr "Fuse into Xianjing"
+
+#. STRINGS.UI.LING_GUARD_PANEL.CLOSE_PANEL
+msgctxt "STRINGS.UI.LING_GUARD_PANEL.CLOSE_PANEL"
+msgid "Close Panel"
+msgstr "Close"
+
+#. STRINGS.UI.LING_GUARD_PANEL.RECALL
+msgctxt "STRINGS.UI.LING_GUARD_PANEL.RECALL"
+msgid "Return to Homeland"
+msgstr "Return to Homeland"
+
+#. STRINGS.UI.LING_GUARD_PANEL.OPEN_CONTAINER
+msgctxt "STRINGS.UI.LING_GUARD_PANEL.OPEN_CONTAINER"
+msgid "Open Container"
+msgstr "Open Container"
+
+#. STRINGS.UI.LING_GUARD_PANEL.CLOSE_CONTAINER
+msgctxt "STRINGS.UI.LING_GUARD_PANEL.CLOSE_CONTAINER"
+msgid "Close Container"
+msgstr "Close Container"
+
+#. STRINGS.UI.LING_GUARD_PANEL.MODE_PREFIX
+msgctxt "STRINGS.UI.LING_GUARD_PANEL.MODE_PREFIX"
+msgid "Mode: %s"
+msgstr "Mode: %s"
+
+#. STRINGS.UI.LING_GUARD_PANEL.SELECT_WORK
+msgctxt "STRINGS.UI.LING_GUARD_PANEL.SELECT_WORK"
+msgid "Select Work"
+msgstr "Select Work"
+
+#. STRINGS.UI.LING_GUARD_PANEL.STOP_WORK
+msgctxt "STRINGS.UI.LING_GUARD_PANEL.STOP_WORK"
+msgid "Stop Work"
+msgstr "Stop Work"
+
+#. STRINGS.UI.LING_GUARD_WORKMODE.WORK_PREFIX
+msgctxt "STRINGS.UI.LING_GUARD_WORKMODE.WORK_PREFIX"
+msgid "Work: %s"
+msgstr "Work: %s"
+
+#. STRINGS.UI.LING_GUARD_WORKMODE.CHOP
+msgctxt "STRINGS.UI.LING_GUARD_WORKMODE.CHOP"
+msgid "Chop"
+msgstr "Chop"
+
+#. STRINGS.UI.LING_GUARD_WORKMODE.DIG
+msgctxt "STRINGS.UI.LING_GUARD_WORKMODE.DIG"
+msgid "Dig"
+msgstr "Dig"
+
+#. STRINGS.UI.LING_GUARD_WORKMODE.DIG_LAND
+msgctxt "STRINGS.UI.LING_GUARD_WORKMODE.DIG_LAND"
+msgid "Dig Land"
+msgstr "Dig Land"
+
+#. STRINGS.UI.LING_GUARD_WORKMODE.HAMMER
+msgctxt "STRINGS.UI.LING_GUARD_WORKMODE.HAMMER"
+msgid "Hammer"
+msgstr "Hammer"
+
+#. STRINGS.UI.LING_GUARD_WORKMODE.MINE
+msgctxt "STRINGS.UI.LING_GUARD_WORKMODE.MINE"
+msgid "Mine"
+msgstr "Mine"
+
+#. STRINGS.UI.LING_GUARD_WORKMODE.PLANT
+msgctxt "STRINGS.UI.LING_GUARD_WORKMODE.PLANT"
+msgid "Plant"
+msgstr "Plant"
+
+#. STRINGS.UI.LING_GUARD_PANEL.SWITCH_TO_QINGPING
+msgctxt "STRINGS.UI.LING_GUARD_PANEL.SWITCH_TO_QINGPING"
+msgid "Switch: Qingping"
+msgstr "Switch: Qingping"
+
+#. STRINGS.UI.LING_GUARD_PANEL.SWITCH_TO_XIAOYAO
+msgctxt "STRINGS.UI.LING_GUARD_PANEL.SWITCH_TO_XIAOYAO"
+msgid "Switch: Xiaoyao"
+msgstr "Switch: Xiaoyao"
+
+#. STRINGS.UI.LING_GUARD_PANEL.LOCKED_SUFFIX
+msgctxt "STRINGS.UI.LING_GUARD_PANEL.LOCKED_SUFFIX"
+msgid " (Locked)"
+msgstr " (Locked)"
+
+#. STRINGS.UI.LING_GUARD_PANEL.HEALTH
+msgctxt "STRINGS.UI.LING_GUARD_PANEL.HEALTH"
+msgid "Health: %d/%d (%d%%)"
+msgstr "Health: %d/%d (%d%%)"
+
+#. STRINGS.ACTIONS.ENTER_CLOUD_PAVILION
+msgctxt "STRINGS.ACTIONS.ENTER_CLOUD_PAVILION"
+msgid "Enter"
+msgstr "Enter"
+
+#. STRINGS.ACTIONS.EXIT_CLOUD_PAVILION
+msgctxt "STRINGS.ACTIONS.EXIT_CLOUD_PAVILION"
+msgid "Exit"
+msgstr "Exit"
+
+#. STRINGS.NAMES.LING_CLOUD_PAVILION_EXIT_DOOR
+msgctxt "STRINGS.NAMES.LING_CLOUD_PAVILION_EXIT_DOOR"
+msgid "Cloud Pavilion"
+msgstr "Cloud Pavilion"
+
+#. STRINGS.CHARACTERS.GENERIC.LING_CLOUD_PAVILION_PRIVATE_SLEEP
+msgctxt "STRINGS.CHARACTERS.GENERIC.LING_CLOUD_PAVILION_PRIVATE_SLEEP"
+msgid "This is no place for slumber — a dream within a dream, I fear one may never awaken."
+msgstr "This is no place for slumber — a dream within a dream, I fear one may never awaken."
+
+#. STRINGS.UI.SO_IS_WRIT_AN_ODE_TO_WINE.NAME
+msgctxt "STRINGS.UI.SO_IS_WRIT_AN_ODE_TO_WINE.NAME"
+msgid "So Is Writ An Ode To Wine"
+msgstr "So Is Writ, An Ode To Wine"
+
+#. STRINGS.UI.SO_IS_WRIT_AN_ODE_TO_WINE.DESC.1
+msgctxt "STRINGS.UI.SO_IS_WRIT_AN_ODE_TO_WINE.DESC.1"
+msgid "STRINGS.UI.SO_IS_WRIT_AN_ODE_TO_WINE.DESC.1"
+msgstr "- Triggers when Qingping, Xiaoyao, or Xianjing is defeated, fused, or recalled\n- On trigger: all skills recover 5 SP\n- ATK +2%\n- Lasts 20s"
+
+#. STRINGS.UI.SO_IS_WRIT_AN_ODE_TO_WINE.DESC.2
+msgctxt "STRINGS.UI.SO_IS_WRIT_AN_ODE_TO_WINE.DESC.2"
+msgid "STRINGS.UI.SO_IS_WRIT_AN_ODE_TO_WINE.DESC.2"
+msgstr "- Triggers when Qingping, Xiaoyao, or Xianjing is defeated, fused, or recalled\n- On trigger: all skills recover 10 SP\n- ATK +3%\n- Lasts 20s"
+
+#. STRINGS.UI.SO_IS_WRIT_AN_ODE_TO_WINE.DESC.3
+msgctxt "STRINGS.UI.SO_IS_WRIT_AN_ODE_TO_WINE.DESC.3"
+msgid "STRINGS.UI.SO_IS_WRIT_AN_ODE_TO_WINE.DESC.3"
+msgstr "- Triggers when Qingping, Xiaoyao, or Xianjing is defeated, fused, or recalled\n- On trigger: all skills recover 15 SP\n- ATK +4%\n- Lasts 20s"
+
+#. STRINGS.CHARACTERS.LING.ANNOUNCE_ENTER_DREAM_ISLAND
+msgctxt "STRINGS.CHARACTERS.LING.ANNOUNCE_ENTER_DREAM_ISLAND"
+msgid "It looks a bit desolate..."
+msgstr "A solitary citadel in barren expanse... it has its own charm."
+
+#. STRINGS.CHARACTERS.LING.ANNOUNCE_ENTER_CLOUD_PAVILION
+msgctxt "STRINGS.CHARACTERS.LING.ANNOUNCE_ENTER_CLOUD_PAVILION"
+msgid "hidden but beautiful spot"
+msgstr "A hidden realm of breathtaking beauty."
+
+#. STRINGS.CHARACTERS.LING.ANNOUNCE_DREAM_ISLAND_TELEPORT_FAILED
+msgctxt "STRINGS.CHARACTERS.LING.ANNOUNCE_DREAM_ISLAND_TELEPORT_FAILED"
+msgid "The lights on the distant shore are a galaxy that I cannot touch."
+msgstr "The lights on the distant shore are a galaxy I cannot touch."
+
+#. STRINGS.CHARACTERS.GENERIC.ANNOUNCE_DREAM_ISLAND_TELEPORT_FAILED
+msgctxt "STRINGS.CHARACTERS.GENERIC.ANNOUNCE_DREAM_ISLAND_TELEPORT_FAILED"
+msgid "Cannot find teleport target."
+msgstr "The mist obscures the way home — the shore's lights cannot be found."
+
+#. STRINGS.ACTIONS.DREAM_ISLAND_TELEPORT
+msgctxt "STRINGS.ACTIONS.DREAM_ISLAND_TELEPORT"
+msgid "Teleport"
+msgstr "Teleport"
+
+#. STRINGS.CHARACTERS.GENERIC.POETIC_OBJECTS
+msgctxt "STRINGS.CHARACTERS.GENERIC.POETIC_OBJECTS"
+msgid "Poetic Creation"
+msgstr "Poetic Creation"
+
+#. STRINGS.CHARACTERS.GENERIC.LING_SKILL_NOT_ENOUGH_POETRY
+msgctxt "STRINGS.CHARACTERS.GENERIC.LING_SKILL_NOT_ENOUGH_POETRY"
+msgid "Not enough poetry."
+msgstr "Insufficient poetic inspiration."
+
+#. STRINGS.CHARACTERS.LING.ANNOUNCE_REVIVE_IN_DREAM_ISLAND
+msgctxt "STRINGS.CHARACTERS.LING.ANNOUNCE_REVIVE_IN_DREAM_ISLAND"
+msgid "I will not let this dream end."
+msgstr "While the dream endures, I shall not fall."
+
+#. STRINGS.CHARACTERS.GENERIC.LING_GUARD_BUSY
+msgctxt "STRINGS.CHARACTERS.GENERIC.LING_GUARD_BUSY"
+msgid "The guard is busy."
+msgstr "Hold — it has pressing matters to attend to."
+
+#. STRINGS.CHARACTERS.GENERIC.LING_SKILL_NOT_ENOUGH_GUARD
+msgctxt "STRINGS.CHARACTERS.GENERIC.LING_SKILL_NOT_ENOUGH_GUARD"
+msgid "Not enough guard."
+msgstr "A single branch cannot prop up the sky — one more is needed."
+
+#. STRINGS.CHARACTERS.GENERIC.LING_GUARD_NO_SPAWN_POINT
+msgctxt "STRINGS.CHARACTERS.GENERIC.LING_GUARD_NO_SPAWN_POINT"
+msgid "No valid spawn point nearby."
+msgstr "No foothold to be found here — move elsewhere to draw Qingping into the dream."
+
+#. STRINGS.CHARACTERS.GENERIC.LING_SKILL1
+msgctxt "STRINGS.CHARACTERS.GENERIC.LING_SKILL1"
+msgid "Skill 1"
+msgstr "Spears broken, sands sunk — ambitions unfulfilled."
+
+#. STRINGS.CHARACTERS.GENERIC.LING_SKILL2
+msgctxt "STRINGS.CHARACTERS.GENERIC.LING_SKILL2"
+msgid "Skill 2"
+msgstr "All creation in a single verse — only then does it hold true grandeur."
+
+#. STRINGS.CHARACTERS.GENERIC.LING_SKILL3_1
+msgctxt "STRINGS.CHARACTERS.GENERIC.LING_SKILL3_1"
+msgid "Skill 3"
+msgstr "When will the buried hatred of the battlefield end?"
+
+#. STRINGS.CHARACTERS.GENERIC.LING_SKILL3_2
+msgctxt "STRINGS.CHARACTERS.GENERIC.LING_SKILL3_2"
+msgid "Skill 3"
+msgstr "Pouring out the heart without restraint — pure exhilaration."
+
+#. STRINGS.CHARACTERS.GENERIC.IDLE1
+msgctxt "STRINGS.CHARACTERS.GENERIC.IDLE1"
+msgid "Idle 1"
+msgstr "Is it my turn now?"
+
+#. STRINGS.CHARACTERS.GENERIC.IDLE2
+msgctxt "STRINGS.CHARACTERS.GENERIC.IDLE2"
+msgid "Idle 2"
+msgstr "A war song, an elegy."
+
+#. STRINGS.LINGGUARDNAMES.1
+msgctxt "STRINGS.LINGGUARDNAMES.1"
+msgid "Guhong"
+msgstr "Guhong"
+
+#. STRINGS.LINGGUARDNAMES.2
+msgctxt "STRINGS.LINGGUARDNAMES.2"
+msgid "Duanhong"
+msgstr "Duanhong"
+
+#. STRINGS.LINGGUARDNAMES.3
+msgctxt "STRINGS.LINGGUARDNAMES.3"
+msgid "Guiyan"
+msgstr "Guiyan"
+
+#. STRINGS.LINGGUARDNAMES.4
+msgctxt "STRINGS.LINGGUARDNAMES.4"
+msgid "Sha'ou"
+msgstr "Sha'ou"
+
+#. STRINGS.LINGGUARDNAMES.5
+msgctxt "STRINGS.LINGGUARDNAMES.5"
+msgid "Bailu"
+msgstr "Bailu"
+
+#. STRINGS.LINGGUARDNAMES.6
+msgctxt "STRINGS.LINGGUARDNAMES.6"
+msgid "Huangying"
+msgstr "Huangying"
+
+#. STRINGS.LINGGUARDNAMES.7
+msgctxt "STRINGS.LINGGUARDNAMES.7"
+msgid "Yuanyang"
+msgstr "Yuanyang"
+
+#. STRINGS.LINGGUARDNAMES.8
+msgctxt "STRINGS.LINGGUARDNAMES.8"
+msgid "Zhegu"
+msgstr "Zhegu"
+
+#. STRINGS.LINGGUARDNAMES.9
+msgctxt "STRINGS.LINGGUARDNAMES.9"
+msgid "Huajiao"
+msgstr "Huajiao"
+
+#. STRINGS.LINGGUARDNAMES.10
+msgctxt "STRINGS.LINGGUARDNAMES.10"
+msgid "Hujia"
+msgstr "Hujia"
+
+#. STRINGS.LINGGUARDNAMES.11
+msgctxt "STRINGS.LINGGUARDNAMES.11"
+msgid "Pipa"
+msgstr "Pipa"
+
+#. STRINGS.LINGGUARDNAMES.12
+msgctxt "STRINGS.LINGGUARDNAMES.12"
+msgid "Konghou"
+msgstr "Konghou"
+
+#. STRINGS.LINGGUARDNAMES.13
+msgctxt "STRINGS.LINGGUARDNAMES.13"
+msgid "Yudi"
+msgstr "Yudi"
+
+#. STRINGS.LINGGUARDNAMES.14
+msgctxt "STRINGS.LINGGUARDNAMES.14"
+msgid "Yuhuo"
+msgstr "Yuhuo"
+
+#. STRINGS.LINGGUARDNAMES.15
+msgctxt "STRINGS.LINGGUARDNAMES.15"
+msgid "Kefan"
+msgstr "Kefan"
+
+#. STRINGS.LINGGUARDNAMES.16
+msgctxt "STRINGS.LINGGUARDNAMES.16"
+msgid "Guizhao"
+msgstr "Guizhao"
+
+#. STRINGS.LINGGUARDNAMES.17
+msgctxt "STRINGS.LINGGUARDNAMES.17"
+msgid "Lanzhou"
+msgstr "Lanzhou"
+
+#. STRINGS.LINGGUARDNAMES.18
+msgctxt "STRINGS.LINGGUARDNAMES.18"
+msgid "Huafang"
+msgstr "Huafang"
+
+#. STRINGS.LINGGUARDNAMES.19
+msgctxt "STRINGS.LINGGUARDNAMES.19"
+msgid "Zhengpei"
+msgstr "Zhengpei"
+
+#. STRINGS.LINGGUARDNAMES.20
+msgctxt "STRINGS.LINGGUARDNAMES.20"
+msgid "Shouma"
+msgstr "Shouma"
+
+#. STRINGS.LINGGUARDNAMES.21
+msgctxt "STRINGS.LINGGUARDNAMES.21"
+msgid "Xilou"
+msgstr "Xilou"
+
+#. STRINGS.LINGGUARDNAMES.22
+msgctxt "STRINGS.LINGGUARDNAMES.22"
+msgid "Nanlou"
+msgstr "Nanlou"
+
+#. STRINGS.LINGGUARDNAMES.23
+msgctxt "STRINGS.LINGGUARDNAMES.23"
+msgid "Jianglou"
+msgstr "Jianglou"
+
+#. STRINGS.LINGGUARDNAMES.24
+msgctxt "STRINGS.LINGGUARDNAMES.24"
+msgid "Weilou"
+msgstr "Weilou"
+
+#. STRINGS.LINGGUARDNAMES.25
+msgctxt "STRINGS.LINGGUARDNAMES.25"
+msgid "Xiaolou"
+msgstr "Xiaolou"
+
+#. STRINGS.LINGGUARDNAMES.26
+msgctxt "STRINGS.LINGGUARDNAMES.26"
+msgid "Zhuge"
+msgstr "Zhuge"
+
+#. STRINGS.LINGGUARDNAMES.27
+msgctxt "STRINGS.LINGGUARDNAMES.27"
+msgid "Qihu"
+msgstr "Qihu"
+
+#. STRINGS.LINGGUARDNAMES.28
+msgctxt "STRINGS.LINGGUARDNAMES.28"
+msgid "Diaolan"
+msgstr "Diaolan"
+
+#. STRINGS.LINGGUARDNAMES.29
+msgctxt "STRINGS.LINGGUARDNAMES.29"
+msgid "Yuqi"
+msgstr "Yuqi"
+
+#. STRINGS.LINGGUARDNAMES.30
+msgctxt "STRINGS.LINGGUARDNAMES.30"
+msgid "Jinjing"
+msgstr "Jinjing"
+
+#. STRINGS.LINGGUARDNAMES.31
+msgctxt "STRINGS.LINGGUARDNAMES.31"
+msgid "Yinchuang"
+msgstr "Yinchuang"
+
+#. STRINGS.LINGGUARDNAMES.32
+msgctxt "STRINGS.LINGGUARDNAMES.32"
+msgid "Zhulian"
+msgstr "Zhulian"
+
+#. STRINGS.LINGGUARDNAMES.33
+msgctxt "STRINGS.LINGGUARDNAMES.33"
+msgid "Cuimu"
+msgstr "Cuimu"
+
+#. STRINGS.LINGGUARDNAMES.34
+msgctxt "STRINGS.LINGGUARDNAMES.34"
+msgid "Luowei"
+msgstr "Luowei"
+
+#. STRINGS.LINGGUARDNAMES.35
+msgctxt "STRINGS.LINGGUARDNAMES.35"
+msgid "Shachu"
+msgstr "Shachu"
+
+#. STRINGS.LINGGUARDNAMES.36
+msgctxt "STRINGS.LINGGUARDNAMES.36"
+msgid "Yudian"
+msgstr "Yudian"
+
+#. STRINGS.LINGGUARDNAMES.37
+msgctxt "STRINGS.LINGGUARDNAMES.37"
+msgid "Bingdian"
+msgstr "Bingdian"
+
+#. STRINGS.LINGGUARDNAMES.38
+msgctxt "STRINGS.LINGGUARDNAMES.38"
+msgid "Yinzhu"
+msgstr "Yinzhu"
+
+#. STRINGS.LINGGUARDNAMES.39
+msgctxt "STRINGS.LINGGUARDNAMES.39"
+msgid "Hongzhu"
+msgstr "Hongzhu"
+
+#. STRINGS.LINGGUARDNAMES.40
+msgctxt "STRINGS.LINGGUARDNAMES.40"
+msgid "Handeng"
+msgstr "Handeng"
+
+#. STRINGS.LINGGUARDNAMES.41
+msgctxt "STRINGS.LINGGUARDNAMES.41"
+msgid "Candeng"
+msgstr "Candeng"
+
+#. STRINGS.LINGGUARDNAMES.42
+msgctxt "STRINGS.LINGGUARDNAMES.42"
+msgid "Langao"
+msgstr "Langao"
+
+#. STRINGS.LINGGUARDNAMES.43
+msgctxt "STRINGS.LINGGUARDNAMES.43"
+msgid "Yulou"
+msgstr "Yulou"
+
+#. STRINGS.LINGGUARDNAMES.44
+msgctxt "STRINGS.LINGGUARDNAMES.44"
+msgid "Genglou"
+msgstr "Genglou"
+
+#. STRINGS.LINGGUARDNAMES.45
+msgctxt "STRINGS.LINGGUARDNAMES.45"
+msgid "Shalou"
+msgstr "Shalou"
+
+#. STRINGS.LINGGUARDNAMES.46
+msgctxt "STRINGS.LINGGUARDNAMES.46"
+msgid "Lianlou"
+msgstr "Lianlou"
+
+#. STRINGS.LINGGUARDNAMES.47
+msgctxt "STRINGS.LINGGUARDNAMES.47"
+msgid "Yuhu"
+msgstr "Yuhu"
+
+#. STRINGS.LINGGUARDNAMES.48
+msgctxt "STRINGS.LINGGUARDNAMES.48"
+msgid "Jinzun"
+msgstr "Jinzun"
+
+#. STRINGS.LINGGUARDNAMES.49
+msgctxt "STRINGS.LINGGUARDNAMES.49"
+msgid "Yushang"
+msgstr "Yushang"
+
+#. STRINGS.LINGGUARDNAMES.50
+msgctxt "STRINGS.LINGGUARDNAMES.50"
+msgid "Yaoshang"
+msgstr "Yaoshang"
+
+
+#. STRINGS.LINGGUARDNAMES.51
+msgctxt "STRINGS.LINGGUARDNAMES.51"
+msgid "Yinping"
+msgstr "Yinping"
+
+#. STRINGS.LINGGUARDNAMES.52
+msgctxt "STRINGS.LINGGUARDNAMES.52"
+msgid "Yupan"
+msgstr "Yupan"
+
+#. STRINGS.LINGGUARDNAMES.53
+msgctxt "STRINGS.LINGGUARDNAMES.53"
+msgid "Jinzhu"
+msgstr "Jinzhu"
+
+#. STRINGS.LINGGUARDNAMES.54
+msgctxt "STRINGS.LINGGUARDNAMES.54"
+msgid "Xiangzhu"
+msgstr "Xiangzhu"
+
+#. STRINGS.LINGGUARDNAMES.55
+msgctxt "STRINGS.LINGGUARDNAMES.55"
+msgid "Yuwan"
+msgstr "Yuwan"
+
+#. STRINGS.LINGGUARDNAMES.56
+msgctxt "STRINGS.LINGGUARDNAMES.56"
+msgid "Bingwan"
+msgstr "Bingwan"
+
+#. STRINGS.LINGGUARDNAMES.57
+msgctxt "STRINGS.LINGGUARDNAMES.57"
+msgid "Luyu"
+msgstr "Luyu"
+
+#. STRINGS.LINGGUARDNAMES.58
+msgctxt "STRINGS.LINGGUARDNAMES.58"
+msgid "Chuncai"
+msgstr "Chuncai"
+
+#. STRINGS.LINGGUARDNAMES.59
+msgctxt "STRINGS.LINGGUARDNAMES.59"
+msgid "Lukuai"
+msgstr "Lukuai"
+
+#. STRINGS.LINGGUARDNAMES.60
+msgctxt "STRINGS.LINGGUARDNAMES.60"
+msgid "Chungeng"
+msgstr "Chungeng"
+
+#. STRINGS.LINGGUARDNAMES.61
+msgctxt "STRINGS.LINGGUARDNAMES.61"
+msgid "Lizhi"
+msgstr "Lizhi"
+
+#. STRINGS.LINGGUARDNAMES.62
+msgctxt "STRINGS.LINGGUARDNAMES.62"
+msgid "Longyan"
+msgstr "Longyan"
+
+#. STRINGS.LINGGUARDNAMES.63
+msgctxt "STRINGS.LINGGUARDNAMES.63"
+msgid "Pipa"
+msgstr "Pipa"
+
+#. STRINGS.LINGGUARDNAMES.64
+msgctxt "STRINGS.LINGGUARDNAMES.64"
+msgid "Yangmei"
+msgstr "Yangmei"
+
+#. STRINGS.LINGGUARDNAMES.65
+msgctxt "STRINGS.LINGGUARDNAMES.65"
+msgid "Yingtao"
+msgstr "Yingtao"
+
+#. STRINGS.LINGGUARDNAMES.66
+msgctxt "STRINGS.LINGGUARDNAMES.66"
+msgid "Bajiao"
+msgstr "Bajiao"
+
+#. STRINGS.LINGGUARDNAMES.67
+msgctxt "STRINGS.LINGGUARDNAMES.67"
+msgid "Wutong"
+msgstr "Wutong"
+
+#. STRINGS.LINGGUARDNAMES.68
+msgctxt "STRINGS.LINGGUARDNAMES.68"
+msgid "Yuqian"
+msgstr "Yuqian"
+
+#. STRINGS.LINGGUARDNAMES.69
+msgctxt "STRINGS.LINGGUARDNAMES.69"
+msgid "Liuxu"
+msgstr "Liuxu"
+
+#. STRINGS.LINGGUARDNAMES.70
+msgctxt "STRINGS.LINGGUARDNAMES.70"
+msgid "Yanghua"
+msgstr "Yanghua"
+
+#. STRINGS.LINGGUARDNAMES.71
+msgctxt "STRINGS.LINGGUARDNAMES.71"
+msgid "Pingye"
+msgstr "Pingye"
+
+#. STRINGS.LINGGUARDNAMES.72
+msgctxt "STRINGS.LINGGUARDNAMES.72"
+msgid "Fuping"
+msgstr "Fuping"
+
+#. STRINGS.LINGGUARDNAMES.73
+msgctxt "STRINGS.LINGGUARDNAMES.73"
+msgid "Lingjiao"
+msgstr "Lingjiao"
+
+#. STRINGS.LINGGUARDNAMES.74
+msgctxt "STRINGS.LINGGUARDNAMES.74"
+msgid "Lianpeng"
+msgstr "Lianpeng"
+
+#. STRINGS.LINGGUARDNAMES.75
+msgctxt "STRINGS.LINGGUARDNAMES.75"
+msgid "Ousi"
+msgstr "Ousi"
+
+#. STRINGS.LINGGUARDNAMES.76
+msgctxt "STRINGS.LINGGUARDNAMES.76"
+msgid "Heyi"
+msgstr "Heyi"
+
+#. STRINGS.LINGGUARDNAMES.77
+msgctxt "STRINGS.LINGGUARDNAMES.77"
+msgid "Jihe"
+msgstr "Jihe"
+
+#. STRINGS.LINGGUARDNAMES.78
+msgctxt "STRINGS.LINGGUARDNAMES.78"
+msgid "Furong"
+msgstr "Furong"
+
+#. STRINGS.LINGGUARDNAMES.79
+msgctxt "STRINGS.LINGGUARDNAMES.79"
+msgid "Handan"
+msgstr "Handan"
+
+#. STRINGS.LINGGUARDNAMES.80
+msgctxt "STRINGS.LINGGUARDNAMES.80"
+msgid "Zhuyu"
+msgstr "Zhuyu"
+
+#. STRINGS.LINGGUARDNAMES.81
+msgctxt "STRINGS.LINGGUARDNAMES.81"
+msgid "Xuancao"
+msgstr "Xuancao"
+
+#. STRINGS.LINGGUARDNAMES.82
+msgctxt "STRINGS.LINGGUARDNAMES.82"
+msgid "Wangyoucao"
+msgstr "Wangyoucao"
+
+#. STRINGS.LINGGUARDNAMES.83
+msgctxt "STRINGS.LINGGUARDNAMES.83"
+msgid "Hongdou"
+msgstr "Hongdou"
+
+#. STRINGS.LINGGUARDNAMES.84
+msgctxt "STRINGS.LINGGUARDNAMES.84"
+msgid "Xiangsizi"
+msgstr "Xiangsizi"
+
+#. STRINGS.LINGGUARDNAMES.85
+msgctxt "STRINGS.LINGGUARDNAMES.85"
+msgid "Lianlizhi"
+msgstr "Lianlizhi"
+
+#. STRINGS.LINGGUARDNAMES.86
+msgctxt "STRINGS.LINGGUARDNAMES.86"
+msgid "Biyiniao"
+msgstr "Biyiniao"
+
+#. STRINGS.LINGGUARDNAMES.87
+msgctxt "STRINGS.LINGGUARDNAMES.87"
+msgid "Shuangliyu"
+msgstr "Shuangliyu"
+
+#. STRINGS.LINGGUARDNAMES.88
+msgctxt "STRINGS.LINGGUARDNAMES.88"
+msgid "Chisushu"
+msgstr "Chisushu"
+
+#. STRINGS.LINGGUARDNAMES.89
+msgctxt "STRINGS.LINGGUARDNAMES.89"
+msgid "Yanzi"
+msgstr "Yanzi"
+
+#. STRINGS.LINGGUARDNAMES.90
+msgctxt "STRINGS.LINGGUARDNAMES.90"
+msgid "Yushu"
+msgstr "Yushu"
+
+#. STRINGS.LINGGUARDNAMES.91
+msgctxt "STRINGS.LINGGUARDNAMES.91"
+msgid "Yishi"
+msgstr "Yishi"
+
+#. STRINGS.LINGGUARDNAMES.92
+msgctxt "STRINGS.LINGGUARDNAMES.92"
+msgid "Meihuashi"
+msgstr "Meihuashi"
+
+#. STRINGS.LINGGUARDNAMES.93
+msgctxt "STRINGS.LINGGUARDNAMES.93"
+msgid "Qingniao"
+msgstr "Qingniao"
+
+#. STRINGS.LINGGUARDNAMES.94
+msgctxt "STRINGS.LINGGUARDNAMES.94"
+msgid "Luanjing"
+msgstr "Luanjing"
+
+#. STRINGS.LINGGUARDNAMES.95
+msgctxt "STRINGS.LINGGUARDNAMES.95"
+msgid "Fengxiao"
+msgstr "Fengxiao"
+
+#. STRINGS.LINGGUARDNAMES.96
+msgctxt "STRINGS.LINGGUARDNAMES.96"
+msgid "Luansheng"
+msgstr "Luansheng"
+
+#. STRINGS.LINGGUARDNAMES.97
+msgctxt "STRINGS.LINGGUARDNAMES.97"
+msgid "Fengguan"
+msgstr "Fengguan"
+
+#. STRINGS.LINGGUARDNAMES.98
+msgctxt "STRINGS.LINGGUARDNAMES.98"
+msgid "Longdi"
+msgstr "Longdi"
+
+#. STRINGS.LINGGUARDNAMES.99
+msgctxt "STRINGS.LINGGUARDNAMES.99"
+msgid "Tuogu"
+msgstr "Tuogu"
+
+#. STRINGS.LINGGUARDNAMES.100
+msgctxt "STRINGS.LINGGUARDNAMES.100"
+msgid "Yugu"
+msgstr "Yugu"
+
+#. STRINGS.LINGGUARDNAMES.101
+msgctxt "STRINGS.LINGGUARDNAMES.101"
+msgid "Qiaofu"
+msgstr "Qiaofu"
+
+#. STRINGS.LINGGUARDNAMES.102
+msgctxt "STRINGS.LINGGUARDNAMES.102"
+msgid "Gengli"
+msgstr "Gengli"
+
+#. STRINGS.LINGGUARDNAMES.103
+msgctxt "STRINGS.LINGGUARDNAMES.103"
+msgid "Diaogan"
+msgstr "Diaogan"
+
+#. STRINGS.LINGGUARDNAMES.104
+msgctxt "STRINGS.LINGGUARDNAMES.104"
+msgid "Suoli"
+msgstr "Suoli"
+
+#. STRINGS.LINGGUARDNAMES.105
+msgctxt "STRINGS.LINGGUARDNAMES.105"
+msgid "Lungan"
+msgstr "Lungan"
+
+#. STRINGS.LINGGUARDNAMES.106
+msgctxt "STRINGS.LINGGUARDNAMES.106"
+msgid "Diaoji"
+msgstr "Diaoji"
+
+#. STRINGS.LINGGUARDNAMES.107
+msgctxt "STRINGS.LINGGUARDNAMES.107"
+msgid "Diaotai"
+msgstr "Diaotai"
+
+#. STRINGS.LINGGUARDNAMES.108
+msgctxt "STRINGS.LINGGUARDNAMES.108"
+msgid "Yanlinglai"
+msgstr "Yanlinglai"
+
+#. STRINGS.LINGGUARDNAMES.109
+msgctxt "STRINGS.LINGGUARDNAMES.109"
+msgid "Fuchunshan"
+msgstr "Fuchunshan"
+
+#. STRINGS.LINGGUARDNAMES.110
+msgctxt "STRINGS.LINGGUARDNAMES.110"
+msgid "Shouyangshan"
+msgstr "Shouyangshan"
+
+#. STRINGS.LINGGUARDNAMES.111
+msgctxt "STRINGS.LINGGUARDNAMES.111"
+msgid "Jishan"
+msgstr "Jishan"
+
+#. STRINGS.LINGGUARDNAMES.112
+msgctxt "STRINGS.LINGGUARDNAMES.112"
+msgid "Yingshui"
+msgstr "Yingshui"
+
+#. STRINGS.LINGGUARDNAMES.113
+msgctxt "STRINGS.LINGGUARDNAMES.113"
+msgid "Shangshan"
+msgstr "Shangshan"
+
+#. STRINGS.LINGGUARDNAMES.114
+msgctxt "STRINGS.LINGGUARDNAMES.114"
+msgid "Zizhi"
+msgstr "Zizhi"
+
+#. STRINGS.LINGGUARDNAMES.115
+msgctxt "STRINGS.LINGGUARDNAMES.115"
+msgid "Huangshi"
+msgstr "Huangshi"
+
+#. STRINGS.LINGGUARDNAMES.116
+msgctxt "STRINGS.LINGGUARDNAMES.116"
+msgid "Chisong"
+msgstr "Chisong"
+
+#. STRINGS.LINGGUARDNAMES.117
+msgctxt "STRINGS.LINGGUARDNAMES.117"
+msgid "Baihe"
+msgstr "Baihe"
+
+#. STRINGS.LINGGUARDNAMES.118
+msgctxt "STRINGS.LINGGUARDNAMES.118"
+msgid "Qingniu"
+msgstr "Qingniu"
+
+#. STRINGS.LINGGUARDNAMES.119
+msgctxt "STRINGS.LINGGUARDNAMES.119"
+msgid "Ziqi"
+msgstr "Ziqi"
+
+#. STRINGS.LINGGUARDNAMES.120
+msgctxt "STRINGS.LINGGUARDNAMES.120"
+msgid "Dansha"
+msgstr "Dansha"
+
+#. STRINGS.LINGGUARDNAMES.121
+msgctxt "STRINGS.LINGGUARDNAMES.121"
+msgid "Yuzhi"
+msgstr "Yuzhi"
+
+#. STRINGS.LINGGUARDNAMES.122
+msgctxt "STRINGS.LINGGUARDNAMES.122"
+msgid "Jinye"
+msgstr "Jinye"
+
+#. STRINGS.LINGGUARDNAMES.123
+msgctxt "STRINGS.LINGGUARDNAMES.123"
+msgid "Bailu"
+msgstr "Bailu"
+
+#. STRINGS.LINGGUARDNAMES.124
+msgctxt "STRINGS.LINGGUARDNAMES.124"
+msgid "Qingyang"
+msgstr "Qingyang"
+
+#. STRINGS.LINGGUARDNAMES.125
+msgctxt "STRINGS.LINGGUARDNAMES.125"
+msgid "Xuanhe"
+msgstr "Xuanhe"
+
+#. STRINGS.LINGGUARDNAMES.126
+msgctxt "STRINGS.LINGGUARDNAMES.126"
+msgid "Cangying"
+msgstr "Cangying"
+
+#. STRINGS.LINGGUARDNAMES.127
+msgctxt "STRINGS.LINGGUARDNAMES.127"
+msgid "Huangquan"
+msgstr "Huangquan"
+
+#. STRINGS.LINGGUARDNAMES.128
+msgctxt "STRINGS.LINGGUARDNAMES.128"
+msgid "Baiyuan"
+msgstr "Baiyuan"
+
+#. STRINGS.LINGGUARDNAMES.129
+msgctxt "STRINGS.LINGGUARDNAMES.129"
+msgid "Xuanyuan"
+msgstr "Xuanyuan"
+
+#. STRINGS.LINGGUARDNAMES.130
+msgctxt "STRINGS.LINGGUARDNAMES.130"
+msgid "Qingyuan"
+msgstr "Qingyuan"
+
+#. STRINGS.LINGGUARDNAMES.131
+msgctxt "STRINGS.LINGGUARDNAMES.131"
+msgid "Dujuan"
+msgstr "Dujuan"
+
+#. STRINGS.LINGGUARDNAMES.132
+msgctxt "STRINGS.LINGGUARDNAMES.132"
+msgid "Zigui"
+msgstr "Zigui"
+
+#. STRINGS.LINGGUARDNAMES.133
+msgctxt "STRINGS.LINGGUARDNAMES.133"
+msgid "Xiebao"
+msgstr "Xiebao"
+
+#. STRINGS.LINGGUARDNAMES.134
+msgctxt "STRINGS.LINGGUARDNAMES.134"
+msgid "Bugu"
+msgstr "Bugu"
+
+#. STRINGS.LINGGUARDNAMES.135
+msgctxt "STRINGS.LINGGUARDNAMES.135"
+msgid "Tihu"
+msgstr "Tihu"
+
+#. STRINGS.LINGGUARDNAMES.136
+msgctxt "STRINGS.LINGGUARDNAMES.136"
+msgid "Huamei"
+msgstr "Huamei"
+
+#. STRINGS.LINGGUARDNAMES.137
+msgctxt "STRINGS.LINGGUARDNAMES.137"
+msgid "Huangli"
+msgstr "Huangli"
+
+#. STRINGS.LINGGUARDNAMES.138
+msgctxt "STRINGS.LINGGUARDNAMES.138"
+msgid "Ziyan"
+msgstr "Ziyan"
+
+#. STRINGS.LINGGUARDNAMES.139
+msgctxt "STRINGS.LINGGUARDNAMES.139"
+msgid "Baiou"
+msgstr "Baiou"
+
+#. STRINGS.LINGGUARDNAMES.140
+msgctxt "STRINGS.LINGGUARDNAMES.140"
+msgid "Zhuhuan"
+msgstr "Zhuhuan"
+
+#. STRINGS.LINGGUARDNAMES.141
+msgctxt "STRINGS.LINGGUARDNAMES.141"
+msgid "Cuiniao"
+msgstr "Cuiniao"
+
+#. STRINGS.LINGGUARDNAMES.142
+msgctxt "STRINGS.LINGGUARDNAMES.142"
+msgid "Jinji"
+msgstr "Jinji"
+
+#. STRINGS.LINGGUARDNAMES.143
+msgctxt "STRINGS.LINGGUARDNAMES.143"
+msgid "Kongque"
+msgstr "Kongque"
+
+#. STRINGS.LINGGUARDNAMES.144
+msgctxt "STRINGS.LINGGUARDNAMES.144"
+msgid "Fenghuang"
+msgstr "Fenghuang"
+
+#. STRINGS.LINGGUARDNAMES.145
+msgctxt "STRINGS.LINGGUARDNAMES.145"
+msgid "Qilin"
+msgstr "Qilin"
+
+#. STRINGS.LINGGUARDNAMES.146
+msgctxt "STRINGS.LINGGUARDNAMES.146"
+msgid "Xiezhi"
+msgstr "Xiezhi"
+
+#. STRINGS.LINGGUARDNAMES.147
+msgctxt "STRINGS.LINGGUARDNAMES.147"
+msgid "Bixie"
+msgstr "Bixie"
+
+#. STRINGS.LINGGUARDNAMES.148
+msgctxt "STRINGS.LINGGUARDNAMES.148"
+msgid "Tianlu"
+msgstr "Tianlu"
+
+#. STRINGS.LINGGUARDNAMES.149
+msgctxt "STRINGS.LINGGUARDNAMES.149"
+msgid "Jiaoduan"
+msgstr "Jiaoduan"
+
+#. STRINGS.LINGGUARDNAMES.150
+msgctxt "STRINGS.LINGGUARDNAMES.150"
+msgid "Baize"
+msgstr "Baize"
+
+#. STRINGS.LINGGUARDNAMES.151
+msgctxt "STRINGS.LINGGUARDNAMES.151"
+msgid "Xuan'gui"
+msgstr "Xuan'gui"
+
+#. STRINGS.LINGGUARDNAMES.152
+msgctxt "STRINGS.LINGGUARDNAMES.152"
+msgid "Shenlong"
+msgstr "Shenlong"
+
+#. STRINGS.LINGGUARDNAMES.153
+msgctxt "STRINGS.LINGGUARDNAMES.153"
+msgid "Yinglong"
+msgstr "Yinglong"
+
+#. STRINGS.LINGGUARDNAMES.154
+msgctxt "STRINGS.LINGGUARDNAMES.154"
+msgid "Zhulong"
+msgstr "Zhulong"
+
+#. STRINGS.LINGGUARDNAMES.155
+msgctxt "STRINGS.LINGGUARDNAMES.155"
+msgid "Kunpeng"
+msgstr "Kunpeng"
+
+#. STRINGS.LINGGUARDNAMES.156
+msgctxt "STRINGS.LINGGUARDNAMES.156"
+msgid "Fuyou"
+msgstr "Fuyou"
+
+#. STRINGS.LINGGUARDNAMES.157
+msgctxt "STRINGS.LINGGUARDNAMES.157"
+msgid "Huigu"
+msgstr "Huigu"
+
+#. STRINGS.LINGGUARDNAMES.158
+msgctxt "STRINGS.LINGGUARDNAMES.158"
+msgid "Hanjiang"
+msgstr "Hanjiang"
+
+#. STRINGS.LINGGUARDNAMES.159
+msgctxt "STRINGS.LINGGUARDNAMES.159"
+msgid "Qiuqiong"
+msgstr "Qiuqiong"
+
+#. STRINGS.LINGGUARDNAMES.160
+msgctxt "STRINGS.LINGGUARDNAMES.160"
+msgid "Luowei"
+msgstr "Luowei"
+
+#. STRINGS.LINGGUARDNAMES.161
+msgctxt "STRINGS.LINGGUARDNAMES.161"
+msgid "Cuzhi"
+msgstr "Cuzhi"
+
+#. STRINGS.LINGGUARDNAMES.162
+msgctxt "STRINGS.LINGGUARDNAMES.162"
+msgid "Qingting"
+msgstr "Qingting"
+
+#. STRINGS.LINGGUARDNAMES.163
+msgctxt "STRINGS.LINGGUARDNAMES.163"
+msgid "Hudie"
+msgstr "Hudie"
+
+#. STRINGS.LINGGUARDNAMES.164
+msgctxt "STRINGS.LINGGUARDNAMES.164"
+msgid "Zhuangzhoudie"
+msgstr "Zhuangzhoudie"
+
+#. STRINGS.LINGGUARDNAMES.165
+msgctxt "STRINGS.LINGGUARDNAMES.165"
+msgid "Wangdijuan"
+msgstr "Wangdijuan"
+
+#. STRINGS.LINGGUARDNAMES.166
+msgctxt "STRINGS.LINGGUARDNAMES.166"
+msgid "Changhongxue"
+msgstr "Changhongxue"
+
+#. STRINGS.LINGGUARDNAMES.167
+msgctxt "STRINGS.LINGGUARDNAMES.167"
+msgid "Dujuanxue"
+msgstr "Dujuanxue"
+
+#. STRINGS.LINGGUARDNAMES.168
+msgctxt "STRINGS.LINGGUARDNAMES.168"
+msgid "Xiangfeizhu"
+msgstr "Xiangfeizhu"
+
+#. STRINGS.LINGGUARDNAMES.169
+msgctxt "STRINGS.LINGGUARDNAMES.169"
+msgid "Banzhu"
+msgstr "Banzhu"
+
+#. STRINGS.LINGGUARDNAMES.170
+msgctxt "STRINGS.LINGGUARDNAMES.170"
+msgid "Xiaoxiangzhu"
+msgstr "Xiaoxiangzhu"
+
+#. STRINGS.LINGGUARDNAMES.171
+msgctxt "STRINGS.LINGGUARDNAMES.171"
+msgid "Qiyuzhu"
+msgstr "Qiyuzhu"
+
+#. STRINGS.LINGGUARDNAMES.172
+msgctxt "STRINGS.LINGGUARDNAMES.172"
+msgid "Weichuanzhu"
+msgstr "Weichuanzhu"
+
+#. STRINGS.LINGGUARDNAMES.173
+msgctxt "STRINGS.LINGGUARDNAMES.173"
+msgid "Tuolong"
+msgstr "Tuolong"
+
+#. STRINGS.LINGGUARDNAMES.174
+msgctxt "STRINGS.LINGGUARDNAMES.174"
+msgid "Zhumeng"
+msgstr "Zhumeng"
+
+#. STRINGS.LINGGUARDNAMES.175
+msgctxt "STRINGS.LINGGUARDNAMES.175"
+msgid "Zhushi"
+msgstr "Zhushi"
+
+#. STRINGS.LINGGUARDNAMES.176
+msgctxt "STRINGS.LINGGUARDNAMES.176"
+msgid "Tonghua"
+msgstr "Tonghua"
+
+#. STRINGS.LINGGUARDNAMES.177
+msgctxt "STRINGS.LINGGUARDNAMES.177"
+msgid "Tongru"
+msgstr "Tongru"
+
+#. STRINGS.LINGGUARDNAMES.178
+msgctxt "STRINGS.LINGGUARDNAMES.178"
+msgid "Tongyin"
+msgstr "Tongyin"
+
+#. STRINGS.LINGGUARDNAMES.179
+msgctxt "STRINGS.LINGGUARDNAMES.179"
+msgid "Hua'anguo"
+msgstr "Hua'anguo"
+
+#. STRINGS.LINGGUARDNAMES.180
+msgctxt "STRINGS.LINGGUARDNAMES.180"
+msgid "Nankejun"
+msgstr "Nankejun"
+
+#. STRINGS.LINGGUARDNAMES.181
+msgctxt "STRINGS.LINGGUARDNAMES.181"
+msgid "Handandao"
+msgstr "Handandao"
+
+#. STRINGS.LINGGUARDNAMES.182
+msgctxt "STRINGS.LINGGUARDNAMES.182"
+msgid "Huangliangmeng"
+msgstr "Huangliangmeng"
+
+#. STRINGS.LINGGUARDNAMES.183
+msgctxt "STRINGS.LINGGUARDNAMES.183"
+msgid "Huaxuguo"
+msgstr "Huaxuguo"
+
+#. STRINGS.LINGGUARDNAMES.184
+msgctxt "STRINGS.LINGGUARDNAMES.184"
+msgid "Wuheyouxiang"
+msgstr "Wuheyouxiang"
+
+#. STRINGS.LINGGUARDNAMES.185
+msgctxt "STRINGS.LINGGUARDNAMES.185"
+msgid "Guanghangong"
+msgstr "Guanghangong"
+
+#. STRINGS.LINGGUARDNAMES.186
+msgctxt "STRINGS.LINGGUARDNAMES.186"
+msgid "Changong"
+msgstr "Changong"
+
+#. STRINGS.LINGGUARDNAMES.187
+msgctxt "STRINGS.LINGGUARDNAMES.187"
+msgid "Guidian"
+msgstr "Guidian"
+
+#. STRINGS.LINGGUARDNAMES.188
+msgctxt "STRINGS.LINGGUARDNAMES.188"
+msgid "Yueku"
+msgstr "Yueku"
+
+#. STRINGS.LINGGUARDNAMES.189
+msgctxt "STRINGS.LINGGUARDNAMES.189"
+msgid "Rilun"
+msgstr "Rilun"
+
+#. STRINGS.LINGGUARDNAMES.190
+msgctxt "STRINGS.LINGGUARDNAMES.190"
+msgid "Xihe"
+msgstr "Xihe"
+
+#. STRINGS.LINGGUARDNAMES.191
+msgctxt "STRINGS.LINGGUARDNAMES.191"
+msgid "Wangshu"
+msgstr "Wangshu"
+
+#. STRINGS.LINGGUARDNAMES.192
+msgctxt "STRINGS.LINGGUARDNAMES.192"
+msgid "Xian'a"
+msgstr "Xian'a"
+
+#. STRINGS.LINGGUARDNAMES.193
+msgctxt "STRINGS.LINGGUARDNAMES.193"
+msgid "Su'e"
+msgstr "Su'e"
+
+#. STRINGS.LINGGUARDNAMES.194
+msgctxt "STRINGS.LINGGUARDNAMES.194"
+msgid "Heng'e"
+msgstr "Heng'e"
+
+#. STRINGS.LINGGUARDNAMES.195
+msgctxt "STRINGS.LINGGUARDNAMES.195"
+msgid "Wugang"
+msgstr "Wugang"
+
+#. STRINGS.LINGGUARDNAMES.196
+msgctxt "STRINGS.LINGGUARDNAMES.196"
+msgid "Yutu"
+msgstr "Yutu"
+
+#. STRINGS.LINGGUARDNAMES.197
+msgctxt "STRINGS.LINGGUARDNAMES.197"
+msgid "Jinma"
+msgstr "Jinma"
+
+#. STRINGS.LINGGUARDNAMES.198
+msgctxt "STRINGS.LINGGUARDNAMES.198"
+msgid "Chanchu"
+msgstr "Chanchu"
+
+#. STRINGS.LINGGUARDNAMES.199
+msgctxt "STRINGS.LINGGUARDNAMES.199"
+msgid "Tiangou"
+msgstr "Tiangou"
+
+#. STRINGS.LINGGUARDNAMES.200
+msgctxt "STRINGS.LINGGUARDNAMES.200"
+msgid "Yinhe"
+msgstr "Yinhe"
+
+#. STRINGS.LINGGUARDNAMES.201
+msgctxt "STRINGS.LINGGUARDNAMES.201"
+msgid "Yunhan"
+msgstr "Yunhan"
+
+#. STRINGS.LINGGUARDNAMES.202
+msgctxt "STRINGS.LINGGUARDNAMES.202"
+msgid "Tianhan"
+msgstr "Tianhan"
+
+#. STRINGS.LINGGUARDNAMES.203
+msgctxt "STRINGS.LINGGUARDNAMES.203"
+msgid "Xinghan"
+msgstr "Xinghan"
+
+#. STRINGS.LINGGUARDNAMES.204
+msgctxt "STRINGS.LINGGUARDNAMES.204"
+msgid "Xiaohan"
+msgstr "Xiaohan"
+
+#. STRINGS.LINGGUARDNAMES.205
+msgctxt "STRINGS.LINGGUARDNAMES.205"
+msgid "Yinhuang"
+msgstr "Yinhuang"
+
+#. STRINGS.LINGGUARDNAMES.206
+msgctxt "STRINGS.LINGGUARDNAMES.206"
+msgid "Yinwan"
+msgstr "Yinwan"
+
+#. STRINGS.LINGGUARDNAMES.207
+msgctxt "STRINGS.LINGGUARDNAMES.207"
+msgid "Tianjin"
+msgstr "Tianjin"
+
+#. STRINGS.LINGGUARDNAMES.208
+msgctxt "STRINGS.LINGGUARDNAMES.208"
+msgid "Tiansun"
+msgstr "Tiansun"
+
+#. STRINGS.LINGGUARDNAMES.209
+msgctxt "STRINGS.LINGGUARDNAMES.209"
+msgid "Zhinv"
+msgstr "Zhinv"
+
+#. STRINGS.LINGGUARDNAMES.210
+msgctxt "STRINGS.LINGGUARDNAMES.210"
+msgid "Qianniu"
+msgstr "Qianniu"
+
+#. STRINGS.LINGGUARDNAMES.211
+msgctxt "STRINGS.LINGGUARDNAMES.211"
+msgid "Hegu"
+msgstr "Hegu"
+
+#. STRINGS.LINGGUARDNAMES.212
+msgctxt "STRINGS.LINGGUARDNAMES.212"
+msgid "Beidou"
+msgstr "Beidou"
+
+#. STRINGS.LINGGUARDNAMES.213
+msgctxt "STRINGS.LINGGUARDNAMES.213"
+msgid "Nanji"
+msgstr "Nanji"
+
+#. STRINGS.LINGGUARDNAMES.214
+msgctxt "STRINGS.LINGGUARDNAMES.214"
+msgid "Dongjing"
+msgstr "Dongjing"
+
+#. STRINGS.LINGGUARDNAMES.215
+msgctxt "STRINGS.LINGGUARDNAMES.215"
+msgid "Xishen"
+msgstr "Xishen"
+
+#. STRINGS.LINGGUARDNAMES.216
+msgctxt "STRINGS.LINGGUARDNAMES.216"
+msgid "Chenxiu"
+msgstr "Chenxiu"
+
+#. STRINGS.LINGGUARDNAMES.217
+msgctxt "STRINGS.LINGGUARDNAMES.217"
+msgid "Liexiu"
+msgstr "Liexiu"
+
+#. STRINGS.LINGGUARDNAMES.218
+msgctxt "STRINGS.LINGGUARDNAMES.218"
+msgid "Sanyuan"
+msgstr "Sanyuan"
+
+#. STRINGS.LINGGUARDNAMES.219
+msgctxt "STRINGS.LINGGUARDNAMES.219"
+msgid "Sixiang"
+msgstr "Sixiang"
+
+#. STRINGS.LINGGUARDNAMES.220
+msgctxt "STRINGS.LINGGUARDNAMES.220"
+msgid "Ershibaxiu"
+msgstr "Ershibaxiu"
+
+#. STRINGS.LINGGUARDNAMES.221
+msgctxt "STRINGS.LINGGUARDNAMES.221"
+msgid "Canglong"
+msgstr "Canglong"
+
+#. STRINGS.LINGGUARDNAMES.222
+msgctxt "STRINGS.LINGGUARDNAMES.222"
+msgid "Baihu"
+msgstr "Baihu"
+
+#. STRINGS.LINGGUARDNAMES.223
+msgctxt "STRINGS.LINGGUARDNAMES.223"
+msgid "Zhuque"
+msgstr "Zhuque"
+
+#. STRINGS.LINGGUARDNAMES.224
+msgctxt "STRINGS.LINGGUARDNAMES.224"
+msgid "Xuanwu"
+msgstr "Xuanwu"
+
+#. STRINGS.LINGGUARDNAMES.225
+msgctxt "STRINGS.LINGGUARDNAMES.225"
+msgid "Gouchen"
+msgstr "Gouchen"
+
+#. STRINGS.LINGGUARDNAMES.226
+msgctxt "STRINGS.LINGGUARDNAMES.226"
+msgid "Huagai"
+msgstr "Huagai"
+
+#. STRINGS.LINGGUARDNAMES.227
+msgctxt "STRINGS.LINGGUARDNAMES.227"
+msgid "Ziwei"
+msgstr "Ziwei"
+
+#. STRINGS.LINGGUARDNAMES.228
+msgctxt "STRINGS.LINGGUARDNAMES.228"
+msgid "Taiwei"
+msgstr "Taiwei"
+
+#. STRINGS.LINGGUARDNAMES.229
+msgctxt "STRINGS.LINGGUARDNAMES.229"
+msgid "Tianshi"
+msgstr "Tianshi"
+
+#. STRINGS.LINGGUARDNAMES.230
+msgctxt "STRINGS.LINGGUARDNAMES.230"
+msgid "Wenchang"
+msgstr "Wenchang"
+
+#. STRINGS.LINGGUARDNAMES.231
+msgctxt "STRINGS.LINGGUARDNAMES.231"
+msgid "Wenqu"
+msgstr "Wenqu"
+
+#. STRINGS.LINGGUARDNAMES.232
+msgctxt "STRINGS.LINGGUARDNAMES.232"
+msgid "Wuqu"
+msgstr "Wuqu"
+
+#. STRINGS.LINGGUARDNAMES.233
+msgctxt "STRINGS.LINGGUARDNAMES.233"
+msgid "Tanlang"
+msgstr "Tanlang"
+
+#. STRINGS.LINGGUARDNAMES.234
+msgctxt "STRINGS.LINGGUARDNAMES.234"
+msgid "Jumen"
+msgstr "Jumen"
+
+#. STRINGS.LINGGUARDNAMES.235
+msgctxt "STRINGS.LINGGUARDNAMES.235"
+msgid "Lucun"
+msgstr "Lucun"
+
+#. STRINGS.LINGGUARDNAMES.236
+msgctxt "STRINGS.LINGGUARDNAMES.236"
+msgid "Lianzhen"
+msgstr "Lianzhen"
+
+#. STRINGS.LINGGUARDNAMES.237
+msgctxt "STRINGS.LINGGUARDNAMES.237"
+msgid "Pojun"
+msgstr "Pojun"
+
+#. STRINGS.LINGGUARDNAMES.238
+msgctxt "STRINGS.LINGGUARDNAMES.238"
+msgid "Zuofu"
+msgstr "Zuofu"
+
+#. STRINGS.LINGGUARDNAMES.239
+msgctxt "STRINGS.LINGGUARDNAMES.239"
+msgid "Youbi"
+msgstr "Youbi"
+
+#. STRINGS.LINGGUARDNAMES.240
+msgctxt "STRINGS.LINGGUARDNAMES.240"
+msgid "Tiangang"
+msgstr "Tiangang"
+
+#. STRINGS.LINGGUARDNAMES.241
+msgctxt "STRINGS.LINGGUARDNAMES.241"
+msgid "Disha"
+msgstr "Disha"
+
+#. STRINGS.LINGGUARDNAMES.242
+msgctxt "STRINGS.LINGGUARDNAMES.242"
+msgid "Yudi"
+msgstr "Yudi"
+
+#. STRINGS.LINGGUARDNAMES.243
+msgctxt "STRINGS.LINGGUARDNAMES.243"
+msgid "Wangmu"
+msgstr "Wangmu"
+
+#. STRINGS.LINGGUARDNAMES.244
+msgctxt "STRINGS.LINGGUARDNAMES.244"
+msgid "Sanqing"
+msgstr "Sanqing"
+
+#. STRINGS.LINGGUARDNAMES.245
+msgctxt "STRINGS.LINGGUARDNAMES.245"
+msgid "Siyu"
+msgstr "Siyu"
+
+#. STRINGS.LINGGUARDNAMES.246
+msgctxt "STRINGS.LINGGUARDNAMES.246"
+msgid "Wulao"
+msgstr "Wulao"
+
+#. STRINGS.LINGGUARDNAMES.247
+msgctxt "STRINGS.LINGGUARDNAMES.247"
+msgid "Liusi"
+msgstr "Liusi"
+
+#. STRINGS.LINGGUARDNAMES.248
+msgctxt "STRINGS.LINGGUARDNAMES.248"
+msgid "Qiyuan"
+msgstr "Qiyuan"
+
+#. STRINGS.LINGGUARDNAMES.249
+msgctxt "STRINGS.LINGGUARDNAMES.249"
+msgid "Baji"
+msgstr "Baji"
+
+#. STRINGS.LINGGUARDNAMES.250
+msgctxt "STRINGS.LINGGUARDNAMES.250"
+msgid "Jiuxiao"
+msgstr "Jiuxiao"
+
+
