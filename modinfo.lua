@@ -4,11 +4,17 @@ name = ChooseTranslationTable({
 })
 -- 版本更新说明（由发布脚本自动维护，请勿手动编辑）
 local UPDATE_EN = [[
+v1.3.0 (2026-07-28)
+- Updated publishing configuration with Steam Workshop dependencies
+---
 v1.2.0 (2026-07-28)
 - Internal tooling and pipeline updates
 ]]
 
 local UPDATE_ZH = [[
+v1.3.0 (2026-07-28)
+- 更新发布配置，添加工作坊依赖项
+---
 v1.2.0 (2026-07-28)
 - 内部工具链更新
 ]]
@@ -38,7 +44,7 @@ QQ群: 666511586
 欢迎大家积极参与!]]
 })
 author = "让 望月心灵"
-version = "1.2.0"
+version = "1.3.0"
 forumthread = "https://github.com/TohsakaKuro/DST-Arknights-Typhon/issues"
 
 api_version = 10
@@ -128,5 +134,5 @@ configuration_options = { {
 }}
 mod_dependencies = {
     -- { workshop = "workshop-3677284770"},
-    {["DST-ArknightsItemPackage"] = false},
+    { workshop = "workshop-3677284770" },
 }
