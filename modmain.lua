@@ -11,8 +11,10 @@ if LOC.GetLocaleCode() == "zh" then
   local new = require("languages/speech_ling")
   STRINGS.CHARACTERS.LING = MergeMaps(STRINGS.CHARACTERS.LING, new)
 end
-MergePOFile("scripts/languages/ling_chinese_s.po", "zh")
-MergePOFile("scripts/languages/ling_english.po", "en")
+RegisterPOFile(GetModConfigData("language"), {
+  zh = "scripts/languages/ling_chinese_s.po",
+  en = "scripts/languages/ling_english.po",
+})
 
 PrefabFiles = {'ling_lantern', 'ling', 'ling_none', 'ling_lantern_smoke', 'ling_guards', 'ling_guard_basic_start_fx', 'ling_guard_basic_fusion_fx', 'ling_fx', 'ling_guard_plant_container', 'ling_guard_plant_club', 'poem_0', 'poem_1', 'poem_2', 'poem_3', 'ling_desk', 'ling_jars', 'ling_cloud_pavilion_exit_door', 'ling_interior_texture_packages', 'ling_wall_tigerpond', 'so_is_writ_an_ode_to_wine_buff', 'ling_dream_island_buff', 'ling_bookshelf'}
 

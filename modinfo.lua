@@ -66,6 +66,36 @@ icon = "modicon.tex"
 
 server_filter_tags = {"character", "Ling", "arknights", "令", "明日方舟"}
 configuration_options = { {
+    name = "language",
+    label = T({
+        en = "Text Language",
+        zh = "界面文本语言"
+    }),
+    hover = T({
+        en = "Choose the language of the mod UI text (Auto follows game language)",
+        zh = "选择模组界面文本的语言 (Auto 跟随游戏语言)"
+    }),
+    options = {{
+        description = T({
+            en = "Auto (follow game)",
+            zh = "自动 (跟随游戏)"
+        }),
+        data = "auto"
+    }, {
+        description = T({
+            en = "Simplified Chinese",
+            zh = "简体中文"
+        }),
+        data = "zh"
+    }, {
+        description = T({
+            en = "English",
+            zh = "英文"
+        }),
+        data = "en"
+    }},
+    default = "auto"
+}, {
     name = "voice_language",
     label = T({
         en = "Choose Voice Language",
@@ -139,6 +169,5 @@ configuration_options = { {
     default = 0.6
 }}
 mod_dependencies = {
-    -- { workshop = "workshop-3677284770"},
-    { workshop = "workshop-3677284770" },
+    {["DST-ArknightsItemPackage"] = false},
 }

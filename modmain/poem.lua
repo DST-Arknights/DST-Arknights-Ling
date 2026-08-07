@@ -46,17 +46,15 @@ end)
 AddStategraphActionHandler("wilson", ActionHandler(ACTIONS.USE_POEM, "doshortaction"))
 AddStategraphActionHandler("wilson_client", ActionHandler(ACTIONS.USE_POEM, "doshortaction"))
 
-local _ReadCondition = ACTIONS.READ.condition
-ACTIONS.READ.condition = function(inst)
-  local action = inst:GetBufferedAction()
-  local targe = action.target or action.invobject
-  if targe ~= nil and targe.components.poem_useable ~= nil and targe.components.rechargeable ~= nil then
-    return targe.components.rechargeable:IsCharged()
-  end
-  if _ReadCondition ~= nil then
-    return _ReadCondition(inst)
-  end
-  return true
+-- 服务端执行前兜底：防止编程式 BufferedAction:Do() 绕过 UI 直接读未充能的诗
+-- (validfn 仅服务端执行, bufferedaction.lua:46; UI 层过滤由下方 removeReadActionIfNotCharged 负责)
+local _ReadValidfn = ACTIONS.READ.validfn   -- 原版为 nil, 链式备用
+ACTIONS.READ.validfn = function(act)
+    local target = act.target or act.invobject
+    if target ~= nil and target.components.poem_useable ~= nil and target.components.rechargeable ~= nil then
+        return target.components.rechargeable:IsCharged()
+    end
+    return _ReadValidfn ~= nil and _ReadValidfn(act) or true
 end
 
 -- 如果书未充能完毕, 则不显示阅读选项开关
