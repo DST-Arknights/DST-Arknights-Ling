@@ -208,7 +208,7 @@ end
 local function OnTalk(inst, data)
   -- local idleVoices = { "IDLE1", "IDLE2" }
   -- local voiceIndex = math.random(1, #idleVoices)
-  -- SayAndVoice(inst, idleVoices[voiceIndex], { notext = true })
+  -- SayAndVoice(inst, idleVoices[voiceIndex], { text = false }) -- 只语音不出文字气泡
 end
 
 local DEFAULT_SKILL_IDS = {
@@ -294,12 +294,7 @@ local function master_post_init(inst)
     requiredElite = 3,
     eliteLevelMap = { [3] = 1 },
   })
-  inst:AddComponent("i18n_talker")
-  inst.components.i18n_talker:SetupVoice('ling')
-  inst.components.i18n_talker:SetVoiceLang(TUNING.LING.VOICE_LANG)
-  inst.components.i18n_talker.sound_params = {
-    volume = TUNING.LING.VOICE_VOLUME,
-  }
+  BindVoice(inst, "ling")
 
   inst.components.sanity.dapperness = 0.33
 
