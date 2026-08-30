@@ -1,5 +1,13 @@
 # 版本更新记录
 
+## v1.3.3 (2026-08-31)
+
+- 禁用迷你地图实体缓存以提高性能
+- 重构代码结构，提升可读性与可维护性
+---
+- Disabled minimap entity caching to improve performance
+- Refactored the code structure to improve readability and maintainability
+
 ## v1.3.2 (2026-08-07)
 
 - Added language selection feature | 添加语言选择功能
