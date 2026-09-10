@@ -85,11 +85,7 @@ end
 local function OnReroll(inst)
   -- 移除所有的召唤物
   if inst.components.ling_summon_manager then
-    inst.components.ling_summon_manager:OptionalAllGuard(function(guard)
-      if guard.components.ling_guard then
-        guard.components.ling_guard:Recall()
-      end
-    end)
+    inst.components.ling_summon_manager:DespawnAllGuards()
   end
 end
 
@@ -350,6 +346,13 @@ local function master_post_init(inst)
     end
   end
   inst:ListenForEvent("ms_playerreroll", OnReroll)
+  -- c_despawn / 月岩门换人走的是 ms_playerdespawnanddelete，不会触发 ms_playerreroll，
+  -- 需要单独处理，否则守卫会失去主人留在世界上
+  inst:ListenForEvent("ms_playerdespawnanddelete", function(world, player)
+    if player == inst and inst.components.ling_summon_manager then
+      inst.components.ling_summon_manager:DespawnAllGuards()
+    end
+  end, TheWorld)
   inst:ListenForEvent("changearea", OnChangeArea)
   inst:ListenForEvent("emote", OnEmote)
 

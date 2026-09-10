@@ -152,12 +152,13 @@ function LingGuardBehavior:IsPanelOpenedBy(doer)
     return self.panel_opener == doer
 end
 
-function LingGuardBehavior:ThrowContainerItems(container)
+function LingGuardBehavior:ThrowContainerItems(container, force_drop)
     if not container or not container.components or not container.components.container then
         return
     end
     local leader = self.inst.components.follower.leader
-    if leader and leader.components.inventory then
+    -- force_drop: 主人本体即将被删除（换人等），交给主人等于一起消失，改为直接丢在地上
+    if not force_drop and leader and leader.components.inventory then
         local container = container.components.container
         -- 使用源码中的 MoveItemFromAllOfSlot 方法转移所有物品
         for i = 1, container.numslots do

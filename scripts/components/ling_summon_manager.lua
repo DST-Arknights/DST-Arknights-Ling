@@ -453,6 +453,57 @@ function LingSummonManager:OnFollowerLost(follower)
     self:RequestCurrentWorldSync(0.1)
 end
 
+-- 换人/重选角色（c_despawn、月岩门、无缝变身等）时，令的守卫应随令一同消失。
+-- 注意：只能挂在换人事件上，不能挂在 OnDespawn 上：
+--       正常存档退出（OnDespawn(nil)）和断开连接时守卫都要保留，重连后靠缓存主人重新跟随。
+function LingSummonManager:DespawnAllGuards()
+  if self.despawning_guards then
+    return
+  end
+  self.despawning_guards = true
+
+  -- 守卫以槽位数据为准，同时兜底 follower 列表（防止槽位数据缺失时留下野守卫）
+  local guards = {}
+  local function AddGuard(guard)
+    if guard and guard:IsValid() and guard.components.ling_guard then
+      guards[guard] = true
+    end
+  end
+
+  local leader = self.inst.components.leader
+  if leader then
+    local followers = leader:GetFollowersByTag("ling_summon")
+    for i = 1, #followers do
+      AddGuard(followers[i])
+    end
+  end
+  for i = 1, self.max_slots do
+    local slot_data = self:GetSlotData(i)
+    if slot_data then
+      AddGuard(slot_data.inst)
+    end
+  end
+
+  for guard in pairs(guards) do
+    local comp = guard.components.ling_guard
+    -- 令本体马上会被删除，守卫容器里的物品直接丢在地上，避免跟着一起消失
+    comp:ThrowContainerItems(guard.plant_container, true)
+    comp:ThrowContainerItems(guard.plant_club, true)
+    comp:ThrowContainerItems(guard, true)
+    -- 立刻移除（换人过程中世界可能被暂停，延迟移除会留在世界里）
+    local gx, gy, gz = guard.Transform:GetWorldPosition()
+    local fx = SpawnPrefab("spawn_fx_medium")
+    if fx then
+      fx.Transform:SetPosition(gx, 0, gz)
+    end
+    guard:Remove()
+  end
+
+  for i = 1, self.max_slots do
+    self:EmptySlot(i)
+  end
+end
+
 function LingSummonManager:OnFollowerAdded(follower)
   ArkLogger:Debug("LingSummonManager:OnFollowerAdded: 检测到follower添加", follower)
   -- 仅处理令的召唤兽
