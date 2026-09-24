@@ -133,7 +133,6 @@ local autoMap = {
 }
 local voice_lang = voice_cfg == "auto" and autoMap[LOC.GetLocaleCode(LOC.GetLanguage())] or voice_cfg ~= "auto" and voice_cfg or "japanese"
 TUNING.LING.VOICE_LANG = voice_lang
-TUNING.LING.VOICE_VOLUME = GetModConfigData("voice_volume")
 
 function GLOBAL.IsEntityInDreamIsland(inst)
     local x, y, z = inst.Transform:GetWorldPosition()
@@ -148,5 +147,4 @@ end
 
 RegisterVoice("ling", "languages/ling_voice", {
   voice_lang = TUNING.LING.VOICE_LANG,
-  volume = TUNING.LING.VOICE_VOLUME,
 })
