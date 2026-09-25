@@ -1,4 +1,12 @@
 # 版本更新记录
+## v1.3.4 (2026-09-26)
+
+- 新增 Japanese、Mandarin、dialect、Korean 多语言随机闲聊语音，并优化为短句随机播放且多端同步
+- 新增守卫消失处理，优化角色换人时的守卫管理
+---
+- Added Japanese, Mandarin, dialect, and Korean random chatter voices with short, synchronized playback across clients
+- Added guard disappearance handling and improved guard management when switching characters
+
 
 ## v1.3.3 (2026-08-31)
 

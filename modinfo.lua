@@ -10,25 +10,23 @@ name = T({
 })
 -- 版本更新说明（由发布脚本自动维护，请勿手动编辑）
 local UPDATE_EN = [[
+v1.3.4 (2026-09-26)
+- Added Japanese, Mandarin, dialect, and Korean random chatter voices with short, synchronized playback across clients
+- Added guard disappearance handling and improved guard management when switching characters
+---
 v1.3.3 (2026-08-31)
 - Disabled minimap entity caching to improve performance
 - Refactored the code structure to improve readability and maintainability
----
-v1.3.2 (2026-08-07)
-- Added language selection feature
-- Language now automatically follows the game's language
-- Updated release script to check the project root directory
 ]]
 
 local UPDATE_ZH = [[
+v1.3.4 (2026-09-26)
+- 新增 Japanese、Mandarin、dialect、Korean 多语言随机闲聊语音，并优化为短句随机播放且多端同步
+- 新增守卫消失处理，优化角色换人时的守卫管理
+---
 v1.3.3 (2026-08-31)
 - 禁用迷你地图实体缓存以提高性能
 - 重构代码结构，提升可读性与可维护性
----
-v1.3.2 (2026-08-07)
-- 添加语言选择功能
-- 语言自动跟随游戏语言
-- 更新发布脚本以检查项目根目录
 ]]
 
 description = T({
@@ -56,7 +54,7 @@ QQ群: 666511586
 欢迎大家积极参与!]]
 })
 author = "让 望月心灵"
-version = "1.3.3"
+version = "1.3.4"
 forumthread = "https://github.com/TohsakaKuro/DST-Arknights-Typhon/issues"
 
 api_version = 10
