@@ -256,6 +256,9 @@ local function common_post_init(inst)
   inst:AddTag("ling")
   inst:AddTag("reader")
   inst:AddTag("ark_character")
+  -- 随机闲聊语音: 随机说话状态可能只在客户端副本执行,
+  -- 必须放 common_postinit 让服务端与客户端都能看到 (同 Wang/Mon3tr 做法)
+  inst.talksoundoverride = TUNING.LING.VOICE_TALK_PATH
 end
 
 local function master_post_init(inst)

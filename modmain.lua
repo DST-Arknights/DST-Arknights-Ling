@@ -133,6 +133,8 @@ local autoMap = {
 }
 local voice_lang = voice_cfg == "auto" and autoMap[LOC.GetLocaleCode(LOC.GetLanguage())] or voice_cfg ~= "auto" and voice_cfg or "japanese"
 TUNING.LING.VOICE_LANG = voice_lang
+-- 随机闲聊语音池: ling/<lang>/talk_LP (randomnorepeat, 由 FMOD 直接选波形)
+TUNING.LING.VOICE_TALK_PATH = "ling/" .. voice_lang .. "/talk_LP"
 
 function GLOBAL.IsEntityInDreamIsland(inst)
     local x, y, z = inst.Transform:GetWorldPosition()
